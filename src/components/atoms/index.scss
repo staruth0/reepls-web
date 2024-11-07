@@ -1,0 +1,7 @@
+//button
+@use '../../styles/mixin.scss';
+@use '../../styles/variable.scss';
+
+.btn__primary{
+    @include mixin.button(rgba(255, 255, 255, 0.8), var(--main-green))
+}

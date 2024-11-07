@@ -1,0 +1,19 @@
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin transition($property, $duration) {
+  transition: $property $duration ease;
+}
+
+
+@mixin button{
+      padding: 0.7rem;
+      border-radius: 1.5rem;
+      font-size: .9rem;
+      font-weight: 550;
+      font-family: var(--roboto-font);
+      cursor: pointer;
+}

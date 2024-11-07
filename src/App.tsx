@@ -1,35 +1,71 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import Home from './feature/Blog/pages/Home';
+import Welcome from './feature/Auth/pages/Welcome';
+import Login from './feature/Auth/pages/Login';
+import Register from './feature/Auth/pages/Register';
+import Registerwithemail from './feature/Auth/pages/Registerwithemail';
+import Loginwithemail from './feature/Auth/pages/Loginwithemail';
+import Checkemail from './feature/Auth/pages/Checkemail';
+import Checkphone from './feature/Auth/pages/Checkphone';
+import { useEffect } from 'react';
+import useTheme from './hooks/useTheme';
+import AuthLayout from './feature/Auth/components/AuthLayout';
+
+
+
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Home />,
+    children: [],
+  },
+  {
+    path: "/auth",
+    element: <AuthLayout />,
+    children: [
+      {
+        index: true,
+        element: <Welcome />,
+      },
+      {
+        path: "login/phone",
+        element: <Login />,
+      },
+      {
+        path: "login/email",
+        element: <Loginwithemail />,
+      },
+      {
+        path: "register/phone",
+        element: <Register />,
+      },
+      {
+        path: "register/email",
+        element: <Registerwithemail />,
+      },
+      {
+        path: "register/checkemail",
+        element: <Checkemail/> ,
+      },
+      {
+        path: "register/checkphone",
+        element: <Checkphone/> ,
+      },
+    ],
+  },
+]);
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { theme} = useTheme();
+  
+  useEffect(() => {
+    document.body.className = theme === 'dark' ? "dark-theme" : "";
+  },[theme])
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <RouterProvider router={router}/>
   )
 }
 
-export default App
+export default App;

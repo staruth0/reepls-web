@@ -1,0 +1,84 @@
+@use "../../../styles/mixin.scss";
+@use "../../../styles/main.scss";
+@use "../../../styles/variable.scss";
+
+.register__phone__container {
+  padding: 0.7rem 1.2rem;
+  display: grid;
+  gap: 2rem;
+  min-width: 74%;
+  max-width: 85%;
+
+  .insightful__texts {
+    div {
+      font-size: 32px;
+      font-weight: 550;
+      font-family: var(--instrument-serif-font);
+      color: var(--plain-a);
+    }
+    p {
+      font-size: 17px;
+      font-weight: 400;
+      font-family: var(--roboto-font);
+      color: var(--neutral-100);
+    }
+
+    .welcome{
+      text-align: center;
+      padding: 1rem;
+    }
+    .login{
+       text-align: center;
+       font-size: 33px;
+       font-weight: 600;
+    }
+    .code__message{
+      font-size: 17px;
+      color: var(--neutral-100);
+    }
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+
+    button {
+      @include mixin.button;
+      border: none;
+      background-color: var(--main-green);
+      color: var(--plain-b);
+      margin: 1rem 0.4rem 0rem 0.4rem;
+      @include mixin.transition(all,.3s);
+
+      &:hover {
+        scale: 1.1;
+      }
+    }
+  }
+
+  .bottom__links{
+    font-size: 16px;
+    @include mixin.flex-center;
+    flex-direction: column;
+    gap: .2rem;
+    color: var(--neutral-50);
+
+    .alternate__email {
+    font-size: 16px;
+    text-decoration: underline;
+    text-align: center;
+    color: var(--neutral-50);
+    margin-top: .3rem;
+    cursor: pointer;
+  }
+
+  .resend__text{
+    display: flex;
+    font-family: var(--roboto-font);
+    color: var(--plain-a);
+    font-weight: 600;
+  }
+  }
+  
+}

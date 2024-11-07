@@ -1,0 +1,88 @@
+@use "../../../styles/mixin.scss";
+@use "../../../styles/main.scss";
+@use "../../../styles/variable.scss";
+
+.swiper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  padding: 1rem 1.5rem;
+
+  .swiper__logo {
+    align-self: flex-start;
+    font-weight: 600;
+    font-size: x-large;
+    padding:.3rem;
+  }
+
+  .swiper__image__container {
+    @include mixin.flex-center;
+    position: relative;
+    margin: 20px 0;
+    width: 100%;
+    padding: 0.87rem 0rem;
+
+    .swiper__buttons {
+      position: absolute;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+
+      .swiper__button {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+
+        .arrow-right {
+          transform: rotate(180deg);
+        }
+      }
+    }
+
+    .swiper__image__wrapper {
+      width: 90%;
+      height: 350px;
+      border-radius: 12px;
+      background-color: #9e9494;
+    }
+  }
+
+  .swiper__text {
+    color: var(--plain-a);
+
+    h2 {
+      font-size: 32px;
+      font-weight: 600;
+      font-family: var(--instrument-serif-font);
+      margin-bottom: 10px;
+      
+    }
+
+    p {
+      font-size: 15px;
+      color: var(--roboto-font);
+      padding: .2rem 5.7rem;
+    }
+  }
+
+  .swiper__indicators {
+    display: flex;
+    gap: 10px;
+    margin-top: 2.3rem;
+
+    .swiper__indicator {
+      width: 80px;
+      height: 6px;
+      border-radius: 10px;
+      background-color: var(--primary-600);
+      cursor: pointer;
+
+      &.active {
+        background-color: var(--primary-400-main);
+      }
+    }
+  }
+}
