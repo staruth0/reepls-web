@@ -3,6 +3,7 @@ import { back_arrow } from "../../../assets/icons";
 import { useEffect, useState } from "react";
 import { slides } from "../../../Data/Data";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 
 function Swiper() {
     //states
@@ -26,14 +27,22 @@ function Swiper() {
     
     
    //useEffects 
-    useEffect(() => {
-        setInterval(handleNextSlide, 6000);
-    },[])
+  useEffect(() => {
+    const interval = setInterval(handleNextSlide, 5000);
+    return () => clearInterval(interval); 
+  }, []);
+  
+     const transitionVariants = {
+       hidden: { opacity: 0, x: -20 },
+       visible: { opacity: 1, x: 0 },
+       exit: { opacity: 0, x: 20 },
+     };
+
 
   return (
     <div className="swiper">
-          <div className="swiper__logo">
-              REEPLS
+      <div className="swiper__logo">
+        REEPLS
         {/* <img src={back_arrow} alt="Logo" /> */}
       </div>
 
@@ -50,10 +59,20 @@ function Swiper() {
         <div className="swiper__image__wrapper"></div>
       </div>
 
-      <div className="swiper__text">
-        <h2>{t(slides[activeSlide].text)}</h2>
-        <p>{t(slides[activeSlide].description)}</p>
-      </div>
+      <motion.div
+        key={activeSlide}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        variants={transitionVariants}
+        transition={{ duration: 0.9 }}
+        className="content"
+      >
+        <div className="swiper__text">
+          <h2>{t(slides[activeSlide].text)}</h2>
+          <p>{t(slides[activeSlide].description)}</p>
+        </div>
+      </motion.div>
 
       <div className="swiper__indicators">
         {slides.map((_, index) => (
