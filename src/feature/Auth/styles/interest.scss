@@ -1,0 +1,88 @@
+@use "../../../styles/mixin.scss";
+@use "../../../styles/main.scss";
+@use "../../../styles/variable.scss";
+
+.interest__container {
+  padding: 0.5rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 75%;
+
+  .head__interests {
+    font-family: var(--roboto-font);
+
+    div {
+      font-size: 2rem;
+      font-family: var(--instrument-serif-font);
+      color: var(--plain-a);
+    }
+    p {
+      font-size: 14px;
+      color: var(--neutral-100);
+      line-height: 20px;
+    }
+  }
+
+  .counter__interests {
+    color: var(--neutral-100);
+    font-size: 20px;
+    line-height: 28px;
+
+    &.green{
+        color: var(--primary-400-main);
+    }
+  }
+
+  .interest__wrapper {
+    padding: 1rem 0rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    gap: 7px;
+  }
+
+  .interest_btns {
+    display: flex;
+    flex-direction: column;
+    max-width: 87%;
+    gap: 8px;
+
+    button {
+      @include mixin.button;
+      background-color: var(--neutral-200);
+      border: none;
+      color: var(--neutral-100);
+
+      &.green{
+        background-color: var(--main-green);
+        color: #fff;
+      }
+    }
+    div {
+      align-self: center;
+      color: var(--neutral-50);
+      font-size: 14px;
+      margin: 5px;
+    }
+  }
+}
+
+.interest__btn {
+  padding: 0.85rem 1.3rem;
+  border-radius: 6.25rem;
+  outline: none;
+  border: 1px solid var(--plain-a);
+  color: var(--plain-a);
+  background: transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: var(--roboto-font);
+  transition: all 0.3s ease;
+
+  &.selected {
+    color: #fff;
+    background-color: var(--primary-400-main);
+    border: none;
+  }
+}

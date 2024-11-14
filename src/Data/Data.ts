@@ -1,20 +1,32 @@
 const slides = [
   {
-    text: "Creating Waves of Professional Impact",
-    description:
-      "Stay informed with credible sources. We bring you the latest, unbiased updates from trusted voices around the globe.",
+    text: "slidetext",
+    description: "slide1_description",
   },
   {
-    text: "Unleashing Boundless Creativity",
-    description:
-      "Unlock new dimensions of imagination and skill. Dive into creative pursuits that challenge boundaries and inspire innovation.",
+    text: "slide2_text",
+    description: "slide2_description",
   },
   {
-    text: "Crafting Stories with Purpose",
-    description:
-      "Writing that goes beyond words. Engage with narratives that capture experiences, convey messages, and resonate deeply.",
+    text: "slide3_text",
+    description: "slide3_description",
   },
 ];
 
+const interests = [
+  "Science",
+  "Politics",
+  "Health & Wellness",
+  "Technology",
+  "Art",
+  "Music",
+  "Literature",
+  "Sports",
+  "Travel",
+  "History",
+  "Philosophy",
+  "Environment",
+  "Engineering",
+];
 
-export {slides}
+export { slides, interests };

@@ -10,39 +10,6 @@
 
 
 body {
-font-size: 18px;
-
-}
-
-.container {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  @include flex-center;
-  flex-direction: column;
-  gap: 0.8rem;
-}
-
-.togglebtn {
-  width: 80px;
-  height: 40px;
-  border-radius: 3rem;
-  background-color: grey;
-
-
-
-  &.flex {
-    display: flex;
-    justify-content: end;
-    background-color: rgb(7, 7, 7);
-    transition: all 1s ease;
-  
-  }
-
-  .togglebtn__mover {
-    width: 43px;
-    height: 40px;
-    border-radius: inherit;
-    background-color: white;
-  }
+font-size: 16px;
+background: var(--primary-50);
 }

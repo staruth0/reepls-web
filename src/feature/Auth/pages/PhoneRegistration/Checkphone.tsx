@@ -1,7 +1,8 @@
 import React from "react";
-import "../styles/authpages.scss";
+import "../../styles/authpages.scss";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next"; 
+import OTPInput from "../../components/OTPInput";
 
 function Checkphone() {
   const { t } = useTranslation();
@@ -12,12 +13,15 @@ function Checkphone() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted successfully!");
-    navigateToHomepage();
+    navigateToInterests();
   };
 
+     const handleOtpComplete = (otp: string) => {
+       console.log("Complete OTP:", otp);
+     };
   // functions to navigate
-  const navigateToHomepage = () => {
-    navigate("/");
+  const navigateToInterests = () => {
+    navigate("/auth/interests");
   };
 
   return (
@@ -27,12 +31,13 @@ function Checkphone() {
         <div className="code__message">{t("CheckMessagesMessage")}</div>
       </div>
       <form onSubmit={handleSubmit}>
+        <OTPInput length={6} onComplete={handleOtpComplete} />
         <button type="submit">{t("VerifyButton")}</button>
       </form>
       <div className="bottom__links">
         <div className="resend__text">
           {t("ResendPrompt")}
-          <div onClick={navigateToHomepage} className="bottom__link_resend">
+          <div onClick={navigateToInterests} className="bottom__link_resend">
             {t("ResendButton")}
           </div>
         </div>

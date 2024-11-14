@@ -9,13 +9,18 @@ function Welcome() {
   const navigateToSignIn = () => {
     navigate("register/phone");
   };
+  const navigateToSignUp = () => {
+    navigate("login/phone");
+  };
 
   return (
     <div className="welcome__container">
       <div className="welcome__text">{t("WelcomeMessage")}</div>
 
       <div className="welcome__buttons">
-        <button className="btn__sign-in">{t("SignInButton")}</button>
+        <button className="btn__sign-in" onClick={navigateToSignUp}>
+          {t("SignInButton")}
+        </button>
         <div className="divider">
           <p>{t("OrDivider")}</p>
         </div>

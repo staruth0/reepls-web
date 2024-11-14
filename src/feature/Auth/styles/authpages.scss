@@ -6,8 +6,8 @@
   padding: 0.7rem 1.2rem;
   display: grid;
   gap: 2rem;
-  min-width: 74%;
-  max-width: 85%;
+  min-width: 70%;
+  max-width: 75%;
 
   .insightful__texts {
     div {
@@ -41,20 +41,49 @@
   form {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 1.7rem;
 
     button {
       @include mixin.button;
       border: none;
       background-color: var(--main-green);
       color: var(--plain-b);
-      margin: 1rem 0.4rem 0rem 0.4rem;
       @include mixin.transition(all,.3s);
 
       &:hover {
         scale: 1.1;
       }
     }
+   .create__account__btn{
+        @include mixin.flex-center;
+        @include mixin.button;
+        @include mixin.transition(all,.3s);
+        background-color:#fff;
+        color: var(--neutral-100);
+        border: 1px solid var(--neutral-100);
+        gap: .2rem;
+
+        img{
+          width: 20px;
+          height: 20px;
+        }
+
+    }
+      .divider {
+      background-color: var(--neutral-400); 
+      height: 2px;
+      position: relative;
+
+      p{
+        position: absolute;
+        left: 44%;
+        top: -17.5px;
+        padding: .5rem;
+         background: var(--primary-800);
+         color: var(--neutral-50);
+      }
+    }
+
   }
 
   .bottom__links{
@@ -82,3 +111,4 @@
   }
   
 }
+

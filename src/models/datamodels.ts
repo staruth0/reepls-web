@@ -1,16 +1,17 @@
 export interface User {
-  user_id: string;
+  user_id?: string;
   username: string;
   email: string;
   password: string;
+  phone: string;
   role: "Admin" | "Reader" | "Writer";
   profile_picture?: string;
   bio?: string;
   address?: string;
   interests?: string[];
-  is_verified_writer: boolean;
-  created_at: string;
-  updated_at: string;
+  is_verified_writer?: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Article {

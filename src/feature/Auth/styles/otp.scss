@@ -1,0 +1,33 @@
+@use "../../../styles/mixin.scss";
+@use "../../../styles/main.scss";
+@use "../../../styles/variable.scss";
+
+.otp__wrapper {
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+
+    input {
+        position: relative;
+        width: 60px;
+        font-size: 1.3rem;
+        padding: 1rem 0.6rem;
+        text-align: center;
+        background-color: var(--primary-700);
+        border-radius: 10px;
+        border: none;
+        outline: none;
+        z-index: 1; 
+
+        // Pseudo-element for the gradient border on focus
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 10px; // Ensures the border has rounded corners
+            padding: 1rem;
+            background: linear-gradient(90deg, green, red, yellow);
+            z-index: 71; // Place gradient behind the input
+        }
+    }
+}

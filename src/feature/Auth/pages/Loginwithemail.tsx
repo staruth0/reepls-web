@@ -3,9 +3,15 @@ import InputField from "../components/InputField";
 import "../styles/authpages.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next"; 
+import { validatePassword } from "../../../utils/validatePassword";
+import { useStoreCredential } from "../hooks/useStoreCredential";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
 
 function Loginwithemail() {
-  const { t } = useTranslation(); 
+    const { t } = useTranslation(); 
+    const { storeEmail, storePassword } = useStoreCredential();
+    const { email: enteredEmail, password: enteredPassword } = useSelector((state: RootState) => state.user);
 
   //states
   const [email, setEmail] = useState<string>("");
@@ -17,17 +23,28 @@ function Loginwithemail() {
 
   //functions to handle DOM events
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-    setPasswordInputError(false);
+    const passwordValue = e.target.value;
+    setPassword(passwordValue);
+    storePassword(passwordValue)
+
+    if (validatePassword(passwordValue) || passwordValue === "") {
+      setPasswordInputError(false);
+    } else {
+      setPasswordInputError(true);
+    }
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
+    storeEmail(e.target.value)
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted successfully!");
+    console.log({
+      enteredEmail,enteredPassword
+    })
   };
 
   // functions to navigate

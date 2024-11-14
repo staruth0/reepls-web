@@ -2,10 +2,16 @@ import "../styles/swiper.scss";
 import { back_arrow } from "../../../assets/icons";
 import { useEffect, useState } from "react";
 import { slides } from "../../../Data/Data";
+import { useTranslation } from "react-i18next";
 
 function Swiper() {
+    //states
   const [activeSlide, setActiveSlide] = useState<number>(0);
+  const {t} = useTranslation()
 
+
+    //functions to handle DOM EVENTS
+    
   const handlePrevSlide = () => {
     setActiveSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   };
@@ -18,6 +24,8 @@ function Swiper() {
     setActiveSlide(index);
     };
     
+    
+   //useEffects 
     useEffect(() => {
         setInterval(handleNextSlide, 6000);
     },[])
@@ -43,8 +51,8 @@ function Swiper() {
       </div>
 
       <div className="swiper__text">
-        <h2>{slides[activeSlide].text}</h2>
-        <p>{slides[activeSlide].description}</p>
+        <h2>{t(slides[activeSlide].text)}</h2>
+        <p>{t(slides[activeSlide].description)}</p>
       </div>
 
       <div className="swiper__indicators">
