@@ -8,11 +8,19 @@ import { useStoreCredential } from "../hooks/useStoreCredential";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { google } from "../../../assets/icons";
+import { useAuth } from "../hooks/useAuth";
 
 function Loginwithemail() {
-    const { t } = useTranslation(); 
-    const { storeEmail, storePassword } = useStoreCredential();
-    const { email: enteredEmail, password: enteredPassword } = useSelector((state: RootState) => state.user);
+  const { t } = useTranslation();
+  const { storeEmail, storePassword } = useStoreCredential();
+  const { email: enteredEmail, password: enteredPassword } = useSelector(
+    (state: RootState) => state.user
+  );
+
+  //custom'hooks
+  const { login } = useAuth();
+  // const { storeAccessToken,storeRefreshToken } = useTokenStorage();
+
 
   //states
   const [email, setEmail] = useState<string>("");
@@ -26,7 +34,7 @@ function Loginwithemail() {
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const passwordValue = e.target.value;
     setPassword(passwordValue);
-    storePassword(passwordValue)
+    storePassword(passwordValue);
 
     if (validatePassword(passwordValue) || passwordValue === "") {
       setPasswordInputError(false);
@@ -37,15 +45,27 @@ function Loginwithemail() {
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    storeEmail(e.target.value)
+    storeEmail(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted successfully!");
     console.log({
-      enteredEmail,enteredPassword
-    })
+      enteredEmail,
+      enteredPassword,
+    });
+
+    try {
+      const response = await login({
+        password: enteredPassword,
+        email: enteredEmail,
+      });
+      if (response) {
+        console.log("success", response);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // functions to navigate

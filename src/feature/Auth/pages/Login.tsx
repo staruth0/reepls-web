@@ -7,11 +7,16 @@ import { validatePassword } from "../../../utils/validatePassword";
 import { useStoreCredential } from "../hooks/useStoreCredential";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
+import { useAuth } from "../hooks/useAuth";
 
 function Login() {
   const { t } = useTranslation(); 
   const { storePhone, storePassword } = useStoreCredential()
   const { phone:enteredPhone, password:enteredPassword } = useSelector((state:RootState) => state.user);
+
+  //custom'hooks
+  const { login } = useAuth();
+  // const { storeAccessToken,storeRefreshToken } = useTokenStorage();
 
   // states
   const [phone, setPhone] = useState<string>("");
@@ -53,13 +58,23 @@ const handlePhoneBlur = () => {
   }
 };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit =async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     console.log({
-
-      enteredPassword,enteredPhone
+     password: enteredPassword, phone: enteredPhone
     })
+
+    try{
+      const response = await login({password: enteredPassword, phone: enteredPhone });
+      if(response){
+        console.log("success",response);
+      }
+
+    }catch(error){
+      console.error(error);
+    }
+
     console.log("Form submitted successfully!");
   };
 
