@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import InputField from "../components/InputField";
 import "../styles/authpages.scss";
-import { Link, useNavigate } from "react-router-dom";
+// import {useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next"; 
 import { validatePassword } from "../../../utils/validatePassword";
 import { useStoreCredential } from "../hooks/useStoreCredential";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
+import { google } from "../../../assets/icons";
 
 function Loginwithemail() {
     const { t } = useTranslation(); 
@@ -19,7 +20,7 @@ function Loginwithemail() {
   const [passwordInputError, setPasswordInputError] = useState<boolean>(false);
 
   //navigate
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   //functions to handle DOM events
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,45 +49,46 @@ function Loginwithemail() {
   };
 
   // functions to navigate
-  const navigateToSignInWithPhone = () => {
-    navigate("/auth/login/phone");
-  };
+  // const navigateToSignInWithPhone = () => {
+  //   navigate("/auth/login/phone");
+  // };
 
   return (
     <div className="register__phone__container">
       <div className="insightful__texts">
-        <div className="welcome">{t("WelcomeBackToREEPLS")}</div>
-        <div className="login">{t("Login")}</div>
+        <div>{t("GetInformed")}</div>
+        <p>{t("Enter your email and password to sign in")}</p>
       </div>
       <form onSubmit={handleSubmit}>
         <InputField
           textValue={email}
-          label={t("EmailLabel")} 
+          label={t("EmailLabel")}
           type="email"
-          placeholder={t("EmailPlaceholder")} 
+          placeholder={t("EmailPlaceholder")}
           handleInputChange={handleEmailChange}
         />
         <InputField
           textValue={password}
-          label={t("PasswordLabel")} 
+          label={t("PasswordLabel")}
           type="password"
-          placeholder={t("PasswordPlaceholder")} 
+          placeholder={t("PasswordPlaceholder")}
           handleInputChange={handlePasswordChange}
           isInputError={passwordInputError}
-          inputErrorMessage={t("IncorrectPasswordMessage")} 
+          inputErrorMessage={t("IncorrectPasswordMessage")}
         />
         <button type="submit">{t("ContinueButton")}</button>
+        <div className="divider">
+          <p>{t("OrDivider")}</p>
+        </div>
+        <button type="button" className="create__account__btn">
+          <img src={google} alt="google_image" />
+          <span>{t("Create account with google")}</span>
+        </button>
       </form>
       <div className="bottom__links">
-        <p>
-          {t("NoAccountPrompt")}{" "}
-          <Link to={"/auth/register/phone"} className="bottom__link_login">
-            {t("RegisterLink")}
-          </Link>
-        </p>
-        <div className="alternate__email" onClick={navigateToSignInWithPhone}>
+        {/* <div className="alternate__email" onClick={navigateToSignInWithPhone}>
           {t("AlternateSignInWithPhone")}
-        </div>
+        </div> */}
       </div>
     </div>
   );

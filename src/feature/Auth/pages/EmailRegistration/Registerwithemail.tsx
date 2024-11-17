@@ -35,7 +35,7 @@ function Registerwithemail() {
     <div className="register__phone__container">
       <div className="insightful__texts">
         <div>{t("GetInformed")}</div>
-        <p>Enter your email to create account</p>
+        <p>{t("Enter your email to create account")}</p>
       </div>
       <form onSubmit={handleSubmit}>
         <InputField
@@ -52,7 +52,7 @@ function Registerwithemail() {
         </div>
         <button type="button" className="create__account__btn">
           <img src={google} alt="google_image" />
-          <span>Create account with google</span>
+          <span>{t("Create account with google")}</span>
         </button>
       </form>
       <div className="bottom__links">

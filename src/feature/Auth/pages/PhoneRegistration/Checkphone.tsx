@@ -1,28 +1,70 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../../styles/authpages.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next"; 
 import OTPInput from "../../components/OTPInput";
+import { useAuth } from "../../hooks/useAuth";
 
 function Checkphone() {
   const { t } = useTranslation();
+  
+  const location = useLocation();
+  const { phone } = location.state || {}; 
+
+  //states
+  const [otp,setOtp] = useState<string>('')
+
+ // custom-hooks
+  const { getPhoneCode, verifyPhone } = useAuth();
 
   // navigate
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async  (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted successfully!");
-    navigateToInterests();
+    try {
+      console.log({
+        phone,
+        code: otp,
+      });
+      const res = await verifyPhone({
+        phone,
+        code: otp,
+      });
+      if (res) {
+          navigateToInterests();
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  
   };
 
-     const handleOtpComplete = (otp: string) => {
+  const handleOtpComplete = (otp: string) => {
        console.log("Complete OTP:", otp);
-     };
+       setOtp(otp);
+  };
+  
+    const handleCodeVerification = async () => {
+      try {
+        const res = await getPhoneCode(phone);
+        console.log("Code verification response:", res);
+      } catch (error) {
+        console.error("Error fetching email code:", error);
+      }
+    };
   // functions to navigate
   const navigateToInterests = () => {
     navigate("/auth/interests");
   };
+
+  useEffect(() => {
+    if (phone) {
+      console.log(phone);
+      handleCodeVerification();
+    }
+    
+  }, []);
 
   return (
     <div className="register__phone__container">

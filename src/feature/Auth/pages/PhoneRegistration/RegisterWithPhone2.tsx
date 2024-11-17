@@ -7,13 +7,23 @@ import { useStoreCredential } from "../../hooks/useStoreCredential";
 
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../store";
+import { useAuth } from "../../hooks/useAuth";
+import { useTokenStorage } from "../../hooks/useTokenStorage";
+import { PhoneCode } from "../../../../models/datamodels";
+
+
 
 function RegisterWithPhone2() {
   const { t } = useTranslation();
-  const {username,password,phone} = useSelector((state:RootState)=>state.user)
+  const { username, password, phone } = useSelector((state: RootState) => state.user)
+
+  
 
   //custom-hooks
-  const {storeName} = useStoreCredential()
+  const { storeName } = useStoreCredential()
+  const { createUser } = useAuth();
+  const {storeAccessToken,storeRefreshToken} = useTokenStorage()
+
   //states
   const [name, setName] = useState<string>("");
   //navigate
@@ -25,16 +35,34 @@ function RegisterWithPhone2() {
     setName(e.target.value)
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     console.log({
       username,
       password,
-      phone
+      phone:`+237${phone}`
     })
     console.log("Form submitted successfully!");
-    navigateToCheckPhone();
+
+       try {
+         const data = await createUser({
+           username,
+           password,
+           phone: `+237${phone}`,
+         });
+         if (data) {
+           console.log("authenticated");
+           storeAccessToken(data.tokens.access.token);
+           storeRefreshToken(data.tokens.refresh.token);
+
+           navigateToCheckPhone({ phone: data.user.phone });
+         }
+       } catch (error) {
+         console.error(error);
+       }
+   
+    
   };
 
     
@@ -42,15 +70,15 @@ function RegisterWithPhone2() {
   const navigateToSignInWithEmail = () => {
     navigate("/auth/register/email");
   };
-  const navigateToCheckPhone = () => {
-    navigate("/auth/register/checkphone");
+  const navigateToCheckPhone = (phonecode:PhoneCode) => {
+    navigate("/auth/register/checkphone",{state:phonecode});
   };
 
   return (
     <div className="register__phone__container">
       <div className="insightful__texts">
-        <div>Enter your name</div>
-        <p>Almost there! Enter your legal name</p>
+        <div>{t("Enter your name")}</div>
+        <p>{t("Almost there! Enter your legal name")}</p>
       </div>
       <form onSubmit={handleSubmit}>
         <div>
@@ -66,7 +94,7 @@ function RegisterWithPhone2() {
       </form>
       <div className="bottom__links">
         <div className="alternate__email" onClick={navigateToSignInWithEmail}>
-          Create Account with Email instead
+         {t("Create Account with Email instead")}
         </div>
       </div>
     </div>

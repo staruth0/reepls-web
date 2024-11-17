@@ -74,7 +74,6 @@
   display: flex;
   position: relative;
   gap: 0.8rem;
-  margin-bottom: 0.9rem;
 
   .country__code {
     @include mixin.flex-center;

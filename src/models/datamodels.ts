@@ -1,10 +1,10 @@
 export interface User {
   user_id?: string;
-  username: string;
-  email: string;
-  password: string;
-  phone: string;
-  role: "Admin" | "Reader" | "Writer";
+  username?: string;
+  email?: string;
+  password?: string;
+  phone?: string;
+  role?: "Admin" | "Reader" | "Writer";
   profile_picture?: string;
   bio?: string;
   address?: string;
@@ -70,4 +70,22 @@ export interface Report {
   reason: string;
   status: "Pending" | "Resolved";
   created_at: string;
+}
+
+export interface EmailCode{
+  email:string
+}
+
+export interface CodeVerify{
+  code: string;
+  email:string
+}
+
+export interface PhoneCode{
+  phone:string
+}
+
+export interface PhoneVerify{
+  code: string;
+  phone:string
 }

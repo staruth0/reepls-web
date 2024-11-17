@@ -57,11 +57,8 @@ function RegisterWithPhone1() {
   return (
     <div className="register__phone__container">
       <div className="insightful__texts">
-        <div>Create your password</div>
-        <p>
-          Create a strong password comprising letters, at least one digit and
-          one special character
-        </p>
+        <div>{t("Create your password")}</div>
+        <p>{t("Create your password - description")}</p>
       </div>
       <form onSubmit={handleSubmit}>
         <div>
