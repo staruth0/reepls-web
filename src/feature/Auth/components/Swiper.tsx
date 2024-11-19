@@ -6,49 +6,42 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 
 function Swiper() {
-    //states
+  // states
   const [activeSlide, setActiveSlide] = useState<number>(0);
-  const {t} = useTranslation()
+  const { t } = useTranslation();
 
-
-    //functions to handle DOM EVENTS
-    
+  // functions to handle DOM EVENTS
   const handlePrevSlide = () => {
     setActiveSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   };
 
   const handleNextSlide = () => {
     setActiveSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-    };
-    
-  const handleCurrentSlide = (index:number) => {
+  };
+
+  const handleCurrentSlide = (index: number) => {
     setActiveSlide(index);
-    };
-    
-    
-   //useEffects 
+  };
+
+  // useEffects
   useEffect(() => {
     const interval = setInterval(handleNextSlide, 5000);
-    return () => clearInterval(interval); 
+    return () => clearInterval(interval);
   }, []);
-  
-     const transitionVariants = {
-       hidden: { opacity: 0, x: -20 },
-       visible: { opacity: 1, x: 0 },
-       exit: { opacity: 0, x: 20 },
-     };
 
+  const transitionVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: 20 },
+  };
 
   return (
     <div className="swiper">
-      <div className="swiper__logo">
-        REEPLS
-        {/* <img src={back_arrow} alt="Logo" /> */}
-      </div>
+      <div className="swiper__logo">REEPLS</div>
 
       <div className="swiper__image__container">
         <div className="swiper__buttons">
-          <div className="swiper__button " onClick={handlePrevSlide}>
+          <div className="swiper__button" onClick={handlePrevSlide}>
             <img src={back_arrow} alt="arrow-left" />
           </div>
           <div className="swiper__button" onClick={handleNextSlide}>
@@ -76,12 +69,17 @@ function Swiper() {
 
       <div className="swiper__indicators">
         {slides.map((_, index) => (
-          <div
+          <motion.div
             key={index}
             className={`swiper__indicator ${
               index === activeSlide ? "active" : ""
             }`}
             onClick={() => handleCurrentSlide(index)}
+            animate={{
+              scale: index === activeSlide ? 1.1 : 1,
+              opacity: index === activeSlide ? 1 : 0.6,
+            }}
+            transition={{ duration: 0.4 }}
           />
         ))}
       </div>
