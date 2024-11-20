@@ -33,3 +33,33 @@
       }
     
 }
+
+@mixin max-1440 {
+  @media (max-width: 1440px) {
+    @content;
+  }
+}
+
+@mixin max-1024 {
+  @media (max-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin max-768 {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin max-480 {
+  @media (max-width: 480px) {
+    @content;
+  }
+}
+
+@mixin max-320 {
+  @media (max-width: 320px) {
+    @content;
+  }
+}

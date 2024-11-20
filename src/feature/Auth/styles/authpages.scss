@@ -9,6 +9,11 @@
   min-width: 70%;
   max-width: 75%;
 
+  @include mixin.max-768{
+    min-width: 90%;
+    max-width: 94%;
+  }
+
   .insightful__texts {
     div {
       font-size: 32px;

@@ -13,6 +13,13 @@ const apiClient: AxiosInstance = axios.create({
   },
 });
 
+const apiClient3: AxiosInstance = axios.create({
+  baseURL: "https://saah-server.vercel.app",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 const apiClient2: AxiosInstance = axios.create({
   baseURL: "https://saah-server.vercel.app",
   headers: {
@@ -39,4 +46,4 @@ apiClient.interceptors.request.use(
   }
 );
 
-export { apiClient,apiClient2 };
+export { apiClient,apiClient2,apiClient3};
