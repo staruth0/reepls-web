@@ -16,10 +16,12 @@
     width: inherit;
     font-size: 1.2rem;
     outline: none;
-    border: 1px solid var(--neutral-50);
+    padding: 1.26rem 1rem;
     border-radius: 8px;
-    padding: 1.1rem 0.6rem;
-    background: var(--primary-800);
+    border: none;
+    font-family: var(--roboto-font);
+    background: var(--primary-700);
+    color: var(--plain-a);
 
     &::placeholder {
       font-size: 16px;
@@ -33,13 +35,11 @@
 
   label {
     position: absolute;
-    padding: 0.1rem 0.2rem;
-    background: var(--primary-800);
+    left: 1rem;
+    top: 3px;
+    font-size: 14px;
     color: var(--neutral-100);
-    font-size: 16px;
-    font-weight: bold;
-    left: 1.3rem;
-    transform: translateY(-12px);
+    font-weight: 500;
 
     &.error {
       color: red;
@@ -57,6 +57,8 @@
     &.error {
       top: 17%;
     }
+
+    color: var(--neutral-100)
   }
 
   .input__error {
@@ -81,6 +83,10 @@
     padding: 1rem 1.2rem;
     background-color: var(--primary-600);
     border-radius: 8px;
+    @include mixin.max-480{
+      gap: .6rem;
+      padding: .4rem .5rem;
+    }
 
     div {
       @include mixin.flex-center;
@@ -125,7 +131,7 @@
     outline: none;
     border-radius: 8px;
     border: none;
-    padding: 1rem 0.6rem;
+    padding: 1rem 1rem;
     font-family: var(--roboto-font);
     background: var(--primary-700);
     color: var(--plain-a);
@@ -139,7 +145,7 @@
 
   label {
     position: absolute;
-    left: 3%;
+    left: 1rem;
     top: 2px;
     font-size: 13.3px;
     color: var(--neutral-100);

@@ -79,7 +79,7 @@ function Swiper() {
               scale: index === activeSlide ? 1.1 : 1,
               opacity: index === activeSlide ? 1 : 0.6,
             }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.7 }}
           />
         ))}
       </div>
