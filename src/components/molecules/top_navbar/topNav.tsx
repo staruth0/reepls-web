@@ -1,10 +1,11 @@
+import TopbarAtom from '../../atoms/topbarAtom'
 import './topNav.scss'
-const topNav = () => {
+const TopNav = () => {
   return (
     <div>
-      
+     <TopbarAtom />
     </div>
   )
 }
 
-export default topNav
+export default TopNav
