@@ -1,0 +1,36 @@
+.top-bar-atom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 40px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .tabs {
+    display: flex;
+    gap: 16px;
+  }
+  
+  .tab {
+    padding: 10px 15px;
+    font-size: 1rem;
+    font-weight: 500;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+  }
+  
+  .tab.active {
+    border-bottom: 2px solid #57c016;
+  }
+  
+ 
+  
+  .icon img {
+    width: 24px;
+    height: 24px;
+  }
+  

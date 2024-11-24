@@ -16,6 +16,7 @@ import useTheme from "./hooks/useTheme";
 import AuthLayout from "./feature/Auth/components/AuthLayout";
 import Interests from "./feature/Auth/pages/Interests";
 
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -24,6 +25,7 @@ const router = createBrowserRouter([
       {}
     ],
   },
+  
   {
     path: "/auth",
     element: <AuthLayout />,
@@ -78,6 +80,7 @@ const router = createBrowserRouter([
       },
     ],
   },
+
 ]);
 
 function App() {
