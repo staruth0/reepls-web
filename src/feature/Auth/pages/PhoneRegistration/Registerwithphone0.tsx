@@ -84,7 +84,7 @@ function Registerwithphone0() {
       </form>
       <div className="bottom__links">
         <div className="alternate__email" onClick={navigateToSignInWithEmail}>
-          Create Account with Email instead
+         {t(" Create Account with Email instead")}
         </div>
       </div>
     </div>

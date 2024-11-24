@@ -55,5 +55,16 @@
   "History": "Histoire",
   "Philosophy": "Philosophie",
   "Environment": "Environnement",
-  "Engineering": "Ingénierie"
+  "Engineering": "Ingénierie",
+  "Enter your name": "Entrez votre nom",
+  "Almost there! Enter your legal name": "Presque terminé ! Entrez votre nom légal",
+  "Enow, you’re in! Select your interests": "Enow, tu es dedans ! Sélectionne tes centres d'intérêt",
+"Last! Pick at least one topic that you are interested in": "Dernière étape ! Choisis au moins un sujet qui t'intéresse",
+  "Create Account with Email instead": "Créer un compte avec un email à la place",
+  "Create your password": "Créez votre mot de passe",
+  "Create your password - description": "Créez un mot de passe fort comprenant des lettres, au moins un chiffre et un caractère spécial",
+  "Create account with google": "Créer un compte avec Google",
+  "Enter your email to create account": "Entrez votre email pour créer un compte",
+  "Enter your email and password to sign in": "Entrez votre email et votre mot de passe pour vous connecter",
+  "Enter the phone number associated with your account to sign in": "Entrez le numéro de téléphone associé à votre compte pour vous connecter"
 }

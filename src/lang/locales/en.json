@@ -55,5 +55,16 @@
   "History": "History",
   "Philosophy": "Philosophy",
   "Environment": "Environment",
-  "Engineering": "Engineering"
+  "Engineering": "Engineering",
+  "Enter your name":"Enter your name",
+  "Almost there! Enter your legal name":"Almost there! Enter your legal name",
+  "Create Account with Email instead":"Create Account with Email instead",
+  "Enow, you’re in! Select your interests":"Enow, you’re in! Select your interests",
+  "Last! Pick at least one topic that you are interested in":"Last! Pick at least one topic that you are interested in",
+  "Create your password":"Create your password",
+  "Create your password - description":" Create a strong password comprising letters, at least one digit and one special character",
+  "Create account with google":"Create account with google",
+  "Enter your email to create account":"Enter your email to create account",
+  "Enter your email and password to sign in":"Enter your email and password to sign in",
+  "Enter the phone number associated with your account to sign in":"Enter the phone number associated with your account to sign in"
 }

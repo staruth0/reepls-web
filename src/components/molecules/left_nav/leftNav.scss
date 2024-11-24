@@ -1,0 +1,16 @@
+
+.Left-nav-links{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #000;
+    /* M3/body/large */
+    font-family: var(--Body-Large-Font, Roboto);
+    font-size: var(--Body-Large-Size, 16px);
+    font-style: normal;
+    font-weight: 700;
+    line-height: var(--Body-Large-Line-Height, 24px); /* 150% */
+    letter-spacing: var(--Body-Large-Tracking, 0.5px);
+    gap: 8px;
+    color: #57C016;
+}

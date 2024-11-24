@@ -17,3 +17,19 @@
       font-family: var(--roboto-font);
       cursor: pointer;
 }
+
+@mixin divider{
+      background-color: var(--neutral-400); 
+      height: 2px;
+      position: relative;
+
+      p{
+        position: absolute;
+        left: 44%;
+        top: -17.5px;
+        padding: .5rem;
+         background: var(--primary-800);
+         color: var(--neutral-50);
+      }
+    
+}

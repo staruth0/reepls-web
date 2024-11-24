@@ -6,14 +6,19 @@ import { useTranslation } from "react-i18next";
 import { useStoreCredential } from "../../hooks/useStoreCredential";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../store";
+import { useAuth } from "../../hooks/useAuth";
+import { useTokenStorage } from "../../hooks/useTokenStorage";
+import { EmailCode} from "../../../../models/datamodels";
 
-function RegisterWithEmail2() {
+
+function RegisterWithEmail2(){
   const { t } = useTranslation();
-  const { email, password, username } = useSelector(
-    (state: RootState) => state.user
-  );
+  const { email, password, username } = useSelector((state: RootState) => state.user);
   //custom-hooks
-  const {storeName}= useStoreCredential()
+  const { storeName } = useStoreCredential()
+  const { createUser } = useAuth()
+  const {storeAccessToken,storeRefreshToken} = useTokenStorage()
+  
   //states
   const [name, setName] = useState<string>("");
   //navigate
@@ -25,29 +30,42 @@ function RegisterWithEmail2() {
     storeName(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted successfully!");
     console.log({
       email,password,username
     })
-    navigateToCheckMail();
-  };
+    try {
+       const data = await createUser({ email, password, username });
+       if (data) {
+         console.log("authenticated");
+         storeAccessToken(data.tokens.access.token);
+         storeRefreshToken(data.tokens.refresh.token);
 
+         navigateToCheckMail({email:data.user.email});
+       }
+      
+    } catch (error) {
+      console.error(error);
+    }
+ 
+   
+  };
     
   // functions to navigate
   const navigateToSignInWithEmail = () => {
     navigate("/auth/register/email");
   };
-  const navigateToCheckMail = () => {
-    navigate("/auth/register/checkmail");
+  const navigateToCheckMail = (userEmail:EmailCode) => {
+    navigate("/auth/register/checkemail",{state:userEmail});
   };
 
   return (
     <div className="register__phone__container">
       <div className="insightful__texts">
-        <div>Enter your name</div>
-        <p>Almost there! Enter your legal name</p>
+        <div>{t("Enter your name")}</div>
+        <p>{t("Almost there! Enter your legal name")}</p>
       </div>
       <form onSubmit={handleSubmit}>
         <div>
@@ -63,7 +81,7 @@ function RegisterWithEmail2() {
       </form>
       <div className="bottom__links">
         <div className="alternate__email" onClick={navigateToSignInWithEmail}>
-          Create Account with Email instead
+         {t("Create Account with Email instead")}
         </div>
       </div>
     </div>
