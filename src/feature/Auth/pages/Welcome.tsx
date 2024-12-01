@@ -12,6 +12,9 @@ function Welcome() {
   const navigateToSignUp = () => {
     navigate("login/phone");
   };
+  const navigateToFeed = () => {
+    navigate("/feed");
+  };
 
   return (
     <div className="welcome__container">
@@ -29,7 +32,7 @@ function Welcome() {
         </button>
       </div>
 
-      <div className="welcome__link">{t("ContinueWithoutSignIn")}</div>
+      <div className="welcome__link" onClick={navigateToFeed}>{t("ContinueWithoutSignIn")}</div>
     </div>
   );
 }

@@ -1,5 +1,4 @@
-import React from "react";
-import "../molecules/right_nav/rightNav.scss";
+import "./rightNav.scss";
 import checkMarkIcon from "../../assets/icons/checkmark.svg";
 
 interface messageTypes {

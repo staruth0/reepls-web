@@ -1,0 +1,76 @@
+@use '../../../styles/main.scss';
+@use '../../../styles/mixin.scss';
+@use '../../../styles/variable.scss';
+
+
+.home__layout {
+  display: grid;
+  grid-template-columns: 0.18fr 0.57fr 0.25fr;
+ background-color: var(--background);
+
+
+  .side {
+    height: 100vh;
+    border-right: 1px solid var(--neutral-500);
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color:var(--plain-a);
+    gap: 1.5rem;
+
+    .logo__position{
+      font-weight: 500;
+      font-size: x-large;
+      padding: 1rem;
+      flex: .5;
+    }
+
+    .sidebar__links{
+      flex: 1.8;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+
+
+    .create__post__btn{
+      flex: 1.6;
+      
+
+
+      button{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem 1.5rem;
+        border-radius: 1000px;
+        outline: none;
+        border: 1px solid var(--neutral-500);
+        font-family: var(--roboto-font);
+        color: var(--neutral-100);
+        background: none;
+        font-size: 14px;
+        gap: .3rem;
+        font-weight: 550;
+        margin-top: 3.5rem;
+      }
+    }
+  }
+
+  .main {
+  border-right: 1px solid var(--neutral-500);
+
+  .outlet-main{
+   
+  }
+  }
+
+  .right {
+    display: flex;
+    flex-direction: column;
+    
+  }
+}

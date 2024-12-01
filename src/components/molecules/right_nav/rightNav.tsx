@@ -1,4 +1,3 @@
-import React from 'react';
 import './rightNav.scss';
 import Message from '../../atoms/message';
 

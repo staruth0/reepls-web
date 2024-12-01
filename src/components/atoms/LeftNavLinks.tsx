@@ -1,4 +1,3 @@
-import React from 'react';
 import '../molecules/left_nav/leftNav.scss'
 
 interface NavlinkTypes  {
@@ -10,7 +9,7 @@ const LeftNavLinks = (props: NavlinkTypes) => {
   return (
     <a className='Left-nav-links' href='/'>
       <div className="icon">
-        <img src={props.icontype} alt="Brain Icon" />
+        <img src={props.icontype} className='test' alt="Brain Icon" />
       </div>
       <span>{props.text}</span>
     </a>

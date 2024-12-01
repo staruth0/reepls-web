@@ -1,7 +1,45 @@
 //button
 @use '../../styles/mixin.scss';
 @use '../../styles/variable.scss';
+@use '../../styles/main.scss';
 
-.btn__primary{
-    @include mixin.button(rgba(255, 255, 255, 0.8), var(--main-green))
+.side__link{
+    text-decoration: none;
+    color: var(--neutral-100);
+ 
+
+.sidebar__item{
+    font-family: var(--roboto-font);
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+
+
+    p{
+        font-family: var(--roboto-font);
+        font-size:15px;
+        font-weight: 500;
+        color: var(--neutral-100);
+    }
+}
+
+}
+
+.right__top__bar{
+    display: flex;
+    align-items: center;
+    padding: .8rem 1.2rem;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--background);
+    color: var(--neutral-100);
+
+    div{
+        display: flex;
+        font-family: var(--roboto-font);
+        align-items: center;
+        gap: 10px;
+    }
 }
