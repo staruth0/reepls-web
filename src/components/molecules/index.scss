@@ -27,13 +27,13 @@
   flex-direction: column;
   gap: 2rem;
    width: 78%;
+   padding: 1rem 0;
  
-  .each_blog_post{
+.each_blog_post{
  
   padding: 1rem;
-  background-color: #fff; 
   border-radius: 8px; 
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 4px var(--neutral-700);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
   }
 
