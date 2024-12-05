@@ -8,10 +8,21 @@ const registerUser = async (user: User) => {
   return data;
 };
 
+// Register user
+const updateUser = async (user: User) => {
+  const id = localStorage.getItem('user_id');
+  if (id) {
+    console.log("second",id, user);
+    const { data } = await apiClient2.patch(`/api-V1/users/${id}`, user);
+    return data;
+  }
+  
+};
+
 // Login user
 const loginUser = async (user: User) => {
   console.log(user);
-  const { data } = await apiClient2.post("/api-V1/auth/login", user); 
+  const { data } = await apiClient2.post("/api-V1/auth/login-email", user); 
   return data;
 };
 
@@ -103,4 +114,5 @@ export {
   forgotPassword,
   verifyResetPasswordCode,
   resetPassword,
+  updateUser
 };

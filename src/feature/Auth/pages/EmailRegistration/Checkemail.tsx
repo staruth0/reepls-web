@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
 import "../../styles/authpages.scss";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import OTPInput from "../../components/OTPInput";
-import { useAuth } from "../../hooks/useAuth";
+import { useGetEmailCode, useVerifyEmailCode } from "../../hooks/AuthHooks";
 
 function Checkemail() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const location = useLocation();
   const { email } = location.state || {}; 
 
   const [otp,setOtp] = useState<string>('')
-  const { getEmailCode, verifyEmail } = useAuth();
+
+  const CodeFetch = useGetEmailCode()
+  const CodeVerify = useVerifyEmailCode()
 
   // Handle OTP completion
   const handleOtpComplete = async (otp: string) => {
@@ -24,28 +25,17 @@ function Checkemail() {
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const response = await verifyEmail({
-        email,
-        code: otp,
-      });
-      if (response) {
-        console.log(response.message)
-        navigateToInterests();
-      }
-    } catch (error) {
-      console.error("Error verifying OTP:", error);
-    }
+
+    CodeVerify.mutate({
+      email,
+      code: otp,
+    });
+
   };
 
   // Function to verify code
   const handleCodeVerification = async () => {
-    try {
-      const res = await getEmailCode({email});
-      console.log("Code verification response:", res);
-    } catch (error) {
-      console.error("Error fetching email code:", error);
-    }
+    CodeFetch.mutate({ email });
   };
 
   // Function to handle resend link
@@ -53,10 +43,6 @@ function Checkemail() {
     handleCodeVerification();
   };
 
-  // Navigate to interests page
-  const navigateToInterests = () => {
-    navigate("/auth/interests");
-  };
 
   // useEffect to fetch initial code
   useEffect(() => {
@@ -73,9 +59,11 @@ function Checkemail() {
         <div className="code__message">{t("CheckMailMessage")}</div>
       </div>
       <OTPInput length={6} onComplete={handleOtpComplete} />
+      {CodeFetch.error && <div>Fetching Code</div>}
+      {CodeVerify.error && <div>An Error Occured While Verifying the code</div>}
       <form onSubmit={handleSubmit}>
         <button type="submit">
-          {t("VerifyButton")}
+          {CodeVerify.isPending ? "Verifying....." : t("VerifyButton")}
         </button>
       </form>
       <div className="bottom__links">

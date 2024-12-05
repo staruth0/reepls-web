@@ -9,7 +9,14 @@ function Home() {
   const navigate = useNavigate();
   
   const handleClick = () => {
-    navigate('/auth')
+   const userid = localStorage.getItem('user_id')
+    if (userid) {
+      navigate("/feed");
+    } else {
+       console.log("userid", userid);
+       navigate("/auth");
+    }
+   
   }
 
   const test = t("Get Started");

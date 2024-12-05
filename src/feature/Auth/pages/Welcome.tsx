@@ -2,9 +2,11 @@ import "../styles/welcome.scss";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+
 function Welcome() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+ 
 
   const navigateToSignIn = () => {
     navigate("register/phone");

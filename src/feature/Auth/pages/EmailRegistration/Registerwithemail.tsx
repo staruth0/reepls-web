@@ -10,7 +10,7 @@ function Registerwithemail() {
   const { t } = useTranslation();
   const navigate = useNavigate()
 
-  const {storeEmail}= useStoreCredential()
+  const {storeEmail,storeName}= useStoreCredential()
 
   //states
   const [email, setEmail] = useState<string>("");
@@ -21,8 +21,9 @@ function Registerwithemail() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     storeEmail(email);
+    storeName(email)
 
-    console.log("Form submitted successfully!");
+    console.log("Email submitted successfully!");
     navigateToPassword();
   };
 
