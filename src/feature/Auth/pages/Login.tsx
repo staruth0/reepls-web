@@ -7,7 +7,7 @@ import { validatePassword } from "../../../utils/validatePassword";
 import { useStoreCredential } from "../hooks/useStoreCredential";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
-import { useAuth } from "../hooks/useAuth";
+import { useLoginUser } from "../hooks/AuthHooks";
 
 function Login() {
   const { t } = useTranslation(); 
@@ -15,7 +15,7 @@ function Login() {
   const { phone:enteredPhone, password:enteredPassword } = useSelector((state:RootState) => state.user);
 
   //custom'hooks
-  const { login } = useAuth();
+  const Login = useLoginUser()
   // const { storeAccessToken,storeRefreshToken } = useTokenStorage();
 
   // states
@@ -28,7 +28,7 @@ function Login() {
   const navigate = useNavigate();
 
   // functions to handle DOM events
-    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const passwordValue = e.target.value;
       setPassword(passwordValue);
       storePassword(passwordValue);
@@ -58,24 +58,18 @@ const handlePhoneBlur = () => {
   }
 };
 
-  const handleSubmit =async (e: React.FormEvent<HTMLFormElement>) => {
+const handleSubmit =async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     console.log({
      password: enteredPassword, phone: enteredPhone
     })
-
-    try{
-      const response = await login({password: enteredPassword, phone: enteredPhone });
-      if(response){
-        console.log("success",response);
-      }
-
-    }catch(error){
-      console.error(error);
-    }
-
-    console.log("Form submitted successfully!");
+    
+  Login.mutate({
+    password: enteredPassword,
+    phone: enteredPhone,
+  });
+  
   };
 
   // functions to navigate
@@ -109,7 +103,8 @@ const handlePhoneBlur = () => {
           isInputError={passwordInputError}
           inputErrorMessage={t("IncorrectPasswordMessage")}
         />
-        <button type="submit">{t("ContinueButton")}</button>
+        {Login.error && <div>Error Occured While Loging user in</div>}
+        <button type="submit">{Login.isPending? "Loging in......": t("ContinueButton")}</button>
       </form>
       <div className="bottom__links">
         <div className="alternate__email" onClick={navigateToSignInWithEmail}>
