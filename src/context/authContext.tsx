@@ -2,19 +2,23 @@ import { createContext } from "react";
 
 export interface AuthContextProps {
   userId: string;
-  isAuthenticated: boolean;
-  setIsAuthenticated: (value:boolean) => void;
-  setUserId: (userid: string) => void;
+  token: string;
 }
 
-const initialState: AuthContextProps = {
-  userId: "",
-  isAuthenticated: false,
-  setIsAuthenticated: () => {},
-  setUserId: () => {},
+export interface AuthProviderProps {
+  authState: AuthContextProps | null;
+  login: (token: string) => void;
+  logout: () => void;
+  loading: boolean;
+}
+
+const initialState: AuthProviderProps = {
+  authState: null, 
+  login: () => {}, 
+  logout: () => {}, 
+  loading: true, 
 };
 
-const AuthContext = createContext<AuthContextProps>(initialState);
+const AuthContext = createContext<AuthProviderProps>(initialState);
 
 export { AuthContext };
- 

@@ -103,7 +103,7 @@ const handleSubmit =async (e: React.FormEvent<HTMLFormElement>) => {
           isInputError={passwordInputError}
           inputErrorMessage={t("IncorrectPasswordMessage")}
         />
-        {Login.error && <div>Error Occured While Loging user in</div>}
+        {Login.error && <div>{ Login.error.message}</div>}
         <button type="submit">{Login.isPending? "Loging in......": t("ContinueButton")}</button>
       </form>
       <div className="bottom__links">

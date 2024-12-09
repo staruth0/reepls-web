@@ -2,18 +2,20 @@ import { useTranslation } from "react-i18next"
 import useTheme from "../../../hooks/useTheme";
 import "../styles/home.scss"
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../../../context/authContext";
 
 function Home() {
     const { t, i18n } = useTranslation()
   const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate();
+  const {loading,authState} = useContext(AuthContext)
   
   const handleClick = () => {
-   const userid = localStorage.getItem('user_id')
-    if (userid) {
+   
+    if (authState?.userId) {
       navigate("/feed");
     } else {
-       console.log("userid", userid);
        navigate("/auth");
     }
    
@@ -35,7 +37,7 @@ function Home() {
         <div className="togglebtn__mover"></div>
       </div>
 
-      <h2 onClick={handleClick}>{test}</h2>
+      <h2 onClick={handleClick}>{loading ?'updaing state': test}</h2>
     </div>
   );
 }

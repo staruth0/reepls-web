@@ -48,7 +48,7 @@ function Interests() {
           />
         ))}
       </div>
-      {updateUser.error && <div>An error occured while completing the Process</div>}
+      {updateUser.error && <div>{ updateUser.error.message}</div>}
       
       <div className="interest_btns">
         {updateUser.isPending ? (

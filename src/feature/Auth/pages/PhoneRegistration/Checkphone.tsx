@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "../../styles/authpages.scss";
-import { useNavigate,useLocation } from "react-router-dom";
+import {useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next"; 
 import OTPInput from "../../components/OTPInput";
-import { useAuth } from "../../hooks/useAuth";
+import { useGetPhoneCode, useVerifyPhoneCode } from "../../hooks/AuthHooks";
 
 function Checkphone() {
   const { t } = useTranslation();
@@ -15,28 +15,13 @@ function Checkphone() {
   const [otp,setOtp] = useState<string>('')
 
  // custom-hooks
-  const { getPhoneCode, verifyPhone } = useAuth();
+  const codeGet = useGetPhoneCode()
+  const codeVerify = useVerifyPhoneCode()
 
-  // navigate
-  const navigate = useNavigate();
 
   const handleSubmit = async  (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      console.log({
-        phone,
-        code: otp,
-      });
-      const res = await verifyPhone({
-        phone,
-        code: otp,
-      });
-      if (res) {
-          navigateToInterests();
-      }
-    } catch (error) {
-      console.error(error)
-    }
+    codeVerify.mutate({phone, code: otp});
   
   };
 
@@ -46,17 +31,8 @@ function Checkphone() {
   };
   
     const handleCodeVerification = async () => {
-      try {
-        const res = await getPhoneCode(phone);
-        console.log("Code verification response:", res);
-      } catch (error) {
-        console.error("Error fetching email code:", error);
-      }
+      codeGet.mutate({phone});
     };
-  // functions to navigate
-  const navigateToInterests = () => {
-    navigate("/auth/interests");
-  };
 
   useEffect(() => {
     if (phone) {
@@ -64,7 +40,7 @@ function Checkphone() {
       handleCodeVerification();
     }
     
-  }, []);
+  }, [phone]);
 
   return (
     <div className="register__phone__container">
@@ -74,14 +50,18 @@ function Checkphone() {
       </div>
       <form onSubmit={handleSubmit}>
         <OTPInput length={6} onComplete={handleOtpComplete} />
-        <button type="submit">{t("VerifyButton")}</button>
+        {codeGet.error && <div>Fetching Code</div>}
+        {codeVerify.error && (
+          <div>An Error Occured While Verifying the code</div>
+        )}
+        <button type="submit">
+          {codeVerify.isPending ? "Verifying....." : t("VerifyButton")}
+        </button>
       </form>
       <div className="bottom__links">
         <div className="resend__text">
           {t("ResendPrompt")}
-          <div onClick={navigateToInterests} className="bottom__link_resend">
-            {t("ResendButton")}
-          </div>
+          <div className="bottom__link_resend">{t("ResendButton")}</div>
         </div>
       </div>
     </div>

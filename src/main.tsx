@@ -9,6 +9,7 @@ import { Provider } from 'react-redux'
 import { ThemeProvider } from './context/Theme/themeProvider.tsx'
 import CognitiveModeProvider from './context/CognitiveMode/CognitiveModeProvider.tsx'
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import AuthProvider from './context/AuthProvider.tsx'
 
 
 const queryClient = new QueryClient({})
@@ -16,14 +17,16 @@ const queryClient = new QueryClient({})
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider>
-      <CognitiveModeProvider>
-        <Provider store={store}>
-          <QueryClientProvider client={queryClient} >
-            <App />
-          </QueryClientProvider>
-        </Provider>
-      </CognitiveModeProvider>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <CognitiveModeProvider>
+          <Provider store={store}>
+            <QueryClientProvider client={queryClient}>
+              <App />
+            </QueryClientProvider>
+          </Provider>
+        </CognitiveModeProvider>
+      </ThemeProvider>
+    </AuthProvider>
   </StrictMode>
 );

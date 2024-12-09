@@ -69,8 +69,10 @@ function RegisterWithEmail1() {
             inputErrorMessage={t("PasswordErrorMessage")}
           />
         </div>
-        {error && <div>An error occured while registering you</div>}
-        <button type="submit">{isPending? "Loading.....": t("ContinueButton")}</button>
+        {error && <div>{error.message}</div>}
+        <button type="submit">
+          {isPending ? "Loading....." : t("ContinueButton")}
+        </button>
       </form>
     </div>
   );

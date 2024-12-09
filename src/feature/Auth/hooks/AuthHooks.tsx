@@ -1,33 +1,56 @@
 import { useMutation } from "@tanstack/react-query";
-import { registerUser,loginUser,getEmailVerificationCode,verifyEmailCode,getPhoneVerificationCode,verifyPhoneCode, updateUser} from "../api";
-import { User,EmailCode,PhoneCode,CodeVerify,PhoneVerify} from "../../../models/datamodels";
+import {registerUser,loginUser,getEmailVerificationCode,verifyEmailCode,getPhoneVerificationCode,verifyPhoneCode,updateUser} from "../api";
+import {User,EmailCode,PhoneCode,CodeVerify,PhoneVerify} from "../../../models/datamodels";
 import { useTokenStorage } from "./useTokenStorage";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../../context/authContext";
 
-
 // Hook for registering a user
 export const useRegisterUser = () => {
-    const { storeAccessToken, storeRefreshToken } = useTokenStorage();
-    const navigate = useNavigate()
-    const { setIsAuthenticated } = useContext(AuthContext);
-    
-     const navigateToCheckMail = (userEmail: EmailCode) => {
-       navigate("/auth/register/checkemail", { state: userEmail });
-    };
-    
+  const { storeAccessToken, storeRefreshToken } = useTokenStorage();
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
+
+  const navigateToCheckMail = (userEmail: EmailCode) => {
+    navigate("/auth/register/checkemail", { state: userEmail });
+  };
+
   return useMutation({
     mutationFn: (user: User) => registerUser(user),
     onSuccess: (data) => {
-        console.log("User registered:", data);
-        storeAccessToken(data.tokens.access.token);
-        storeRefreshToken(data.tokens.refresh.token);
+      console.log("User registered:", data);
+      storeAccessToken(data.tokens.access.token);
+      storeRefreshToken(data.tokens.refresh.token);
+      login(data.tokens.access.token);
 
-        localStorage.setItem('user_id', data.user.id);
-        setIsAuthenticated(true);
-        navigateToCheckMail({ email: data.user.email });
-        
+      navigateToCheckMail({ email: data.user.email });
+    },
+    onError: (error) => {
+      console.error("Error registering user:", error);
+    },
+  });
+};
+
+// Hook for registering a user with phone number
+export const usePhoneRegisterUser = () => {
+  const { storeAccessToken, storeRefreshToken } = useTokenStorage();
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
+
+  const navigateToCheckPhone = (phonecode: PhoneCode) => {
+    navigate("/auth/register/checkphone", { state: phonecode });
+  };
+
+  return useMutation({
+    mutationFn: (user: User) => registerUser(user),
+    onSuccess: (data) => {
+      console.log("User registered:", data);
+      storeAccessToken(data.tokens.access.token);
+      storeRefreshToken(data.tokens.refresh.token);
+      login(data.tokens.access.token);
+
+      navigateToCheckPhone({ phone: data.user.phone });
     },
     onError: (error) => {
       console.error("Error registering user:", error);
@@ -37,24 +60,22 @@ export const useRegisterUser = () => {
 
 // Hook for logging in a user
 export const useLoginUser = () => {
-    const navigate = useNavigate();
-     const { storeAccessToken, storeRefreshToken } = useTokenStorage();
-     const { setIsAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { storeAccessToken, storeRefreshToken } = useTokenStorage();
+  const { login } = useContext(AuthContext);
 
-    const navigateToFeed = () => {
-        navigate('/feed')
-    }
+  const navigateToFeed = () => {
+    navigate("/feed");
+  };
   return useMutation({
     mutationFn: (user: User) => loginUser(user),
     onSuccess: (data) => {
-        console.log("User logged in:", data);
-         storeAccessToken(data.tokens.access.token);
-         storeRefreshToken(data.tokens.refresh.token);
+      console.log("User logged in:", data);
+      storeAccessToken(data.tokens.access.token);
+      storeRefreshToken(data.tokens.refresh.token);
+      login(data.tokens.access.token);
 
-         localStorage.setItem("user_id", data.user.id);
-         setIsAuthenticated(true);
-
-        navigateToFeed()
+      navigateToFeed();
     },
     onError: (error) => {
       console.error("Error logging in:", error);
@@ -67,7 +88,7 @@ export const useUpdateUser = () => {
   const navigate = useNavigate();
 
   const navigateToUserProfile = () => {
-    navigate("/feed"); 
+    navigate("/feed");
   };
 
   return useMutation({
@@ -97,20 +118,19 @@ export const useGetEmailCode = () => {
 
 // Hook for verifying email code
 export const useVerifyEmailCode = () => {
+  //   const { storeAccessToken, storeRefreshToken } = useTokenStorage();
+  const navigate = useNavigate();
 
-    //   const { storeAccessToken, storeRefreshToken } = useTokenStorage();
-    const navigate = useNavigate();
+  const navigateToName = () => {
+    navigate("/auth/register/email/two");
+  };
 
-    const navigateToName = () => {
-         navigate("/auth/register/email/two");
-    };
-    
   return useMutation({
     mutationFn: (codeVerify: CodeVerify) => verifyEmailCode(codeVerify),
     onSuccess: (data) => {
-        console.log("Email code verified:", data);
-        
-        navigateToName()
+      console.log("Email code verified:", data);
+
+      navigateToName();
     },
     onError: (error) => {
       console.error("Error verifying email code:", error);
@@ -133,10 +153,16 @@ export const useGetPhoneCode = () => {
 
 // Hook for verifying phone code
 export const useVerifyPhoneCode = () => {
+    const navigate = useNavigate();
+
+    const navigateToName = () => {
+      navigate("/auth/register/phone/two");
+    };
   return useMutation({
     mutationFn: (phoneVerify: PhoneVerify) => verifyPhoneCode(phoneVerify),
     onSuccess: (data) => {
       console.log("Phone code verified:", data);
+      navigateToName();
     },
     onError: (error) => {
       console.error("Error verifying phone code:", error);

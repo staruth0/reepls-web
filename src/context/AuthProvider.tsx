@@ -1,25 +1,51 @@
-import React, { ReactNode,  useState } from "react";
-import { AuthContext } from "./authContext";
-import { useTokenStorage } from "../feature/Auth/hooks/useTokenStorage";
+import React, { ReactNode, useState, useEffect } from "react";
+import { AuthContext, AuthContextProps } from "./authContext";
+import {jwtDecode} from "jwt-decode"; 
+
+interface AuthProviderComponentProps {
+  children: ReactNode;
+}
+
+const AuthProvider: React.FC<AuthProviderComponentProps> = ({ children }) => {
+  const [authState, setAuthState] = useState<AuthContextProps | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
 
-const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [userId, setUserIdState] = useState<string>("");
-    const {getAccessToken } = useTokenStorage();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-        const token = getAccessToken(); 
-        return !!token; 
-  });
-
-  const setUserId = (value: string) => {
-    setUserIdState(value);
+  const login = (token: string) => {
+    try {
+      const decoded = jwtDecode(token); 
+      const user = { userId: decoded.sub!, token };
+      console.log("authState",JSON.stringify(user))
+      setAuthState(user);
+      localStorage.setItem("authToken", token);
+    } catch (error) {
+      console.error("Error decoding token:", error);
+    }
   };
 
 
+  const logout = () => {
+    setAuthState(null);
+    localStorage.removeItem("authToken");
+  };
+
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("authToken");
+    if (storedToken) {
+      try {
+        const decoded = jwtDecode(storedToken);
+        setAuthState({ userId: decoded.sub!, token: storedToken });
+      } catch (error) {
+        console.error("Invalid token, logging out.",error);
+        logout();
+      }
+    }
+    setLoading(false);
+  }, []);
+
   return (
-    <AuthContext.Provider
-      value={{ userId, isAuthenticated, setUserId, setIsAuthenticated }}
-    >
+    <AuthContext.Provider value={{ authState, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
