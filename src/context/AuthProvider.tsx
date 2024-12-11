@@ -14,6 +14,7 @@ const AuthProvider: React.FC<AuthProviderComponentProps> = ({ children }) => {
   const login = (token: string) => {
     try {
       const decoded = jwtDecode(token); 
+      console.log('decodedToken',decoded)
       const user = { userId: decoded.sub!, token };
       console.log("authState",JSON.stringify(user))
       setAuthState(user);

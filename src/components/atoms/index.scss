@@ -6,6 +6,8 @@
 .side__link{
     text-decoration: none;
     color: var(--neutral-100);
+
+    
  
 
 .sidebar__item{
@@ -14,12 +16,17 @@
     align-items: center;
     gap: .6rem;
 
-
+   
     p{
         font-family: var(--roboto-font);
         font-size:15px;
         font-weight: 500;
         color: var(--neutral-100);
+
+         &.active__link{
+        color: var(--primary-400-main);
+    }
+
     }
 }
 
@@ -41,5 +48,13 @@
         font-family: var(--roboto-font);
         align-items: center;
         gap: 10px;
+    }
+
+    img{
+        transition: all .3s ease;
+        cursor: pointer;
+        &.rotate{
+             transform: rotate(180deg);
+        }
     }
 }

@@ -2,7 +2,11 @@ import React from "react";
 import Message from "../atoms/message";
 import "./index.scss";
 
-const RightRecentComponent: React.FC = () => {
+interface rightTopProbs {
+  isExpandedMode: boolean;
+}
+
+const RightRecentComponent: React.FC<rightTopProbs> = ({isExpandedMode}) => {
   return (
     <div className="right__recent">
       <p className="recent">Recent</p>
@@ -13,6 +17,7 @@ const RightRecentComponent: React.FC = () => {
           description={"Writer @ CMR FA magazine..."}
           messageDate={"20 Oct"}
           messageText={"Urgent notice regarding power outage this week."}
+          isExpandedMode={isExpandedMode}
         />
         <Message
           profile={"M"}
@@ -22,6 +27,7 @@ const RightRecentComponent: React.FC = () => {
           messageText={
             "Join us for a workshop on combating online fraud and securing your digital presence."
           }
+          isExpandedMode={isExpandedMode}
         />
         <Message
           profile={"H"}
@@ -31,6 +37,7 @@ const RightRecentComponent: React.FC = () => {
           messageText={
             "Vaccination campaigns are ongoing. Visit your nearest health center for free immunization."
           }
+          isExpandedMode={isExpandedMode}
         />
       </div>
     </div>
