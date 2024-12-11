@@ -2,12 +2,11 @@
 @use '../../styles/variable.scss';
 @use '../../styles/main.scss';
 
-
 .blog-profile {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: .5rem 1rem;
+  padding: 0.5rem 1rem;
 
   .profile-image {
     background-color: #f0c419;
@@ -29,33 +28,31 @@
     h4 {
       display: flex;
       align-items: center;
-      gap: .2rem;
-    p{
-           font-size: 14px;
-      font-weight: 550;
-    }
+      gap: 0.2rem;
+
+      p {
+        font-size: 14px;
+        font-weight: 550;
+      }
 
       img {
         margin-left: 5px;
       }
 
-      div{
-        font-size: 500;
+      div {
         font-size: 13px;
         color: var(--primary-400-main);
         cursor: pointer;
-        margin-left:.5rem;
+        margin-left: 0.5rem;
       }
     }
 
     p {
       font-size: 12px;
-  
     }
 
     span {
       font-size: 12px;
-
     }
   }
 
@@ -67,10 +64,9 @@
   }
 }
 
-
-//message
+// Message
 .blog-message {
-  padding: .5rem 1rem;
+  padding: 0.5rem 1rem;
   font-family: var(--roboto-font);
   color: var(--neutral-50);
 
@@ -79,20 +75,28 @@
     font-weight: 600;
   }
 
-  p {
+  .paragraph {
     font-size: 14px;
     margin: 10px 0;
     line-height: 1.5;
-    max-height: 3rem;
-
-    span{
-        font-weight: 550;
-    }
+    max-height: 3rem; 
+    overflow: hidden;
+    transition: max-height 0.5s ease;
   }
+
+  .paragraph.expanded {
+    max-height: 100rem; 
+  }
+
+  .toggle-text {
+    font-weight: 550;
+    cursor: pointer;
+  }
+
 
   .show-translation {
     text-transform: uppercase;
-    margin: 10px 0px;
+    margin: 10px 0;
     background: none;
     border: none;
     color: var(--neutral-50);
@@ -102,22 +106,16 @@
   }
 }
 
-
-//imagery
-
+// Imagery
 .blog-imagery {
- 
-
   img {
     width: 100%;
     height: auto;
     border-radius: 5px;
   }
-
 }
 
-
-//stats
+// Stats
 .blog-reaction-stats {
   display: flex;
   justify-content: space-between;
@@ -162,7 +160,6 @@
     > div:nth-child(2),
     > div:nth-child(3) {
       margin-left: 40px;
-      
     }
   }
 
@@ -172,10 +169,7 @@
   }
 }
 
-
-
-//session
-
+// Session
 .blog-reaction-session {
   display: flex;
   justify-content: space-between;
@@ -192,7 +186,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: .3rem;
+    gap: 0.3rem;
 
     i {
       margin-right: 5px;
