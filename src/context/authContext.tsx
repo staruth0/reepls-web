@@ -9,14 +9,16 @@ export interface AuthProviderProps {
   authState: AuthContextProps | null;
   login: (token: string) => void;
   logout: () => void;
+  checkTokenExpiration: () => boolean;
   loading: boolean;
 }
 
 const initialState: AuthProviderProps = {
-  authState: null, 
-  login: () => {}, 
-  logout: () => {}, 
-  loading: true, 
+  authState: null,
+  login: () => {},
+  logout: () => {},
+  checkTokenExpiration: () => false,
+  loading: true,
 };
 
 const AuthContext = createContext<AuthProviderProps>(initialState);

@@ -4,13 +4,15 @@ import useTheme from "./hooks/useTheme";
 import { HomeRoutes } from "./Routes/HomeRoutes";
 import { AuthRoutes } from "./Routes/AuthRoutes";
 import { WebRoutes } from "./Routes/WebRoutes";
+import { PostRoutes } from "./Routes/PostRoutes";
 
 
 
 const router = createBrowserRouter([
   WebRoutes,
   HomeRoutes,
-  AuthRoutes
+  AuthRoutes,
+  PostRoutes
 ]);
 
 function App() {

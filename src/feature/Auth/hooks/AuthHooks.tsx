@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import {registerUser,loginUser,getEmailVerificationCode,verifyEmailCode,getPhoneVerificationCode,verifyPhoneCode,updateUser} from "../api";
+import {registerUser,loginUser,getEmailVerificationCode,verifyEmailCode,getPhoneVerificationCode,verifyPhoneCode,updateUser, refreshAuthTokens} from "../api";
 import {User,EmailCode,PhoneCode,CodeVerify,PhoneVerify} from "../../../models/datamodels";
 import { useTokenStorage } from "./useTokenStorage";
 import { useNavigate } from "react-router-dom";
@@ -169,3 +169,24 @@ export const useVerifyPhoneCode = () => {
     },
   });
 };
+
+
+// Hook for refrehing the token
+export const useRefreshToken = () => {
+  const { getRefreshToken } = useTokenStorage();
+
+  return useMutation({
+    mutationFn: () => refreshAuthTokens(getRefreshToken()!),
+    onSuccess: (data) => { 
+      console.log("Token refreshed:", data)
+
+    },
+    onError: (error) => { 
+      console.error(error)
+    }
+
+  })
+}
+
+
+

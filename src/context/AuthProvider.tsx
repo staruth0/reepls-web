@@ -24,29 +24,46 @@ const AuthProvider: React.FC<AuthProviderComponentProps> = ({ children }) => {
     }
   };
 
+  const checkTokenExpiration = () => { 
+    const storedToken = localStorage.getItem("authToken");
+    if (storedToken) { 
+      const decodedToken = jwtDecode(storedToken);
+      const currentTime = Date.now() / 1000;
+      if (decodedToken.exp! < currentTime) {
+        logout();
+        return true
+      }
+    }
+
+   return false
+
+  }
+
 
   const logout = () => {
     setAuthState(null);
     localStorage.removeItem("authToken");
+    localStorage.clear()
   };
 
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("authToken");
-    if (storedToken) {
-      try {
-        const decoded = jwtDecode(storedToken);
-        setAuthState({ userId: decoded.sub!, token: storedToken });
-      } catch (error) {
-        console.error("Invalid token, logging out.",error);
-        logout();
-      }
-    }
+    const isExpired = checkTokenExpiration()
+    if (isExpired) { 
+      logout()
+    } else {
+       const storedToken = localStorage.getItem("authToken");
+       if (storedToken) {
+           const decoded = jwtDecode(storedToken);
+           setAuthState({ userId: decoded.sub!, token: storedToken });    
+           console.log("authState.....", { userId: decoded.sub!, token: storedToken });
+       }
+    } 
     setLoading(false);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authState, login, logout, loading }}>
+    <AuthContext.Provider value={{ authState, login, logout,checkTokenExpiration, loading }}>
       {children}
     </AuthContext.Provider>
   );

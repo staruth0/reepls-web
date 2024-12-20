@@ -1,30 +1,21 @@
-import React, { useContext, useState } from "react";
-import "../styles/homeLaout.scss";
+import React, { useContext} from "react";
 import SidebarItem from "../../../components/atoms/SidebarItem";
-import { Icons,postIcon } from "../../../assets/icons";
+import { Icons, postIcon } from "../../../assets/icons";
 import TopbarAtom from "../../../components/atoms/topbarAtom";
-import TopRightComponent from "../../../components/atoms/TopRightComponent";
-import RightRecentComponent from "../../../components/molecules/RightRecentComponent";
-import RightOlderComponent from "../../../components/molecules/RightOlderComponent";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import ExpiredToken from "../../../components/atoms/Popups/ExpiredToken";
 import { AuthContext } from "../../../context/authContext";
 
-
 const HomeLayout: React.FC = () => {
-  const { checkTokenExpiration} = useContext(AuthContext);
+  const { checkTokenExpiration } = useContext(AuthContext);
   const location = useLocation();
-  const navigate = useNavigate()
-  const [isExpandedMode, setIsExpandedMode] = useState<boolean>(false);
+  const navigate = useNavigate();
 
 
-   function handleExpandedMode() {
-     setIsExpandedMode((prev) => !prev);
-  }
-  
+
   function navigateToCreatePost() {
-    navigate('/posts/create');
+    navigate("/posts/create");
   }
 
   const navLinks = [
@@ -60,7 +51,9 @@ const HomeLayout: React.FC = () => {
     {
       icon: (
         <Icons.NotificationIcon
-          color={location.pathname === "/notifications" ? "#57C016 " : "#737373"}
+          color={
+            location.pathname === "/notifications" ? "#57C016 " : "#737373"
+          }
         />
       ),
       name: "Notifications",
@@ -77,10 +70,9 @@ const HomeLayout: React.FC = () => {
     },
   ];
 
-
   return (
-    <div className={`home__layout  ${isExpandedMode ? "expanded" : null}`}>
-      { checkTokenExpiration() && <ExpiredToken/> }
+    <div className={`home__layout`}>
+      {checkTokenExpiration() && <ExpiredToken />}
 
       <div className="side">
         <div className="logo__position">REEPLS</div>
@@ -96,27 +88,14 @@ const HomeLayout: React.FC = () => {
           ))}
         </div>
         <div className="create__post__btn">
-          <button onClick={navigateToCreatePost} >
+          <button onClick={navigateToCreatePost}>
             <img src={postIcon} alt="post-icon" />
             Create Post
           </button>
-          
         </div>
       </div>
-      <div className="main">
-        <TopbarAtom />
-        <div className="outlet-main">
-          <Outlet />
-        </div>
-      </div>
-      <div className="right">
-        <TopRightComponent
-          isExpandedMode={isExpandedMode}
-          handleExpandedMode={handleExpandedMode}
-        />
-        <RightRecentComponent isExpandedMode={isExpandedMode} />
-        <RightOlderComponent isExpandedMode={isExpandedMode} />
-      </div>
+     
+    
     </div>
   );
 };

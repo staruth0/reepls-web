@@ -73,7 +73,7 @@ const logoutUser = async (refreshToken: string) => {
 
 // Refresh tokens
 const refreshAuthTokens = async (refreshToken: string) => {
-  const { data } = await apiClient2.post("/api-v1/auth/refresh-tokens", {
+  const { data } = await apiClient.post("/api-v1/auth/refresh-tokens", {
     refreshToken,
   }); 
   return data;
