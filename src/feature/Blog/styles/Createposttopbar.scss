@@ -1,0 +1,36 @@
+@use "../../../styles/mixin.scss";
+@use "../../../styles/main.scss";
+@use "../../../styles/variable.scss";
+
+
+.create__post__top__bar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 40px;
+    border-bottom: 1px solid var(--neutral-500);
+    height: 85px;
+    position: sticky;
+    top: 0;
+
+
+    div{
+        color: var(--neutral-50);
+        font-size: 18px;
+        font-family: var(--roboto-font);
+    }
+    
+    select{
+        border: none;
+        background: none;
+        color: var(--neutral-50);
+        font-size: 18px;
+        font-family: var(--roboto-font);
+
+        &:focus{
+            outline: none;
+            border: none;
+        }
+
+    }
+}

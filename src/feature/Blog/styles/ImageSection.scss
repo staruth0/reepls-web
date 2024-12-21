@@ -1,0 +1,28 @@
+@use "../../../styles/mixin.scss";
+@use "../../../styles/main.scss";
+@use "../../../styles/variable.scss";
+
+.image__section__container {
+  .image__section__content {
+    display: flex;
+    align-items: center;
+    background-color: var(--primary-800);
+    border: 1px solid var(--primary-600);
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    justify-content: space-between;
+    font-family: var(--roboto-font);
+    font-size: 15px;
+    color: var(--neutral-50);
+
+    .image__section__upload__container {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      p {
+        color: #408415;
+      }
+    }
+  }
+}

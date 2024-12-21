@@ -1,7 +1,25 @@
+@use "../../../styles/main.scss";
+@use "../../../styles/mixin.scss";
+@use "../../../styles/variable.scss";
 
+.create__post__container {
+  display: grid;
+  grid-template-columns: 0.18fr 0.82fr;
 
-.create__post{
-    max-width: 80vw;
-    margin: 0 auto;
-    
+  .content__container {
+    position: relative;
+
+    .content__body {
+      padding: 2.8125rem 13rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2.8rem;
+
+      .input__container__wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+  }
 }
