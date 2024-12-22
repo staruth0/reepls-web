@@ -1,28 +1,26 @@
-import { useTranslation } from "react-i18next"
+import { useTranslation } from "react-i18next";
 import useTheme from "../../../hooks/useTheme";
-import "../styles/home.scss"
+import "../styles/home.scss";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
-import { AuthContext } from "../../../context/authContext";
+import { AuthContext } from "../../../context/AuthContext/authContext";
 
 function Home() {
-    const { t, i18n } = useTranslation()
-  const { theme, toggleTheme } = useTheme()
+  const { t, i18n } = useTranslation();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  const {loading,authState} = useContext(AuthContext)
-  
+  const { loading, authState } = useContext(AuthContext);
+
   const handleClick = () => {
-   
     if (authState?.userId) {
       navigate("/feed");
     } else {
-       navigate("/auth");
+      navigate("/auth");
     }
-   
-  }
+  };
 
   const test = t("Get Started");
-    
+
   return (
     <div className="home__container">
       <h1>{t("Welcome to REEPLS")}</h1>
@@ -37,9 +35,9 @@ function Home() {
         <div className="togglebtn__mover"></div>
       </div>
 
-      <h2 onClick={handleClick}>{loading ?'updaing state': test}</h2>
+      <h2 onClick={handleClick}>{loading ? "updaing state" : test}</h2>
     </div>
   );
 }
 
-export default Home
+export default Home;

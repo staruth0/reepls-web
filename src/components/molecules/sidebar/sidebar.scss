@@ -34,9 +34,16 @@
     .create__post__btn{
       flex: 1.6;
       
+      .create__post__btn__text{
+         padding: 1rem 1.5rem;
+         margin-top: 1.3rem;
+         font-weight: 600;
+         font-family: var(--roboto-font);
+         font-size: 15px;
+      }
 
 
-      button{
+      .create__post__button{
         display: flex;
         align-items: center;
         justify-content: center;
@@ -52,6 +59,12 @@
         font-weight: 550;
         margin-top: 3.5rem;
         cursor: pointer;
+
+        &.active{
+          background: var(--primary-600);
+          border: none;
+
+        }
       }
     }
   }

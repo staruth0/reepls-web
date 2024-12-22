@@ -21,15 +21,32 @@ const ImageSection: React.FC = () => {
   return (
     <div className="image__section__container">
       {imageUrl ? (
-        <img src={imageUrl} alt="thumbnail" />
+        <>
+          <img className="thumbnail__image" src={imageUrl} alt="thumbnail" />
+          <div className="image__section__content image__section__content2">
+            <div
+              onClick={handleDivClick}
+              className="image__section__upload__container"
+            >
+              <p>replace thumbnail image</p>
+              <img src={image} alt="add image" />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageInput}
+                style={{ display: "none" }}
+                ref={inputRef}
+              />
+            </div>
+          </div>
+        </>
       ) : (
         <div className="image__section__content">
-          <div>Add thumbnail image for article (optional)</div>
           <div
-             onClick={handleDivClick}
-             className="image__section__upload__container"
+            onClick={handleDivClick}
+            className="image__section__upload__container"
           >
-            <p>add image</p>
+            <p>Add thumbnail image</p>
             <img src={image} alt="add image" />
             <input
               type="file"

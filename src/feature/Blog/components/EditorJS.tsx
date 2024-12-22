@@ -1,52 +1,37 @@
-import React, { useEffect, useState, useRef } from "react";
-import EditorJS from "@editorjs/editorjs";
+import React, { useEffect, useRef, useState } from "react";
+import EditorJS, { OutputData } from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
 
+
 const Editor: React.FC = () => {
-  const editorRef = useRef<HTMLDivElement | null>(null);
-  const [editor, setEditor] = useState<EditorJS | null>(null);
+  const editorRef = useRef<EditorJS | null>(null);
+  const [editorData, setEditorData] = useState<OutputData | null>(null);
 
   useEffect(() => {
-    if (!editorRef.current) return;
-    console.log(editor)
-
-    const editorInstance = new EditorJS({
-      holder: editorRef.current, // Attach to the ref instead of ID
-      tools: {
-        header: Header,
-        list: List,
-      },
-      placeholder: "Start writing your content here...",
-    });
-
-    editorInstance.isReady
-      .then(() => {
-        setEditor(editorInstance);
-      })
-      .catch((error) => {
-        console.error("Error initializing EditorJS:", error);
+    if (!editorRef.current) {
+      editorRef.current = new EditorJS({
+        holder: "editorjs",
+        tools: {
+          header: Header,
+          list: List,
+        },
+        placeholder:"Start typing here......",
+        onChange: async () => {
+          const data = await editorRef.current?.save();
+          setEditorData(data || null);
+        },
       });
-
+    }
     return () => {
-      editorInstance.isReady
-        .then(() => {
-          editorInstance.destroy();
-        })
-        .catch((error) => {
-          console.error("Error during cleanup:", error);
-        });
+      if (editorRef.current) {
+        editorRef.current = null;
+      }
     };
   }, []);
 
   return (
-    <>
-      <div
-        ref={editorRef}           
-              id="editorjs"
-          ></div>
-          
-    </>
+      <div id="editorjs"></div>
   );
 };
 

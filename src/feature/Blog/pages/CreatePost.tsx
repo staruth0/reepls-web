@@ -1,47 +1,64 @@
-import React, { useContext} from "react";
+import React, { useContext, useState } from "react";
 import ExpiredToken from "../../../components/atoms/Popups/ExpiredToken";
-import { AuthContext } from "../../../context/authContext";
+import { AuthContext } from "../../../context/AuthContext/authContext";
 import Sidebar from "../../../components/molecules/sidebar/Sidebar";
-import '../styles/Create.scss'
+import "../styles/Create.scss";
 import CreatePostTopBar from "../components/CreatePostTopBar";
-import CollapsableBar from "../components/CollapsableBar";
 import ImageSection from "../components/ImageSection";
 import InputPost from "../components/InputPost";
 
 const CreatePost: React.FC = () => {
   const { checkTokenExpiration } = useContext(AuthContext);
+  const [postType, setPostType] = useState<string>("regular post");
+
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setPostType(event.target.value);
+  };
 
   return (
-    <div className={`create__post__container`}>
+    <div className="create__post__container">
       {checkTokenExpiration() && <ExpiredToken />}
       <Sidebar />
       <div className="content__container">
-        <CreatePostTopBar />
+        <CreatePostTopBar
+          postType={postType}
+          handleSelectChange={handleSelectChange}
+        />
 
         <div className="content__body">
           <ImageSection />
-          <div className="input__container__wrapper">
-            <InputPost
-              inputType="text"
-              placeholder="Title goes here..."
-              className="input__title"
-              title="Title"
-            />
-            <InputPost
-              inputType="text"
-              placeholder="SubTitle goes here..."
-              className="input__sub__title"
-              title="subTitle"
-            />
-            <InputPost
-              inputType="textarea"
-              placeholder="SubTitle goes here..."
-              className="input__text__area"
-              title="body"
-            />
-          </div>
+          {postType === "Article" ? (
+            <div className="input__container__wrapper">
+              <InputPost
+                inputType="text"
+                placeholder="Title goes here..."
+                className="input__title"
+                title="Title"
+              />
+              <InputPost
+                inputType="text"
+                placeholder="Subtitle goes here..."
+                className="input__sub__title"
+                title="Subtitle"
+              />
+              <InputPost
+                inputType="textarea"
+                placeholder="Body goes here..."
+                className="input__text__area"
+                title="Body"
+              />
+            </div>
+          ) : (
+            <div className="input__container__wrapper">
+              <InputPost
+                inputType="textarea"
+                placeholder="Body goes here..."
+                className="input__text__area"
+                title="Body"
+              />
+            </div>
+          )}
         </div>
-        <CollapsableBar />
       </div>
     </div>
   );

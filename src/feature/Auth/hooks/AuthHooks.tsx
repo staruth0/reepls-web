@@ -1,10 +1,25 @@
 import { useMutation } from "@tanstack/react-query";
-import {registerUser,loginUser,getEmailVerificationCode,verifyEmailCode,getPhoneVerificationCode,verifyPhoneCode,updateUser, refreshAuthTokens} from "../api";
-import {User,EmailCode,PhoneCode,CodeVerify,PhoneVerify} from "../../../models/datamodels";
+import {
+  registerUser,
+  loginUser,
+  getEmailVerificationCode,
+  verifyEmailCode,
+  getPhoneVerificationCode,
+  verifyPhoneCode,
+  updateUser,
+  refreshAuthTokens,
+} from "../api";
+import {
+  User,
+  EmailCode,
+  PhoneCode,
+  CodeVerify,
+  PhoneVerify,
+} from "../../../models/datamodels";
 import { useTokenStorage } from "./useTokenStorage";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
-import { AuthContext } from "../../../context/authContext";
+import { AuthContext } from "../../../context/AuthContext/authContext";
 
 // Hook for registering a user
 export const useRegisterUser = () => {
@@ -153,11 +168,11 @@ export const useGetPhoneCode = () => {
 
 // Hook for verifying phone code
 export const useVerifyPhoneCode = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const navigateToName = () => {
-      navigate("/auth/register/phone/two");
-    };
+  const navigateToName = () => {
+    navigate("/auth/register/phone/two");
+  };
   return useMutation({
     mutationFn: (phoneVerify: PhoneVerify) => verifyPhoneCode(phoneVerify),
     onSuccess: (data) => {
@@ -170,23 +185,17 @@ export const useVerifyPhoneCode = () => {
   });
 };
 
-
 // Hook for refrehing the token
 export const useRefreshToken = () => {
   const { getRefreshToken } = useTokenStorage();
 
   return useMutation({
     mutationFn: () => refreshAuthTokens(getRefreshToken()!),
-    onSuccess: (data) => { 
-      console.log("Token refreshed:", data)
-
+    onSuccess: (data) => {
+      console.log("Token refreshed:", data);
     },
-    onError: (error) => { 
-      console.error(error)
-    }
-
-  })
-}
-
-
-
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+};

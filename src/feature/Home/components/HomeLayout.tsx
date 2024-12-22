@@ -6,12 +6,16 @@ import RightRecentComponent from "../../../components/molecules/RightRecentCompo
 import RightOlderComponent from "../../../components/molecules/RightOlderComponent";
 import { Outlet } from "react-router-dom";
 import ExpiredToken from "../../../components/atoms/Popups/ExpiredToken";
-import { AuthContext } from "../../../context/authContext";
+import { AuthContext } from "../../../context/AuthContext/authContext";
 import Sidebar from "../../../components/molecules/sidebar/Sidebar";
+import PostModal from "../../../components/molecules/PostModal/PostModal";
+import { ModalContext } from "../../../context/PostModal/PostModalContext";
 
 const HomeLayout: React.FC = () => {
   const { checkTokenExpiration } = useContext(AuthContext);
+  const { isModalOpen } = useContext(ModalContext);
   const [isExpandedMode, setIsExpandedMode] = useState<boolean>(false);
+
 
   function handleExpandedMode() {
     setIsExpandedMode((prev) => !prev);
@@ -20,6 +24,7 @@ const HomeLayout: React.FC = () => {
   return (
     <div className={`home__layout  ${isExpandedMode ? "expanded" : null}`}>
       {checkTokenExpiration() && <ExpiredToken />}
+      { isModalOpen && <PostModal/>}
       <Sidebar />
       <div className="main">
         <TopbarAtom />

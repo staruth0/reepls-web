@@ -10,6 +10,14 @@
      gap: .6rem;
      border-radius: 10px;
 
+      #editorjs {
+         min-height: 200px; 
+         max-width: 100%;
+           overflow-wrap: normal; 
+           word-wrap: break-word; 
+
+            }
+
 
     div{
        display: flex;
@@ -40,6 +48,7 @@
         font-size: 14px;
         font-family: var(--roboto-font);
         color: var(--plain-a);
+        font-weight: 600;
      
         &::placeholder{
             color: var(--plain-a);

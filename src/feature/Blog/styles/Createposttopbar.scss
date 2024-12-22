@@ -12,6 +12,7 @@
     height: 85px;
     position: sticky;
     top: 0;
+    z-index: 999;
 
 
     div{
@@ -33,4 +34,14 @@
         }
 
     }
+
+    button{
+    padding: .7rem 2.5rem;    
+    border-radius: 6.25rem;    
+    border: none;    
+    background-color: var(--primary-400-main);    
+    color: var(--plain-b);    
+   font-family: var(--roboto-font);
+   cursor: pointer;
+  }
 }

@@ -1,4 +1,5 @@
 import CreatePost from "../feature/Blog/pages/CreatePost"
+import PreviewPost from "../feature/Blog/pages/PreviewPost";
 
 
 const PostRoutes = {
@@ -6,4 +7,9 @@ const PostRoutes = {
     element:<CreatePost/>
 }
 
-export {PostRoutes}
+const Previewroutes = {
+  path: "/posts/create/preview",
+  element: <PreviewPost/>
+};
+
+export {PostRoutes, Previewroutes}

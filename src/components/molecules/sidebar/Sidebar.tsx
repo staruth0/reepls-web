@@ -1,18 +1,28 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Icons,postIcon } from '../../../assets/icons';
 import { useLocation, useNavigate } from 'react-router-dom'
 import SidebarItem from '../../atoms/SidebarItem';
 import './sidebar.scss'
+import { ModalContext } from '../../../context/PostModal/PostModalContext';
 
 
 const Sidebar:React.FC = () => {
 const navigate = useNavigate()
-const location = useLocation()
+  const location = useLocation()
+ 
+  const { isModalOpen, openModal, numberOftimesModalOpened } = useContext(ModalContext);
 
       
-      function navigateToCreatePost() {
-        navigate('/posts/create');
-      }
+  function handleCreatePostBtnClick() {
+    if (numberOftimesModalOpened > 0) {
+          navigate("/posts/create");
+        }
+    else {
+      openModal()
+        }
+    }
+  
+  
     
       const navLinks = [
         {
@@ -79,10 +89,14 @@ const location = useLocation()
         ))}
       </div>
       <div className="create__post__btn">
-        <button onClick={navigateToCreatePost}>
-          <img src={postIcon} alt="post-icon" />
-          Create Post
-        </button>
+        {location.pathname.includes("/posts/create") ? (
+          <div className='create__post__btn__text'>Creating Post...</div>
+        ) : (
+          <button className={`create__post__button ${isModalOpen ?'active': null}`} onClick={handleCreatePostBtnClick}>
+            <img src={postIcon} alt="post-icon" />
+            Create Post
+          </button>
+        )}
       </div>
     </div>
   );

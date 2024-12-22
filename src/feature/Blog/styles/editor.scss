@@ -1,0 +1,19 @@
+@use "../../../styles/mixin.scss";
+@use "../../../styles/main.scss";
+@use "../../../styles/variable.scss";
+
+
+#editorjs{
+  
+    padding: 10px;
+    box-sizing: border-box;
+
+    .codex-editor{
+        width: 500px;
+
+        .codex-editor__redactor{
+            width: 100%;
+        }
+    }
+
+}
