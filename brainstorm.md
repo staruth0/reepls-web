@@ -17,3 +17,9 @@ Animated icons:
 Main considerations: Fontawesome, Bootstrap, Lucide, react-icons
 
 https://react-icons.github.io/react-icons/
+
+Todo
+-Load till editor ready
+-Webview for mobile
+-Router linking using active
+-No incode color&&font size setting
