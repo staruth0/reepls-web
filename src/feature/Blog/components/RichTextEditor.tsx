@@ -61,7 +61,7 @@ const Editor = ({
       }
     };
   }, []);
-  return <div id={editorblock} />;
+  return <div id={editorblock} style={{ marginBlock: '20px' }} />;
 };
 
 export default memo(Editor);
