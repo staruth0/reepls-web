@@ -61,7 +61,7 @@ const Sidebar: React.FC = () => {
           <button
             className={`create__post__button ${isModalOpen ? 'active' : null}`}
             onClick={handleCreatePostBtnClick}>
-            <LuPlusCircle className="create__post__icon" />
+            <LuPlusCircle className="create__post__icon" style={{ width: '20px', height: '20px' }} />
             Create Post
           </button>
         )}

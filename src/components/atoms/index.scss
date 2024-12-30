@@ -21,13 +21,15 @@
     }
     .sidebar__icon {
       color: var(--neutral-100);
+      width: 20px;
+      height: 20px;
     }
   }
   &.active__link {
-    .sidebar__icon {
-      color: var(--primary-400-main);
-    }
     .sidebar__item {
+      .sidebar__icon {
+        color: var(--primary-400-main);
+      }
       p {
         color: var(--primary-400-main);
       }
