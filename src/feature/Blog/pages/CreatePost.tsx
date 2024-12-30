@@ -1,15 +1,15 @@
-import React, { useContext, useState } from "react";
-import ExpiredToken from "../../../components/atoms/Popups/ExpiredToken";
-import { AuthContext } from "../../../context/AuthContext/authContext";
-import Sidebar from "../../../components/molecules/sidebar/Sidebar";
-import "../styles/Create.scss";
-import CreatePostTopBar from "../components/CreatePostTopBar";
-import ImageSection from "../components/ImageSection";
-import InputPost from "../components/InputPost";
+import React, { useContext, useState } from 'react';
+import ExpiredToken from '../../../components/atoms/Popups/ExpiredToken';
+import Sidebar from '../../../components/molecules/sidebar/Sidebar';
+import { AuthContext } from '../../../context/AuthContext/authContext';
+import CreatePostTopBar from '../components/CreatePostTopBar';
+import ImageSection from '../components/ImageSection';
+import InputPost from '../components/InputPost';
+import '../styles/Create.scss';
 
 const CreatePost: React.FC = () => {
   const { checkTokenExpiration } = useContext(AuthContext);
-  const [postType, setPostType] = useState<string>("regular post");
+  const [postType, setPostType] = useState<string>('regular post');
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setPostType(event.target.value);
@@ -20,21 +20,13 @@ const CreatePost: React.FC = () => {
       {checkTokenExpiration() && <ExpiredToken />}
       <Sidebar />
       <div className="content__container">
-        <CreatePostTopBar
-          postType={postType}
-          handleSelectChange={handleSelectChange}
-        />
+        <CreatePostTopBar postType={postType} handleSelectChange={handleSelectChange} />
 
         <div className="content__body">
           <ImageSection />
-          {postType === "Article" ? (
+          {postType === 'Article' ? (
             <div className="input__container__wrapper">
-              <InputPost
-                inputType="text"
-                placeholder="Title goes here..."
-                className="input__title"
-                title="Title"
-              />
+              <InputPost inputType="text" placeholder="Title goes here..." className="input__title" title="Title" />
               <InputPost
                 inputType="text"
                 placeholder="Subtitle goes here..."
@@ -50,12 +42,12 @@ const CreatePost: React.FC = () => {
             </div>
           ) : (
             <div className="input__container__wrapper">
-              <InputPost
+              {/* <InputPost
                 inputType="textarea"
                 placeholder="Body goes here..."
                 className="input__text__area"
                 title="Body"
-              />
+              /> */}
             </div>
           )}
         </div>

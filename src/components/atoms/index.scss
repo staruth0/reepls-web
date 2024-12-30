@@ -3,58 +3,61 @@
 @use '../../styles/variable.scss';
 @use '../../styles/main.scss';
 
-.side__link{
-    text-decoration: none;
-    color: var(--neutral-100);
+.side__link {
+  text-decoration: none;
+  color: var(--neutral-100);
 
-    
- 
-
-.sidebar__item{
+  .sidebar__item {
     font-family: var(--roboto-font);
     display: flex;
     align-items: center;
-    gap: .6rem;
+    gap: 0.6rem;
 
-   
-    p{
-        font-family: var(--roboto-font);
-        font-size:15px;
-        font-weight: 500;
-        color: var(--neutral-100);
-
-         &.active__link{
+    p {
+      font-family: var(--roboto-font);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--neutral-100);
+    }
+    .sidebar__icon {
+      color: var(--neutral-100);
+    }
+  }
+  &.active__link {
+    .sidebar__icon {
+      color: var(--primary-400-main);
+    }
+    .sidebar__item {
+      p {
         color: var(--primary-400-main);
+      }
     }
-
-    }
+  }
 }
 
-}
+.right__top__bar {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--background);
+  color: var(--neutral-100);
 
-.right__top__bar{
+  div {
     display: flex;
+    font-family: var(--roboto-font);
     align-items: center;
-    padding: .8rem 1.2rem;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background-color: var(--background);
-    color: var(--neutral-100);
+    gap: 10px;
+  }
 
-    div{
-        display: flex;
-        font-family: var(--roboto-font);
-        align-items: center;
-        gap: 10px;
+  img {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    &.rotate {
+      transform: rotate(180deg);
     }
-
-    img{
-        transition: all .3s ease;
-        cursor: pointer;
-        &.rotate{
-             transform: rotate(180deg);
-        }
-    }
+  }
 }

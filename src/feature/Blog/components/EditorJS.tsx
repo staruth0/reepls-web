@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
-import EditorJS, { OutputData } from "@editorjs/editorjs";
-import Header from "@editorjs/header";
-import List from "@editorjs/list";
-
+import EditorJS, { OutputData } from '@editorjs/editorjs';
+import Header from '@editorjs/header';
+import List from '@editorjs/list';
+import React, { useEffect, useRef, useState } from 'react';
 
 const Editor: React.FC = () => {
   const editorRef = useRef<EditorJS | null>(null);
@@ -11,12 +10,12 @@ const Editor: React.FC = () => {
   useEffect(() => {
     if (!editorRef.current) {
       editorRef.current = new EditorJS({
-        holder: "editorjs",
+        holder: 'editorjs',
         tools: {
           header: Header,
           list: List,
         },
-        placeholder:"Start typing here......",
+        placeholder: 'Start typing here......',
         onChange: async () => {
           const data = await editorRef.current?.save();
           setEditorData(data || null);
@@ -30,9 +29,7 @@ const Editor: React.FC = () => {
     };
   }, []);
 
-  return (
-      <div id="editorjs"></div>
-  );
+  return <div id="editorjs"></div>;
 };
 
 export default Editor;
