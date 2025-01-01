@@ -55,10 +55,10 @@ export default {
     },
   },
   plugins: [
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/aspect-ratio'),
-    require('@tailwindcss/container-queries'),
+    // require('@tailwindcss/typography'),
+    // require('@tailwindcss/forms'),
+    // require('@tailwindcss/aspect-ratio'),
+    // require('@tailwindcss/container-queries'),
     require('tailwindcss-themer')({
       defaultTheme: {
         extend: {
@@ -110,7 +110,7 @@ export default {
       },
       themes: [
         {
-          name: 'dark-theme',
+          name: 'dark',
           extend: {
             colors: {
               primary: {

@@ -51,6 +51,7 @@ import RichTextEditor, {
 
 import 'katex/dist/katex.min.css';
 import 'reactjs-tiptap-editor/style.css';
+import useTheme from '../../../hooks/useTheme';
 
 function convertBase64ToBlob(base64: string) {
   const arr = base64.split(',');
@@ -190,7 +191,7 @@ function debounce(func: any, wait: number) {
 
 function TipTapRichTextEditor() {
   const [content, setContent] = useState(DEFAULT);
-  const [theme, setTheme] = useState('light');
+  const { theme } = useTheme();
   const [disable, setDisable] = useState(false);
 
   const onValueChange = useCallback(
@@ -199,52 +200,17 @@ function TipTapRichTextEditor() {
     }, 300),
     []
   );
+  locale.setLang('en');
   return (
-    <div
-      className="p-[24px] flex flex-col w-full max-w-screen-lg gap-[24px] mx-[auto] my-0"
-      style={{
-        maxWidth: 1024,
-        margin: '40px auto',
-      }}>
-      <div
-        style={{
-          display: 'flex',
-          gap: '12px',
-          marginTop: '100px',
-          marginBottom: 10,
-        }}>
-        <button type="button" onClick={() => locale.setLang('vi')}>
-          Vietnamese
-        </button>
-        <button type="button" onClick={() => locale.setLang('en')}>
-          English
-        </button>
-        <button type="button" onClick={() => locale.setLang('zh_CN')}>
-          Chinese
-        </button>
-        <button type="button" onClick={() => locale.setLang('pt_BR')}>
-          Português
-        </button>
-        <button type="button" onClick={() => locale.setLang('hu_HU')}>
-          Hungarian
-        </button>
-        <button type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
-          {theme === 'dark' ? 'Light' : 'Dark'}
-        </button>
-        <button type="button" onClick={() => setDisable(!disable)}>
-          {disable ? 'Editable' : 'Readonly'}
-        </button>
-      </div>
-
-      <RichTextEditor
-        output="html"
-        content={content as any}
-        onChangeContent={onValueChange}
-        extensions={extensions}
-        dark={theme === 'dark'}
-        disabled={disable}
-      />
-    </div>
+    <RichTextEditor
+      output="html"
+      content={content as any}
+      onChangeContent={onValueChange}
+      extensions={extensions}
+      dark={theme === 'dark'}
+      disabled={disable}
+      resetCSS
+    />
   );
 }
 
