@@ -47,9 +47,9 @@ const TopbarAtom = () => {
 
             <div className="slider" style={getSliderStyle()}></div>
           </div>
-          <div className="icon">
-            <LuBrain />
-          </div>
+          <button className="icon">
+            <LuBrain className="h-6 w-6" />
+          </button>
         </div>
       )}
     </>

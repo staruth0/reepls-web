@@ -213,16 +213,10 @@ function TipTapRichTextEditor() {
           marginTop: '100px',
           marginBottom: 10,
         }}>
-        <button
-          type="button"
-          className="bg-blue-500 text-white px-4 py-2 rounded-md"
-          onClick={() => locale.setLang('vi')}>
+        <button type="button" onClick={() => locale.setLang('vi')}>
           Vietnamese
         </button>
-        <button
-          type="button"
-          className="bg-blue-500 text-white px-4 py-2 rounded-md"
-          onClick={() => locale.setLang('en')}>
+        <button type="button" onClick={() => locale.setLang('en')}>
           English
         </button>
         <button type="button" onClick={() => locale.setLang('zh_CN')}>
