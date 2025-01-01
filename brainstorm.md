@@ -22,3 +22,10 @@ Editor Considerations
 
 What do I want to achive for the editor?
 What is provided by each options?
+
+https://www.radix-ui.com/primitives/docs/components/tooltip
+
+Adding:
+
+- Radix Ui
+- Tailwind css

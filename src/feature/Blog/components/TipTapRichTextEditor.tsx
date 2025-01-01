@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import RichTextEditor, {
   Attachment,
@@ -52,6 +52,7 @@ import RichTextEditor, {
 import 'katex/dist/katex.min.css';
 import 'reactjs-tiptap-editor/style.css';
 import useTheme from '../../../hooks/useTheme';
+import '../styles/editor.scss';
 
 function convertBase64ToBlob(base64: string) {
   const arr = base64.split(',');
@@ -70,9 +71,10 @@ const extensions = [
     placeholder: {
       showOnlyCurrent: true,
     },
-    characterCount: {
-      limit: 50_000,
-    },
+
+    // characterCount: {
+    //   limit: 50_000,
+    // },
   }),
   History,
   SearchAndReplace,
@@ -179,7 +181,6 @@ const extensions = [
   Twitter,
 ];
 
-const DEFAULT = ``;
 function debounce(func: any, wait: number) {
   let timeout: NodeJS.Timeout;
   return function (...args: any[]) {
@@ -189,28 +190,39 @@ function debounce(func: any, wait: number) {
   };
 }
 
-function TipTapRichTextEditor() {
-  const [content, setContent] = useState(DEFAULT);
+function TipTapRichTextEditor({
+  handleContentChange,
+  editorRef,
+}: {
+  handleContentChange: (content: string) => void;
+  editorRef: React.RefObject<any>;
+}) {
   const { theme } = useTheme();
-  const [disable, setDisable] = useState(false);
 
   const onValueChange = useCallback(
     debounce((value: any) => {
-      setContent(value);
+      handleContentChange(value);
     }, 300),
     []
   );
   locale.setLang('en');
   return (
-    <RichTextEditor
-      output="html"
-      content={content as any}
-      onChangeContent={onValueChange}
-      extensions={extensions}
-      dark={theme === 'dark'}
-      disabled={disable}
-      resetCSS
-    />
+    <div
+      className="block max-w-full bg-primary-100 mx-auto my-2"
+      style={{
+        maxWidth: 1024,
+      }}>
+      <RichTextEditor
+        ref={editorRef}
+        output="html"
+        content={'' as any}
+        onChangeContent={onValueChange}
+        extensions={extensions}
+        dark={theme === 'dark'}
+        disabled={false}
+        hideToolbar
+      />
+    </div>
   );
 }
 

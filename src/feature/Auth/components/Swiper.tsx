@@ -1,9 +1,9 @@
-import "../styles/swiper.scss";
-import { back_arrow } from "../../../assets/icons";
-import { useEffect, useState } from "react";
-import { slides } from "../../../Data/Data";
-import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { back_arrow } from '../../../assets/icons';
+import { slides } from '../../../data';
+import '../styles/swiper.scss';
 
 function Swiper() {
   // states
@@ -59,8 +59,7 @@ function Swiper() {
         exit="exit"
         variants={transitionVariants}
         transition={{ duration: 0.9 }}
-        className="content"
-      >
+        className="content">
         <div className="swiper__text">
           <h2>{t(slides[activeSlide].text)}</h2>
           <p>{t(slides[activeSlide].description)}</p>
@@ -71,9 +70,7 @@ function Swiper() {
         {slides.map((_, index) => (
           <motion.div
             key={index}
-            className={`swiper__indicator ${
-              index === activeSlide ? "active" : ""
-            }`}
+            className={`swiper__indicator ${index === activeSlide ? 'active' : ''}`}
             onClick={() => handleCurrentSlide(index)}
             animate={{
               scale: index === activeSlide ? 1.1 : 1,
