@@ -1,25 +1,24 @@
-Possible icons sources: (libraries, custom & animated)
+Todo
 
-- https://icons.getbootstrap.com/
-- https://feathericons.com/
-- https://icons.tabler.io/
-- https://lucide.dev/
-- https://iconify.design/
-- https://phosphoricons.com/
-- https://fontawesome.com/
-- https://heroicons.com/
+- App-wide color and other settings management
+- Editor problems
+- Handling themes in standard way
+- No incode color&&font size setting
+
+Fixes
+
+- Debounce Editor updates
 
 Animated icons:
 
 - https://icons.pqoqubbw.dev
 - https://react.useanimations.com/
 
-Main considerations: Fontawesome, Bootstrap, Lucide, react-icons
+Editor Considerations
 
-https://react-icons.github.io/react-icons/
+- use pure TipTap (if can find their immplementation)
+- use Novel
+- use reactjs-tiptap-editor library
 
-Todo
--Load till editor ready
--Webview for mobile
--Router linking using active
--No incode color&&font size setting
+What do I want to achive for the editor?
+What is provided by each options?

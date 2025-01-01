@@ -4,6 +4,7 @@ import { createReactEditorJS } from 'react-editor-js';
 import crossIcon from '../../../assets/icons/clearIcon.svg';
 import '../styles/inputPost.scss';
 import RichTextEditor from './RichTextEditor';
+import TipTapRichTextEditor from './TipTapRichTextEditor';
 
 interface InputPostProps {
   title: string;
@@ -26,6 +27,8 @@ const InputPost: React.FC<InputPostProps> = ({ title, inputType, placeholder, cl
       </div>
       {inputType === 'textarea' ? (
         <>
+          <TipTapRichTextEditor />
+          <hr></hr>
           <RichTextEditor data={data} onChange={onChange} editorblock={'editorjs-container'} />
           <hr style={{ marginBlock: '10px' }} />
           {/* <ReactEditorJS placeholder={'Start writing...'} /> */}

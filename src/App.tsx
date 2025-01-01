@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import TipTapRichTextEditor from './feature/Blog/components/TipTapRichTextEditor';
+import NotFound from './feature/NotFound';
 import useTheme from './hooks/useTheme';
-import NotFound from './pages/NotFound';
+import './index.css';
 import { AuthRoutes } from './Routes/AuthRoutes';
 import { HomeRoutes } from './Routes/HomeRoutes';
 import { PostRoutes, Previewroutes } from './Routes/PostRoutes';
@@ -13,6 +15,7 @@ const router = createBrowserRouter([
   AuthRoutes,
   PostRoutes,
   Previewroutes,
+  { path: '/editor', element: <TipTapRichTextEditor /> },
   { path: '*', element: <NotFound /> }, // Catch-all route for 404
 ]);
 
