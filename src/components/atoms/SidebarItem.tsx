@@ -1,23 +1,30 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import './index.scss'
+import cn from 'classnames';
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import './index.scss';
 
-interface sidebarprops{
-    icon: React.ReactNode,
-    link: string,
-    name: string,
-    active:boolean
+interface sidebarprops {
+  NavItemIcon: React.FC<{ className?: string }>;
+  link: string;
+  name: string;
 }
 
-const SidebarItem:React.FC<sidebarprops> = ({icon,name,link,active}) => {
-    return (
-      <Link to={link} className='side__link'>
-        <div className={`sidebar__item }`}>
-          {icon}
-          <p className={`${active ? 'active__link' : null}`}>{ name}</p>
-        </div>
-      </Link>
-    );
-}
+const SidebarItem: React.FC<sidebarprops> = ({ NavItemIcon, name, link }) => {
+  return (
+    <NavLink
+      to={link}
+      className={({ isActive }) =>
+        cn('side__link', {
+          active__link: isActive,
+        })
+      }
+      end>
+      <div className={`sidebar__item`}>
+        <NavItemIcon className="sidebar__icon" />
+        <p>{name}</p>
+      </div>
+    </NavLink>
+  );
+};
 
-export default SidebarItem
+export default SidebarItem;

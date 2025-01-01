@@ -1,35 +1,31 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useEffect } from "react";
-import useTheme from "./hooks/useTheme";
-import { HomeRoutes } from "./Routes/HomeRoutes";
-import { AuthRoutes } from "./Routes/AuthRoutes";
-import { WebRoutes } from "./Routes/WebRoutes";
-import { PostRoutes, Previewroutes } from "./Routes/PostRoutes";
-
-
+import { useEffect } from 'react';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import NotFound from './feature/NotFound';
+import useTheme from './hooks/useTheme';
+import './index.css';
+import { AuthRoutes } from './Routes/AuthRoutes';
+import { HomeRoutes } from './Routes/HomeRoutes';
+import { PostRoutes, Previewroutes } from './Routes/PostRoutes';
+import { WebRoutes } from './Routes/WebRoutes';
 
 const router = createBrowserRouter([
   WebRoutes,
   HomeRoutes,
   AuthRoutes,
   PostRoutes,
-  Previewroutes
+  Previewroutes,
+  { path: '*', element: <NotFound /> }, // Catch-all route for 404
 ]);
 
 function App() {
   const { theme } = useTheme();
-  
-
 
   useEffect(() => {
-    document.body.className = theme === "dark" ? "dark-theme" : "";
-    console.log("Theme:", theme);
+    document.body.className = theme === 'dark' ? 'dark-theme' : '';
+    console.log('Theme:', theme);
   }, [theme]);
-
-
 
   return <RouterProvider router={router} />;
 }
 
 export default App;
-
