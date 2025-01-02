@@ -15,19 +15,20 @@ export interface User {
 }
 
 export interface Article {
-  article_id: string;
-  title: string;
-  content: string;
-  category: string;
+  article_id?: string;
+  title?: string;
+  subTitle?: string;
+  content?: string;
+  category?: string[];
   keywords?: string[];
-  media: string[];
+  media?: string[];
   text_to_speech?: string;
-  author_id: string;
-  status: "Draft" | "Published" | "Archived";
-  created_at: string;
-  updated_at: string;
-  views_count: number;
-  reports_count: number;
+  author_id?: string;
+  status?: "Draft" | "Published" | "Archived";
+  created_at?: string;
+  updated_at?: string;
+  views_count?: number;
+  reports_count?: number;
 }
 
 export interface Comment {
