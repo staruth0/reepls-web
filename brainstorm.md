@@ -29,3 +29,7 @@ Adding:
 
 - Radix Ui
 - Tailwind css
+
+Refs:
+
+- https://tailwindui.com/components/application-ui/overlays/modal-dialogs
