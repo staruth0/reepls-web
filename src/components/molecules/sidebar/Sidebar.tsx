@@ -1,8 +1,10 @@
 import React, { useContext } from 'react';
-import { LuBell, LuBookmark, LuHome, LuPlusCircle, LuSearch, LuUser } from 'react-icons/lu';
+import { FaRegUserCircle } from 'react-icons/fa';
+import { LuBell, LuBookmark, LuHome, LuPlusCircle, LuSearch } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 import { ModalContext } from '../../../context/PostModal/PostModalContext';
 import SidebarItem from '../../atoms/SidebarItem';
+
 import './sidebar.scss';
 
 const Sidebar: React.FC = () => {
@@ -26,7 +28,7 @@ const Sidebar: React.FC = () => {
     },
     {
       icon: LuSearch,
-      name: 'Search',
+      name: 'Explore',
       link: '/feed/search',
     },
     {
@@ -40,7 +42,7 @@ const Sidebar: React.FC = () => {
       link: '/notifications',
     },
     {
-      icon: LuUser,
+      icon: FaRegUserCircle,
       name: 'Profile',
       link: '/profile',
     },
