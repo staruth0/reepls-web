@@ -5,7 +5,7 @@
   padding: 0.8rem 2rem;
   border-bottom: 1px solid var(--neutral-500);
   position: relative;
-  position: sticky;
+  // position: sticky;
   top: 0;
   background-color: var(--background);
 
@@ -35,14 +35,13 @@
       scale: 1.2;
     }
 
- 
     .slider {
       position: absolute;
-      bottom: -5px; 
+      bottom: -5px;
       height: 3px;
       background-color: var(--main-green);
       transition: all 0.3s ease;
-      width: 40%; 
+      width: 40%;
     }
   }
 
@@ -53,7 +52,6 @@
     }
   }
 }
-
 
 .top-bar-atom {
   position: sticky;

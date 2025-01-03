@@ -1,30 +1,29 @@
-import React, { useContext, useState } from "react";
-import "../styles/homeLaout.scss";
-import TopbarAtom from "../../../components/atoms/topbarAtom";
-import TopRightComponent from "../../../components/atoms/TopRightComponent";
-import RightRecentComponent from "../../../components/molecules/RightRecentComponent";
-import RightOlderComponent from "../../../components/molecules/RightOlderComponent";
-import { Outlet } from "react-router-dom";
-import ExpiredToken from "../../../components/atoms/Popups/ExpiredToken";
-import { AuthContext } from "../../../context/AuthContext/authContext";
-import Sidebar from "../../../components/molecules/sidebar/Sidebar";
-import PostModal from "../../../components/molecules/PostModal/PostModal";
-import { ModalContext } from "../../../context/PostModal/PostModalContext";
+import React, { useContext, useEffect, useState } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+import TopbarAtom from '../../../components/atoms/TopbarAtom';
+import TopRightComponent from '../../../components/atoms/TopRightComponent';
+import RightOlderComponent from '../../../components/molecules/RightOlderComponent';
+import RightRecentComponent from '../../../components/molecules/RightRecentComponent';
+import Sidebar from '../../../components/molecules/sidebar/Sidebar';
+import { AuthContext } from '../../../context/AuthContext/authContext';
+import '../styles/layout.scss';
 
 const HomeLayout: React.FC = () => {
   const { checkTokenExpiration } = useContext(AuthContext);
-  const { isModalOpen } = useContext(ModalContext);
   const [isExpandedMode, setIsExpandedMode] = useState<boolean>(false);
-
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (checkTokenExpiration()) {
+      navigate('/auth/login');
+    }
+  }, [checkTokenExpiration]);
 
   function handleExpandedMode() {
     setIsExpandedMode((prev) => !prev);
   }
 
   return (
-    <div className={`home__layout  ${isExpandedMode ? "expanded" : null}`}>
-      {checkTokenExpiration() && <ExpiredToken />}
-      { isModalOpen && <PostModal/>}
+    <div className={`home__layout  ${isExpandedMode ? 'expanded' : null}`}>
       <Sidebar />
       <div className="main">
         <TopbarAtom />
@@ -33,10 +32,7 @@ const HomeLayout: React.FC = () => {
         </div>
       </div>
       <div className="right">
-        <TopRightComponent
-          isExpandedMode={isExpandedMode}
-          handleExpandedMode={handleExpandedMode}
-        />
+        <TopRightComponent isExpandedMode={isExpandedMode} handleExpandedMode={handleExpandedMode} />
         <RightRecentComponent isExpandedMode={isExpandedMode} />
         <RightOlderComponent isExpandedMode={isExpandedMode} />
       </div>

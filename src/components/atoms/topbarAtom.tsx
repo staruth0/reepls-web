@@ -47,7 +47,7 @@ const TopbarAtom = () => {
 
             <div className="slider" style={getSliderStyle()}></div>
           </div>
-          <button className="icon">
+          <button className="icon hover:text-primary-400 transition-all duration-300">
             <LuBrain className="h-6 w-6" />
           </button>
         </div>

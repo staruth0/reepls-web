@@ -2,42 +2,36 @@
 @use '../../styles/variable.scss';
 @use '../../styles/main.scss';
 
+.right__recent {
+  padding: 1rem 0.7rem;
+  font-family: var(--roboto-font);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 
-.right__recent{
-    padding: 1rem .7rem;
-    font-family: var(--roboto-font);
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-
-    .recent{
-        font-size: 16px;
-        padding: 0rem .8rem;
-        color: var(--neutral-200);
-    }
+  .recent {
+    font-size: 16px;
+    padding: 0rem 0.8rem;
+    color: var(--neutral-200);
+  }
 }
 
-.older{
-    position: sticky;
-    top: 80px;
-}
+// .older{
+//     position: sticky;
+//     top: 80px;
+// }
 
 .blog__component {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-   width: 100%;
-   padding: 1rem 0;
- 
-.each_blog_post{
- 
-  padding: 1rem;
-  border-radius: 8px; 
-  box-shadow: 0 2px 4px var(--neutral-700);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  width: 78%;
+  padding: 1rem 0;
+
+  .each_blog_post {
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--neutral-700);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
   }
-
- 
 }
-
-

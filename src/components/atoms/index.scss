@@ -25,7 +25,8 @@
       height: 20px;
     }
   }
-  &.active__link {
+  &.active__link,
+  &:hover {
     .sidebar__item {
       .sidebar__icon {
         color: var(--primary-400-main);
@@ -44,7 +45,7 @@
   justify-content: space-between;
   position: sticky;
   top: 0;
-  z-index: 10;
+  // z-index: 5;
   background-color: var(--background);
   color: var(--neutral-100);
 

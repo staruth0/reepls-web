@@ -8,6 +8,10 @@ Todo
 Fixes
 
 - Debounce Editor updates
+- Support for multiple languages
+- Support for multiple themes (and should read from system)
+
+-
 
 Animated icons:
 
@@ -33,3 +37,4 @@ Adding:
 Refs:
 
 - https://tailwindui.com/components/application-ui/overlays/modal-dialogs
+- Popover: https://dev.to/said7388/how-to-create-a-popover-using-tailwind-css-13kj

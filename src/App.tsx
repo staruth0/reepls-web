@@ -6,6 +6,7 @@ import './index.css';
 import { AuthRoutes } from './Routes/AuthRoutes';
 import { HomeRoutes } from './Routes/HomeRoutes';
 import { PostRoutes, Previewroutes } from './Routes/PostRoutes';
+import { UserRoutes } from './Routes/UserRoutes';
 import { WebRoutes } from './Routes/WebRoutes';
 import { ProfileRoutes } from './Routes/ProfileRoutes';
 
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
   PostRoutes,
   ProfileRoutes,
   Previewroutes,
+  UserRoutes,
   { path: '*', element: <NotFound /> }, // Catch-all route for 404
 ]);
 

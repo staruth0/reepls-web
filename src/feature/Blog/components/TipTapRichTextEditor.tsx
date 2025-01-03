@@ -52,6 +52,7 @@ import RichTextEditor, {
 import 'katex/dist/katex.min.css';
 import 'reactjs-tiptap-editor/style.css';
 import useTheme from '../../../hooks/useTheme';
+import { debounce } from '../../../utils';
 import '../styles/editor.scss';
 
 function convertBase64ToBlob(base64: string) {
@@ -72,9 +73,7 @@ const extensions = [
       showOnlyCurrent: true,
     },
 
-    // characterCount: {
-    //   limit: 50_000,
-    // },
+    characterCount: false,
   }),
   History,
   SearchAndReplace,
@@ -180,15 +179,6 @@ const extensions = [
   }),
   Twitter,
 ];
-
-function debounce(func: any, wait: number) {
-  let timeout: NodeJS.Timeout;
-  return function (...args: any[]) {
-    clearTimeout(timeout);
-    // @ts-ignore
-    timeout = setTimeout(() => func.apply(this, args), wait);
-  };
-}
 
 function TipTapRichTextEditor({
   handleContentChange,
