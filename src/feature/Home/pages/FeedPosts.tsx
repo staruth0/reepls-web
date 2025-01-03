@@ -5,7 +5,7 @@ import '../styles/FeedPosts.scss'
 
 const FeedPosts:React.FC = () => {
   return (
-    <div className='Feed__Posts'>      
+    <div className='Feed__Posts px-20'>      
           <BlogComponent/>
     </div>
   )
