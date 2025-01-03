@@ -19,7 +19,7 @@ const ProfileConfigurations: React.FC = () => {
 
 
   return (
-    <div className="profile__configurations px-6 py-4">
+    <div className="profile__configurations px-6 py-4 sticky top-0">
       <div className="text-[16px] text-neutral-50">Settings</div>
       <div className="actual__settings mt-8 flex flex-col gap-6">
         <ConfigurationWrapper>Phone Settings</ConfigurationWrapper>

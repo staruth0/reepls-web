@@ -1,14 +1,12 @@
 import React from 'react'
 import BlogComponent from '../../../components/molecules/BlogComponent'
-import '../styles/FeedPosts.scss'
 
-
-const FeedPosts:React.FC = () => {
+const ProfilePosts:React.FC = () => {
   return (
-    <div className='Feed__Posts px-20'>      
+      <div>
           <BlogComponent/>
     </div>
   )
 }
 
-export default FeedPosts
+export default ProfilePosts

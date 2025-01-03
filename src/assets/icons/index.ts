@@ -26,11 +26,12 @@ import sadface from './sadface.svg'
 import thumb_2 from './thumb_up_2.svg'
 import tooltip from './tooltip.svg'
 import readAloudIcon from './read_aloud_icon.svg'
+import briefcase from './briefcase__business.svg'
+import mapPin from './map__pin.svg'
 
 
 
-
-export { back_arrow, cm,VerifiedIcon,hand5,heart,smile,sadface,thumb, thumb_2,tooltip,readAloudIcon,ellipsisVertical,chevrondown,profileAvatar, google, home1, notification, profile, search, bookmark ,postIcon,commuLeft,arrowLeftRight}
+export {mapPin, back_arrow,briefcase, cm,VerifiedIcon,hand5,heart,smile,sadface,thumb, thumb_2,tooltip,readAloudIcon,ellipsisVertical,chevrondown,profileAvatar, google, home1, notification, profile, search, bookmark ,postIcon,commuLeft,arrowLeftRight}
 
 export const Icons = {
     NotificationIcon,
