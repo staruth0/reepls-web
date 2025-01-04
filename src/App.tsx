@@ -6,9 +6,9 @@ import './index.css';
 import { AuthRoutes } from './Routes/AuthRoutes';
 import { HomeRoutes } from './Routes/HomeRoutes';
 import { PostRoutes, Previewroutes } from './Routes/PostRoutes';
+import { ProfileRoutes } from './Routes/ProfileRoutes';
 import { UserRoutes } from './Routes/UserRoutes';
 import { WebRoutes } from './Routes/WebRoutes';
-import { ProfileRoutes } from './Routes/ProfileRoutes';
 
 const router = createBrowserRouter([
   WebRoutes,

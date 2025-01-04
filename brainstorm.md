@@ -1,3 +1,17 @@
+The same layout is usable for
+
+- Feed
+- Profile
+- Notification
+- write article
+- View article
+
+Left Side bar | Top bar and then content | Right top barand its content
+
+currentlt have:
+home container for feed and search
+then another fopr create postx
+
 Todo
 
 - App-wide color and other settings management
@@ -38,3 +52,4 @@ Refs:
 
 - https://tailwindui.com/components/application-ui/overlays/modal-dialogs
 - Popover: https://dev.to/said7388/how-to-create-a-popover-using-tailwind-css-13kj
+- Tabs: https://devsimplified.hashnode.dev/tabs-in-reactjs-with-slider-animation

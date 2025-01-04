@@ -1,12 +1,12 @@
 .top-bar-atom {
-  display: flex;
+  // display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0.8rem 2rem;
   border-bottom: 1px solid var(--neutral-500);
-  position: relative;
+  // position: relative;
   // position: sticky;
-  top: 0;
+  // top: 0;
   background-color: var(--background);
 
   .tabs {

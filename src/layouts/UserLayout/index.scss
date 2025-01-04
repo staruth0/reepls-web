@@ -1,0 +1,9 @@
+@use '../../styles/main.scss';
+@use '../../styles/variable.scss';
+@use '../../styles/mixin.scss';
+
+.user__layout {
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+  background-color: var(--background);
+}

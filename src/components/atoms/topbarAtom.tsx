@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { LuBrain } from 'react-icons/lu';
+import { LuBrain, LuSearch } from 'react-icons/lu';
 import { useLocation } from 'react-router-dom';
-import { Icons } from '../../assets/icons';
 import './topNav.scss';
 
 const TopbarAtom = () => {
@@ -30,7 +29,7 @@ const TopbarAtom = () => {
             className="search-input"
           />
           <div className="search-icon">
-            <Icons.SearchIcon color="#737373" />
+            <LuSearch className="h-6 w-6" />
           </div>
         </div>
       ) : (

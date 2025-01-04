@@ -2,30 +2,25 @@
 @use '../../../styles/mixin.scss';
 @use '../../../styles/variable.scss';
 
-
 .home__layout {
   display: grid;
   grid-template-columns: 0.18fr 0.57fr 0.25fr;
   background-color: var(--background);
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 
-  &.expanded{
-  grid-template-columns: 18% 64% 18%;
+  &.expanded {
+    grid-template-columns: 18% 64% 18%;
   }
-
-
 
   .main {
-  border-right: 1px solid var(--neutral-500);
+    border-right: 1px solid var(--neutral-500);
 
-  .outlet-main{
-   
-  }
+    .outlet-main {
+    }
   }
 
   .right {
     display: flex;
     flex-direction: column;
-    
   }
 }
