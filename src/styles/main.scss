@@ -13,7 +13,7 @@ body {
   // color: var(--secondary-50);
   background: var(--background-color);
   color: var(--text-color);
-  font-family: var(--inter-font);
+  // font-family: var(--inter-font);
 }
 
 h1,
@@ -22,7 +22,8 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--instrument-serif-font);
+  // font-family: var(--instrument-serif-font);
+  text-overflow: ellipsis;
 }
 
 p,

@@ -54,8 +54,8 @@ const Sidebar: React.FC = () => {
         <Popover.Root>
           <Popover.Trigger asChild>
             <button
-              className={`create__post__button ${isCreatingPost ? 'active' : ''}`}
-              disabled={location.pathname === '/posts/create'}>
+              className={`create__post__button `}
+              disabled={location.pathname === '/posts/create' || isCreatingPost}>
               <LuPlusCircle className="create__post__icon" style={{ width: '20px', height: '20px' }} />
               Create Post
             </button>
