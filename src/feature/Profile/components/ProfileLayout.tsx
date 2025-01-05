@@ -9,7 +9,6 @@ const ProfileLayout: React.FC = () => {
       {/* Sidebar Section */}
      
         <Sidebar />
-     
 
       {/* Main Section */}
           <div className="main__section__profile border-r-[1px] border-neutral-500">

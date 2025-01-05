@@ -6,6 +6,7 @@ export interface User {
   phone?: string;
   role?: "Admin" | "Reader" | "Writer";
   profile_picture?: string;
+  banner_image?: string
   bio?: string;
   address?: string;
   interests?: string[];
