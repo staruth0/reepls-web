@@ -9,8 +9,8 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({}: CreateTopBarProps) =>
   const navigate = useNavigate();
 
   const onPublish = () => {
-    if (location.pathname === '/posts/create') {
-      navigate('/posts/create/preview');
+    if (location.pathname === '/test/posts/create') {
+      navigate('/test/posts/create/preview');
     } else if (location.pathname === '/posts/create/preview') {
       console.log('Publishing the post...');
     }
@@ -29,7 +29,7 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({}: CreateTopBarProps) =>
   };
 
   return (
-    <div className="flex items-center justify-between px-10 border-b border-neutral-500 h-20 sticky top-0 z-50">
+    <div className="w-full flex items-center justify-between px-10">
       <h2 className=" text-xl font-instrumentSerif">New Article</h2>
       <div className="flex items-center gap-2">
         <button className="p-2 cursor-pointer rounded-full" onClick={handleInfo}>

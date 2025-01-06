@@ -1,40 +1,45 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Sidebar from '../../../components/molecules/sidebar/Sidebar';
-import { AuthContext } from '../../../context/AuthContext/authContext';
-import CreatePostTopBar from '../components/CreatePostTopBar';
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import Topbar from '../../../components/atoms/Topbar/Topbar'
+import CreatePostTopBar from '../components/CreatePostTopBar'
 import ImageSection from '../components/ImageSection';
+import { AuthContext } from '../../../context/AuthContext/authContext';
+import { useNavigate } from 'react-router-dom';
 import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
-import '../styles/Create.scss';
 
 const CreatePost: React.FC = () => {
-  const { checkTokenExpiration } = useContext(AuthContext);
-  const [title, setTitle] = useState<string>('');
-  const [subtitle, setSubtitle] = useState<string>('');
-  const [content, setContent] = useState<string>('');
-  const editorRef = useRef<any>(null);
-  const navigate = useNavigate();
+      const { checkTokenExpiration } = useContext(AuthContext);
+      const [title, setTitle] = useState<string>("");
+      const [subtitle, setSubtitle] = useState<string>("");
+      const [content, setContent] = useState<string>("");
+      const editorRef = useRef<any>(null);
+      const navigate = useNavigate();
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>, nextFocus: () => void) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      nextFocus();
-    }
-  };
+      const handleKeyDown = (
+        event: React.KeyboardEvent<HTMLTextAreaElement>,
+        nextFocus: () => void
+      ) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          nextFocus();
+        }
+      };
 
-  const isLoggedOut = checkTokenExpiration();
+      const isLoggedOut = checkTokenExpiration();
 
-  useEffect(() => {
-    if (isLoggedOut) {
-      navigate('/auth');
-    }
-  }, [isLoggedOut]);
+    useEffect(() => {
+          console.log(content)
+        if (isLoggedOut) {
+          navigate("/auth");
+        }
+      }, [isLoggedOut]);
 
   return (
-    <div className="create__post__container">
-      <Sidebar />
-      <div className="content__container">
+    <div className="">
+      <Topbar>
         <CreatePostTopBar />
+      </Topbar>
+
+      <div className='mt-10'>
         <div className="md:px-4">
           <ImageSection />
           <div
@@ -82,6 +87,6 @@ const CreatePost: React.FC = () => {
       </div>
     </div>
   );
-};
+}
 
-export default CreatePost;
+export default CreatePost

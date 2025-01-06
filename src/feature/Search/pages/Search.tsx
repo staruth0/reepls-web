@@ -73,3 +73,29 @@ const Search: React.FC = () => {
 };
 
 export default Search;
+
+
+
+//  <div className="content">
+//    {activeTab === "Topics" && (
+//      <div className="topics">
+//        {topics.map((topic) => (
+//          <span key={topic} className="topic">
+//            {topic}
+//          </span>
+//        ))}
+//      </div>
+//    )}
+//    {activeTab === "Recent" && (
+//      <div className="recent">
+//        {articles.map((article) => (
+//          <p key={article}>{article}</p>
+//        ))}
+//      </div>
+//    )}
+//    {activeTab === "People" && (
+//      <div className="people">
+//        <p>No people suggestions yet.</p>
+//      </div>
+//    )}
+//  </div>;

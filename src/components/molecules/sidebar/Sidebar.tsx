@@ -16,12 +16,12 @@ const Sidebar: React.FC = () => {
     {
       icon: LuHome,
       name: 'Home',
-      link: '/feed',
+      link: '/test/feed',
     },
     {
       icon: LuSearch,
       name: 'Explore',
-      link: '/feed/search',
+      link: '/test/explore',
     },
     {
       icon: LuBookmark,
@@ -31,12 +31,12 @@ const Sidebar: React.FC = () => {
     {
       icon: LuBell,
       name: 'Notifications',
-      link: '/notifications',
+      link: '/test/notifications',
     },
     {
       icon: FaRegUserCircle,
       name: 'Profile',
-      link: '/profile',
+      link: '/test/profile',
     },
   ];
 
@@ -55,7 +55,7 @@ const Sidebar: React.FC = () => {
           <Popover.Trigger asChild>
             <button
               className={`create__post__button `}
-              disabled={location.pathname === '/posts/create' || isCreatingPost}>
+              disabled={location.pathname === '/test/posts/create' || isCreatingPost}>
               <LuPlusCircle className="create__post__icon" style={{ width: '20px', height: '20px' }} />
               Create Post
             </button>
@@ -71,7 +71,7 @@ const Sidebar: React.FC = () => {
                 <hr className="border-neutral-400 w-3/4 mx-auto" />
                 <button
                   className="cursor-pointer py-2 px-4 text-sm hover:text-primary-400"
-                  onClick={() => navigate('/posts/create')}>
+                  onClick={() => navigate('/test/posts/create')}>
                   Write Article
                 </button>
               </div>

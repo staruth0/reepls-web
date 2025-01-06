@@ -31,17 +31,22 @@ const ProfileView: React.FC = () => {
           </div>
 
           <div className="flex gap-2 text-neutral-50 justify-center items-center">
-            <button className="px-8 py-3 border border-gray-300 rounded-full text-sm hover:bg-gray-100" onClick={handleEditProfile}>
+            <button
+              className="px-8 py-3 border border-gray-300 rounded-full text-sm hover:bg-gray-100"
+              onClick={handleEditProfile}
+            >
               Edit Profile
             </button>
-            <button className="px-8 py-3 bg-neutral-600 rounded-full text-sm hover:bg-gray-200" onClick={handleViewAnalytics}>
+            <button
+              className="px-8 py-3 bg-neutral-600 rounded-full text-sm hover:bg-gray-200"
+              onClick={handleViewAnalytics}
+            >
               View Analytics
             </button>
           </div>
         </div>
       </ProfileBody>
 
-    
       <div className="relative mt-6 border-b-[1px] border-neutral-500 text-[14px] pb-2">
         <div className="flex justify-between px-4 text-neutral-400">
           <p
@@ -78,7 +83,6 @@ const ProfileView: React.FC = () => {
           </p>
         </div>
 
-        
         <div
           className={`absolute bottom-0 h-[2px] bg-primary-400 transition-all duration-300`}
           style={{
@@ -95,7 +99,6 @@ const ProfileView: React.FC = () => {
         ></div>
       </div>
 
-    
       <div className="mt-10 ">
         {activeTab === "about" && <ProfileAbout />}
         {activeTab === "posts" && <ProfilePosts />}

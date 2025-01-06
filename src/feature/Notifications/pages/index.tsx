@@ -1,43 +1,33 @@
-import React, { useState } from 'react';
-import '../styles/notifications.scss';
+import React from 'react'
+import Topbar from '../../../components/atoms/Topbar/Topbar';
+import ProfileConfigurations from '../../Profile/components/ProfileConfigurations';
+import NotificationContainer from '../components/NotificationContainer';
 
-const Notifications: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('All');
-
-  const tabs = ['All', 'Mentions', 'Comments'];
-  const notifications = {
-    All: ['You have a new follower', 'Your post was liked', 'New comment on your post'],
-    Mentions: ['@user mentioned you in a comment'],
-    Comments: ['New comment on your post'],
-  };
-
-  const getSliderStyle = () => {
-    const index = tabs.indexOf(activeTab);
-    return {
-      left: `${index * 33.33}%`,
-    };
-  };
-
+const Notifications:React.FC = () => {
   return (
-    <div className="notifications-container">
-      <div className="tabs">
-        {tabs.map((tab) => (
-          <button key={tab} className={`tab ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)}>
-            {tab}
-          </button>
-        ))}
-        <div className="slider" style={getSliderStyle()}></div>
+    <div className={`grid grid-cols-[4fr_1.66fr] `}>
+     
+      <div className="profile border-r-[1px] border-neutral-500 ">
+        <Topbar>
+          <p>Notifications</p>
+        </Topbar>
+
+        {/* notification content */}
+        <div className="profile__content px-20">
+          <div className='mt-6 flex flex-col gap-5'>
+            <NotificationContainer />
+            <NotificationContainer />
+            <NotificationContainer />
+          </div>
+        </div>
       </div>
 
-      <div className="content">
-        {notifications[activeTab as keyof typeof notifications].map((notification, index) => (
-          <p key={index} className="notification">
-            {notification}
-          </p>
-        ))}
+      {/*configurations Section */}
+      <div className="profile__configurationz">
+        <ProfileConfigurations />
       </div>
     </div>
   );
-};
+}
 
 export default Notifications;
