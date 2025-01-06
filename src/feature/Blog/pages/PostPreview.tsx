@@ -1,29 +1,17 @@
-import React, { useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Pics } from '../../../assets/images';
-import Sidebar from '../../../components/molecules/sidebar/Sidebar';
-import { AuthContext } from '../../../context/AuthContext/authContext';
+import React from 'react'
+import Topbar from '../../../components/atoms/Topbar/Topbar';
 import CreatePostTopBar from '../components/CreatePostTopBar';
-import '../styles/Create.scss';
+import { Pics } from '../../../assets/images';
+import "../styles/Create.scss";
 
-const PreviewPost: React.FC = () => {
-  const { checkTokenExpiration } = useContext(AuthContext);
-  const navigate = useNavigate();
-
-  const isLoggedOut = checkTokenExpiration();
-
-  useEffect(() => {
-    if (isLoggedOut) {
-      navigate('/auth/login');
-    }
-  }, [isLoggedOut]);
-
+const PostPreview:React.FC = () => {
   return (
-    <div className="create__post__container">
-      <Sidebar />
-      <div className="content__container">
+    <div className="">
+      <Topbar>
         <CreatePostTopBar />
+      </Topbar>
 
+      <div className="mt-10 px-40">
         <div className="content__body content__body__preview__post">
           <div className="image__section__container">
             <img className="thumbnail__image" src={Pics.blogPic} alt="" />
@@ -52,6 +40,6 @@ const PreviewPost: React.FC = () => {
       </div>
     </div>
   );
-};
+}
 
-export default PreviewPost;
+export default PostPreview

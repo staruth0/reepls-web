@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import TopbarAtom from '../../../components/atoms/TopbarAtom';
+import TopbarAtom from '../../../components/atoms/topbarAtom';
 import TopRightComponent from '../../../components/atoms/TopRightComponent';
 import RightOlderComponent from '../../../components/molecules/RightOlderComponent';
 import RightRecentComponent from '../../../components/molecules/RightRecentComponent';

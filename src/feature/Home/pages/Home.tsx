@@ -13,7 +13,7 @@ function Home() {
 
   const handleClick = () => {
     if (authState?.userId) {
-      navigate('/feed');
+      navigate('/test/feed');
     } else {
       navigate('/auth');
     }
