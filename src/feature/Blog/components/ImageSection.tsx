@@ -1,10 +1,12 @@
 import React, { useRef } from 'react';
 import image from '../../../assets/icons/image-plus.svg';
 import '../styles/ImageSection.scss';
+import { useTranslation } from 'react-i18next';
 
 const ImageSection: React.FC = () => {
   const [imageUrl, setImageUrl] = React.useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const {t} = useTranslation()
 
   const handleDivClick = () => {
     inputRef.current?.click();
@@ -40,7 +42,7 @@ const ImageSection: React.FC = () => {
       ) : (
         <div className="image__section__content">
           <div onClick={handleDivClick} className="image__section__upload__container">
-            <p>Add thumbnail image</p>
+            <p>{t(`Add thumbnail image`)}</p>
             <img src={image} alt="add image" />
             <input
               type="file"

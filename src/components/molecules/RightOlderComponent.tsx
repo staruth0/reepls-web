@@ -1,15 +1,17 @@
 import React from 'react';
-import Message from '../atoms/Message';
+import Message from '../atoms/message';
 import './index.scss';
+import { useTranslation } from 'react-i18next';
 
 interface rightTopProbs {
   isExpandedMode: boolean;
 }
 
 const RightOlderComponent: React.FC<rightTopProbs> = ({ isExpandedMode }) => {
+  const { t } = useTranslation()
   return (
     <div className="right__recent older">
-      <p className="recent">Older</p>
+      <p className="recent">{t(`Older`)}</p>
       <div className="message-list">
         <Message
           profile={'E'}

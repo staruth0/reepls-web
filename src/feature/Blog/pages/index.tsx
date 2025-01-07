@@ -5,6 +5,7 @@ import ImageSection from '../components/ImageSection';
 import { AuthContext } from '../../../context/AuthContext/authContext';
 import { useNavigate } from 'react-router-dom';
 import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
+import { useTranslation } from 'react-i18next';
 
 const CreatePost: React.FC = () => {
       const { checkTokenExpiration } = useContext(AuthContext);
@@ -12,7 +13,9 @@ const CreatePost: React.FC = () => {
       const [subtitle, setSubtitle] = useState<string>("");
       const [content, setContent] = useState<string>("");
       const editorRef = useRef<any>(null);
-      const navigate = useNavigate();
+  const navigate = useNavigate();
+  const {t} = useTranslation()
+
 
       const handleKeyDown = (
         event: React.KeyboardEvent<HTMLTextAreaElement>,
@@ -52,7 +55,7 @@ const CreatePost: React.FC = () => {
               style={{
                 scrollbarGutter: "stable",
               }}
-              placeholder="Enter your title here..."
+              placeholder={t(`Enter your title here...`)}
               className="w-full mb-0 text-3xl font-light font-instrumentSerif border-none outline-none bg-transparent placeholder-gray-500"
               value={title}
               rows={2}
@@ -65,7 +68,7 @@ const CreatePost: React.FC = () => {
             />
             <textarea
               id="subtitle"
-              placeholder="Enter your subtitle here..."
+              placeholder={t(`Enter your subtitle here...`)}
               className="w-full mb-2 text-lg font-normal font-inter border-none outline-none bg-transparent placeholder-gray-400"
               value={subtitle}
               rows={2}

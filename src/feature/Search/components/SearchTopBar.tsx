@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next';
 import { LuSearch } from 'react-icons/lu';
 
 const SearchTopBar: React.FC = () => {
+  const {t} = useTranslation()
     const [searchTerm, setSearchTerm] = useState<string>('');
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => { 
         setSearchTerm(event.target.value)
@@ -9,12 +11,12 @@ const SearchTopBar: React.FC = () => {
     }
 
   return (
-     <div className="w-full relative">
+        <div className="w-full relative">
               <input
                 type="text"
                 value={searchTerm}
                 onChange={handleInputChange}
-                placeholder="Search..."
+                placeholder={t("Search")}
                 className="w-full px-4 py-3 border-none bg-neutral-600 rounded-full outline-none"
               />
               <div className="absolute top-3 right-5 cursor-pointer ">

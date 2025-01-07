@@ -9,6 +9,7 @@ import ProfileAbout from "../components/ProfileAbout";
 import ProfilePosts from "../components/ProfilePosts";
 import ProfileArticles from "../components/ProfileArticles";
 import ProfileMedia from "../components/ProfileMedia";
+import { useTranslation } from "react-i18next";
 
 const tabs = [
   { id: 'about', title: "About" },
@@ -19,12 +20,13 @@ const tabs = [
 
 const Profile: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
+  const { t } = useTranslation();
   
   return (
     <div className={`grid grid-cols-[4fr_1.66fr] `}>
       <div className="profile border-r-[1px] border-neutral-500 ">
         <Topbar>
-          <p>Profile</p>
+          <p>{t(`Profile`)}</p>
         </Topbar>
 
         {/* profile content */}

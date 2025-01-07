@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+
 
 interface TabsProps {
   tabs: { id: number | string; title: string }[];
@@ -11,6 +13,7 @@ interface TabsProps {
 const Tabs: React.FC<TabsProps> = ({tabs, activeTab,setActiveTab,scale}) => {
   const [tabStyle, setTabStyle] = useState<React.CSSProperties>({});
   const tabRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const activeTabElement = tabRef.current?.querySelector(".active" ) as HTMLElement;
@@ -41,7 +44,7 @@ const Tabs: React.FC<TabsProps> = ({tabs, activeTab,setActiveTab,scale}) => {
             }`}
             onClick={() => handleTabClick(tab.id)}
           >
-            {tab.title}
+            {t(`${tab.title}`)}
           </div>
         ))}
         {/* Tab slider */}

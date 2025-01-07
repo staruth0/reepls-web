@@ -2,6 +2,7 @@ import cn from 'classnames';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import './index.scss';
+import { useTranslation } from 'react-i18next';
 
 interface sidebarprops {
   NavItemIcon: React.FC<{ className?: string }>;
@@ -10,6 +11,8 @@ interface sidebarprops {
 }
 
 const SidebarItem: React.FC<sidebarprops> = ({ NavItemIcon, name, link }) => {
+  const { t } = useTranslation();
+
   return (
     <NavLink
       to={link}
@@ -21,7 +24,7 @@ const SidebarItem: React.FC<sidebarprops> = ({ NavItemIcon, name, link }) => {
       end>
       <div className={`sidebar__item`}>
         <NavItemIcon className="sidebar__icon" />
-        <p>{name}</p>
+        <p>{t(`${name}`)}</p>
       </div>
     </NavLink>
   );

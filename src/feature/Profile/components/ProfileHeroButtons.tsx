@@ -1,8 +1,11 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 const ProfileHeroButtons: React.FC = () => {
-     const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+
      const handleEditProfile = () => {
        navigate("/test/profile/edit");
      };
@@ -15,13 +18,13 @@ const ProfileHeroButtons: React.FC = () => {
         className="px-8 py-3 border border-gray-300 rounded-full text-sm hover:bg-gray-100"
         onClick={handleEditProfile}
       >
-        Edit Profile
+       {t(`Edit Profile`)}
       </button>
       <button
         className="px-8 py-3 bg-neutral-600 rounded-full text-sm hover:bg-gray-200"
         onClick={handleViewAnalytics}
       >
-        View Analytics
+        {t(`View Analytics`)}
       </button>
     </div>
   );

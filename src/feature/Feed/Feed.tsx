@@ -6,6 +6,7 @@ import Communique from "./components/Communique/Communique";
 import "./feed.scss";
 import Tabs from "../../components/molecules/Tabs/Tabs";
 
+
 const tabs = [
   { id: 1, title: "For you" },
   { id: 2, title: "Following" },
@@ -14,6 +15,7 @@ const tabs = [
 const UserFeed:React.FC = () => {
   const [isExpandedMode, setIsExpandedMode] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
+
 
   function handleExpandedMode() {
     setIsExpandedMode((prev) => !prev);

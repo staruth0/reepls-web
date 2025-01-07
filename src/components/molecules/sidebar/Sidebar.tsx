@@ -6,11 +6,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import SidebarItem from '../../atoms/SidebarItem';
 
 import './sidebar.scss';
+import { useTranslation } from 'react-i18next';
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
+  const {t} = useTranslation()
 
   const navLinks = [
     {
@@ -57,7 +59,7 @@ const Sidebar: React.FC = () => {
               className={`create__post__button `}
               disabled={location.pathname === '/test/posts/create' || isCreatingPost}>
               <LuPlusCircle className="create__post__icon" style={{ width: '20px', height: '20px' }} />
-              Create Post
+              {t(`Create Post`)}
             </button>
           </Popover.Trigger>
           <Popover.Portal>
@@ -66,13 +68,13 @@ const Sidebar: React.FC = () => {
                 <button
                   className="cursor-pointer py-2 px-4 text-sm hover:text-primary-400"
                   onClick={() => setIsCreatingPost(true)}>
-                  Create Regular Post
+                  {t(`Create Regular Post`)}
                 </button>
                 <hr className="border-neutral-400 w-3/4 mx-auto" />
                 <button
                   className="cursor-pointer py-2 px-4 text-sm hover:text-primary-400"
                   onClick={() => navigate('/test/posts/create')}>
-                  Write Article
+                  {t(`Write Article`)}
                 </button>
               </div>
               <Popover.Arrow className="PopoverArrow" />

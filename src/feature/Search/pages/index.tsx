@@ -3,6 +3,7 @@ import Topbar from "../../../components/atoms/Topbar/Topbar";
 import Tabs from "../../../components/molecules/Tabs/Tabs";
 import Communique from "../../Feed/components/Communique/Communique";
 import SearchTopBar from "../components/SearchTopBar";
+import { useTranslation } from "react-i18next";
 
 const tabs = [
   { id: "Topics", title: "Topics" },
@@ -11,14 +12,14 @@ const tabs = [
 ];
 
 const topics = [
-  "politics",
-  "journalism",
-  "tech",
-  "art",
-  "history",
-  "culture",
-  "film",
-  "crime",
+  "Politics",
+  "Journalism",
+  "Tech",
+  "Art",
+  "History",
+  "Culture",
+  "Film",
+  "Crime",
 ];
 const articles = [
   "Anglophone crisis",
@@ -29,6 +30,8 @@ const articles = [
 const Search: React.FC = () => {
   const [isExpandedMode, setIsExpandedMode] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
+  const {t} = useTranslation()
+
 
   function handleExpandedMode() {
     setIsExpandedMode((prev) => !prev);
@@ -60,7 +63,7 @@ const Search: React.FC = () => {
                 <div className="flex flex-wrap gap-x-3 gap-y-2  ">
                   {topics.map((topic) => (
                     <span key={topic} className="py-2 px-6 text-neutral-100 rounded-full border-[1px] border-neutral-500 hover:border-none hover:bg-primary-400 hover:text-white transition-all transition-300 cursor-pointer ">
-                      {topic}
+                      {t(`${topic}`)}
                     </span>
                   ))}
                 </div>

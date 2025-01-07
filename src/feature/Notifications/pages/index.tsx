@@ -2,14 +2,16 @@ import React from 'react'
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import ProfileConfigurations from '../../Profile/components/ProfileConfigurations';
 import NotificationContainer from '../components/NotificationContainer';
+import { useTranslation } from 'react-i18next';
 
-const Notifications:React.FC = () => {
+const Notifications: React.FC = () => {
+  const {t} = useTranslation()
   return (
     <div className={`grid grid-cols-[4fr_1.66fr] `}>
      
       <div className="profile border-r-[1px] border-neutral-500 ">
         <Topbar>
-          <p>Notifications</p>
+          <p>{t(`Notifications`)}</p>
         </Topbar>
 
         {/* notification content */}
