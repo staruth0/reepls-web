@@ -18,10 +18,11 @@ const ProfileInput: React.FC<ProfileInputProps> = ({
       <label className="text-neutral-100 text-[15px]">{label}</label>
       <input
         type="text"
-        className="w-full border-none bg-transparent text-neutral-50 text-[16px] outline-none"
+        className="w-full border-none bg-transparent text-neutral-50 text-[16px] outline-none "
         value={value}
         onChange={onChange}
         placeholder={placeholder}
+       
       />
     </div>
   );

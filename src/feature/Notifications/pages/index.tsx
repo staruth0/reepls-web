@@ -13,8 +13,14 @@ const Notifications:React.FC = () => {
         </Topbar>
 
         {/* notification content */}
-        <div className="profile__content px-20">
+        <div className="notification__content px-20">
           <div className='mt-6 flex flex-col gap-5'>
+            <NotificationContainer />
+            <NotificationContainer />
+            <NotificationContainer />
+            <NotificationContainer />
+            <NotificationContainer />
+            <NotificationContainer />
             <NotificationContainer />
             <NotificationContainer />
             <NotificationContainer />

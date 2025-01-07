@@ -3,7 +3,7 @@ import { thumb } from '../../../assets/icons'
 
 const NotificationContainer:React.FC = () => {
   return (
-    <div className="flex gap-2 w-full items-start border-b-[1px] border-neutral-500 pb-3 ">
+    <div className="flex gap-2 w-full items-start border-b-[1px] rounded border-neutral-500 pb-3 ">
       <img src={thumb} alt="thumb" className="w-[25px] mt-1" />
       <div className="flex-1 flex flex-col gap-1">
         <div className="text-xl font-roboto font-bold text-neutral-50 flex items-center gap-3 w-full">
