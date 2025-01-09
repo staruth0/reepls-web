@@ -17,28 +17,28 @@ const Sidebar: React.FC = () => {
   const navLinks = [
     {
       icon: LuHome,
-      name: 'Home',
-      link: '/test/feed',
+      name: "Home",
+      link: "/test/feed",
     },
     {
       icon: LuSearch,
-      name: 'Explore',
-      link: '/test/explore',
+      name: "Explore",
+      link: "/test/explore",
     },
     {
       icon: LuBookmark,
-      name: 'Bookmarks',
-      link: '/bookmarks',
+      name: "Bookmarks",
+      link: "/test/bookmarks",
     },
     {
       icon: LuBell,
-      name: 'Notifications',
-      link: '/test/notifications',
+      name: "Notifications",
+      link: "/test/notifications",
     },
     {
       icon: FaRegUserCircle,
-      name: 'Profile',
-      link: '/test/profile',
+      name: "Profile",
+      link: "/test/profile",
     },
   ];
 

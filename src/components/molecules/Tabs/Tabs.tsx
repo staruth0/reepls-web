@@ -3,14 +3,16 @@ import { useTranslation } from "react-i18next";
 
 
 interface TabsProps {
-  tabs: { id: number | string; title: string }[];
+    tabs: { id: number | string; title: string }[];
     activeTab: number | string;
     setActiveTab: (tabId: number | string) => void;
-    scale:boolean
+    scale: boolean;
+    borderBottom?: boolean
+
 
 }
 
-const Tabs: React.FC<TabsProps> = ({tabs, activeTab,setActiveTab,scale}) => {
+const Tabs: React.FC<TabsProps> = ({tabs, activeTab,setActiveTab,scale,borderBottom}) => {
   const [tabStyle, setTabStyle] = useState<React.CSSProperties>({});
   const tabRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
@@ -32,12 +34,12 @@ const Tabs: React.FC<TabsProps> = ({tabs, activeTab,setActiveTab,scale}) => {
   return (
     <div className="flex flex-col items-center px-4 ">
       {/* Tabs */}
-      <div ref={tabRef} className="relative flex justify-between w-full">
+      <div ref={tabRef} className={`relative flex justify-between w-full px-4 ${borderBottom ?'border-b':'' } `}>
         {tabs.map((tab) => (
           <div
             key={tab.id}
             id={`tab-${tab.id}`}
-            className={`px-4 py-2 cursor-pointer transition-all border-b-2 ${
+            className={`px-4 py-2 cursor-pointer transition-all border-b-2 -mb-0 ${
               activeTab === tab.id
                 ? `border-primary-400 text-neutral-50 ${ scale ? 'scale-110':''}`
                 : "border-transparent text-neutral-50"

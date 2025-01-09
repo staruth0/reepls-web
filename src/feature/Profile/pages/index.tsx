@@ -46,6 +46,7 @@ const Profile: React.FC = () => {
               activeTab={activeTab}
               setActiveTab={setActiveTab}
               scale={false}
+              borderBottom={true}
             />
           </div>
 
