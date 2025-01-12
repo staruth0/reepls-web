@@ -85,3 +85,17 @@ Refs:
 - https://tailwindui.com/components/application-ui/overlays/modal-dialogs
 - Popover: https://dev.to/said7388/how-to-create-a-popover-using-tailwind-css-13kj
 - Tabs: https://devsimplified.hashnode.dev/tabs-in-reactjs-with-slider-animation
+
+Editor command addtions
+
+- search and replace
+- emoji keyboard
+- equation?
+  Mobile
+- Add image and video
+- Fix link
+
+To do
+
+- Add Error boundary to app
+-
