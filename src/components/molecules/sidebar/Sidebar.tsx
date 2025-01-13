@@ -24,7 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarColla
   const navLinks = [
     {
       icon: LuHome,
-      name: "feed",
+      name: "Feed",
       link: "/feed",
     },
     {
