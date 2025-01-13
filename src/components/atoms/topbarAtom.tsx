@@ -19,38 +19,42 @@ const TopbarAtom = () => {
 
   return (
     <>
-      {location.pathname === '/feed/search' ? (
-        <div className="top-bar-atom">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={handleInputChange}
-            placeholder="Search..."
-            className="search-input"
-          />
-          <div className="search-icon">
-            <LuSearch className="h-6 w-6" />
-          </div>
-        </div>
-      ) : (
-        <div className="top-bar-atom">
-          <div className="tabs">
-            <button className={`tab ${activeTab === 'forYou' ? 'active' : ''}`} onClick={() => setActiveTab('forYou')}>
-              For you
-            </button>
-            <button
-              className={`tab ${activeTab === 'following' ? 'active' : ''}`}
-              onClick={() => setActiveTab('following')}>
-              Following
-            </button>
+      <div className="top-bar-atom">
+        {location.pathname === '/feed/search' ? (
+          <>
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={handleInputChange}
+              placeholder="Search..."
+              className="search-input"
+            />
+            <div className="search-icon">
+              <LuSearch className="h-6 w-6" />
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="tabs">
+              <button
+                className={`tab ${activeTab === 'forYou' ? 'active' : ''}`}
+                onClick={() => setActiveTab('forYou')}>
+                For you
+              </button>
+              <button
+                className={`tab ${activeTab === 'following' ? 'active' : ''}`}
+                onClick={() => setActiveTab('following')}>
+                Following
+              </button>
 
-            <div className="slider" style={getSliderStyle()}></div>
-          </div>
-          <button className="icon hover:text-primary-400 transition-all duration-300">
-            <LuBrain className="h-6 w-6" />
-          </button>
-        </div>
-      )}
+              <div className="slider" style={getSliderStyle()}></div>
+            </div>
+            <button className="icon hover:text-primary-400 transition-all duration-300">
+              <LuBrain className="h-6 w-6" />
+            </button>
+          </>
+        )}
+      </div>
     </>
   );
 };

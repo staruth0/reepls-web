@@ -5,40 +5,40 @@ import { LuBell, LuBookmark, LuHome, LuPlusCircle, LuSearch } from 'react-icons/
 import { useLocation, useNavigate } from 'react-router-dom';
 import SidebarItem from '../../atoms/SidebarItem';
 
-import './sidebar.scss';
 import { useTranslation } from 'react-i18next';
+import './sidebar.scss';
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
-  const {t} = useTranslation()
+  const { t } = useTranslation();
 
   const navLinks = [
     {
       icon: LuHome,
-      name: "Home",
-      link: "/test/feed",
+      name: 'My Feed',
+      link: '/test/feed',
     },
     {
       icon: LuSearch,
-      name: "Explore",
-      link: "/test/explore",
+      name: 'Explore',
+      link: '/test/explore',
     },
     {
       icon: LuBookmark,
-      name: "Bookmarks",
-      link: "/test/bookmarks",
+      name: 'Bookmarks',
+      link: '/test/bookmarks',
     },
     {
       icon: LuBell,
-      name: "Notifications",
-      link: "/test/notifications",
+      name: 'Notifications',
+      link: '/test/notifications',
     },
     {
       icon: FaRegUserCircle,
-      name: "Profile",
-      link: "/test/profile",
+      name: 'Profile',
+      link: '/test/profile',
     },
   ];
 
