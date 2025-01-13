@@ -1,8 +1,8 @@
 import cn from 'classnames';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 import './index.scss';
-import { useTranslation } from 'react-i18next';
 
 interface sidebarprops {
   NavItemIcon: React.FC<{ className?: string }>;

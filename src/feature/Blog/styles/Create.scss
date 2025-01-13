@@ -14,13 +14,13 @@
     .content__body {
       width: 100%;
       padding: 2.8125rem 13rem;
-      @include mixin.max-1440 {
-        padding: 5px;
-      }
       display: flex;
       flex-direction: column;
       gap: 2.8rem;
       align-self: center;
+      @include mixin.max-1440 {
+        padding: 5px;
+      }
 
       &.content__body__preview__post {
         max-width: clamp(300px, 50%, 580px);

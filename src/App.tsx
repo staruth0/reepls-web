@@ -7,6 +7,7 @@ import { AuthRoutes } from './Routes/AuthRoutes';
 import { UserRoutes } from './Routes/UserRoutes';
 import { WebRoutes } from './Routes/WebRoutes';
 
+
 const router = createBrowserRouter([
   WebRoutes,
   AuthRoutes,

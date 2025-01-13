@@ -5,9 +5,10 @@ import { LuBell, LuBookmark, LuHome, LuPlusCircle, LuSearch } from 'react-icons/
 import { useLocation, useNavigate } from 'react-router-dom';
 import SidebarItem from '../../atoms/SidebarItem';
 
-import './sidebar.scss';
 import { useTranslation } from 'react-i18next';
 import { arrowLeftRight } from '../../../assets/icons';
+import './sidebar.scss';
+
 
 interface SidebarProps{
   isSidebarCollapsed: boolean,
@@ -18,7 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarColla
   const location = useLocation();
   const navigate = useNavigate();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
-  const {t} = useTranslation()
+  const { t } = useTranslation();
 
   const navLinks = [
     {
@@ -45,6 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarColla
       icon: FaRegUserCircle,
       name: "Profile",
       link: "/profile",
+
     },
   ];
 
