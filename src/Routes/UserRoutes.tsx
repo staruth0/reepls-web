@@ -10,7 +10,7 @@ import UserLayout from '../layouts/UserLayout';
 // import Home from "../feature/Home/pages/Home";
 
 const UserRoutes = {
-  path: "/test",
+  path: "/",
   element: <UserLayout />,
   children: [
     {

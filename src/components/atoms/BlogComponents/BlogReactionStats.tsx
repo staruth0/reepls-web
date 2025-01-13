@@ -1,7 +1,7 @@
 
 import React from "react";
 import "./Blog.scss";
-import { hand5, heart, thumb } from "../../assets/icons";
+import { hand5, heart, thumb } from "../../../assets/icons";
 
 const BlogReactionStats: React.FC = () => {
   return (

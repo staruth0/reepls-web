@@ -18,6 +18,11 @@
     font-size: x-large;
     padding: 1rem;
     flex: 0.5;
+
+    img{
+      width: 26px;
+      height: 26px;
+    }
   }
 
   .sidebar__links {
@@ -25,6 +30,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    margin-top: 1.2rem;
   }
 
   .create__post__btn {

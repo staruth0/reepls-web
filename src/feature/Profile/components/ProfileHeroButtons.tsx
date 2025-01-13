@@ -7,7 +7,7 @@ const ProfileHeroButtons: React.FC = () => {
   const { t } = useTranslation();
 
      const handleEditProfile = () => {
-       navigate("/test/profile/edit");
+       navigate("/profile/edit");
      };
      const handleViewAnalytics = () => {
        navigate("/profile/analytics");

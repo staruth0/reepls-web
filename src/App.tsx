@@ -4,19 +4,12 @@ import NotFound from './feature/NotFound';
 import useTheme from './hooks/useTheme';
 import './index.css';
 import { AuthRoutes } from './Routes/AuthRoutes';
-import { HomeRoutes } from './Routes/HomeRoutes';
-import { PostRoutes, Previewroutes } from './Routes/PostRoutes';
-import { ProfileRoutes } from './Routes/ProfileRoutes';
 import { UserRoutes } from './Routes/UserRoutes';
 import { WebRoutes } from './Routes/WebRoutes';
 
 const router = createBrowserRouter([
   WebRoutes,
-  HomeRoutes,
   AuthRoutes,
-  PostRoutes,
-  ProfileRoutes,
-  Previewroutes,
   UserRoutes,
   { path: '*', element: <NotFound /> }, // Catch-all route for 404
 ]);

@@ -1,6 +1,6 @@
 import React from "react";
 import "./Blog.scss";
-import { ellipsisVertical, profileAvatar, VerifiedIcon } from "../../assets/icons";
+import { ellipsisVertical, profileAvatar, VerifiedIcon } from "../../../assets/icons";
 
 const BlogProfile: React.FC = () => {
   return (

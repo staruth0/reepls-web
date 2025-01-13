@@ -1,5 +1,5 @@
 import React from 'react';
-import Message from '../atoms/Message';
+import Message from '../atoms/message';
 import './index.scss';
 import { useTranslation } from 'react-i18next';
 

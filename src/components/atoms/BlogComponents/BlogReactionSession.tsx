@@ -1,6 +1,6 @@
 import React from "react";
 import "./Blog.scss";
-import { readAloudIcon, thumb_2, tooltip } from "../../assets/icons";
+import { readAloudIcon, thumb_2, tooltip } from "../../../assets/icons";
 
 const BlogReactionSession: React.FC = () => {
   return (

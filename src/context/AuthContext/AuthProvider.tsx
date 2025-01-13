@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, useEffect } from "react";
+import React, { ReactNode, useState, useEffect, useCallback } from "react";
 import { AuthContext, AuthContextProps } from "./authContext";
 import { jwtDecode } from "jwt-decode";
 
@@ -23,7 +23,7 @@ const AuthProvider: React.FC<AuthProviderComponentProps> = ({ children }) => {
     }
   };
 
-  const checkTokenExpiration = () => {
+  const checkTokenExpiration = useCallback(() => {
     const storedToken = localStorage.getItem("authToken");
     if (storedToken) {
       const decodedToken = jwtDecode(storedToken);
@@ -35,7 +35,7 @@ const AuthProvider: React.FC<AuthProviderComponentProps> = ({ children }) => {
     }
 
     return false;
-  };
+  },[]); ;
 
   const logout = () => {
     setAuthState(null);
@@ -46,6 +46,7 @@ const AuthProvider: React.FC<AuthProviderComponentProps> = ({ children }) => {
   useEffect(() => {
     const isExpired = checkTokenExpiration();
     if (isExpired) {
+      console.log(isExpired);
       logout();
     } else {
       const storedToken = localStorage.getItem("authToken");

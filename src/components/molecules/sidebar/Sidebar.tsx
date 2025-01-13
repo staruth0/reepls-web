@@ -7,8 +7,14 @@ import SidebarItem from '../../atoms/SidebarItem';
 
 import './sidebar.scss';
 import { useTranslation } from 'react-i18next';
+import { arrowLeftRight } from '../../../assets/icons';
 
-const Sidebar: React.FC = () => {
+interface SidebarProps{
+  isSidebarCollapsed: boolean,
+  setIsSidebarCollapsed: (value: boolean) => void
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarCollapsed }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
@@ -17,63 +23,96 @@ const Sidebar: React.FC = () => {
   const navLinks = [
     {
       icon: LuHome,
-      name: "Home",
-      link: "/test/feed",
+      name: "feed",
+      link: "/feed",
     },
     {
       icon: LuSearch,
       name: "Explore",
-      link: "/test/explore",
+      link: "/explore",
     },
     {
       icon: LuBookmark,
       name: "Bookmarks",
-      link: "/test/bookmarks",
+      link: "/bookmarks",
     },
     {
       icon: LuBell,
       name: "Notifications",
-      link: "/test/notifications",
+      link: "/notifications",
     },
     {
       icon: FaRegUserCircle,
       name: "Profile",
-      link: "/test/profile",
+      link: "/profile",
     },
   ];
 
   return (
     <div className="side">
-      <div className="logo__position">REEPLS</div>
+      <div className="flex gap-5 items-center h-[80px]">
+        {!isSidebarCollapsed && <div className=" text-roboto text-[24px] font-semibold">REEPLS</div>}
+        
+          <img
+            src={arrowLeftRight}
+            alt="arrow"
+            className={`size-[26px] cursor-pointer   ${
+              isSidebarCollapsed ? "rotate-180 " : ""
+            }`}
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          />
+        
+      </div>
+
       <div className="sidebar__links">
         {navLinks.map((navItem, index) => (
-          <SidebarItem key={index} NavItemIcon={navItem.icon} name={navItem.name} link={navItem.link} />
+          <SidebarItem
+            key={index}
+            NavItemIcon={navItem.icon}
+            name={navItem.name}
+            link={navItem.link}
+            isSidebarcollapsed={!isSidebarCollapsed}
+          />
         ))}
       </div>
 
-      {isCreatingPost && <CreateRegularPostModal isModalOpen={isCreatingPost} setIsModalOpen={setIsCreatingPost} />}
+      {isCreatingPost && (
+        <CreateRegularPostModal
+          isModalOpen={isCreatingPost}
+          setIsModalOpen={setIsCreatingPost}
+        />
+      )}
       <div className="create__post__btn">
         <Popover.Root>
           <Popover.Trigger asChild>
             <button
               className={`create__post__button `}
-              disabled={location.pathname === '/test/posts/create' || isCreatingPost}>
-              <LuPlusCircle className="create__post__icon" style={{ width: '20px', height: '20px' }} />
-              {t(`Create Post`)}
+              disabled={location.pathname === "/posts/create" || isCreatingPost}
+            >
+              <LuPlusCircle
+                className="create__post__icon"
+                style={{ width: "20px", height: "20px" }}
+              />
+              {!isSidebarCollapsed && t(`Create Post`)}
             </button>
           </Popover.Trigger>
           <Popover.Portal>
-            <Popover.Content className="PopoverContent rounded-full" sideOffset={5}>
+            <Popover.Content
+              className="PopoverContent rounded-full"
+              sideOffset={5}
+            >
               <div className="block text-center">
                 <button
                   className="cursor-pointer py-2 px-4 text-sm hover:text-primary-400"
-                  onClick={() => setIsCreatingPost(true)}>
+                  onClick={() => setIsCreatingPost(true)}
+                >
                   {t(`Create Regular Post`)}
                 </button>
                 <hr className="border-neutral-400 w-3/4 mx-auto" />
                 <button
                   className="cursor-pointer py-2 px-4 text-sm hover:text-primary-400"
-                  onClick={() => navigate('/test/posts/create')}>
+                  onClick={() => navigate("/posts/create")}
+                >
                   {t(`Write Article`)}
                 </button>
               </div>

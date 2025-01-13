@@ -6,4 +6,8 @@
   display: grid;
   grid-template-columns: 1fr 5fr;
   background-color: var(--background);
+
+  &.user__layout__bar__collapsed{
+    grid-template-columns: .5fr 5.5fr;
+  }
 }

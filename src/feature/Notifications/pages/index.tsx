@@ -9,7 +9,7 @@ const Notifications: React.FC = () => {
   return (
     <div className={`grid grid-cols-[4fr_1.66fr] `}>
      
-      <div className="profile border-r-[1px] border-neutral-500 ">
+      <div className="profile border-r-[1px] border-neutral-500">
         <Topbar>
           <p>{t(`Notifications`)}</p>
         </Topbar>

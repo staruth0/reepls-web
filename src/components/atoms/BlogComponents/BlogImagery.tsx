@@ -1,6 +1,6 @@
 import React from "react";
 import "./Blog.scss";
-import { Pics } from "../../assets/images";
+import { Pics } from "../../../assets/images";
 
 const BlogImagery: React.FC = () => {
   return (
