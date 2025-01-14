@@ -1,5 +1,6 @@
 import "./rightNav.scss";
 import checkMarkIcon from "../../assets/icons/checkmark.svg";
+import { useNavigate } from "react-router-dom";
 
 interface messageTypes {
   profile: string;
@@ -13,8 +14,13 @@ interface messageTypes {
 }
 
 const Message = (props: messageTypes) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => { 
+    navigate('/posts/communique')
+  }
   return (
-    <div className="message-atom">
+    <div className="message-atom cursor-pointer" onClick={handleClick} >
       <header>
         <span className="header-profile"> {props.profile} </span>
         <div className="header-content">

@@ -7,7 +7,19 @@ interface AuthProviderComponentProps {
 }
 
 const AuthProvider: React.FC<AuthProviderComponentProps> = ({ children }) => {
-  const [authState, setAuthState] = useState<AuthContextProps | null>(null);
+  const [authState, setAuthState] = useState<AuthContextProps | null>(() => {
+    const storedToken = localStorage.getItem("authToken");
+    if (storedToken) {
+      try {
+        const decoded = jwtDecode(storedToken);
+        return { userId: decoded.sub!, token: storedToken };
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        localStorage.removeItem("authToken");
+      }
+    }
+    return null;
+  });
   const [loading, setLoading] = useState<boolean>(true);
 
   const login = (token: string) => {
@@ -44,22 +56,16 @@ const AuthProvider: React.FC<AuthProviderComponentProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    const isExpired = checkTokenExpiration();
-    if (isExpired) {
-      console.log(isExpired);
-      logout();
-    } else {
-      const storedToken = localStorage.getItem("authToken");
-      if (storedToken) {
-        const decoded = jwtDecode(storedToken);
-        setAuthState({ userId: decoded.sub!, token: storedToken });
-        console.log("authState.....", {
-          userId: decoded.sub!,
-          token: storedToken,
-        });
+    const validateToken = async () => {
+      const isExpired = checkTokenExpiration();
+      if (isExpired) {
+        console.log("Token expired");
+        logout();
       }
-    }
-    setLoading(false);
+      setLoading(false);
+    };
+
+    validateToken();
   }, []);
 
   return (

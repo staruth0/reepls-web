@@ -11,8 +11,8 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({}: CreateTopBarProps) =>
   const {t} = useTranslation()
 
   const onPublish = () => {
-    if (location.pathname === '/test/posts/create') {
-      navigate('/test/posts/create/preview');
+    if (location.pathname === '/posts/create') {
+      navigate('/posts/create/preview');
     } else if (location.pathname === '/posts/create/preview') {
       console.log('Publishing the post...');
     }

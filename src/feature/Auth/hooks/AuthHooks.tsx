@@ -80,7 +80,7 @@ export const useLoginUser = () => {
   const { login } = useContext(AuthContext);
 
   const navigateToFeed = () => {
-    navigate("/test/feed");
+    navigate("/feed");
   };
   return useMutation({
     mutationFn: (user: User) => loginUser(user),
@@ -103,7 +103,7 @@ export const useUpdateUser = () => {
   const navigate = useNavigate();
 
   const navigateToUserProfile = () => {
-    navigate("/test/feed");
+    navigate("/feed");
   };
 
   return useMutation({

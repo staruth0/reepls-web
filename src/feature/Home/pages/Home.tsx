@@ -12,9 +12,14 @@ function Home() {
   const { loading, authState } = useContext(AuthContext);
 
   const handleClick = () => {
+    console.log("Current authState:", authState);
+    console.log("Stored token:", localStorage.getItem("authToken"));
+    
     if (authState?.userId) {
+      console.log("Navigating to feed");
       navigate('/feed');
     } else {
+      console.log("Navigating to auth");
       navigate('/auth');
     }
   };
