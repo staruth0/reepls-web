@@ -9,7 +9,7 @@ const BlogReactionSession: React.FC = () => {
 
   const handleSpeak = () => {
     const utterance = new SpeechSynthesisUtterance(
-      "Entrez votre email pour créer un compte. Notez que s'inscrire avec un email offre plus de personnalisation et d'autres avantages."
+      `The Tangue", alongside a number of other historic artworks from the fatherland have not found home yet. These artifacts remain scattered across various countries, awaiting their rightful return to their homeland.`
     );
     utterance.voice = selectedVoice;
     console.log(selectedVoice);

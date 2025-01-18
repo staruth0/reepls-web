@@ -43,12 +43,21 @@ const ProfileConfigurations: React.FC = () => {
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
+  const loadVoices = () => {
     const voices = window.speechSynthesis.getVoices();
-    if (voices.length > 9) {
-      setVoiceLanguages([voices[0], voices[9]]);
+    if (voices.length > 0) {
+      setVoiceLanguages(voices);
     }
-  }, []);
+  };
+
+  loadVoices();
+  window.speechSynthesis.onvoiceschanged = loadVoices; 
+
+  return () => {
+    window.speechSynthesis.onvoiceschanged = null; 
+  };
+}, []);
 
   return (
     <div className="profile__configurations px-6 py-2 sticky top-0">
@@ -114,11 +123,15 @@ const ProfileConfigurations: React.FC = () => {
               className="bg-neutral-800 text-neutral-50 p-2 rounded-md outline-none"
               onChange={handleLanguageChangeVoice}
             >
-              {voiceLanguages.map((voice, index) => (
-                <option key={index} value={voice.name}>
-                 ({voice.lang})
-                </option>
-              ))}
+              {voiceLanguages.length === 0 ? (
+                <option disabled>Loading voices...</option>
+              ) : (
+                voiceLanguages.map((voice, index) => (
+                  <option key={index} value={voice.name}>
+                    ({voice.lang})
+                  </option>
+                ))
+              )}
             </select>
           </div>
         </ConfigurationWrapper>

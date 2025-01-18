@@ -8,7 +8,7 @@ const BlogMessage: React.FC = () => {
     setIsExpanded((prev) => !prev);
   };
 
-  const TextMessage = `"The Tangue", alongside a number of other historic artworks from the fatherland have not found home yet. These artifacts remain scattered across various countries, awaiting their rightful return to their homeland.`;
+  const TextMessage = `The Tangue", alongside a number of other historic artworks from the fatherland have not found home yet. These artifacts remain scattered across various countries, awaiting their rightful return to their homeland.`;
   const truncatedText = `"The Tangue", alongside a number of other historic artworks from the fatherland have not found home yet.`;
 
   return (
