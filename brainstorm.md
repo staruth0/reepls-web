@@ -1,3 +1,7 @@
+Modal, Dialog, Popover, Tooltip, Tabs, Slider,
+
+Emoji Picker
+
 Steps:
 
 1. Dont work on anything having to with Posting or aticles for now; I want tcontinue it but we have toget the layout right first
