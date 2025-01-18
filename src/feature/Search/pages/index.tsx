@@ -43,10 +43,9 @@ const Search: React.FC = () => {
         isExpandedMode ? "grid-cols-[4fr_1.25fr]" : "grid-cols-[4fr_1.66fr]"
       } `}
     >
-      
       <div className="search border-r-[1px] border-neutral-500 ">
         <Topbar>
-          <SearchTopBar/>
+          <SearchTopBar />
         </Topbar>
         <div className="px-20 flex flex-col">
           <div className="mt-10 w-[45%] self-center">
@@ -57,36 +56,38 @@ const Search: React.FC = () => {
               scale={true}
             />
           </div>
-        
-            <div className="mt-8 text-[15px]">
-              {activeTab === "Topics" && (
-                <div className="flex flex-wrap gap-x-3 gap-y-2  ">
-                  {topics.map((topic) => (
-                    <span key={topic} className="py-2 px-6 text-neutral-100 rounded-full border-[1px] border-neutral-500 hover:border-none hover:bg-primary-400 hover:text-white transition-all transition-300 cursor-pointer ">
-                      {t(`${topic}`)}
-                    </span>
-                  ))}
-                </div>
-              )}
-              {activeTab === "Recent" && (
-                <div className="recent">
-                  {articles.map((article) => (
-                    <p key={article}>{article}</p>
-                  ))}
-                </div>
-              )}
-              {activeTab === "People" && (
-                <div className="people">
-                  <p>No people suggestions yet.</p>
-                </div>
-              )}
-            </div>
-        
+
+          <div className="mt-8 text-[15px]">
+            {activeTab === "Topics" && (
+              <div className="flex flex-wrap gap-x-3 gap-y-2  ">
+                {topics.map((topic) => (
+                  <span
+                    key={topic}
+                    className="py-2 px-6 text-neutral-100 rounded-full border-[1px] border-neutral-500 hover:border-none hover:bg-primary-400 hover:text-white transition-all transition-300 cursor-pointer "
+                  >
+                    {t(`${topic}`)}
+                  </span>
+                ))}
+              </div>
+            )}
+            {activeTab === "Recent" && (
+              <div className="recent">
+                {articles.map((article) => (
+                  <p key={article}>{article}</p>
+                ))}
+              </div>
+            )}
+            {activeTab === "People" && (
+              <div className="people">
+                <p>No people suggestions yet.</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Communique Section */}
-      <div className="communique flex flex-col">
+      <div className="communique  hidden lg:block">
         <Communique
           isExpandedMode={isExpandedMode}
           handleExpandedMode={handleExpandedMode}

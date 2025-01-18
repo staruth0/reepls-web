@@ -20,7 +20,7 @@ const ProfileAnalytics:React.FC = () => {
       </div>
 
       {/*configurations Section */}
-      <div className="profile__configurationz">
+      <div className="profile__configurationz hidden lg:block">
         <ProfileConfigurations />
       </div>
     </div>;

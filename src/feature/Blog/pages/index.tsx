@@ -13,9 +13,8 @@ const CreatePost: React.FC = () => {
       const [subtitle, setSubtitle] = useState<string>("");
       const [content, setContent] = useState<string>("");
       const editorRef = useRef<any>(null);
-  const navigate = useNavigate();
-  const {t} = useTranslation()
-
+      const navigate = useNavigate();
+      const { t } = useTranslation();
 
       const handleKeyDown = (
         event: React.KeyboardEvent<HTMLTextAreaElement>,

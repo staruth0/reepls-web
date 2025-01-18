@@ -41,13 +41,13 @@ const Bookmarks: React.FC = () => {
         </div>
       </div>
 
-      <div className="saved__authors px-6 py-4">
-              <p className="">Your top saved Authors</p>
-              <div className='mt-10 flex flex-col gap-6'>
-                  <AuthorComponent/>
-                  <AuthorComponent/>
-                  <AuthorComponent/>
-              </div>
+      <div className="saved__authors px-6 py-4 hidden lg:block">
+        <p className="">Your top saved Authors</p>
+        <div className="mt-10 flex flex-col gap-6">
+          <AuthorComponent />
+          <AuthorComponent />
+          <AuthorComponent />
+        </div>
       </div>
     </div>
   );
