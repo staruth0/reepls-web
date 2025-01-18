@@ -1,5 +1,5 @@
 import * as Popover from '@radix-ui/react-popover';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { FaRegUserCircle } from 'react-icons/fa';
 import { LuBell, LuBookmark, LuHome, LuPlusCircle, LuSearch } from 'react-icons/lu';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -8,6 +8,9 @@ import SidebarItem from '../../atoms/SidebarItem';
 import { useTranslation } from 'react-i18next';
 import { arrowLeftRight } from '../../../assets/icons';
 import './sidebar.scss';
+import { useResponsiveLayout } from '../../../hooks/useResposiveLayout';
+import { AiOutlineClose } from "react-icons/ai";
+import { SidebarContext } from '../../../context/SidebarContext/SidebarContext';
 
 
 interface SidebarProps{
@@ -20,6 +23,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarColla
   const navigate = useNavigate();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
   const { t } = useTranslation();
+  const { isTablet } = useResponsiveLayout()
+  const { isOpen, toggleSidebar } = useContext(SidebarContext);
+  const handleToggleSidebar = () => {
+    console.log("Toggle sidebar", isOpen);
+    toggleSidebar();
+  };
 
   const navLinks = [
     {
@@ -50,20 +59,27 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarColla
     },
   ];
 
+  // fixed top-0 h-screen w-[65%] bg-white z-10 
+
   return (
-    <div className="side">
+    <div className="side h-screen sticky top-0">
       <div className="flex gap-5 items-center h-[80px]">
-        {!isSidebarCollapsed && <div className=" text-roboto text-[24px] font-semibold">REEPLS</div>}
-        
+        {!isSidebarCollapsed && (
+          <div className=" text-roboto text-[24px] font-semibold">REEPLS</div>
+        )}
+
+        {!isTablet && (
           <img
             src={arrowLeftRight}
             alt="arrow"
-            className={`size-[26px] cursor-pointer   ${
+            className={`size-[26px] cursor-pointer hidden sm:block  ${
               isSidebarCollapsed ? "rotate-180 " : ""
             }`}
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           />
-        
+        )}
+
+        <AiOutlineClose size={24} className='sm:hidden cursor-pointer' onClick={handleToggleSidebar}/>
       </div>
 
       <div className="sidebar__links">

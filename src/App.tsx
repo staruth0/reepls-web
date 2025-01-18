@@ -12,7 +12,7 @@ const router = createBrowserRouter([
   WebRoutes,
   AuthRoutes,
   UserRoutes,
-  { path: '*', element: <NotFound /> }, // Catch-all route for 404
+  { path: '*', element: <NotFound /> }, 
 ]);
 
 function App() {

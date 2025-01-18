@@ -10,17 +10,23 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AuthProvider from './context/AuthContext/AuthProvider.tsx';
 import CognitiveModeProvider from './context/CognitiveMode/CognitiveModeProvider.tsx';
 import { ThemeProvider } from './context/Theme/themeProvider.tsx';
+import SideBarProvider from './context/SidebarContext/SideBarProvider.tsx';
+import VoiceLanguageProvider from './context/VoiceLanguageContext/VoiceLanguageProvider.tsx';
 
 const queryClient = new QueryClient({});
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
       <ThemeProvider>
         <CognitiveModeProvider>
           <ReduxProvider store={store}>
             <QueryClientProvider client={queryClient}>
-              <App />
+              <SideBarProvider>
+                <VoiceLanguageProvider>
+                  <App />
+                </VoiceLanguageProvider>
+              </SideBarProvider>
             </QueryClientProvider>
           </ReduxProvider>
         </CognitiveModeProvider>

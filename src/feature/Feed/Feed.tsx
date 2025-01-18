@@ -23,27 +23,29 @@ const UserFeed:React.FC = () => {
 
   return (
     <div
-      className={`grid ${
+      className={`lg:grid ${
         isExpandedMode ? "grid-cols-[4fr_1.25fr]" : "grid-cols-[4fr_1.66fr]"
       } `}
     >
       {/* Feed Posts Section */}
-      <div className="Feed__Posts border-r-[1px] border-neutral-500 ">
+      <div className="Feed__Posts lg:border-r-[1px] border-neutral-500 ">
         <Topbar>
-          <Tabs
-            tabs={tabs}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            scale={true}
-          />
+          <div className="w-[200px] px-3">
+            <Tabs
+              tabs={tabs}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              scale={true}
+            />
+          </div>
         </Topbar>
-        <div className="px-20">
+        <div className="px-1 sm:px-20">
           <BlogComponent />
         </div>
       </div>
 
       {/* Communique Section */}
-      <div className="communique flex flex-col">
+      <div className="communique hidden lg:block">
         <Communique
           isExpandedMode={isExpandedMode}
           handleExpandedMode={handleExpandedMode}
