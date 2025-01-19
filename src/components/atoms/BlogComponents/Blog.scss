@@ -64,7 +64,6 @@
   }
 }
 
-// Message
 .blog-message {
   padding: 0.5rem 1rem;
   font-family: var(--roboto-font);
@@ -93,7 +92,6 @@
     cursor: pointer;
   }
 
-
   .show-translation {
     text-transform: uppercase;
     margin: 10px 0;
@@ -106,7 +104,6 @@
   }
 }
 
-// Imagery
 .blog-imagery {
   img {
     width: 100%;
@@ -115,7 +112,8 @@
   }
 }
 
-// Stats
+
+
 .blog-reaction-stats {
   display: flex;
   justify-content: space-between;
@@ -130,36 +128,53 @@
     align-items: center;
     gap: 0.5rem;
     height: 30px;
+    position: relative; 
 
-    > div:first-child {
-      position: relative;
+    .icons-count-wrapper{
+       display: flex;
+       gap: 0;
+       align-items: center;
+
+    .icon-wrapper {
+      display: flex;
+      position: relative;  
+      gap: 0.2rem;
 
       img {
-        position: absolute;
-        width: 20px;
-        height: 20px;
+        width: 24px;  
+        height: 24px;
         border-radius: 50%;
-        box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
-        margin-top: -10px;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease-in-out;
+        position: sticky;  // Ensures overlap
+        z-index: 1; 
       }
 
       img:nth-child(1) {
         left: 0;
-        z-index: 1;
+        z-index: 3;  
       }
+
       img:nth-child(2) {
-        left: 12px;
-        z-index: 2;
+        left: 10px; 
+        z-index: 2;  
       }
+
       img:nth-child(3) {
-        left: 24px;
-        z-index: 3;
+        left: 20px; 
+        z-index: 1; 
       }
+
     }
 
-    > div:nth-child(2),
-    > div:nth-child(3) {
-      margin-left: 40px;
+    .reaction-count {
+      margin-left: 1rem;
+    }
+  }
+
+    .comment-count {
+      margin-left: 1rem;
+      color: var(--neutral-70);
     }
   }
 
@@ -169,13 +184,17 @@
   }
 }
 
-// Session
+
+
+
+
 .blog-reaction-session {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
   border-top: 1px solid #e5e5e5;
+  position: relative;
 
   button {
     background: none;
