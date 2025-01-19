@@ -27,7 +27,7 @@ const CreatePost: React.FC = () => {
       disabled: false,
       ActionIcon: LuEye,
       onClick: () => {
-        saveDraft();
+        saveDraftArticle({ title, subtitle, content });
         navigate('/posts/article/preview/view');
       },
     },
@@ -103,18 +103,14 @@ const CreatePost: React.FC = () => {
         />
       </Topbar>
 
-      <div className="mt-10 z-10">
+      <div className="mt-10">
         <div className="md:px-4">
           <ImageSection />
-          <div
-            className="mx-auto max-w-full mt-3 pl-20"
-            style={{
-              maxWidth: 1024,
-            }}>
+          <div className="mx-auto mt-3 pl-20 max-w-5xl">
             <div className="">
               <textarea
                 placeholder={t(`Enter your title here...`)}
-                className="resize-none w-full h-auto mb-0 text-3xl font-light font-instrumentSerif border-none outline-none bg-transparent placeholder-gray-500"
+                className="resize-none w-full h-auto mb-2 text-3xl font-semibold font-instrumentSerif border-none outline-none bg-transparent placeholder-gray-500"
                 value={title}
                 rows={2}
                 onChange={(e) => setTitle(e.target.value)}
@@ -123,7 +119,7 @@ const CreatePost: React.FC = () => {
               <textarea
                 id="subtitle"
                 placeholder={t(`Enter your subtitle here...`)}
-                className="resize-none w-full h-auto mb-0 text-lg font-normal font-inter border-none outline-none bg-transparent placeholder-gray-400"
+                className="resize-none w-full h-auto mb-0 text-lg font-medium font-inter border-none outline-none bg-transparent placeholder-gray-400"
                 value={subtitle}
                 rows={2}
                 onChange={(e) => setSubtitle(e.target.value)}
@@ -131,7 +127,7 @@ const CreatePost: React.FC = () => {
               />
             </div>
           </div>
-          <div id="editor" className="mb-20">
+          <div id="editor relative" className="mb-20">
             <TipTapRichTextEditor handleContentChange={setContent} editorRef={editorRef} />
           </div>
         </div>

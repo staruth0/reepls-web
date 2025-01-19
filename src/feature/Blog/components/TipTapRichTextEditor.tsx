@@ -186,7 +186,7 @@ function TipTapRichTextEditor({
   locale.setLang('en');
   return (
     <div
-      className="block max-w-full bg-primary-100 mx-auto my-1"
+      className="block max-w-full bg-primary-100 mx-auto my-1 static"
       style={{
         maxWidth: 1024,
       }}>
