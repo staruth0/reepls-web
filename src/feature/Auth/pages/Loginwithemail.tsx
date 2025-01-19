@@ -8,7 +8,7 @@ import { useStoreCredential } from "../hooks/useStoreCredential";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { google } from "../../../assets/icons";
-import { useAuth } from "../hooks/useAuth";
+import { useLoginUser } from "../hooks/AuthHooks";
 
 function Loginwithemail() {
   const { t } = useTranslation();
@@ -18,7 +18,7 @@ function Loginwithemail() {
   );
 
   //custom'hooks
-  const { login } = useAuth();
+  const Login = useLoginUser();
   // const { storeAccessToken,storeRefreshToken } = useTokenStorage();
 
 
@@ -55,23 +55,11 @@ function Loginwithemail() {
       enteredPassword,
     });
 
-    try {
-      const response = await login({
-        password: enteredPassword,
-        email: enteredEmail,
-      });
-      if (response) {
-        console.log("success", response);
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    Login.mutate({
+      password: enteredPassword,
+      email: enteredEmail,
+    });
   };
-
-  // functions to navigate
-  // const navigateToSignInWithPhone = () => {
-  //   navigate("/auth/login/phone");
-  // };
 
   return (
     <div className="register__phone__container">
@@ -96,7 +84,10 @@ function Loginwithemail() {
           isInputError={passwordInputError}
           inputErrorMessage={t("IncorrectPasswordMessage")}
         />
-        <button type="submit">{t("ContinueButton")}</button>
+        {Login.error && <div>{Login.error.message}</div>}
+        <button type="submit">
+          {Login.isPending ? "Loging in......" : t("ContinueButton")}
+        </button>
         <div className="divider">
           <p>{t("OrDivider")}</p>
         </div>

@@ -2,15 +2,20 @@ import "../styles/welcome.scss";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+
 function Welcome() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+ 
 
   const navigateToSignIn = () => {
     navigate("register/phone");
   };
   const navigateToSignUp = () => {
     navigate("login/phone");
+  };
+  const navigateToFeed = () => {
+    navigate("/feed");
   };
 
   return (
@@ -29,7 +34,7 @@ function Welcome() {
         </button>
       </div>
 
-      <div className="welcome__link">{t("ContinueWithoutSignIn")}</div>
+      <div className="welcome__link" onClick={navigateToFeed}>{t("ContinueWithoutSignIn")}</div>
     </div>
   );
 }

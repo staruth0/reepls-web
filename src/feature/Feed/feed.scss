@@ -1,0 +1,10 @@
+@use '../../styles/main.scss';
+@use '../../styles/mixin.scss';
+@use '../../styles/variable.scss';
+
+.Feed__Posts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--roboto-font);
+}

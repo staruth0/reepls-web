@@ -1,5 +1,6 @@
 import { apiClient, apiClient2 } from "../../../services/apiClient";
 import { CodeVerify,EmailCode,PhoneCode,PhoneVerify,User,} from "../../../models/datamodels";
+import { jwtDecode } from "jwt-decode";
 
 // Register user
 const registerUser = async (user: User) => {
@@ -8,10 +9,23 @@ const registerUser = async (user: User) => {
   return data;
 };
 
+// Register user
+const updateUser = async (user: User) => {
+  const token = localStorage.getItem("authToken");
+
+  if (token) {
+    const tokenDecoded = jwtDecode(token)
+    console.log("second",tokenDecoded.sub, user);
+    const { data } = await apiClient2.patch(`/api-V1/users/${tokenDecoded.sub}`, user);
+    return data;
+  }
+  
+};
+
 // Login user
 const loginUser = async (user: User) => {
   console.log(user);
-  const { data } = await apiClient2.post("/api-V1/auth/login", user); 
+  const { data } = await apiClient2.post("/api-V1/auth/login-email", user); 
   return data;
 };
 
@@ -59,7 +73,7 @@ const logoutUser = async (refreshToken: string) => {
 
 // Refresh tokens
 const refreshAuthTokens = async (refreshToken: string) => {
-  const { data } = await apiClient2.post("/api-v1/auth/refresh-tokens", {
+  const { data } = await apiClient.post("/api-v1/auth/refresh-tokens", {
     refreshToken,
   }); 
   return data;
@@ -103,4 +117,5 @@ export {
   forgotPassword,
   verifyResetPasswordCode,
   resetPassword,
+  updateUser
 };

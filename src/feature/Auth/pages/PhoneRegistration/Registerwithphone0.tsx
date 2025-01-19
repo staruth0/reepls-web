@@ -10,7 +10,7 @@ function Registerwithphone0() {
   const { t } = useTranslation();
 
   //custom-hooks
-  const { storePhone } = useStoreCredential();
+  const { storePhone,storeName } = useStoreCredential();
  
 
   //states
@@ -24,6 +24,7 @@ function Registerwithphone0() {
   const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const phoneValue = e.target.value;
     setPhone(phoneValue);
+    storeName(phoneValue);
 
     if (/^[0-9]{9}$/.test(phoneValue) || phoneValue === '') {
       setPhoneInputError(false);

@@ -1,0 +1,181 @@
+@use '../../../styles/mixin.scss';
+@use '../../../styles/main.scss';
+@use '../../../styles/variable.scss';
+
+.side {
+  height: 100vh;
+  border-right: 1px solid var(--neutral-500);
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--plain-a);
+  gap: 1.5rem;
+  transition: all 300ms ease-in-out;
+  will-change: width;
+
+  .logo__position {
+    font-weight: 500;
+    font-size: x-large;
+    padding: 1rem;
+    flex: 0.5;
+
+    img {
+      width: 26px;
+      height: 26px;
+    }
+  }
+
+  .sidebar__links {
+    flex: 1.8;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 1.2rem;
+  }
+
+  .create__post__btn {
+    flex: 1.6;
+
+    .create__post__btn__text {
+      padding: 1rem 1.5rem;
+      margin-top: 1.3rem;
+      font-weight: 600;
+      font-family: var(--roboto-font);
+      font-size: 15px;
+    }
+
+    .create__post__button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 1.5rem;
+      border-radius: 1000px;
+      outline: none;
+      border: 1px solid var(--neutral-500);
+      font-family: var(--roboto-font);
+      color: var(--neutral-100);
+      background: none;
+      font-size: 14px;
+      gap: 0.3rem;
+      font-weight: 550;
+      margin-top: 3.5rem;
+      cursor: pointer;
+
+      &.active {
+        background: var(--primary-600);
+        border: none;
+      }
+    }
+  }
+}
+
+//==========================
+// Popover Content
+//==========================
+
+.PopoverContent {
+  border-radius: 4px;
+  padding: 5px; //20px;
+  background-color: transparent;
+  color: var(--neutral-100);
+  // box-shadow: var(--foreground) 0px 10px 38px -10px, var(--foreground) 0px 10px 20px -15px;
+  box-shadow: var(--shadow-color) 0px 0px 16px 0px;
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+  border-radius: 10px;
+  z-index: 1100;
+}
+// .PopoverContent:focus {
+//   box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px,
+//     0 0 0 2px var(--violet-7);
+// }
+.PopoverContent[data-state='open'][data-side='top'] {
+  animation-name: slideDownAndFade;
+}
+.PopoverContent[data-state='open'][data-side='right'] {
+  animation-name: slideLeftAndFade;
+}
+.PopoverContent[data-state='open'][data-side='bottom'] {
+  animation-name: slideUpAndFade;
+}
+.PopoverContent[data-state='open'][data-side='left'] {
+  animation-name: slideRightAndFade;
+}
+
+.PopoverArrow {
+  fill: var(--background);
+}
+
+.PopoverClose {
+  font-family: inherit;
+  border-radius: 100%;
+  height: 25px;
+  width: 25px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--violet-11);
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+.PopoverClose:hover {
+  background-color: var(--violet-4);
+}
+.PopoverClose:focus {
+  box-shadow: 0 0 0 2px var(--violet-7);
+}
+
+@keyframes slideUpAndFade {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideRightAndFade {
+  from {
+    opacity: 0;
+    transform: translateX(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideDownAndFade {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideLeftAndFade {
+  from {
+    opacity: 0;
+    transform: translateX(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+//==========================
+// Dialog Modal
+//==========================
+
+.dialog__modal {
+}

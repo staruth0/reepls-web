@@ -2,27 +2,31 @@ import React, { useState } from "react";
 import InputField from "../../components/InputField";
 import "../../styles/authpages.scss";
 import { validatePassword } from "../../../../utils/validatePassword";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useStoreCredential } from "../../hooks/useStoreCredential";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../store";
+import { useRegisterUser } from "../../hooks/AuthHooks";
+
 
 function RegisterWithEmail1() {
   const { t } = useTranslation();
+  const {mutate,isPending,error} = useRegisterUser()
+
+  const { email, password, username } = useSelector((state: RootState) => state.user);
 
   //custom-hooks
   const {storePassword}= useStoreCredential()
 
   //states
-  const [password, setPassword] = useState<string>("");
+  const [passwords, setPassword] = useState<string>("");
   const [passwordInputError, setPasswordInputError] = useState<boolean>(false);
-
-  //navigate
-  const navigate = useNavigate();
   //functions to handle DOM events
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const passwordValue = e.target.value;
     setPassword(passwordValue);
+    storePassword(passwordValue);
 
     if (validatePassword(passwordValue) || passwordValue === "") {
       setPasswordInputError(false);
@@ -32,24 +36,19 @@ function RegisterWithEmail1() {
   };
 
   const handlePasswordBlur = () => {
-    if (password === "") {
+    if (passwords === "") {
       setPasswordInputError(false);
     }
   };
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    storePassword(password);
-
-    console.log("password stored");
-    navigateToName();
+    console.log("password stored", { email, password, username });
+      
+    mutate({ email, password, username });
   };
 
-  // functions to navigate
-
- const navigateToName = () => {
-   navigate("/auth/register/email/two");
- };
+ 
 
   return (
     <div className="register__phone__container">
@@ -60,7 +59,7 @@ function RegisterWithEmail1() {
       <form onSubmit={handleSubmit}>
         <div>
           <InputField
-            textValue={password}
+            textValue={passwords}
             label={t("PasswordLabel")}
             type="password"
             placeholder={t("PasswordPlaceholder")}
@@ -70,8 +69,10 @@ function RegisterWithEmail1() {
             inputErrorMessage={t("PasswordErrorMessage")}
           />
         </div>
-
-        <button type="submit">{t("ContinueButton")}</button>
+        {error && <div>{error.message}</div>}
+        <button type="submit">
+          {isPending ? "Loading....." : t("ContinueButton")}
+        </button>
       </form>
     </div>
   );

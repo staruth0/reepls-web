@@ -1,0 +1,77 @@
+@use '../../../styles/mixin.scss';
+@use '../../../styles/main.scss';
+@use '../../../styles/variable.scss';
+
+.home__container {
+  @include mixin.flex-center;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--background);
+  color: var(--plain-a);
+  font-family: var(--roboto-font);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  gap: 1rem;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-400-main);
+    margin-bottom: 2rem;
+  }
+  h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--neutral-100);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .language__translators {
+    display: flex;
+    gap: 1rem;
+
+    button {
+      @include mixin.button;
+      background-color: var(--main-yellow);
+      color: var(--plain-b);
+      outline: none;
+      border: none;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+
+      &:hover {
+        background-color: var(--main-yellow);
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+
+  .togglebtn {
+    width: 60px;
+    height: 30px;
+    background-color: var(--main-green);
+    border-radius: 50px;
+    position: relative;
+    cursor: pointer;
+    padding: 0.2rem;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+
+    &.flex {
+      background-color: var(--secondary-500);
+      justify-content: flex-end;
+    }
+
+    .togglebtn__mover {
+      width: 26px;
+      height: 26px;
+      background-color: var(--plain-b);
+      border-radius: 50%;
+      box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+    }
+  }
+}

@@ -1,5 +1,4 @@
-import React from "react";
-import "../molecules/right_nav/rightNav.scss";
+import { useNavigate } from "react-router-dom";
 import checkMarkIcon from "../../assets/icons/checkmark.svg";
 
 interface messageTypes {
@@ -8,24 +7,49 @@ interface messageTypes {
   description: string;
   messageDate: string;
   messageText: string;
+  isExpandedMode: boolean;
 }
 
 const Message = (props: messageTypes) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/posts/communique");
+  };
+
   return (
-    <div className="message-atom">
-      <header>
-          <span className="header-profile"> {props.profile} </span>
-          <div className="header-content">
-            <div>
-              <h2>{props.Name}</h2>
-              <img src={checkMarkIcon} alt="check-mark" />
-            </div>
-            <p>{props.description}</p>
-            <span className="message-date">{props.messageDate}</span>
+    <div
+      className="flex flex-col gap-4 font-roboto mt-2 text-neutral-50 p-3 border-b-[1px] border-neutral-600 cursor-pointer"
+      onClick={handleClick}
+    >
+      <header className="flex gap-2">
+        <span className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-14 h-14 text-center">
+          {props.profile}
+        </span>
+
+        <div className="flex flex-col justify-center items-start gap-1">
+          <div className="flex items-center gap-2">
+            <h2 className="text-base font-semibold m-0">{props.Name}</h2>
+            <img src={checkMarkIcon} alt="check-mark" className="w-4 h-4" />
           </div>
+
+          <p
+            className={`text-neutral-50 text-xs ${
+              props.isExpandedMode
+                ? "whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]"
+                : ""
+            }`}
+          >
+            {props.description}
+          </p>
+
+          <span className="text-sm">{props.messageDate}</span>
+        </div>
       </header>
 
-      <div className="message-text">{props.messageText}</div>
+      {!props.isExpandedMode && (
+        <div className="text-xs font-normal leading-5">{props.messageText}</div>
+      )}
     </div>
   );
 };

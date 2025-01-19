@@ -1,9 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "../feature/Auth/redux/index"
+import lPostReducer from "../feature/Blog/redux/LongFormPostSlice"
+
 
 const store = configureStore({
     reducer: {
-        user:userReducer,
+        user: userReducer,
+        lPost:lPostReducer,
     }
 })
 

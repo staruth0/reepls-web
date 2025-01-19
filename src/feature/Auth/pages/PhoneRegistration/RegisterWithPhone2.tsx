@@ -5,24 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useStoreCredential } from "../../hooks/useStoreCredential";
 
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../store";
-import { useAuth } from "../../hooks/useAuth";
-import { useTokenStorage } from "../../hooks/useTokenStorage";
-import { PhoneCode } from "../../../../models/datamodels";
 
 
 
 function RegisterWithPhone2() {
   const { t } = useTranslation();
-  const { username, password, phone } = useSelector((state: RootState) => state.user)
-
-  
-
   //custom-hooks
   const { storeName } = useStoreCredential()
-  const { createUser } = useAuth();
-  const {storeAccessToken,storeRefreshToken} = useTokenStorage()
 
   //states
   const [name, setName] = useState<string>("");
@@ -37,42 +26,14 @@ function RegisterWithPhone2() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    console.log({
-      username,
-      password,
-      phone:`+237${phone}`
-    })
-    console.log("Form submitted successfully!");
-
-       try {
-         const data = await createUser({
-           username,
-           password,
-           phone: `+237${phone}`,
-         });
-         if (data) {
-           console.log("authenticated");
-           storeAccessToken(data.tokens.access.token);
-           storeRefreshToken(data.tokens.refresh.token);
-
-           navigateToCheckPhone({ phone: data.user.phone });
-         }
-       } catch (error) {
-         console.error(error);
-       }
-   
-    
+     navigateToInterests()  
   };
-
     
   // functions to navigate
-  const navigateToSignInWithEmail = () => {
-    navigate("/auth/register/email");
+  const navigateToInterests = () => {
+     navigate("/auth/interests");
   };
-  const navigateToCheckPhone = (phonecode:PhoneCode) => {
-    navigate("/auth/register/checkphone",{state:phonecode});
-  };
+  
 
   return (
     <div className="register__phone__container">
@@ -93,7 +54,7 @@ function RegisterWithPhone2() {
         <button type="submit">{t("ContinueButton")}</button>
       </form>
       <div className="bottom__links">
-        <div className="alternate__email" onClick={navigateToSignInWithEmail}>
+        <div className="alternate__email" onClick={navigateToInterests}>
          {t("Create Account with Email instead")}
         </div>
       </div>
