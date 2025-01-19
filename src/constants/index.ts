@@ -4,6 +4,8 @@ const MAX_VIDEO_COUNT = 1;
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
 
+const PREVIEW_SLUG = 'preview';
+
 const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
 const allowedVideoTypes = [
   'video/quicktime',
@@ -36,4 +38,12 @@ const allowedVideoTypes = [
   'video/f4b',
 ];
 
-export { MAX_IMAGE_COUNT, MAX_IMAGE_SIZE, MAX_VIDEO_COUNT, MAX_VIDEO_SIZE, allowedImageTypes, allowedVideoTypes };
+export {
+  MAX_IMAGE_COUNT,
+  MAX_IMAGE_SIZE,
+  MAX_VIDEO_COUNT,
+  MAX_VIDEO_SIZE,
+  PREVIEW_SLUG,
+  allowedImageTypes,
+  allowedVideoTypes,
+};

@@ -1,26 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
-import { sampleArticle2 } from '../../../data';
+import { PREVIEW_SLUG } from '../../../constants';
 import CreatePostTopBar from '../components/CreatePostTopBar';
 import '../styles/view.scss';
 const ArticleView: React.FC = () => {
+  const navigate = useNavigate();
   const { articleUid } = useParams(); // use to fetch article from db
   const [title, setTitle] = useState<string>('Sample Article Headig lorem ipsum dolor sit amet');
-  const [description, setDescription] = useState<string>(
-    'Sample Article Description lorem ipsum dolor sit amet and consectetur adipiscing elit'
-  );
+  const [description, setDescription] = useState<string>('');
   const [htmlArticleContent, setHtmlArticleContent] = useState<string>('');
 
   useEffect(() => {
-    if (articleUid == 'preview') {
-      setHtmlArticleContent(sampleArticle2);
+    if (articleUid == PREVIEW_SLUG) {
+      const articleData = localStorage.getItem('articleDraft') as string;
+      if (!articleData) {
+        navigate('/posts/create');
+      }
+      let article = JSON.parse(articleData);
+      setTitle(article.title);
+      setDescription(article.subtitle);
+      setHtmlArticleContent(article.content);
     }
   }, [articleUid]);
   return (
     <div className="">
       <Topbar>
-        <CreatePostTopBar />
+        <CreatePostTopBar title={title} mainAction={{ label: 'Publish', onClick: () => {} }} actions={[]} />
       </Topbar>
 
       <div className="mt-10 flex justify-center">

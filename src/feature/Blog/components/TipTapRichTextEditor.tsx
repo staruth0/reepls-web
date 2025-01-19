@@ -180,13 +180,13 @@ function TipTapRichTextEditor({
   const onValueChange = useCallback(
     debounce((value: any) => {
       handleContentChange(value);
-    }, 300),
+    }, 1000),
     []
   );
   locale.setLang('en');
   return (
     <div
-      className="block max-w-full bg-primary-100 mx-auto my-2"
+      className="block max-w-full bg-primary-100 mx-auto my-1"
       style={{
         maxWidth: 1024,
       }}>

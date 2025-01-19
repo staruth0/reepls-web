@@ -208,22 +208,27 @@
 .reactjs-tiptap-editor {
   border: 0;
   outline: none;
-  background-color: transparent;
+  background-color: var(--background-color) !important;
   box-shadow: none;
   div {
     border: 0;
     outline: none;
     box-shadow: none !important;
-    background-color: transparent !important;
+    background-color: var(--background-color) !important;
   }
 
   .tiptap {
     box-shadow: none !important;
     background-color: transparent !important;
+    background-color: var(--background-color) !important;
   }
 
   .ProseMirror {
     box-shadow: none !important;
-    background-color: transparent !important;
+    background-color: var(--background-color) !important;
   }
 }
+
+/*
+====================================================
+*/
