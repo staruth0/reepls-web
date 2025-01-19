@@ -7,12 +7,14 @@ import { AuthContext } from '../../../context/AuthContext/authContext';
 import CreatePostTopBar from '../components/CreatePostTopBar';
 import ImageSection from '../components/ImageSection';
 import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
+import useDraft from '../hooks/useDraft';
 
 const CreatePost: React.FC = () => {
   const { checkTokenExpiration } = useContext(AuthContext);
   const [title, setTitle] = useState<string>('');
   const [subtitle, setSubtitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
+  const { saveDraftArticle, loadDraftArticle } = useDraft();
 
   const editorRef = useRef<any>(null);
 
@@ -74,28 +76,10 @@ const CreatePost: React.FC = () => {
     }
   };
 
-  const saveDraft = () => {
-    const draft = {
-      title,
-      subtitle,
-      content,
-    };
-    localStorage.setItem('articleDraft', JSON.stringify(draft));
-  };
-
-  const loadDraft = () => {
-    const draft = localStorage.getItem('articleDraft');
-    if (!draft) return;
-    const draftObj = JSON.parse(draft);
-    setTitle(draftObj.title);
-    setSubtitle(draftObj.subtitle);
-    setContent(draftObj.content);
-  };
-
   useEffect(() => {
-    loadDraft();
+    loadDraftArticle();
     const interval = setInterval(() => {
-      saveDraft();
+      saveDraftArticle({ title, subtitle, content });
     }, 10_000);
     return () => clearInterval(interval);
   }, []);

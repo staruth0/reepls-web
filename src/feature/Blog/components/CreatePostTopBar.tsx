@@ -25,7 +25,7 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({ title, mainAction, acti
   };
 
   return (
-    <div className="w-full flex items-center justify-between px-10 z-100 sticky top-0 ">
+    <div className="w-full flex items-center justify-between px-10 sticky top-0 backdrop-blur-md">
       <h2 className=" text-xl font-instrumentSerif overflow-hidden text-ellipsis whitespace-nowrap">{title}</h2>
       <div className="flex items-center gap-2">
         <button
