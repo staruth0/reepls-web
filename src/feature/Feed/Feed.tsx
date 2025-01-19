@@ -1,25 +1,27 @@
 import React, { useState } from "react";
 import Topbar from "../../components/atoms/Topbar/Topbar";
-import BlogComponent from "../../components/molecules/BlogComponent";
 import Communique from "./components/Communique/Communique";
-
-import "./feed.scss";
 import Tabs from "../../components/molecules/Tabs/Tabs";
-
+import BlogPost from "../../components/molecules/BlogPost";
+import { useGetAllArticles } from "../Blog/hooks/useArticleHook";
+import "./feed.scss";
 
 const tabs = [
   { id: 1, title: "For you" },
   { id: 2, title: "Following" },
 ];
 
-const UserFeed:React.FC = () => {
+const UserFeed: React.FC = () => {
   const [isExpandedMode, setIsExpandedMode] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
 
-
+  const { data, error, isLoading } = useGetAllArticles();
+  
   function handleExpandedMode() {
     setIsExpandedMode((prev) => !prev);
+    console.log(data.articles)
   }
+
 
   return (
     <div
@@ -39,9 +41,17 @@ const UserFeed:React.FC = () => {
             />
           </div>
         </Topbar>
-        <div className="px-1 sm:px-20">
-          <BlogComponent />
+        {/* Blog Posts */}
+
+      { isLoading? <div>Loading...</div>:<div className="px-1 sm:px-10 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse gap-7 ">
+          {
+            data?.articles.map((article:any) => (
+              <BlogPost key={article.id} images={article.media} title={article.title} content={article.content} id={article.author_id} date={article.createdAt} />
+            ))
+         }
         </div>
+        }
+        {error && <div>Error: {error.message}</div>}
       </div>
 
       {/* Communique Section */}

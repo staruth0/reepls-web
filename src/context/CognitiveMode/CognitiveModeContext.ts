@@ -6,6 +6,6 @@ export interface CognitiveModeContextType {
 }
 
 export const CognitiveModeContext = createContext<CognitiveModeContextType>({
-  isCognitiveMode: false,
+  isCognitiveMode: true,
   toggleCognitiveMode: () => {},
 });

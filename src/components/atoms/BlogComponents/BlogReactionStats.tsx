@@ -1,9 +1,15 @@
 import React from "react";
 import "./Blog.scss";
 import { hand5, heart, thumb } from "../../../assets/icons";
+import { timeAgo } from "../../../utils/dateFormater";
 
 
-const BlogReactionStats: React.FC = () => {
+interface BlogReactionStatsProps { 
+  date: string;
+}
+
+const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({date}) => {
+
   return (
     <div className="blog-reaction-stats">
       <div className="icons">
@@ -22,7 +28,7 @@ const BlogReactionStats: React.FC = () => {
         </div>
       </div>
       <div className="time-posted">
-        3 mins read
+        {timeAgo(date)}
       </div>
     </div>
   );

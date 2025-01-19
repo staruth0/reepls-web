@@ -1,28 +1,29 @@
 import React, { useState } from "react";
 import "./Blog.scss";
 
-const BlogMessage: React.FC = () => {
+interface BlogMessageProps {
+  title: string;
+  content: string;
+}
+
+const BlogMessage: React.FC<BlogMessageProps> = ({ title, content }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleToggle = () => {
-    setIsExpanded((prev) => !prev);
-  };
-
-  const TextMessage = `The Tangue", alongside a number of other historic artworks from the fatherland have not found home yet. These artifacts remain scattered across various countries, awaiting their rightful return to their homeland.`;
-  const truncatedText = `"The Tangue", alongside a number of other historic artworks from the fatherland have not found home yet.`;
+  const handleToggle = () => setIsExpanded((prev) => !prev);
 
   return (
     <div className="blog-message">
-      <h2>
-        The long old case of looted art during German colonial rule resuscitates
-      </h2>
-      <p className={`paragraph ${isExpanded ? "expanded" : ""}`}>
-        {isExpanded ? TextMessage : truncatedText}
-        <span onClick={handleToggle} className="toggle-text">
-          {isExpanded ? " See less" : " See more"}
-        </span>
+      <h2 className="text-xl font-semibold mb-2">{title}</h2>
+      <p
+        className={`text-neutral-50 text-[14px] transition-all duration-300 ${
+          isExpanded ? "line-clamp-none" : "line-clamp-3"
+        }`}
+      >
+        {content}
       </p>
-      <button className="show-translation">Show Translation</button>
+      <button onClick={handleToggle} className="text-neutral-50 text-[15px] font-medium mt-1">
+        {isExpanded ? "See less" : "See more"}
+      </button>
     </div>
   );
 };

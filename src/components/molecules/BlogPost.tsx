@@ -7,16 +7,25 @@ import BlogReactionSession from '../atoms/BlogComponents/BlogReactionSession';
 import { CognitiveModeContext } from '../../context/CognitiveMode/CognitiveModeContext';
 import './index.scss';
 
-const BlogPost: React.FC = () => {
+interface BlogPostProps { 
+  images: string[]; 
+  title: string; 
+  content: string;
+  id: string
+  date: string
+}
+
+
+const BlogPost: React.FC<BlogPostProps> = ({ images,title ,content,id,date}) => {
   const { isCognitiveMode } = useContext(CognitiveModeContext);
 
   return (
-    <div className="each_blog_post">
-      <BlogProfile />
-      <BlogMessage />
-      {!isCognitiveMode && <BlogImagery />}
-      <BlogReactionStats />
-      <BlogReactionSession />
+    <div className="each_blog_post mt-5 shadow-md p-2">
+      <BlogProfile id={id}  date={date}/>
+      <BlogMessage title={title} content={ content} />
+      {!isCognitiveMode && <BlogImagery PostImages={images} />}
+      <BlogReactionStats date={date} />
+      <BlogReactionSession message={content} />
     </div>
   );
 };

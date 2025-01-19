@@ -2,13 +2,17 @@ import React from 'react'
 import { briefcase, mapPin, VerifiedIcon } from '../../../assets/icons'
 import { useTranslation } from 'react-i18next';
 
-const ProfileDetails: React.FC = () => {
+interface ProfileDetailsProps { 
+  name: string;
+}
+
+const ProfileDetails: React.FC<ProfileDetailsProps> = ({name}) => {
   const {t} = useTranslation()
 
   return (
     <div className="text-neutral-50">
       <div className="flex font-semibold gap-2">
-        Ndifor Icha <img src={VerifiedIcon} alt="verified icon" />
+       {name}<img src={VerifiedIcon} alt="verified icon" />
       </div>
       <p className="text-[13px]">writer @CMF FA magazine</p>
       <div className="flex text-[13px] gap-3 mt-1">
