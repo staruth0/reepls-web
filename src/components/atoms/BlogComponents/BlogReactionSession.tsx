@@ -1,40 +1,112 @@
-import React, { useContext, useState } from 'react';
-import { LuAudioLines, LuMessageCircle, LuThumbsUp, LuVolumeX } from 'react-icons/lu';
-import { VoiceLanguageContext } from '../../../context/VoiceLanguageContext/VoiceLanguageContext';
-import { cn } from '../../../utils';
+import React, { useContext, useState } from "react";
+import {
+  AudioLines,
+  MessageCircle,
+  ThumbsUp,
+  Volume2,
+  PauseCircle,
+  PlayCircle,
+  Loader2,
+} from "lucide-react"; // Proper import
+import { VoiceLanguageContext } from "../../../context/VoiceLanguageContext/VoiceLanguageContext";
+import { cn } from "../../../utils";
 
-const BlogReactionSession: React.FC = () => {
+interface BlogReactionSessionProps {
+  message: string;
+}
+
+const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
+  message,
+}) => {
   const { selectedVoice } = useContext(VoiceLanguageContext);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+  const [isPending, setIsPending] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
+
+  const synth = window.speechSynthesis;
 
   const handleSpeak = () => {
-    const message = `The Tangue", alongside a number of other historic artworks from the fatherland have not found home yet. These artifacts remain scattered across various countries, awaiting their rightful return to their homeland.`;
-    setIsSpeaking(true);
+    if (synth.speaking || isPending) return; // Prevent multiple plays
+
+    if (synth.speaking) { 
+    console.log('started speaking');
+    } 
+    
+  if (synth.pending) { 
+    console.log('pending');
+  }
+
+    setIsPending(true);
     const utterance = new SpeechSynthesisUtterance(message);
     if (selectedVoice) utterance.voice = selectedVoice;
-    window.speechSynthesis.speak(utterance);
-    setIsSpeaking(false);
+
+    utterance.onstart = () => {
+      setIsPending(false);
+      setIsSpeaking(true);
+      setIsPaused(false);
+    };
+
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setIsPaused(false);
+    };
+
+    synth.speak(utterance);
+  };
+
+  const handlePauseResume = () => {
+    if (synth.speaking && !synth.paused) {
+      synth.pause();
+      setIsPaused(true);
+    } else if (synth.paused) {
+      synth.resume();
+      setIsPaused(false);
+    }
   };
 
   const cancelSpeaking = () => {
-    window.speechSynthesis.cancel();
+    synth.cancel();
     setIsSpeaking(false);
+    setIsPaused(false);
   };
 
   return (
-    <div className="blog-reaction-session">
-      <button className="hover:text-primary-400 cursor-pointer">
-        <LuThumbsUp className="size-5" /> React
+    <div className="blog-reaction-session flex gap-4">
+      <button className="hover:text-primary-400 cursor-pointer flex items-center gap-2">
+        <ThumbsUp className="size-5" /> React
       </button>
-      <button className="hover:text-primary-400 cursor-pointer">
-        <LuMessageCircle className="size-5" /> Comment
+      <button className="hover:text-primary-400 cursor-pointer flex items-center gap-2">
+        <MessageCircle className="size-5" /> Comment
       </button>
       <button
-        className={cn('hover:text-primary-400 cursor-pointer', isSpeaking && 'animate-pulse')}
-        onClick={isSpeaking ? cancelSpeaking : handleSpeak}>
-        {isSpeaking ? <LuVolumeX className="size-5 animate-spin" /> : <LuAudioLines className="size-5" />}
-        {isSpeaking ? 'Stop' : 'Read Aloud'}
+        className={cn(
+          "hover:text-primary-400 cursor-pointer flex items-center gap-2",
+          isSpeaking && "animate-pulse"
+        )}
+        onClick={isSpeaking ? cancelSpeaking : handleSpeak}
+      >
+        {isPending ? (
+          <Loader2 className="size-5 animate-spin" />
+        ) : isSpeaking ? (
+          <Volume2 className="size-5" />
+        ) : (
+          <AudioLines className="size-5" />
+        )}
+        {isSpeaking ? "Stop" : "Read Aloud"}
       </button>
+      {isSpeaking && (
+        <button
+          className="hover:text-primary-400 cursor-pointer flex items-center gap-2"
+          onClick={handlePauseResume}
+        >
+          {isPaused ? (
+            <PlayCircle className="size-5" />
+          ) : (
+            <PauseCircle className="size-5" />
+          )}
+          {isPaused ? "Resume" : "Pause"}
+        </button>
+      )}
     </div>
   );
 };

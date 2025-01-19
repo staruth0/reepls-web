@@ -1,18 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./Blog.scss";
 import { ellipsisVertical, profileAvatar, VerifiedIcon } from "../../../assets/icons";
 import { useRoute } from "../../../hooks/useRoute";
 import { useGetUserById } from "../../../feature/Profile/hooks";
 import { formatDateWithMonth } from "../../../utils/dateFormater";
+import { AuthContext } from "../../../context/AuthContext/authContext";
 
 interface BlogProfileProps { 
   id: string;
   date:string
 }
 
-const BlogProfile: React.FC<BlogProfileProps> = ({ id,date }) => {
-  const { data} = useGetUserById(id || "");
-  
+const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
+  const { authState } = useContext(AuthContext);
+  const { data} = useGetUserById(id || authState?.userId || "");
   const { goToProfile } = useRoute();
 
   const handleProfileClick = (id:string) => { 
@@ -27,7 +28,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id,date }) => {
  };
  
   return (
-    <div className="blog-profile cursor-pointer" onClick={()=>handleProfileClick('Thiago')}>
+    <div className="blog-profile cursor-pointer" onClick={()=>handleProfileClick(id)}>
       <img src={profileAvatar} alt="avatar" />
       <div className="profile-info">
         <div className="profile-name" >

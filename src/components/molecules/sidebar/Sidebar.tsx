@@ -4,22 +4,7 @@ import Picker from 'emoji-picker-react';
 import * as RadixPopover from '@radix-ui/react-popover';
 import React, { useContext, useState } from 'react';
 import { FaRegUserCircle } from 'react-icons/fa';
-import {
-  LuBell,
-  LuBookmark,
-  LuCalendar,
-  LuCircleArrowLeft,
-  LuCirclePlus,
-  LuClock,
-  LuHouse,
-  LuImage,
-  LuPencilLine,
-  LuPlus,
-  LuSearch,
-  LuSmile,
-  LuVideo,
-  LuX,
-} from 'react-icons/lu';
+import {LuBell,LuBookmark,LuCalendar,LuCircleArrowLeft,LuCirclePlus,LuClock,LuHouse,LuImage,LuPencilLine,LuPlus,LuSearch,LuSmile,LuVideo,LuX} from 'react-icons/lu';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SidebarItem from '../../atoms/SidebarItem';
 
@@ -29,6 +14,7 @@ import { SidebarContext } from '../../../context/SidebarContext/SidebarContext';
 import { useResponsiveLayout } from '../../../hooks/useResposiveLayout';
 import { cn } from '../../../utils';
 import './sidebar.scss';
+import { AuthContext } from '../../../context/AuthContext/authContext';
 
 interface SidebarProps {
   isSidebarCollapsed: boolean;
@@ -46,6 +32,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarColla
     console.log('Toggle sidebar', isOpen);
     toggleSidebar();
   };
+  const {authState} = useContext(AuthContext);
 
   const navLinks = [
     {
@@ -72,7 +59,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarColla
     {
       icon: FaRegUserCircle,
       name: 'Profile',
-      link: '/profile',
+      link: `/profile/${authState?.userId}`,
     },
   ];
 

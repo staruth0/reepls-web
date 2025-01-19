@@ -13,7 +13,6 @@ interface BlogPostProps {
   content: string;
   id: string
   date: string
-  
 }
 
 
@@ -26,7 +25,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ images,title ,content,id,date}) => 
       <BlogMessage title={title} content={ content} />
       {!isCognitiveMode && <BlogImagery PostImages={images} />}
       <BlogReactionStats date={date} />
-      <BlogReactionSession />
+      <BlogReactionSession message={content} />
     </div>
   );
 };

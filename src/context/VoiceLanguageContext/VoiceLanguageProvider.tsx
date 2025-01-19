@@ -17,7 +17,7 @@ const VoiceLanguageProvider: React.FC<VoiceLanguageProviderProps> = ({
         setSelectedVoice(voices[0]);
       }
     };
-   
+    window.speechSynthesis.onvoiceschanged = updateVoices;
     updateVoices(); 
 
     return () => {

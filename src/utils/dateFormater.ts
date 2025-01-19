@@ -1,4 +1,4 @@
-// Utility function to format date 
+// Utility function to format date 9+
 export const formatDateWithMonth = (isoString: string) => {
   const date = new Date(isoString);
   const options: Intl.DateTimeFormatOptions = { day: "numeric", month: "long" };
