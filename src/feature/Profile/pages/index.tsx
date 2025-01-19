@@ -45,7 +45,7 @@ const Profile: React.FC = () => {
           <ProfileBody>
             <div className="flex items-center">
               <div className="flex-1">
-                <ProfileDetails name={ data.username} />
+                <ProfileDetails name={data.username} town={ data.address} occupation={data.Job} />
               </div>
               <ProfileHeroButtons />
             </div>

@@ -27,14 +27,11 @@ export const useGetAllUsers = () => {
 
 // Hook for updating a user
 export const useUpdateUser = () => {
-  const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: ({ userId, user }: { userId: string; user: User }) =>
-      updateUser(userId, user),
-    onSuccess: (data, variables) => {
-      console.log("User updated:", data);
-      navigate(`/users/${variables.userId}`);
+    mutationFn: (user: User) => updateUser(user),
+    onSuccess: (data) => {
+      console.log("User updated successfully:", data);
     },
     onError: (error) => {
       console.error("Error updating user:", error);

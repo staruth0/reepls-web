@@ -1,5 +1,6 @@
-import { apiClient } from "../../../services/apiClient";
+import { apiClient, apiClient2 } from "../../../services/apiClient";
 import { User } from "../../../models/datamodels";
+import { jwtDecode } from "jwt-decode";
 
 
 // Fetch a single user by ID
@@ -17,10 +18,18 @@ const getAllUsers = async () => {
 };
 
 // Update a user by ID
-const updateUser = async (userId: string, user: User) => {
-  console.log("Updating user with ID:", userId, "Data:", user);
-  const { data } = await apiClient.patch(`/api-v1/users/${userId}`, user);
-  return data;
+const updateUser = async (user: User) => {
+  const token = localStorage.getItem("authToken");
+
+  if (token) {
+    const tokenDecoded = jwtDecode(token);
+    console.log("second", tokenDecoded.sub, user);
+    const { data } = await apiClient2.patch(
+      `/api-V1/users/${tokenDecoded.sub}`,
+      user
+    );
+    return data;
+  }
 };
 
 // Delete a user by ID

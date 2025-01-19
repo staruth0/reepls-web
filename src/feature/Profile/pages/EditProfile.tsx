@@ -1,83 +1,133 @@
-import React, { useState } from "react";
+import React, { useReducer } from "react";
 import ProfileBody from "../components/ProfileBody";
 import ProfileInput from "../components/ProfileInput";
 import Topbar from "../../../components/atoms/Topbar/Topbar";
 import ProfileConfigurations from "../components/ProfileConfigurations";
+import { useUpdateUser } from "../hooks";
+
+type Action =
+  | { type: "SET_NAME"; payload: string }
+  | { type: "SET_BIO"; payload: string }
+  | { type: "SET_OCCUPATION"; payload: string }
+  | { type: "SET_LOCATION"; payload: string }
+  | { type: "RESET" };
+
+
+interface State {
+  name: string;
+  bio: string;
+  Job: string;
+  location: string;
+}
+
+// Reducer function to handle state updates
+const profileReducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case "SET_NAME":
+      return { ...state, name: action.payload };
+    case "SET_BIO":
+      return { ...state, bio: action.payload };
+    case "SET_OCCUPATION":
+      return { ...state, Job: action.payload };
+    case "SET_LOCATION":
+      return { ...state, location: action.payload };
+    case "RESET":
+      return { name: "", bio: "", Job: "", location: "" };
+    default:
+      return state;
+  }
+};
 
 const EditProfile: React.FC = () => {
-  const [name, setName] = useState<string>("");
-  const [bio, setBio] = useState<string>("");
-  const [occupation, setOccupation] = useState<string>("");
-  const [location, setLocation] = useState<string>("");
+  // Initialize reducer
+  const [state, dispatch] = useReducer(profileReducer, {
+    name: "",
+    bio: "",
+    Job: "",
+    location: "",
+  });
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  };
+  const { mutate, isPending, isError, isSuccess } = useUpdateUser();
 
-  const handleBioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setBio(e.target.value);
-  };
-
-  const handleOccupationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setOccupation(e.target.value);
-  };
-
-  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocation(e.target.value);
+  
+  const handleUpdateProfile = () => {
+    mutate({
+      username: state.name,
+      bio: state.bio,
+      Job: state.Job,
+      address: state.location,
+    });
   };
 
   return (
-    <div className={`grid grid-cols-[4fr_1.66fr] `}>
-      {/* profile Section */}
-      <div className="profile border-r-[1px] border-neutral-500 ">
+    <div className="grid grid-cols-[4fr_1.66fr]">
+      {/* Profile Section */}
+      <div className="profile border-r-[1px] border-neutral-500">
         <Topbar>
           <p>Profile</p>
         </Topbar>
 
-        {/* profile content */}
+        {/* Profile Content */}
         <div className="profile__content px-20">
           <ProfileBody>
-            <div
-              className="flex flex-col  w-full mt-8ǀ
-"
-            >
+            <div className="flex flex-col w-full mt-8">
               <ProfileInput
                 label="Name"
-                value={name}
-                onChange={handleNameChange}
+                value={state.name}
+                onChange={(e) =>
+                  dispatch({ type: "SET_NAME", payload: e.target.value })
+                }
                 placeholder="Enter your name"
               />
               <ProfileInput
                 label="Bio"
-                value={bio}
-                onChange={handleBioChange}
+                value={state.bio}
+                onChange={(e) =>
+                  dispatch({ type: "SET_BIO", payload: e.target.value })
+                }
                 placeholder="Enter your bio"
               />
               <ProfileInput
                 label="Occupation"
-                value={occupation}
-                onChange={handleOccupationChange}
+                value={state.Job}
+                onChange={(e) =>
+                  dispatch({ type: "SET_OCCUPATION", payload: e.target.value })
+                }
                 placeholder="Enter your occupation"
               />
               <ProfileInput
                 label="Location"
-                value={location}
-                onChange={handleLocationChange}
+                value={state.location}
+                onChange={(e) =>
+                  dispatch({ type: "SET_LOCATION", payload: e.target.value })
+                }
                 placeholder="Enter your location"
               />
 
               <button
-                className="outline-none border-none bg-primary-400 text-white px-4 py-2 mt-8 rounded-full self-center cursor-pointer w-[320px] h-[40px] flex justify-center items-centerǀ
- "
+                className="outline-none border-none bg-primary-400 text-white px-4 py-2 mt-8 rounded-full self-center cursor-pointer w-[320px] h-[40px] flex justify-center items-center"
+                onClick={handleUpdateProfile}
+                disabled={isPending}
               >
-                Save
+                {isPending ? "Saving..." : "Save"}
               </button>
+
+              {isSuccess && (
+                <p className="text-green-500 mt-2">
+                  Profile updated successfully!
+                </p>
+              )}
+              {isError && (
+                <p className="text-red-500 mt-2">
+                  Failed to update profile. Try again.
+                </p>
+              )}
             </div>
           </ProfileBody>
         </div>
       </div>
 
-      {/*configurations Section */}
+      {/* Configurations Section */}
       <div className="profile__configurationz">
         <ProfileConfigurations />
       </div>
