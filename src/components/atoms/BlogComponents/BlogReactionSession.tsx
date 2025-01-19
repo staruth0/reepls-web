@@ -1,13 +1,5 @@
 import React, { useContext, useState } from "react";
-import {
-  AudioLines,
-  MessageCircle,
-  ThumbsUp,
-  Volume2,
-  PauseCircle,
-  PlayCircle,
-  Loader2,
-} from "lucide-react"; // Proper import
+import {AudioLines,MessageCircle,ThumbsUp,Volume2,PauseCircle,PlayCircle, Loader2,} from "lucide-react"; // Proper import
 import { VoiceLanguageContext } from "../../../context/VoiceLanguageContext/VoiceLanguageContext";
 import { cn } from "../../../utils";
 
