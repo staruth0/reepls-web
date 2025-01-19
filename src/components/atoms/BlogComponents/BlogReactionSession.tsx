@@ -2,31 +2,23 @@ import React, { useContext, useState } from "react";
 import {AudioLines,MessageCircle,ThumbsUp,Volume2,PauseCircle,PlayCircle, Loader2,} from "lucide-react"; // Proper import
 import { VoiceLanguageContext } from "../../../context/VoiceLanguageContext/VoiceLanguageContext";
 import { cn } from "../../../utils";
+import ReactionModal from "./ReactionModal";
 
 interface BlogReactionSessionProps {
   message: string;
 }
 
-const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
-  message,
-}) => {
+const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({ message }) => {
   const { selectedVoice } = useContext(VoiceLanguageContext);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   const synth = window.speechSynthesis;
 
   const handleSpeak = () => {
     if (synth.speaking || isPending) return; // Prevent multiple plays
-
-    if (synth.speaking) { 
-    console.log('started speaking');
-    } 
-    
-  if (synth.pending) { 
-    console.log('pending');
-  }
 
     setIsPending(true);
     const utterance = new SpeechSynthesisUtterance(message);
@@ -64,7 +56,11 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
 
   return (
     <div className="blog-reaction-session flex gap-4">
-      <button className="hover:text-primary-400 cursor-pointer flex items-center gap-2">
+      <button
+        onMouseEnter={() => setModalOpen(true)}
+        onClick={() => setModalOpen(true)}
+        className="flex items-center gap-2 hover:text-primary-400 cursor-pointer"
+      >
         <ThumbsUp className="size-5" /> React
       </button>
       <button className="hover:text-primary-400 cursor-pointer flex items-center gap-2">
@@ -91,14 +87,15 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
           className="hover:text-primary-400 cursor-pointer flex items-center gap-2"
           onClick={handlePauseResume}
         >
-          {isPaused ? (
-            <PlayCircle className="size-5" />
-          ) : (
-            <PauseCircle className="size-5" />
-          )}
+          {isPaused ? <PlayCircle className="size-5" /> : <PauseCircle className="size-5" />}
           {isPaused ? "Resume" : "Pause"}
         </button>
       )}
+      <ReactionModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        onReact={(reaction) => console.log(`Reacted with ${reaction}`)}
+      />
     </div>
   );
 };
