@@ -19,7 +19,7 @@
     padding: 1rem;
     flex: 0.5;
 
-    img{
+    img {
       width: 26px;
       height: 26px;
     }
@@ -75,8 +75,7 @@
 
 .PopoverContent {
   border-radius: 4px;
-  padding: 20px;
-  width: 260px;
+  padding: 5px; //20px;
   background-color: inherit;
   color: var(--neutral-100);
   // box-shadow: var(--foreground) 0px 10px 38px -10px, var(--foreground) 0px 10px 20px -15px;

@@ -94,13 +94,14 @@ export default {
               500: '#DEDEDE',
               600: '#F2F2F2',
               700: '#F7F7F7',
-              800: '#FCFCFC',
+              800: '#fafafa',
             },
             main: {
               green: '#57c016',
               yellow: '#e9b50c',
             },
-            background: '#fefefe',
+            background: '#fafafa',
+            // background: '#fefefe',
             plain: {
               a: '#242424',
               b: '#fefefe',
@@ -144,13 +145,14 @@ export default {
                 500: '#333333',
                 600: '#303030',
                 700: '#262626',
-                800: '#212121',
+                800: '#1f1e1f',
               },
               main: {
                 green: '#408415',
                 yellow: '#ffcd29',
               },
-              background: '#0f0f0f',
+              background: '#1f1e1f',
+              // background: '#0f0f0f',
               plain: {
                 a: '#fefefe',
                 b: '#141414',
