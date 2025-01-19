@@ -1,4 +1,5 @@
 import CreatePost from '../feature/Blog/pages';
+import ArticleView from '../feature/Blog/pages/ArticleView';
 import PostPreview from '../feature/Blog/pages/PostPreview';
 import CommuniqueDetail from '../feature/Feed/CommuniqueDetail';
 import UserFeed from '../feature/Feed/Feed';
@@ -12,52 +13,56 @@ import UserLayout from '../layouts/UserLayout';
 // import Home from "../feature/Home/pages/Home";
 
 const UserRoutes = {
-  path: "/",
+  path: '/',
   element: <UserLayout />,
   children: [
     {
-      path: "feed",
+      path: 'feed',
       element: <UserFeed />,
     },
     {
-      path: "explore",
+      path: 'explore',
       element: <Search />,
     },
     {
-      path: "profile",
+      path: 'profile',
       element: <Profile />,
     },
     {
-      path: "profile/edit",
+      path: 'profile/edit',
       element: <EditProfile />,
     },
     {
-      path: "/profile/:username",
+      path: '/profile/:username',
       element: <Profile />,
     },
     {
-      path: "/profile/analytics",
-      element: <ProfileAnalytics/>,
+      path: '/profile/analytics',
+      element: <ProfileAnalytics />,
     },
     {
-      path: "notifications",
+      path: 'notifications',
       element: <Notifications />,
     },
     {
-      path: "bookmarks",
+      path: 'bookmarks',
       element: <Bookmarks />,
     },
     {
-      path: "posts/create",
+      path: 'posts/create',
       element: <CreatePost />,
     },
     {
-      path: "posts/create/preview",
+      path: 'posts/create/preview',
       element: <PostPreview />,
     },
     {
-      path: "posts/communique",
-      element: <CommuniqueDetail/>
+      path: 'posts/article/:articleUid/view',
+      element: <ArticleView />,
+    },
+    {
+      path: 'posts/communique',
+      element: <CommuniqueDetail />,
     },
   ],
 };

@@ -1,10 +1,31 @@
 Modal, Dialog, Popover, Tooltip, Tabs, Slider,
-
-Emoji Picker
-
 Alerts and Toasts
 
-Steps:
+Problemss
+
+- Create Post Pop Over has a slight border radius problem (check in dark mode)
+- There might be possibility fo xss attacks via editor????
+-
+
+Do Next
+
+- Fix the editor
+- Be able to type and view drafts
+- Connect to storage/ Setup storage
+- Clean up styling
+
+Small
+
+- Read alout in app language
+- Reduce height pop over items
+- Add cognitive mode icons
+- Emoji picker dark mode
+- Should display multiple media with ... to show
+- See more, see less colored? bolded?
+- Replace icons with icon pack icons
+- auth and other layoust moved accordinaly
+
+  Steps:
 
 1. Dont work on anything having to with Posting or aticles for now; I want tcontinue it but we have toget the layout right first
 2. If you visit /test/feed, you will see how I am trying to bring everything together for the userlayout

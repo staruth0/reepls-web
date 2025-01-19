@@ -52,20 +52,8 @@ import RichTextEditor, {
 import 'katex/dist/katex.min.css';
 import 'reactjs-tiptap-editor/style.css';
 import useTheme from '../../../hooks/useTheme';
-import { debounce } from '../../../utils';
+import { convertBase64ToBlob, debounce } from '../../../utils';
 import '../styles/editor.scss';
-
-function convertBase64ToBlob(base64: string) {
-  const arr = base64.split(',');
-  const mime = arr[0].match(/:(.*?);/)![1];
-  const bstr = atob(arr[1]);
-  let n = bstr.length;
-  const u8arr = new Uint8Array(n);
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n);
-  }
-  return new Blob([u8arr], { type: mime });
-}
 
 const extensions = [
   BaseKit.configure({
@@ -211,6 +199,7 @@ function TipTapRichTextEditor({
         dark={theme === 'dark'}
         disabled={false}
         hideToolbar
+        resetCSS
       />
     </div>
   );

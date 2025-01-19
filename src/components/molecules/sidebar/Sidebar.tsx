@@ -1,20 +1,45 @@
-import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
-import Picker from 'emoji-picker-react';
+import {
+  Button,
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  DialogTitle,
+  Popover,
+  PopoverButton,
+  PopoverPanel,
+} from '@headlessui/react';
+import Picker, { Theme } from 'emoji-picker-react';
 
-import * as RadixPopover from '@radix-ui/react-popover';
+// import * as RadixPopover from '@radix-ui/react-popover';
 import React, { useContext, useState } from 'react';
 import { FaRegUserCircle } from 'react-icons/fa';
-import {LuBell,LuBookmark,LuCalendar,LuCircleArrowLeft,LuCirclePlus,LuClock,LuHouse,LuImage,LuPencilLine,LuPlus,LuSearch,LuSmile,LuVideo,LuX} from 'react-icons/lu';
+import {
+  LuBell,
+  LuBookmark,
+  LuCalendar,
+  LuCircleChevronLeft,
+  LuCirclePlus,
+  LuClock,
+  LuHouse,
+  LuImage,
+  LuPencilLine,
+  LuPlus,
+  LuSearch,
+  LuSmile,
+  LuVideo,
+  LuX,
+} from 'react-icons/lu';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SidebarItem from '../../atoms/SidebarItem';
 
 import { useTranslation } from 'react-i18next';
 import { allowedImageTypes, allowedVideoTypes } from '../../../constants';
+import { AuthContext } from '../../../context/AuthContext/authContext';
 import { SidebarContext } from '../../../context/SidebarContext/SidebarContext';
 import { useResponsiveLayout } from '../../../hooks/useResposiveLayout';
+import useTheme from '../../../hooks/useTheme';
 import { cn } from '../../../utils';
 import './sidebar.scss';
-import { AuthContext } from '../../../context/AuthContext/authContext';
 
 interface SidebarProps {
   isSidebarCollapsed: boolean;
@@ -32,7 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarColla
     console.log('Toggle sidebar', isOpen);
     toggleSidebar();
   };
-  const {authState} = useContext(AuthContext);
+  const { authState } = useContext(AuthContext);
 
   const navLinks = [
     {
@@ -67,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarColla
 
   return (
     <div className="side">
-      <LuCircleArrowLeft
+      <LuCircleChevronLeft
         className={cn(
           'size-6 p-0 rounded-full cursor-pointer',
           isSidebarCollapsed && 'rotate-180',
@@ -95,33 +120,41 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarColla
       </div>
 
       {isCreatingPost && <CreateRegularPostModal isModalOpen={isCreatingPost} setIsModalOpen={setIsCreatingPost} />}
-      {/* <div className="create__post__btn">
+      <div className="create__post__btn">
         <Popover className="relative">
           <PopoverButton
-            className={`create__post__button `}
-            disabled={location.pathname === '/posts/create' || isCreatingPost}>
+            className={cn(`create__post__button `, 'disabled:text-neutral-400 disabled:cursor-not-allowed')}
+            disabled={isCreatingPost}>
             <LuCirclePlus className="create__post__icon" style={{ width: '20px', height: '20px' }} />
             {!isSidebarCollapsed && t(`Create Post`)}
           </PopoverButton>
-          <PopoverPanel anchor="bottom" className="flex flex-col bg-red-500 z-50">
-            <button
-              className="cursor-pointer py-2 px-4 text-sm hover:text-primary-400"
-              onClick={() => setIsCreatingPost(true)}>
-              {t(`Create Regular Post`)}
-            </button>
-            <hr className="border-neutral-400 w-3/4 mx-auto" />
-            <button
-              className="cursor-pointer py-2 px-4 text-sm hover:text-primary-400"
-              onClick={() => navigate('/posts/create')}>
-              {t(`Write Article`)}
-            </button>
+          <PopoverPanel
+            anchor="bottom"
+            className={cn('PopoverContent flex flex-col bg-red-500 z-50 mt-2', isSidebarCollapsed ? 'w-32' : 'w-40')}>
+            <div className="block text-center">
+              <button
+                className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4 hover:text-primary-400"
+                onClick={() => setIsCreatingPost(true)}>
+                <LuPlus className="size-4" />
+                <span className="text-sm">{isSidebarCollapsed ? t(`Post`) : t(`Create Post`)}</span>
+              </button>
+              <hr className="border-neutral-400 w-3/4 mx-auto" />
+              <button
+                className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4  hover:text-primary-400"
+                onClick={() => navigate('/posts/create')}>
+                <LuPencilLine className="size-4" />
+                <span className="text-sm">{isSidebarCollapsed ? t(`Write`) : t(`Write Article`)}</span>
+              </button>
+            </div>
           </PopoverPanel>
         </Popover>
-      </div> */}
-      <div className="create__post__btn">
+      </div>
+      {/* <div className="create__post__btn">
         <RadixPopover.Root>
           <RadixPopover.Trigger asChild>
-            <button className={`create__post__button `} disabled={isCreatingPost}>
+            <button
+              className={cn(`create__post__button `, 'disabled:text-neutral-400 disabled:cursor-not-allowed')}
+              disabled={isCreatingPost}>
               <LuCirclePlus className="size-5" />
               {!isSidebarCollapsed && t(`Create Post`)}
             </button>
@@ -149,7 +182,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarColla
             </RadixPopover.Content>
           </RadixPopover.Portal>
         </RadixPopover.Root>
-      </div>
+      </div> */}
     </div>
   );
 };
@@ -167,6 +200,8 @@ const CreateRegularPostModal = ({
   const [postEvents, setPostEvents] = useState<File[]>([]);
   const [postOther, setPostOther] = useState<File[]>([]);
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState<boolean>(false);
+  const { theme } = useTheme();
+  const { t } = useTranslation();
 
   const onPickImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -274,6 +309,8 @@ const CreateRegularPostModal = ({
                   {isEmojiPickerOpen && (
                     <Picker
                       // className="sticky top-0 left-0"
+                      searchPlaceHolder={t('Search Emojis')}
+                      theme={theme === 'light' ? Theme.LIGHT : Theme.DARK}
                       style={{ position: 'absolute', top: '100%', left: '0' }}
                       onEmojiClick={(emojiData) => {
                         // console.log('emojiData', emojiData);
