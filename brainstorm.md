@@ -13,8 +13,15 @@ Do Next
 - Be able to type and view drafts
 - Connect to storage/ Setup storage
 - Clean up styling
+- Cleanup Layouts: Left Side bar | Top bar and then content | Right top barand its content
 
 Small
+
+- Reactions should show on click
+- voice stuff should be grouped
+- When the profile uid is missing, it means we are on the profile page of the current user
+  (Allows for options like edit profile, change password, etc)
+- When the profile uid is present, it means we are on the profile page of another user
 
 - Read alout in app language
 - Reduce height pop over items
@@ -25,35 +32,8 @@ Small
 - Replace icons with icon pack icons
 - auth and other layoust moved accordinaly
 
-  Steps:
-
-1. Dont work on anything having to with Posting or aticles for now; I want tcontinue it but we have toget the layout right first
-2. If you visit /test/feed, you will see how I am trying to bring everything together for the userlayout
-
-The user layout will be used for
-
-- Feed
-- Profile
-- Notification
-- write article
-- View article
-
-The layout is just a grdi with 2 columns of 1fr and 5fr
-NThe 1 fr is the sidebar and the 5fr is the content depending on the page
-For example, the feed page will further divide the 5fr into 2 columns of 4fr and 1fr (the 4fr is the feed and the 1fr is the communique)(the styles might change but that is the idea)
-The profile page will also divide the 5fr into 2 columns of 4fr and 1fr (where the 4fr is the profile and the 1fr is the settings)
-.. and so on
-I think notifications will not divide it but just use all of teh 5fr but we will see
-
-I already have th userlayout so all you have to do is rearrange the components/PAGES to fit the layout (IE just changing from what we alreay have)
-
-Finally, create a tabs component because it seems many pages need it
-For example, feed page needs it for for you and following
-profile page needs it for about, posts, articles,...
-(I would say you should look online for working implemntation and adapt it e-https://devsimplified.hashnode.dev/tabs-in-reactjs-with-slider-animation
-)
-
-Also be careful with styling with sticky because it causes a lot of problems with creating and overlay component
+fabricekongnyuy2@gmail.com
+Ilovemydreams1#
 
 ===== Notes while working ==========
 
@@ -64,12 +44,6 @@ The same layout is usable for
 - Notification
 - write article
 - View article
-
-Left Side bar | Top bar and then content | Right top barand its content
-
-currentlt have:
-home container for feed and search
-then another fopr create postx
 
 Todo
 
