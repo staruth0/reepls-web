@@ -3,10 +3,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import NotFound from './feature/NotFound';
 import useTheme from './hooks/useTheme';
 import './index.css';
-import { AuthRoutes } from './Routes/AuthRoutes';
-import { UserRoutes } from './Routes/UserRoutes';
-import { WebRoutes } from './Routes/WebRoutes';
-
+import { AuthRoutes } from './routes/AuthRoutes';
+import { UserRoutes } from './routes/UserRoutes';
+import { WebRoutes } from './routes/WebRoutes';
 
 const router = createBrowserRouter([
   WebRoutes,
@@ -20,7 +19,6 @@ function App() {
 
   useEffect(() => {
     document.body.className = theme === 'dark' ? 'dark-theme' : '';
-    console.log('Theme:', theme);
   }, [theme]);
 
   return <RouterProvider router={router} />;

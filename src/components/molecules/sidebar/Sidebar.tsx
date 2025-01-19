@@ -1,21 +1,38 @@
-import * as Popover from '@radix-ui/react-popover';
+import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
+import Picker from 'emoji-picker-react';
+
+import * as RadixPopover from '@radix-ui/react-popover';
 import React, { useContext, useState } from 'react';
 import { FaRegUserCircle } from 'react-icons/fa';
-import { LuBell, LuBookmark, LuHome, LuPlusCircle, LuSearch } from 'react-icons/lu';
+import {
+  LuBell,
+  LuBookmark,
+  LuCalendar,
+  LuCircleArrowLeft,
+  LuCirclePlus,
+  LuClock,
+  LuHouse,
+  LuImage,
+  LuPencilLine,
+  LuPlus,
+  LuSearch,
+  LuSmile,
+  LuVideo,
+  LuX,
+} from 'react-icons/lu';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SidebarItem from '../../atoms/SidebarItem';
 
 import { useTranslation } from 'react-i18next';
-import { arrowLeftRight } from '../../../assets/icons';
-import './sidebar.scss';
-import { useResponsiveLayout } from '../../../hooks/useResposiveLayout';
-import { AiOutlineClose } from "react-icons/ai";
+import { allowedImageTypes, allowedVideoTypes } from '../../../constants';
 import { SidebarContext } from '../../../context/SidebarContext/SidebarContext';
+import { useResponsiveLayout } from '../../../hooks/useResposiveLayout';
+import { cn } from '../../../utils';
+import './sidebar.scss';
 
-
-interface SidebarProps{
-  isSidebarCollapsed: boolean,
-  setIsSidebarCollapsed: (value: boolean) => void
+interface SidebarProps {
+  isSidebarCollapsed: boolean;
+  setIsSidebarCollapsed: (value: boolean) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarCollapsed }) => {
@@ -23,63 +40,58 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarColla
   const navigate = useNavigate();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
   const { t } = useTranslation();
-  const { isTablet } = useResponsiveLayout()
+  const { isTablet } = useResponsiveLayout();
   const { isOpen, toggleSidebar } = useContext(SidebarContext);
   const handleToggleSidebar = () => {
-    console.log("Toggle sidebar", isOpen);
+    console.log('Toggle sidebar', isOpen);
     toggleSidebar();
   };
 
   const navLinks = [
     {
-      icon: LuHome,
-      name: "Feed",
-      link: "/feed",
+      icon: LuHouse,
+      name: 'Feed',
+      link: '/feed',
     },
     {
-      icon: LuSearch,
-      name: "Explore",
-      link: "/explore",
+      icon: LuSearch, // or LuCompass
+      name: 'Search', // or Explore
+      link: '/explore',
     },
     {
       icon: LuBookmark,
-      name: "Bookmarks",
-      link: "/bookmarks",
+      name: 'Bookmarks',
+      link: '/bookmarks',
     },
     {
       icon: LuBell,
-      name: "Notifications",
-      link: "/notifications",
+      name: 'Notifications',
+      link: '/notifications',
+      badgeContent: 14,
     },
     {
       icon: FaRegUserCircle,
-      name: "Profile",
-      link: "/profile",
-
+      name: 'Profile',
+      link: '/profile',
     },
   ];
 
-  // fixed top-0 h-screen w-[65%] bg-white z-10 
+  // fixed top-0 h-screen w-[65%] bg-white z-10
 
   return (
-    <div className="side h-screen sticky top-0">
+    <div className="side">
+      <LuCircleArrowLeft
+        className={cn(
+          'size-6 p-0 rounded-full cursor-pointer',
+          isSidebarCollapsed && 'rotate-180',
+          'transition-all duration-300 ease-in-out',
+          'hover:text-primary-400',
+          'bg-background border-none absolute z-10 top-1/2 right-0 transform translate-x-1/2 text-neutral-400'
+        )}
+        onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+      />
       <div className="flex gap-5 items-center h-[80px]">
-        {!isSidebarCollapsed && (
-          <div className=" text-roboto text-[24px] font-semibold">REEPLS</div>
-        )}
-
-        {!isTablet && (
-          <img
-            src={arrowLeftRight}
-            alt="arrow"
-            className={`size-[26px] cursor-pointer hidden sm:block  ${
-              isSidebarCollapsed ? "rotate-180 " : ""
-            }`}
-            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          />
-        )}
-
-        <AiOutlineClose size={24} className='sm:hidden cursor-pointer' onClick={handleToggleSidebar}/>
+        <div className=" text-roboto text-[24px] font-semibold">REEPLS</div>
       </div>
 
       <div className="sidebar__links">
@@ -89,55 +101,67 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarColla
             NavItemIcon={navItem.icon}
             name={navItem.name}
             link={navItem.link}
+            badgeContent={navItem.badgeContent}
             isSidebarcollapsed={!isSidebarCollapsed}
           />
         ))}
       </div>
 
-      {isCreatingPost && (
-        <CreateRegularPostModal
-          isModalOpen={isCreatingPost}
-          setIsModalOpen={setIsCreatingPost}
-        />
-      )}
-      <div className="create__post__btn">
-        <Popover.Root>
-          <Popover.Trigger asChild>
+      {isCreatingPost && <CreateRegularPostModal isModalOpen={isCreatingPost} setIsModalOpen={setIsCreatingPost} />}
+      {/* <div className="create__post__btn">
+        <Popover className="relative">
+          <PopoverButton
+            className={`create__post__button `}
+            disabled={location.pathname === '/posts/create' || isCreatingPost}>
+            <LuCirclePlus className="create__post__icon" style={{ width: '20px', height: '20px' }} />
+            {!isSidebarCollapsed && t(`Create Post`)}
+          </PopoverButton>
+          <PopoverPanel anchor="bottom" className="flex flex-col bg-red-500 z-50">
             <button
-              className={`create__post__button `}
-              disabled={location.pathname === "/posts/create" || isCreatingPost}
-            >
-              <LuPlusCircle
-                className="create__post__icon"
-                style={{ width: "20px", height: "20px" }}
-              />
+              className="cursor-pointer py-2 px-4 text-sm hover:text-primary-400"
+              onClick={() => setIsCreatingPost(true)}>
+              {t(`Create Regular Post`)}
+            </button>
+            <hr className="border-neutral-400 w-3/4 mx-auto" />
+            <button
+              className="cursor-pointer py-2 px-4 text-sm hover:text-primary-400"
+              onClick={() => navigate('/posts/create')}>
+              {t(`Write Article`)}
+            </button>
+          </PopoverPanel>
+        </Popover>
+      </div> */}
+      <div className="create__post__btn">
+        <RadixPopover.Root>
+          <RadixPopover.Trigger asChild>
+            <button className={`create__post__button `} disabled={isCreatingPost}>
+              <LuCirclePlus className="size-5" />
               {!isSidebarCollapsed && t(`Create Post`)}
             </button>
-          </Popover.Trigger>
-          <Popover.Portal>
-            <Popover.Content
-              className="PopoverContent rounded-full"
-              sideOffset={5}
-            >
+          </RadixPopover.Trigger>
+          <RadixPopover.Portal>
+            <RadixPopover.Content
+              className={cn('PopoverContent rounded-full', isSidebarCollapsed ? 'w-32' : 'w-44')}
+              sideOffset={5}>
               <div className="block text-center">
                 <button
-                  className="cursor-pointer py-2 px-4 text-sm hover:text-primary-400"
-                  onClick={() => setIsCreatingPost(true)}
-                >
-                  {t(`Create Regular Post`)}
+                  className="flex items-center justify-center gap-2 cursor-pointer py-4 px-4 hover:text-primary-400"
+                  onClick={() => setIsCreatingPost(true)}>
+                  <LuPlus className="size-4" />
+                  <span className="text-sm">{isSidebarCollapsed ? t(`Post`) : t(`Create Post`)}</span>
                 </button>
                 <hr className="border-neutral-400 w-3/4 mx-auto" />
                 <button
-                  className="cursor-pointer py-2 px-4 text-sm hover:text-primary-400"
-                  onClick={() => navigate("/posts/create")}
-                >
-                  {t(`Write Article`)}
+                  className="flex items-center justify-center gap-2 cursor-pointer py-4 px-4  hover:text-primary-400"
+                  onClick={() => navigate('/posts/create')}>
+                  <LuPencilLine className="size-4" />
+                  <span className="text-sm">{isSidebarCollapsed ? t(`Write`) : t(`Write Article`)}</span>
                 </button>
               </div>
-              <Popover.Arrow className="PopoverArrow" />
-            </Popover.Content>
-          </Popover.Portal>
-        </Popover.Root>
+              <RadixPopover.Arrow className="PopoverArrow" />
+            </RadixPopover.Content>
+          </RadixPopover.Portal>
+        </RadixPopover.Root>
       </div>
     </div>
   );
@@ -150,19 +174,165 @@ const CreateRegularPostModal = ({
   isModalOpen: boolean;
   setIsModalOpen: (value: boolean) => void;
 }) => {
+  const [postContent, setPostContent] = useState<string>('');
+  const [postImages, setPostImages] = useState<File[]>([]);
+  const [postVideos, setPostVideos] = useState<File[]>([]);
+  const [postEvents, setPostEvents] = useState<File[]>([]);
+  const [postOther, setPostOther] = useState<File[]>([]);
+  const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState<boolean>(false);
+
+  const onPickImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    let newImages = [];
+    for (const file of files) {
+      if (allowedImageTypes.includes(file.type)) {
+        newImages.push(file);
+      }
+    }
+    setPostImages([...postImages, ...newImages]);
+  };
+
+  const onPickVideo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    console.log('picking video', files);
+    if (!files) return;
+    let newVideos = [];
+    console.log('picking ');
+    for (const file of files) {
+      console.log('file', file.type);
+      if (allowedVideoTypes.includes(file.type)) {
+        newVideos.push(file);
+      }
+    }
+    setPostVideos([...postVideos, ...newVideos]);
+    console.log('picked video', newVideos);
+  };
+
   return (
-    <div className="dialog__modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-1000 min-h-screen min-w-screen">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-        <h3 className="text-lg font-bold mb-4">Create a Post</h3>
-        <textarea className="w-full h-32 p-2 border border-gray-300 rounded mb-4" placeholder="What's on your mind?" />
-        <div className="flex justify-end">
-          <button className="bg-gray-500 text-white py-2 px-4 rounded mr-2" onClick={() => setIsModalOpen(false)}>
-            Cancel
-          </button>
-          <button className="bg-blue-500 text-white py-2 px-4 rounded">Post</button>
+    <Dialog
+      open={isModalOpen}
+      as="div"
+      className="relative z-10 focus:outline-none"
+      onClose={() => setIsModalOpen(false)}>
+      <DialogBackdrop className="fixed inset-0 bg-black/30" />
+
+      <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div className="flex min-h-full items-center justify-center p-4">
+          <DialogPanel
+            transition
+            className={cn(
+              'w-full h-full  md:max-w-xl lg:max-w-2xl xl:max-w-3xl  rounded-xl bg-background p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0',
+              isModalOpen ? 'opacity-100' : 'opacity-0'
+            )}>
+            <DialogTitle as="h3" className="text-base/7 font-medium mb-4 flex-1">
+              <div className="flex justify-between items-center">
+                <div className="text-lg font-semibold">Post to anyone</div>
+                <button onClick={() => setIsModalOpen(false)}>
+                  <LuX className="size-6" />
+                </button>
+              </div>
+            </DialogTitle>
+            <div className=" h-[100%] flex-grow">
+              <textarea
+                className="w-full p-2 mb-4 border-none outline-none h-80 bg-background"
+                autoFocus
+                placeholder="What's on your mind?"
+                rows={15}
+                value={postContent}
+                onChange={(e) => setPostContent(e.target.value)}
+              />
+              {(postImages.length > 0 || postVideos.length > 0) && (
+                <div className="display-media flex justify-start items-center overflow-x-auto gap-2 my-1 py-1 px-4 border-b border-t border-neutral-400">
+                  {postImages.map((image, index) => (
+                    <div key={image.name} className="relative block h-32 w-32 aspect-w-1 aspect-h-1 flex-shrink-0">
+                      <img src={URL.createObjectURL(image)} alt="post image" className="object-cover h-full w-auto" />
+                      <button
+                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                        onClick={() => {
+                          const updatedImages = postImages.filter((_, i) => i !== index);
+                          setPostImages(updatedImages);
+                        }}>
+                        <LuX className="size-3" />
+                      </button>
+                    </div>
+                  ))}
+                  {postVideos.map((video, index) => (
+                    <div key={video.name} className="relative w-32 h-32 flex-shrink-0">
+                      <video src={URL.createObjectURL(video)} className="object-cover w-auto h-full" />
+                      <button
+                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                        onClick={() => {
+                          const updatedVideos = postVideos.filter((_, i) => i !== index);
+                          setPostVideos(updatedVideos);
+                        }}>
+                        <LuX className="size-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="actions flex flex-col justify-between items-start gap-3">
+                <div className="relative">
+                  <button
+                    className={cn(
+                      'flex items-center justify-center border-none outline-none hover:text-primary-400 cursor-pointer',
+                      isEmojiPickerOpen && 'text-primary-400'
+                    )}
+                    title="Add Emoji"
+                    onClick={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)}>
+                    <LuSmile className="size-6" />
+                  </button>
+                  {isEmojiPickerOpen && (
+                    <Picker
+                      // className="sticky top-0 left-0"
+                      style={{ position: 'absolute', top: '100%', left: '0' }}
+                      onEmojiClick={(emojiData) => {
+                        // console.log('emojiData', emojiData);
+                        setPostContent(postContent + emojiData.emoji);
+                      }}
+                    />
+                  )}
+                </div>
+
+                <div className="additional__actions flex gap-4">
+                  <label className="hover:text-primary-400 cursor-pointer" title="Add Image">
+                    <LuImage className="size-6" />
+                    <input type="file" accept="image/*" className="hidden" multiple onChange={onPickImage} />
+                  </label>
+                  <label className="hover:text-primary-400 cursor-pointer" title="Add Video">
+                    <LuVideo className="size-6" />
+                    <input type="file" accept="video/*" className="hidden" multiple onChange={onPickVideo} />
+                  </label>
+                  <button className="hover:text-primary-400 cursor-pointer" title="Add Event">
+                    <LuCalendar className="size-6" />
+                  </button>
+                  <button className="hover:text-primary-400 cursor-pointer" title="Add Other ">
+                    <LuPlus className="size-6" />
+                  </button>
+                </div>
+                <div className="mt-4 flex justify-end items-center gap-2 w-full">
+                  <Button className="flex items-center gap-2 hover:text-primary-400 cursor-pointer">
+                    <LuClock className="size-6" />
+                  </Button>
+
+                  <Button
+                    className={cn(
+                      'inline-flex items-center gap-2 py-1.5 px-12 border-2  rounded-full text-sm/6 font-semibold  shadow-inner shadow-white/10 hover:bg-primary-400',
+                      'border-primary-400 cursor-pointer',
+                      'transition-all duration-300 ease-in-out'
+                    )}
+                    onClick={() => setIsModalOpen(false)}>
+                    Post
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </DialogPanel>
         </div>
       </div>
-    </div>
+    </Dialog>
   );
 };
 
