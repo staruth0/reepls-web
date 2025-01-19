@@ -52,6 +52,7 @@ import RichTextEditor, {
 import 'katex/dist/katex.min.css';
 import 'reactjs-tiptap-editor/style.css';
 import useTheme from '../../../hooks/useTheme';
+import '../../../styles/shadcn.scss';
 import { convertBase64ToBlob, debounce } from '../../../utils';
 import '../styles/editor.scss';
 

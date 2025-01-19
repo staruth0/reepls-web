@@ -17,6 +17,10 @@ Do Next
 
 Small
 
+- Relative position of the editor (check css) so that it does not gover navbar means that we cannot see the + and move block commands
+- Edtior doaways: bubble menu, toolbar, the + & move, image/vid dialog (hidetoolbar),
+
+- Find way to ovveride shadcn styles in editor
 - Reactions should show on click
 - voice stuff should be grouped
 - When the profile uid is missing, it means we are on the profile page of the current user
