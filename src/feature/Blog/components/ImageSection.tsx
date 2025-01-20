@@ -27,7 +27,7 @@ const ImageSection: React.FC<{ onImageChange: (imageUrl: string) => void }> = ({
       <label
         htmlFor="thumbnail-image"
         className={cn(
-          'border border-primary-600 bg-primary-800 rounded-md cursor-pointer',
+          'border rounded-full border-primary-600 bg-primary-800 cursor-pointer',
           imageUrl ? 'border-primary-600' : 'bg-primary-400',
           'flex items-center justify-center gap-2 px-5 py-3'
         )}>

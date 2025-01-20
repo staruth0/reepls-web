@@ -18,6 +18,7 @@ Do Next
 - Connect to storage/ Setup storage
 - Clean up styling
 - Cleanup Layouts: Left Side bar | Top bar and then content | Right top barand its content
+  -On upload of media, link should be persisted in case it needs to be deleted
 
 Small
 
