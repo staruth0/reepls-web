@@ -10,6 +10,7 @@ import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
 import useDraft from '../hooks/useDraft';
 
 const CreatePost: React.FC = () => {
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
   const { checkTokenExpiration } = useContext(AuthContext);
   const [title, setTitle] = useState<string>('');
   const [subtitle, setSubtitle] = useState<string>('');
@@ -105,7 +106,7 @@ const CreatePost: React.FC = () => {
 
       <div className="mt-10">
         <div className="md:px-4">
-          <ImageSection />
+          <ImageSection onImageChange={setThumbnailUrl} />
           <div className="mx-auto mt-3 pl-20 max-w-5xl">
             <div className="">
               <textarea

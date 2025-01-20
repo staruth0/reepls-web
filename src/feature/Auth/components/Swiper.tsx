@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { back_arrow } from '../../../assets/icons';
+import { LuArrowLeft, LuArrowRight } from 'react-icons/lu';
 import { slides } from '../../../data';
 import '../styles/swiper.scss';
 
@@ -42,10 +42,10 @@ function Swiper() {
       <div className="swiper__image__container">
         <div className="swiper__buttons">
           <div className="swiper__button" onClick={handlePrevSlide}>
-            <img src={back_arrow} alt="arrow-left" />
+            <LuArrowLeft className="size-6" />
           </div>
           <div className="swiper__button" onClick={handleNextSlide}>
-            <img src={back_arrow} alt="arrow-right" className="arrow-right" />
+            <LuArrowRight className="size-6" />
           </div>
         </div>
 

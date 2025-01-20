@@ -1,6 +1,9 @@
 Modal, Dialog, Popover, Tooltip, Tabs, Slider,
 Alerts and Toasts
+
 npm i @cloudinary/url-gen @cloudinary/react
+
+uninstall: editorjs, radix-ui,
 
 Problemss
 
@@ -22,6 +25,10 @@ Small
 - Relative position of the editor (check css) so that it does not gover navbar means that we cannot see the + and move block commands
 - Edtior doaways: bubble menu, toolbar, the + & move, image/vid dialog (hidetoolbar),
 
+-On click the communique expand and can be read; click another and this one closes
+
+- clean adding thumnail image
+
 - Find way to ovveride shadcn styles in editor
 - Reactions should show on click
 - voice stuff should be grouped
@@ -29,12 +36,13 @@ Small
   (Allows for options like edit profile, change password, etc)
 - When the profile uid is present, it means we are on the profile page of another user
 
-- Read alout in app language
+- Only show reactions on click of react button
+- Read alout in app language chosen at signup
 - Reduce height pop over items
 - Add cognitive mode icons
 - Emoji picker dark mode
-- Should display multiple media with ... to show
-- See more, see less colored? bolded?
+- Should display multiple media with slider to show
+- See more, see less ---colored? bolded?
 - Replace icons images with icon pack icons
 - auth and other layoust moved accordinaly
 

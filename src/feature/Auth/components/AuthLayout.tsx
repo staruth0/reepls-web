@@ -1,14 +1,14 @@
-import "../styles/authlayout.scss";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { back_arrow } from "../../../assets/icons";
-import Swiper from "./Swiper";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
+import { LuArrowLeft } from 'react-icons/lu';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import '../styles/authlayout.scss';
+import Swiper from './Swiper';
 
 const AuthLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { i18n } = useTranslation();
-  const isBackArrowVisible = location.pathname !== "/auth";
+  const isBackArrowVisible = location.pathname !== '/auth';
 
   // Function to navigate to the previous route
   const prevRoute = () => {
@@ -28,11 +28,7 @@ const AuthLayout = () => {
       </div>
       <div className="page__container">
         <div className="top__nav">
-          {isBackArrowVisible ? (
-            <img src={back_arrow} onClick={prevRoute} alt="back_arrow" />
-          ) : (
-            <div></div>
-          )}
+          {isBackArrowVisible && <LuArrowLeft onClick={prevRoute} className="size-4" />}
           <select onChange={handleLanguageChange} defaultValue={i18n.language}>
             <option value="en">English</option>
             <option value="fr">French</option>

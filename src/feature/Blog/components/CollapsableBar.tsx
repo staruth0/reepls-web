@@ -1,6 +1,5 @@
 import React from 'react';
-// import { LuArrowLeftRight } from 'react-icons/lu';
-// import { arrowLeftRight } from '../../../assets/icons';
+import { LuArrowLeftRight } from 'react-icons/lu';
 import '../styles/callapsablebar.scss';
 
 const CollapsableBar: React.FC = () => {
@@ -8,8 +7,7 @@ const CollapsableBar: React.FC = () => {
     <div className="collapsable__bar">
       <div className="left__section">
         <div>Collapse</div>
-        {/* <LuArrowLeftRight className="arrow__icon" /> */}
-        {/* <img src={arrowLeftRight} alt="arrow" className="" /> */}
+        <LuArrowLeftRight className="arrow__icon" />
       </div>
       <div className="middle__section">
         <div className="text-title">The long old case of looted art during German colonial rule resu</div>

@@ -1,5 +1,6 @@
-import React from "react";
-import { ellipsisVertical, profileAvatar, VerifiedIcon } from "../../../assets/icons";
+import React from 'react';
+import { LuBadgeCheck, LuEllipsisVertical } from 'react-icons/lu';
+import { profileAvatar } from '../../../assets/icons';
 
 const AuthorComponent: React.FC = () => {
   return (
@@ -10,15 +11,15 @@ const AuthorComponent: React.FC = () => {
       <div className=" text-neutral-50 w-full flex items-center justify-between">
         <div>
           <div className="text-[16px] flex items-center font-semibold">
-            Thiago ALcantara{" "}
+            Thiago ALcantara{' '}
             <span>
-              {" "}
-              <img src={VerifiedIcon} alt="v_icon" />
+              {' '}
+              <LuBadgeCheck className="size-4" />
             </span>
           </div>
           <div className="text-[13px] ">Writer@ CMR magazine....</div>
-              </div>
-              <img src={ellipsisVertical} alt="ellipses" />
+        </div>
+        <LuEllipsisVertical className="size-4" />
       </div>
     </div>
   );

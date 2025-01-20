@@ -1,5 +1,5 @@
+import { LuBadgeCheck } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
-import checkMarkIcon from '../../assets/icons/checkmark.svg';
 
 interface messageTypes {
   profile: string;
@@ -29,8 +29,7 @@ const Message = (props: messageTypes) => {
         <div className="flex flex-col justify-center items-start gap-1">
           <div className="flex items-center gap-2">
             <h2 className="text-base font-semibold m-0">{props.Name}</h2>
-            {/* <LuBadgeCheck className="text-primary-500 size-5" strokeWidth={2.5} /> */}
-            <img src={checkMarkIcon} alt="check-mark" className="w-4 h-4" />
+            <LuBadgeCheck className="text-primary-500 size-5" strokeWidth={2.5} />
           </div>
 
           <p

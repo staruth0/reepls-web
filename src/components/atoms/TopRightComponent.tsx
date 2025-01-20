@@ -20,7 +20,10 @@ const TopRightComponent: React.FC<rightTopProbs> = ({ isExpandedMode, handleExpa
         {!isExpandedMode && <div>{t(`Communiques`)}</div>}
       </div>
       <LuCircleArrowLeft
-        className={cn('size-7 cursor-pointer ', isExpandedMode && 'rotate')}
+        className={cn(
+          'size-7 cursor-pointer transition-all duration-300 hover:text-primary-400',
+          isExpandedMode && ' rotate-180'
+        )}
         onClick={handleExpandedMode}
       />
       {/* <img
