@@ -25,7 +25,7 @@ const Profile: React.FC = () => {
   const { t } = useTranslation();
   const id = useParams();
 
-  const {data,isLoading,error} = useGetUserById(id.username || '');
+  const {data,isLoading,error} = useGetUserById(id.id || '');
 
 
   useEffect(() => { 
