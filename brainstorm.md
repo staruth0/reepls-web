@@ -1,5 +1,6 @@
 Modal, Dialog, Popover, Tooltip, Tabs, Slider,
 Alerts and Toasts
+npm i @cloudinary/url-gen @cloudinary/react
 
 Problemss
 
@@ -17,6 +18,7 @@ Do Next
 
 Small
 
+- https://reactjs-tiptap-editor.vercel.app/guide/getting-started.html -https://templates.tiptap.dev/hzQHLtDMMD
 - Relative position of the editor (check css) so that it does not gover navbar means that we cannot see the + and move block commands
 - Edtior doaways: bubble menu, toolbar, the + & move, image/vid dialog (hidetoolbar),
 
@@ -33,7 +35,7 @@ Small
 - Emoji picker dark mode
 - Should display multiple media with ... to show
 - See more, see less colored? bolded?
-- Replace icons with icon pack icons
+- Replace icons images with icon pack icons
 - auth and other layoust moved accordinaly
 
 fabricekongnyuy2@gmail.com
