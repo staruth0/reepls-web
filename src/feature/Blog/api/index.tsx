@@ -22,6 +22,20 @@ const getAllArticles = async () => {
   return data;
 };
 
+// Fetch all articles of an author a user is following
+const getFollowedArticles = async () => {
+  console.log("Fetching followed articles");
+  const { data } = await apiClient.get("/api-v1/articles/followed-articles");
+  return data;
+};
+
+// Fetch all articles where is_communiquer is true
+const getCommuniquerArticles = async () => {
+  console.log("Fetching communique articles");
+  const { data } = await apiClient.get("/api-v1/articles/communiquer-articles");
+  return data;
+};
+
 // Update an article by ID
 const updateArticle = async (articleId: string, article: Article) => {
   console.log("Updating article with ID:", articleId, "Data:", article);
@@ -43,6 +57,8 @@ export {
   createArticle,
   getArticleById,
   getAllArticles,
+  getFollowedArticles,
+  getCommuniquerArticles,
   updateArticle,
   deleteArticle,
 };

@@ -29,7 +29,7 @@ const UserRoutes = {
       element: <Profile />,
     },
     {
-      path: 'profile/edit',
+      path: 'profile/edit/:id',
       element: <EditProfile />,
     },
     {

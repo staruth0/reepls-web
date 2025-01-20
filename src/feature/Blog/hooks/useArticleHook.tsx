@@ -5,6 +5,8 @@ import {
   getAllArticles,
   updateArticle,
   deleteArticle,
+  getFollowedArticles,
+  getCommuniquerArticles,
 } from "../api";
 import { Article } from "../../../models/datamodels";
 import { useNavigate } from "react-router-dom";
@@ -40,6 +42,22 @@ export const useGetAllArticles = () => {
     queryKey: ["articles"],
     queryFn: () => getAllArticles(),
     
+  });
+};
+
+// Hook for fetching followed articles
+export const useGetFollowedArticles = () => {
+  return useQuery({
+    queryKey: ["followed-articles"],
+    queryFn: () => getFollowedArticles(),
+  });
+};
+
+// Hook for fetching communique articles
+export const useGetCommuniquerArticles = () => {
+  return useQuery({
+    queryKey: ["communiquer-articles"],
+    queryFn: () => getCommuniquerArticles(),
   });
 };
 

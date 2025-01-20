@@ -1,26 +1,29 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useEffect } from "react";
 import ProfileBody from "../components/ProfileBody";
 import ProfileInput from "../components/ProfileInput";
 import Topbar from "../../../components/atoms/Topbar/Topbar";
 import ProfileConfigurations from "../components/ProfileConfigurations";
-import { useUpdateUser } from "../hooks";
+import { useGetUserById, useUpdateUser } from "../hooks";
+import { useParams } from "react-router-dom";
 
+// Define action types
 type Action =
   | { type: "SET_NAME"; payload: string }
   | { type: "SET_BIO"; payload: string }
   | { type: "SET_OCCUPATION"; payload: string }
   | { type: "SET_LOCATION"; payload: string }
+  | { type: "SET_ALL"; payload: State }
   | { type: "RESET" };
 
-
+// Define state structure
 interface State {
   name: string;
   bio: string;
-  Job: string;
+  job: string;
   location: string;
 }
 
-// Reducer function to handle state updates
+// Reducer function
 const profileReducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "SET_NAME":
@@ -28,36 +31,58 @@ const profileReducer = (state: State, action: Action): State => {
     case "SET_BIO":
       return { ...state, bio: action.payload };
     case "SET_OCCUPATION":
-      return { ...state, Job: action.payload };
+      return { ...state, job: action.payload };
     case "SET_LOCATION":
       return { ...state, location: action.payload };
+    case "SET_ALL":
+      return { ...action.payload };
     case "RESET":
-      return { name: "", bio: "", Job: "", location: "" };
+      return { name: "", bio: "", job: "", location: "" };
     default:
       return state;
   }
 };
 
 const EditProfile: React.FC = () => {
+  const { id } = useParams();
+  const { data, isLoading, error } = useGetUserById(id || "");
+  const { mutate, isPending, isError, isSuccess } = useUpdateUser();
+
   // Initialize reducer
   const [state, dispatch] = useReducer(profileReducer, {
     name: "",
     bio: "",
-    Job: "",
+    job: "",
     location: "",
   });
 
-  const { mutate, isPending, isError, isSuccess } = useUpdateUser();
+  // Update state when data is fetched
+  useEffect(() => {
+    if (data) {
+      dispatch({
+        type: "SET_ALL",
+        payload: {
+          name: data.username || "",
+          bio: data.bio || "",
+          job: data.job || "",
+          location: data.address || "",
+        },
+      });
+    }
+  }, [data]);
 
-  
+  // Handle profile update
   const handleUpdateProfile = () => {
     mutate({
       username: state.name,
       bio: state.bio,
-      Job: state.Job,
+      Job: state.job,
       address: state.location,
     });
   };
+
+  if (isLoading) return <p>Loading profile...</p>;
+  if (error) return <p>Error fetching profile</p>;
 
   return (
     <div className="grid grid-cols-[4fr_1.66fr]">
@@ -89,7 +114,7 @@ const EditProfile: React.FC = () => {
               />
               <ProfileInput
                 label="Occupation"
-                value={state.Job}
+                value={state.job}
                 onChange={(e) =>
                   dispatch({ type: "SET_OCCUPATION", payload: e.target.value })
                 }

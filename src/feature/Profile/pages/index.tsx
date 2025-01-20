@@ -29,7 +29,7 @@ const Profile: React.FC = () => {
 
 
   useEffect(() => { 
-    console.log('profileid',id.username)
+    console.log('profileid',id.id)
   },[id])
   
   return (
@@ -47,7 +47,7 @@ const Profile: React.FC = () => {
               <div className="flex-1">
                 <ProfileDetails name={data.username} town={ data.address} occupation={data.Job} />
               </div>
-              <ProfileHeroButtons />
+              <ProfileHeroButtons userId={ id.id!} />
             </div>
           </ProfileBody>
 
