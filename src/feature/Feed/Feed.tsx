@@ -30,7 +30,7 @@ const UserFeed: React.FC = () => {
       } `}
     >
       {/* Feed Posts Section */}
-      <div className="Feed__Posts lg:border-r-[1px] border-neutral-500 ">
+      <div className="Feed__Posts min-h-screen lg:border-r-[1px] border-neutral-500 ">
         <Topbar>
           <div className="w-[200px] px-3">
             <Tabs
