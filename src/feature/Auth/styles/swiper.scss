@@ -1,8 +1,8 @@
-@use "../../../styles/mixin.scss";
-@use "../../../styles/main.scss";
-@use "../../../styles/variable.scss";
+@use '../../../styles/mixin.scss';
+@use '../../../styles/main.scss';
+@use '../../../styles/variable.scss';
 
-.swiper {
+.swiper__welcome {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,7 +14,7 @@
     align-self: flex-start;
     font-weight: 600;
     font-size: x-large;
-    padding:.3rem;
+    padding: 0.3rem;
     color: var(--plain-a);
   }
 
@@ -59,13 +59,12 @@
       font-weight: 600;
       font-family: var(--instrument-serif-font);
       margin-bottom: 10px;
-      
     }
 
     p {
       font-size: 15px;
       color: var(--roboto-font);
-      padding: .2rem 5.7rem;
+      padding: 0.2rem 5.7rem;
     }
   }
 
@@ -81,12 +80,11 @@
       background-color: var(--primary-600);
       cursor: pointer;
 
-     
-       &.active {
-      background-color:var(--primary-400-main); 
-      transform: scale(1.1); 
-      opacity: 1;
-    }
+      &.active {
+        background-color: var(--primary-400-main);
+        transform: scale(1.1);
+        opacity: 1;
+      }
     }
   }
 }
