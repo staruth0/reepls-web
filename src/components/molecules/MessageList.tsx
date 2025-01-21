@@ -3,6 +3,7 @@ import Message from '../atoms/message';
 import { useTranslation } from 'react-i18next';
 import './index.scss';
 import { Article } from '../../models/datamodels';
+import { formatDateWithMonth } from '../../utils/dateFormater';
 
 interface MessageListProps {
   type: 'recent' | 'older';
@@ -20,7 +21,8 @@ const MessageList: React.FC<MessageListProps> = ({ type, isExpandedMode, communi
         {communiques?.map((communique, index) => (
           <Message
             key={index}
-            messageDate={"20 Oct"}
+            author={communique.author_id!}
+            messageDate={formatDateWithMonth(communique.createdAt!)}
             messageText={communique.content!}
             isExpandedMode={isExpandedMode}
           />

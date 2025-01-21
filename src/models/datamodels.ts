@@ -27,8 +27,8 @@ export interface Article {
   text_to_speech?: string;
   author_id?: string;
   status?: "Draft" | "Published" | "Archived";
-  created_at?: string;
-  updated_at?: string;
+  createdAt?: string;
+  updatedAt?: string;
   views_count?: number;
   reports_count?: number;
 }

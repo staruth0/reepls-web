@@ -1,7 +1,9 @@
 import { LuBadgeCheck } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
+import { useGetUserById } from '../../feature/Profile/hooks';
 
 interface messageTypes {
+  author: string;
   messageDate: string;
   messageText: string;
   isExpandedMode: boolean;
@@ -9,6 +11,8 @@ interface messageTypes {
 
 const Message = (props: messageTypes) => {
   const navigate = useNavigate();
+  const {data} = useGetUserById(props.author!)
+
 
   const handleClick = () => {
     navigate('/posts/communique');
@@ -16,7 +20,7 @@ const Message = (props: messageTypes) => {
 
   return (
     <div
-      className="flex flex-col gap-4 font-roboto mt-2 text-neutral-50 p-3 border-b-[1px] border-neutral-600 cursor-pointer"
+      className="flex flex-col gap-4 font-roboto  text-neutral-50 p-3 border-b-[1px] border-neutral-600 cursor-pointer"
       onClick={handleClick}
     >
       <header className="flex gap-2">
@@ -26,7 +30,7 @@ const Message = (props: messageTypes) => {
 
         <div className="flex flex-col justify-center items-start gap-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold m-0">ENEO</h2>
+            <h2 className="text-base font-semibold m-0">{data.username}</h2>
             <LuBadgeCheck
               className="text-primary-500 size-5"
               strokeWidth={2.5}
@@ -40,7 +44,7 @@ const Message = (props: messageTypes) => {
                 : ""
             }`}
           >
-            Writer @ CMR FA magazine..
+            {!data.job ? "@Cameroon Hustler" : data.Job }
           </p>
 
           <span className="text-sm">{props.messageDate}</span>
