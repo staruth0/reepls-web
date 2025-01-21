@@ -9,7 +9,8 @@ Problemss
 
 - Create Post Pop Over has a slight border radius problem (check in dark mode)
 - There might be possibility fo xss attacks via editor????
--
+- Alert for everything: account exits with email already in use,
+- Should sideba r show when visiting other users [page?]
 
 Do Next
 
