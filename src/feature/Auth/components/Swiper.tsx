@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LuArrowLeft, LuArrowRight } from 'react-icons/lu';
+import { LuCircleArrowLeft, LuCircleArrowRight } from 'react-icons/lu';
 import { slides } from '../../../data';
 import '../styles/swiper.scss';
 
@@ -36,16 +36,18 @@ function Swiper() {
   };
 
   return (
-    <div className="swiper_custom">
+
+    <div className="swiper__welcome">
+
       <div className="swiper__logo">REEPLS</div>
 
       <div className="swiper__image__container">
         <div className="swiper__buttons">
           <div className="swiper__button" onClick={handlePrevSlide}>
-            <LuArrowLeft className="size-6" />
+            <LuCircleArrowLeft className="size-6 transition-all cursor-pointer duration-300 hover:text-primary-400" />
           </div>
           <div className="swiper__button" onClick={handleNextSlide}>
-            <LuArrowRight className="size-6" />
+            <LuCircleArrowRight className="size-6 transition-all cursor-pointer duration-300 hover:text-primary-400" />
           </div>
         </div>
 

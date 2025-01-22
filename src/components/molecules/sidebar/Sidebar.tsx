@@ -84,7 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarColla
     {
       icon: FaRegUserCircle,
       name: 'Profile',
-      link: `/profile/${authState?.userId}`,
+      link: `/profile/`,
     },
   ];
 
