@@ -17,7 +17,7 @@
   "PhoneErrorMessage": "Invalid phone number: must contain just numbers and 9 characters",
   "PasswordPlaceholder": "dfwni8y5*inikfmn",
   "PasswordErrorMessage": "Invalid: password must contain a number and a special character of at least 8 characters",
-  "NameLabel": "Name",
+  "NameLabel": "Username",
   "NamePlaceholder": "John Doe",
   "ContinueButton": "Continue",
   "LoginPrompt": "Already have an Account?",
