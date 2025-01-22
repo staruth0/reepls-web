@@ -4,13 +4,13 @@ export interface User {
   email?: string;
   password?: string;
   phone?: string;
-  role?: "Admin" | "Reader" | "Writer";
+  role?: 'Admin' | 'Reader' | 'Writer';
   profile_picture?: string;
-  banner_image?: string
+  banner_image?: string;
   following?: string[];
   bio?: string;
   address?: string;
-  Job?: string;
+  title?: string; //formerly job
   interests?: string[];
   is_verified_writer?: boolean;
   created_at?: string;
@@ -20,14 +20,17 @@ export interface User {
 export interface Article {
   article_id?: string;
   title?: string;
+  type?: 'ShortForm' | 'LongForm';
+  is_communiquer?: boolean;
   subTitle?: string;
   content?: string;
   category?: string[];
   keywords?: string[];
   media?: string[];
   text_to_speech?: string;
+  flagged?: boolean;
   author_id?: string;
-  status?: "Draft" | "Published" | "Archived";
+  status?: 'Draft' | 'Published' | 'Archived';
   createdAt?: string;
   updatedAt?: string;
   views_count?: number;
@@ -52,7 +55,7 @@ export interface Follow {
 
 export interface Reaction {
   reaction_id: string;
-  type: "Like" | "Insightful" | "Love";
+  type: 'Like' | 'Insightful' | 'Love';
   user_id: string;
   article_id: string;
   created_at: string;
@@ -61,7 +64,7 @@ export interface Reaction {
 export interface Notification {
   notification_id: string;
   user_id: string;
-  type: "New Comment" | "Reaction" | "New Follower";
+  type: 'New Comment' | 'Reaction' | 'New Follower';
   content: string;
   is_read: boolean;
   created_at: string;
@@ -72,24 +75,24 @@ export interface Report {
   article_id: string;
   reporter_id: string;
   reason: string;
-  status: "Pending" | "Resolved";
+  status: 'Pending' | 'Resolved';
   created_at: string;
 }
 
-export interface EmailCode{
-  email:string
+export interface EmailCode {
+  email: string;
 }
 
-export interface CodeVerify{
+export interface CodeVerify {
   code: string;
-  email:string
+  email: string;
 }
 
-export interface PhoneCode{
-  phone:string
+export interface PhoneCode {
+  phone: string;
 }
 
-export interface PhoneVerify{
+export interface PhoneVerify {
   code: string;
-  phone:string
+  phone: string;
 }

@@ -1,13 +1,13 @@
 // BlogProfile.tsx
-import React, { useContext, useState, useEffect } from "react";
-import { LuBadgeCheck, LuEllipsisVertical } from "react-icons/lu";
-import { profileAvatar } from "../../../assets/icons";
-import { AuthContext } from "../../../context/AuthContext/authContext";
-import { useGetUserById, useUpdateUser } from "../../../feature/Profile/hooks";
-import { useRoute } from "../../../hooks/useRoute";
-import { formatDateWithMonth } from "../../../utils/dateFormater";
-import { handleFollowClick } from "../../../utils/followUtils"; // Import the reusable follow function
-import "./Blog.scss";
+import React, { useContext, useEffect, useState } from 'react';
+import { LuBadgeCheck, LuEllipsisVertical } from 'react-icons/lu';
+import { profileAvatar } from '../../../assets/icons';
+import { AuthContext } from '../../../context/AuthContext/authContext';
+import { useGetUserById, useUpdateUser } from '../../../feature/Profile/hooks';
+import { useRoute } from '../../../hooks/useRoute';
+import { formatDateWithMonth } from '../../../utils/dateFormater';
+import { handleFollowClick } from '../../../utils/followUtils'; // Import the reusable follow function
+import './Blog.scss';
 
 interface BlogProfileProps {
   id: string;
@@ -16,8 +16,8 @@ interface BlogProfileProps {
 
 const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
   const { authState } = useContext(AuthContext);
-  const { data } = useGetUserById(id || "");
-  const { data: userData } = useGetUserById(authState?.userId || "");
+  const { user } = useGetUserById(id || '');
+  const { user: userData } = useGetUserById(authState?.userId || '');
   const { goToProfile } = useRoute();
   const { mutate } = useUpdateUser();
 
@@ -36,34 +36,17 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
 
   return (
     <div className="blog-profile">
-      <img
-        src={profileAvatar}
-        alt="avatar"
-        onClick={() => handleProfileClick(id)}
-        className="cursor-pointer"
-      />
+      <img src={profileAvatar} alt="avatar" onClick={() => handleProfileClick(id)} className="cursor-pointer" />
       <div className="profile-info">
         <div className="profile-name">
-          <p
-            className="hover:underline cursor-pointer"
-            onClick={() => handleProfileClick(id)}
-          >
-            {data?.username}
+          <p className="hover:underline cursor-pointer" onClick={() => handleProfileClick(id)}>
+            {user?.username}
           </p>
           <LuBadgeCheck className="size-4" />
           <div
-            onClick={() =>
-              handleFollowClick(
-                isFollowing,
-                setIsFollowing,
-                userData,
-                id,
-                mutate
-              )
-            }
-            className="cursor-pointer"
-          >
-            {isFollowing ? "" : "Follow"}
+            onClick={() => handleFollowClick(isFollowing, setIsFollowing, userData, id, mutate)}
+            className="cursor-pointer">
+            {isFollowing ? '' : 'Follow'}
           </div>
         </div>
         <p>Writer @ CMR FA magazine...</p>

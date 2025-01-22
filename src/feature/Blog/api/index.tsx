@@ -1,64 +1,61 @@
-import { apiClient } from "../../../services/apiClient";
-import { Article } from "../../../models/datamodels";
+import { Article } from '../../../models/datamodels';
+import { apiClient } from '../../../services/apiClient';
 
 // Create a new article
 const createArticle = async (article: Article) => {
-  console.log("Creating article:", article);
-  const { data } = await apiClient.post("/api-v1/articles", article);
+  console.log('Creating article:', article);
+  const { data } = await apiClient.post('/articles', article);
   return data;
 };
 
 // Fetch a single article by ID
 const getArticleById = async (articleId: string) => {
-  console.log("Fetching article with ID:", articleId);
-  const { data } = await apiClient.get(`/api-v1/articles/${articleId}`);
+  console.log('Fetching article with ID:', articleId);
+  const { data } = await apiClient.get(`/articles/${articleId}`);
   return data;
 };
 
 // Fetch all articles
 const getAllArticles = async () => {
-  console.log("Fetching all articles");
-  const { data } = await apiClient.get("/api-v1/articles?page=1&limit=20");
+  console.log('Fetching all articles');
+  const { data } = await apiClient.get('/articles?page=1&limit=20');
   return data;
 };
 
 // Fetch all articles of an author a user is following
 const getFollowedArticles = async () => {
-  console.log("Fetching followed articles");
-  const { data } = await apiClient.get("/api-v1/articles/followed-articles");
+  console.log('Fetching followed articles');
+  const { data } = await apiClient.get('/articles/followed-articles');
   return data;
 };
 
 // Fetch all articles where is_communiquer is true
 const getCommuniquerArticles = async () => {
-  console.log("Fetching communique articles");
-  const { data } = await apiClient.get("/api-v1/articles/communiquer-articles");
+  console.log('Fetching communique articles');
+  const { data } = await apiClient.get('/articles/communiquer-articles');
   return data;
 };
 
 // Update an article by ID
 const updateArticle = async (articleId: string, article: Article) => {
-  console.log("Updating article with ID:", articleId, "Data:", article);
-  const { data } = await apiClient.patch(
-    `/api-v1/articles/${articleId}`,
-    article
-  );
+  console.log('Updating article with ID:', articleId, 'Data:', article);
+  const { data } = await apiClient.patch(`/articles/${articleId}`, article);
   return data;
 };
 
 // Delete an article by ID
 const deleteArticle = async (articleId: string) => {
-  console.log("Deleting article with ID:", articleId);
-  const { data } = await apiClient.delete(`/api-v1/articles/${articleId}`);
+  console.log('Deleting article with ID:', articleId);
+  const { data } = await apiClient.delete(`/articles/${articleId}`);
   return data;
 };
 
 export {
   createArticle,
-  getArticleById,
-  getAllArticles,
-  getFollowedArticles,
-  getCommuniquerArticles,
-  updateArticle,
   deleteArticle,
+  getAllArticles,
+  getArticleById,
+  getCommuniquerArticles,
+  getFollowedArticles,
+  updateArticle,
 };

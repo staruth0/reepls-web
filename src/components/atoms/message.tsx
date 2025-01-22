@@ -11,7 +11,7 @@ interface messageTypes {
 
 const Message = (props: messageTypes) => {
   const navigate = useNavigate();
-  const { data } = useGetUserById(props.author);
+  const { user } = useGetUserById(props.author!);
 
   const handleClick = () => {
     navigate('/posts/communique');
@@ -28,7 +28,7 @@ const Message = (props: messageTypes) => {
 
         <div className="flex flex-col justify-center items-start gap-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold m-0">ENEO</h2>
+            <h2 className="text-base font-semibold m-0">{user?.username || 'ENEO'}</h2>
             <LuBadgeCheck className="text-primary-500 size-5" strokeWidth={2.5} />
           </div>
 
@@ -36,7 +36,7 @@ const Message = (props: messageTypes) => {
             className={`text-neutral-50 text-xs ${
               props.isExpandedMode ? 'whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]' : ''
             }`}>
-            Writer @ CMR FA magazine..
+            {user?.title || 'Writer @ CMR FA magazine..'}
           </p>
 
           <span className="text-sm">{props.messageDate}</span>

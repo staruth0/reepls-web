@@ -38,12 +38,26 @@ const allowedVideoTypes = [
   'video/f4b',
 ];
 
+// All about the api
+const API_BASE_URL = 'https://saah-server.vercel.app';
+const API_VERSION = '/api-v1';
+const API_URL = `${API_BASE_URL}${API_VERSION}`;
+
+const AUTH_TOKEN_KEY = 'AuthToken';
+const ACCESS_TOKEN_KEY = 'AccessToken';
+const REFRESH_TOKEN_KEY = 'RefreshToken';
+
 export {
+  ACCESS_TOKEN_KEY,
+  API_BASE_URL,
+  API_URL,
+  AUTH_TOKEN_KEY,
   MAX_IMAGE_COUNT,
   MAX_IMAGE_SIZE,
   MAX_VIDEO_COUNT,
   MAX_VIDEO_SIZE,
   PREVIEW_SLUG,
+  REFRESH_TOKEN_KEY,
   allowedImageTypes,
   allowedVideoTypes,
 };

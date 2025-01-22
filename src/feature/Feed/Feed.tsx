@@ -1,20 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
-import Topbar from "../../components/atoms/Topbar/Topbar";
-import Communique from "./components/Communique/Communique";
-import Tabs from "../../components/molecules/Tabs/Tabs";
-import BlogPost from "../../components/molecules/BlogPost";
-import {
-  useGetAllArticles,
-  useGetFollowedArticles,
-} from "../Blog/hooks/useArticleHook";
-import "./feed.scss";
-import { Brain } from "lucide-react";
-import { CognitiveModeContext } from "../../context/CognitiveMode/CognitiveModeContext";
+import { Brain } from 'lucide-react';
+import React, { useContext, useEffect, useState } from 'react';
+import Topbar from '../../components/atoms/Topbar/Topbar';
+import BlogPost from '../../components/molecules/BlogPost';
+import Tabs from '../../components/molecules/Tabs/Tabs';
+import { CognitiveModeContext } from '../../context/CognitiveMode/CognitiveModeContext';
+import { useGetAllArticles, useGetFollowedArticles } from '../Blog/hooks/useArticleHook';
+import Communique from './components/Communique/Communique';
+import './feed.scss';
 
 // Tabs configuration
 const tabs = [
-  { id: 1, title: "For you" },
-  { id: 2, title: "Following" },
+  { id: 1, title: 'For you' },
+  { id: 2, title: 'Following' },
 ];
 
 const UserFeed: React.FC = () => {
@@ -25,11 +22,7 @@ const UserFeed: React.FC = () => {
 
   // Fetch all articles and followed articles
   const { data, error, isLoading } = useGetAllArticles();
-  const {
-    data: followedData,
-    error: followedError,
-    isLoading: followedIsLoading,
-  } = useGetFollowedArticles();
+  const { data: followedData, error: followedError, isLoading: followedIsLoading } = useGetFollowedArticles();
 
   // Function to toggle expanded mode for sidebar
   function handleExpandedMode() {
@@ -48,34 +41,25 @@ const UserFeed: React.FC = () => {
   const isDataLoading = activeTab === 1 ? isLoading : followedIsLoading;
   const displayError = activeTab === 1 ? error : followedError;
 
-
-  useEffect(() => { 
-    console.log("Data:", followedData); 
-  },[followedData])
+  useEffect(() => {
+    console.log('Data:', followedData);
+    console.log('Received Data:', data);
+  }, [followedData, data]);
 
   return (
-    <div
-      className={`lg:grid ${
-        isExpandedMode ? "grid-cols-[4fr_1.25fr]" : "grid-cols-[4fr_1.66fr]"
-      }`}
-    >
+    <div className={`lg:grid ${isExpandedMode ? 'grid-cols-[4fr_1.25fr]' : 'grid-cols-[4fr_1.66fr]'}`}>
       {/* Feed Posts Section */}
       <div className="Feed__Posts min-h-screen lg:border-r-[1px] border-neutral-500 ">
         <Topbar>
           <div className="px-3 flex justify-between items-center">
-            <Tabs
-              tabs={tabs}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              scale={true}
-            />
+            <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} scale={true} />
             <Brain
               size={isBrainActive ? 35 : 30}
               onClick={handleBrainClick}
               className={`cursor-pointer transition-all ${
                 isBrainActive
-                  ? "text-green-600 bg-green-100 rounded-full p-1"
-                  : "text-neutral-50 hover:text-green-600 hover:bg-green-100 hover:rounded-full hover:p-1 transition-all"
+                  ? 'text-green-600 bg-green-100 rounded-full p-1'
+                  : 'text-neutral-50 hover:text-green-600 hover:bg-green-100 hover:rounded-full hover:p-1 transition-all'
               }`}
             />
           </div>
@@ -93,7 +77,7 @@ const UserFeed: React.FC = () => {
           <div className="px-1 sm:px-10 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse gap-7 ">
             {displayData?.articles?.map((article: any) => (
               <BlogPost
-                key={article.id}
+                key={article._id}
                 images={article.media}
                 title={article.title}
                 content={article.content}
@@ -108,10 +92,7 @@ const UserFeed: React.FC = () => {
 
       {/* Communique Section */}
       <div className="communique hidden lg:block">
-        <Communique
-          isExpandedMode={isExpandedMode}
-          handleExpandedMode={handleExpandedMode}
-        />
+        <Communique isExpandedMode={isExpandedMode} handleExpandedMode={handleExpandedMode} />
       </div>
     </div>
   );

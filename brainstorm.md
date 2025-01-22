@@ -68,6 +68,9 @@ Todo
 - Handling themes in standard way
 - No incode color&&font size setting
 
+- Should not show edit and other options on profile page of other user
+- Capture username input
+
 Fixes
 
 - Debounce Editor updates
