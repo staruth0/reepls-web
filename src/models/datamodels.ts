@@ -7,6 +7,7 @@ export interface User {
   role?: "Admin" | "Reader" | "Writer";
   profile_picture?: string;
   banner_image?: string
+  following?: string[];
   bio?: string;
   address?: string;
   Job?: string;

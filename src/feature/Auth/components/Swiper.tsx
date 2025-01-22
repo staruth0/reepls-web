@@ -36,7 +36,9 @@ function Swiper() {
   };
 
   return (
+
     <div className="swiper__welcome">
+
       <div className="swiper__logo">REEPLS</div>
 
       <div className="swiper__image__container">

@@ -67,7 +67,7 @@ const handleSubmit =async (e: React.FormEvent<HTMLFormElement>) => {
     
   Login.mutate({
     password: enteredPassword,
-    phone: enteredPhone,
+    phone: `+237${enteredPhone}`,
   });
   
   };

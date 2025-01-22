@@ -1,45 +1,35 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-
 import Sidebar from "../../components/molecules/sidebar/Sidebar";
 import { AuthContext } from "../../context/AuthContext/authContext";
-import "./index.scss";
 import { useResponsiveLayout } from "../../hooks/useResposiveLayout";
 import { SidebarContext } from "../../context/SidebarContext/SidebarContext";
+import "./index.scss";
 
 const UserLayout: React.FC = () => {
-  const { isTablet ,isMobile} = useResponsiveLayout();
+  const { isTablet, isMobile } = useResponsiveLayout();
   const { checkTokenExpiration } = useContext(AuthContext);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const {isOpen} = useContext(SidebarContext)
-
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(isTablet);
+  const { isOpen } = useContext(SidebarContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (checkTokenExpiration()) {
-      console.log("Token expired");
       navigate("/auth");
     }
   }, []);
 
-
+  useEffect(() => {
+    setIsSidebarCollapsed(isTablet);
+  }, [isTablet]);
 
   useEffect(() => {
-    if (isTablet) {
-      setIsSidebarCollapsed(true);
-    }
-  }, [isTablet]);
-  
-
-  useEffect(() => { 
-    if (isMobile) { 
-      setIsSidebarCollapsed(false); 
-    }
-  },[isMobile])
+    if (isMobile) setIsSidebarCollapsed(false);
+  }, [isMobile]);
 
   return (
     <div
-      className={` relative sm:grid  ${
+      className={`relative sm:grid ${
         isSidebarCollapsed ? "grid-cols-[.5fr_5.5fr]" : "grid-cols-[1fr_5fr]"
       }`}
     >
@@ -54,7 +44,7 @@ const UserLayout: React.FC = () => {
         />
       </div>
 
-      <div className="user__content relative ">
+      <div className="user__content relative">
         <Outlet />
       </div>
     </div>

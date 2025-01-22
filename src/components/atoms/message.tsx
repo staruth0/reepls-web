@@ -11,7 +11,7 @@ interface messageTypes {
 
 const Message = (props: messageTypes) => {
   const navigate = useNavigate();
-  const {data} = useGetUserById(props.author!)
+  const {data} = useGetUserById(props.author)
 
 
   const handleClick = () => {
@@ -30,7 +30,7 @@ const Message = (props: messageTypes) => {
 
         <div className="flex flex-col justify-center items-start gap-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold m-0">{data.username}</h2>
+            <h2 className="text-base font-semibold m-0">ENEO</h2>
             <LuBadgeCheck
               className="text-primary-500 size-5"
               strokeWidth={2.5}
@@ -44,7 +44,7 @@ const Message = (props: messageTypes) => {
                 : ""
             }`}
           >
-            {!data.job ? "@Cameroon Hustler" : data.Job }
+            Writer @ CMR FA magazine..
           </p>
 
           <span className="text-sm">{props.messageDate}</span>

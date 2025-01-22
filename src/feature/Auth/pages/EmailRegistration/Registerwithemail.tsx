@@ -8,7 +8,7 @@ import { useStoreCredential } from "../../hooks/useStoreCredential";
 
 function Registerwithemail() {
   const { t } = useTranslation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const {storeEmail,storeName}= useStoreCredential()
 

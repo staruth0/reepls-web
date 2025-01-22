@@ -1,7 +1,7 @@
 import React from "react";
 import TopRightComponent from "../../../../components/atoms/TopRightComponent";
 import RightRecentComponent from "../../../../components/molecules/RightRecentComponent";
-import RightOlderComponent from "../../../../components/molecules/RightOlderComponent";
+// import RightOlderComponent from "../../../../components/molecules/RightOlderComponent";
 import { useGetCommuniquerArticles } from "../../../Blog/hooks/useArticleHook";
 
 interface CommuniqueProps {
@@ -21,7 +21,7 @@ const Communique: React.FC<CommuniqueProps> = ({isExpandedMode,handleExpandedMod
         handleExpandedMode={handleExpandedMode}
       />
       <RightRecentComponent isExpandedMode={isExpandedMode}  communiqueList={data}/>
-      <RightOlderComponent isExpandedMode={isExpandedMode} />
+      {/* <RightOlderComponent isExpandedMode={isExpandedMode} /> */}
     </>
   );
 };
