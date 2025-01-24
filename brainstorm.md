@@ -4,6 +4,15 @@ Alerts and Toasts
 - react-hot-toast or react-toastify
 - sweetalert2 or
 
+# To env
+
+- API_URL
+- CLOUDINARY_URL
+- CLOUDINARY_KEY
+- CLOUDINARY_SECRET
+- CLOUDINARY_PRESET
+- CLOUDINARY_CLOUD_NAME
+
 npm i @cloudinary/url-gen @cloudinary/react
 
 uninstall: editorjs, radix-ui,
@@ -11,6 +20,7 @@ uninstall: editorjs, radix-ui,
 Problemss
 
 - Check if online
+- Load comments page by page
 
 - Create Post Pop Over has a slight border radius problem (check in dark mode)
 - There might be possibility fo xss attacks via editor????

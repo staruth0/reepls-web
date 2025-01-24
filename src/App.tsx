@@ -3,16 +3,11 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import NotFound from './feature/NotFound';
 import useTheme from './hooks/useTheme';
 import './index.css';
-import { AuthRoutes } from './routes/AuthRoutes';
-import { UserRoutes } from './routes/UserRoutes';
-import { WebRoutes } from './routes/WebRoutes';
+import { AuthRoutes } from './Routes/AuthRoutes';
+import { UserRoutes } from './Routes/UserRoutes';
+import { WebRoutes } from './Routes/WebRoutes';
 
-const router = createBrowserRouter([
-  WebRoutes,
-  AuthRoutes,
-  UserRoutes,
-  { path: '*', element: <NotFound /> }, 
-]);
+const router = createBrowserRouter([WebRoutes, AuthRoutes, UserRoutes, { path: '*', element: <NotFound /> }]);
 
 function App() {
   const { theme } = useTheme();
