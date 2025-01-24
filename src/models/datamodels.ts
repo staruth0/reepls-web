@@ -1,26 +1,52 @@
+export enum UserRole {
+  Admin = "Admin",
+  Reader = "Reader",
+  Writer = "Writer",
+}
+
+export interface AuthTokens {
+  access: {
+    token: string;
+    expires: string;
+  };
+  refresh: {
+    token: string;
+    expires: string;
+  };
+}
+
 export interface User {
   user_id?: string;
+  googleId?: string;
   username?: string;
   email?: string;
-  password?: string;
   phone?: string;
-  role?: 'Admin' | 'Reader' | 'Writer';
+  password?: string;
+  role?: UserRole; 
   profile_picture?: string;
   banner_image?: string;
-  following?: string[];
   bio?: string;
   address?: string;
-  title?: string; //formerly job
+  title?: string; // Formerly 'job'
   interests?: string[];
   is_verified_writer?: boolean;
-  created_at?: string;
-  updated_at?: string;
+  is_email_verified?: boolean;
+  is_phone_verified?: boolean;
+  created_at?: Date | string;
+  updated_at?: Date | string;
+  following?: string[];
+  interactionHistory?: {
+    categories: string[];
+    likedArticles: string[];
+    viewedArticles: string[];
+  };
+  tokens?: AuthTokens;
 }
 
 export interface Article {
   article_id?: string;
   title?: string;
-  type?: 'ShortForm' | 'LongForm';
+  type?: "ShortForm" | "LongForm";
   is_communiquer?: boolean;
   subTitle?: string;
   content?: string;
@@ -30,7 +56,7 @@ export interface Article {
   text_to_speech?: string;
   flagged?: boolean;
   author_id?: string;
-  status?: 'Draft' | 'Published' | 'Archived';
+  status?: "Draft" | "Published" | "Archived";
   createdAt?: string;
   updatedAt?: string;
   views_count?: number;
@@ -55,7 +81,7 @@ export interface Follow {
 
 export interface Reaction {
   reaction_id: string;
-  type: 'Like' | 'Insightful' | 'Love';
+  type: "Like" | "Insightful" | "Love";
   user_id: string;
   article_id: string;
   created_at: string;
@@ -64,7 +90,7 @@ export interface Reaction {
 export interface Notification {
   notification_id: string;
   user_id: string;
-  type: 'New Comment' | 'Reaction' | 'New Follower';
+  type: "New Comment" | "Reaction" | "New Follower";
   content: string;
   is_read: boolean;
   created_at: string;
@@ -75,7 +101,7 @@ export interface Report {
   article_id: string;
   reporter_id: string;
   reason: string;
-  status: 'Pending' | 'Resolved';
+  status: "Pending" | "Resolved";
   created_at: string;
 }
 

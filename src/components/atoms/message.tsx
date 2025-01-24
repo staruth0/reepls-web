@@ -6,13 +6,11 @@ interface messageTypes {
   author: string;
   messageDate: string;
   messageText: string;
-  isExpandedMode: boolean;
 }
 
 const Message = (props: messageTypes) => {
   const navigate = useNavigate();
   const { user } = useGetUserById(props.author!);
-
   const handleClick = () => {
     navigate('/posts/communique');
   };
@@ -33,9 +31,7 @@ const Message = (props: messageTypes) => {
           </div>
 
           <p
-            className={`text-neutral-50 text-xs ${
-              props.isExpandedMode ? 'whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]' : ''
-            }`}>
+            className={`text-neutral-50 text-xs whitespace-nowrap overflow-hidden text-ellipsis line-clamp-1`}>
             {user?.title || 'Writer @ CMR FA magazine..'}
           </p>
 
@@ -43,11 +39,11 @@ const Message = (props: messageTypes) => {
         </div>
       </header>
 
-      {!props.isExpandedMode && (
+    
         <div className="text-xs font-normal leading-5 line-clamp-2 overflow-hidden text-ellipsis">
           {props.messageText}
         </div>
-      )}
+      
     </div>
   );
 };

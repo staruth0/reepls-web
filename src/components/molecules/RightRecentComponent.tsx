@@ -4,12 +4,12 @@ import './index.scss';
 import { Article } from '../../models/datamodels';
 
 interface RightRecentProps {
-  isExpandedMode: boolean;
+
   communiqueList:Article[];
 }
 
-const RightRecentComponent: React.FC<RightRecentProps> = ({ isExpandedMode , communiqueList}) => {
-  return <MessageList type="recent" isExpandedMode={isExpandedMode} communiques={communiqueList} />;
+const RightRecentComponent: React.FC<RightRecentProps> = ({ communiqueList}) => {
+  return <MessageList type="recent"  communiques={communiqueList} />;
 };
 
 export default RightRecentComponent;

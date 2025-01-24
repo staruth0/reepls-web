@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuBadgeCheck, LuBriefcase, LuMapPin } from 'react-icons/lu';
+import { useRoute } from '../../../hooks/useRoute';
 interface ProfileDetailsProps {
   name: string;
   town: string;
@@ -9,6 +10,13 @@ interface ProfileDetailsProps {
 
 const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town, occupation }) => {
   const { t } = useTranslation();
+  const {goToFollowingsPage } = useRoute();
+
+  const handleFollowingsClick = () => { 
+    // Handle followings click
+    goToFollowingsPage('glo');
+    
+  }
 
   return (
     <div className="text-neutral-50">
@@ -26,11 +34,11 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town, occupation 
         </div>
       </div>
       <div className="flex text-[13px] gap-3 mt-1 items-center">
-        <div className="flex gap-1">
+        <div className="flex gap-1 cursor-pointer" onClick={handleFollowingsClick}>
           <p className="font-bold">123</p> {t(`Following`)}
         </div>
         <div className="w-[5px] h-[5px] rounded-full bg-neutral-50 "></div>
-        <div className="flex gap-1">
+        <div className="flex gap-1 cursor-pointer" onClick={handleFollowingsClick}>
           <p className="font-bold">173</p> {t(`Followers`)}
         </div>
       </div>

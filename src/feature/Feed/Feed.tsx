@@ -15,7 +15,6 @@ const tabs = [
 ];
 
 const UserFeed: React.FC = () => {
-  const [isExpandedMode, setIsExpandedMode] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
   const [isBrainActive, setIsBrainActive] = useState<boolean>(false);
   const { toggleCognitiveMode } = useContext(CognitiveModeContext);
@@ -23,12 +22,6 @@ const UserFeed: React.FC = () => {
   // Fetch all articles and followed articles
   const { data, error, isLoading } = useGetAllArticles();
   const { data: followedData, error: followedError, isLoading: followedIsLoading } = useGetFollowedArticles();
-
-  // Function to toggle expanded mode for sidebar
-  function handleExpandedMode() {
-    setIsExpandedMode((prev) => !prev);
-    console.log(data.articles);
-  }
 
   // Function to handle cognitive mode toggle
   const handleBrainClick = () => {
@@ -47,19 +40,26 @@ const UserFeed: React.FC = () => {
   }, [followedData, data]);
 
   return (
-    <div className={`lg:grid ${isExpandedMode ? 'grid-cols-[4fr_1.25fr]' : 'grid-cols-[4fr_1.66fr]'}`}>
+    <div
+      className={`lg:grid grid-cols-[4fr_1.73fr]`}
+    >
       {/* Feed Posts Section */}
       <div className="Feed__Posts min-h-screen lg:border-r-[1px] border-neutral-500 ">
         <Topbar>
           <div className="px-3 flex justify-between items-center">
-            <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} scale={true} />
+            <Tabs
+              tabs={tabs}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              scale={true}
+            />
             <Brain
               size={isBrainActive ? 35 : 30}
               onClick={handleBrainClick}
               className={`cursor-pointer transition-all ${
                 isBrainActive
-                  ? 'text-green-600 bg-green-100 rounded-full p-1'
-                  : 'text-neutral-50 hover:text-green-600 hover:bg-green-100 hover:rounded-full hover:p-1 transition-all'
+                  ? "text-green-600 bg-green-100 rounded-full p-1"
+                  : "text-neutral-50 hover:text-green-600 hover:bg-green-100 hover:rounded-full hover:p-1 transition-all"
               }`}
             />
           </div>
@@ -68,10 +68,7 @@ const UserFeed: React.FC = () => {
         {/* Display Skeleton or Articles */}
         {isDataLoading ? (
           <div className="skeleton-loader">
-            {/* Replace with actual skeleton component if needed */}
-            <div className="skeleton-post" />
-            <div className="skeleton-post" />
-            <div className="skeleton-post" />
+          Loading
           </div>
         ) : (
           <div className="px-1 sm:px-10 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse gap-7 ">
@@ -92,7 +89,8 @@ const UserFeed: React.FC = () => {
 
       {/* Communique Section */}
       <div className="communique hidden lg:block">
-        <Communique isExpandedMode={isExpandedMode} handleExpandedMode={handleExpandedMode} />
+        <Communique
+        />
       </div>
     </div>
   );

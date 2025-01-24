@@ -56,7 +56,7 @@ const Profile: React.FC = () => {
                     occupation={user?.title || "Default Occupation"}
                   />
                 </div>
-                <ProfileHeroButtons userId={authState?.userId || ""} />
+                <ProfileHeroButtons userId={user?.id || ""} />
               </div>
             </ProfileBody>
 

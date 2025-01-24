@@ -16,5 +16,6 @@ export const useUser = () => {
     }
   }, [authState]);
 
+
   return { authUser, isLoading };
 };

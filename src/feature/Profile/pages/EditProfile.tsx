@@ -4,7 +4,7 @@ import Topbar from '../../../components/atoms/Topbar/Topbar';
 import ProfileBody from '../components/ProfileBody';
 import ProfileConfigurations from '../components/ProfileConfigurations';
 import ProfileInput from '../components/ProfileInput';
-import { useGetUserById, useUpdateUser } from '../hooks';
+import {  useGetUserByUsername, useUpdateUser } from '../hooks';
 
 // Define action types
 type Action =
@@ -44,8 +44,8 @@ const profileReducer = (state: State, action: Action): State => {
 };
 
 const EditProfile: React.FC = () => {
-  const { userUid } = useParams();
-  const { user } = useGetUserById(userUid || '');
+  const { username } = useParams();
+  const { user } = useGetUserByUsername(username || '');
   const { mutate, isPending, error, isError, isSuccess } = useUpdateUser();
 
   // Initialize reducer
