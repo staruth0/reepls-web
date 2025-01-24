@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuImagePlus } from 'react-icons/lu';
 import { cn } from '../../../utils';
@@ -6,18 +6,14 @@ import '../styles/ImageSection.scss';
 
 const ImageSection: React.FC<{ onImageChange: (imageUrl: string) => void }> = ({ onImageChange }) => {
   const [imageUrl, setImageUrl] = React.useState<string | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation();
-
-  const handleDivClick = () => {
-    inputRef.current?.click();
-  };
 
   const handleImageInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const url = URL.createObjectURL(file);
       setImageUrl(url);
+      onImageChange(url);
     }
   };
 

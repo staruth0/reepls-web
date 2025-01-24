@@ -89,6 +89,9 @@ const CreatePost: React.FC = () => {
 
   useEffect(() => {
     console.log(content);
+    console.log(title);
+    console.log(subtitle);
+    console.log(thumbnailUrl);
     if (isLoggedOut) {
       navigate('/auth');
     }

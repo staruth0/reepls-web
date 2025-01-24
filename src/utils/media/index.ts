@@ -4,6 +4,10 @@ const cloudName = 'd-id';
 const uploadPreset = 'media';
 const baseUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
+const axiosStorageInstance = axios.create({
+  baseURL: baseUrl,
+});
+
 const uploadUserProfile = async (file: File) => {
   const formData = new FormData();
   formData.append('file', file);
@@ -39,4 +43,4 @@ const uploadPostVideo = async (file: File) => {
   return response.data;
 };
 
-export { uploadPostImage, uploadPostVideo, uploadUserBanner, uploadUserProfile };
+export { axiosStorageInstance, uploadPostImage, uploadPostVideo, uploadUserBanner, uploadUserProfile };

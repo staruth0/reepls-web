@@ -29,14 +29,13 @@ import {
   LuVideo,
   LuX,
 } from 'react-icons/lu';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import SidebarItem from '../../atoms/SidebarItem';
 
 import { useTranslation } from 'react-i18next';
 import { allowedImageTypes, allowedVideoTypes } from '../../../constants';
-import { AuthContext } from '../../../context/AuthContext/authContext';
+// import { AuthContext } from '../../../context/AuthContext/authContext';
 import { SidebarContext } from '../../../context/SidebarContext/SidebarContext';
-import { useResponsiveLayout } from '../../../hooks/useResposiveLayout';
 import useTheme from '../../../hooks/useTheme';
 import { cn } from '../../../utils';
 import './sidebar.scss';
@@ -46,18 +45,16 @@ interface SidebarProps {
   setIsSidebarCollapsed: (value: boolean) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarCollapsed }) => {
-  const location = useLocation();
+const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed }) => {
   const navigate = useNavigate();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
   const { t } = useTranslation();
-  const { isTablet } = useResponsiveLayout();
+  // const { isTablet } = useResponsiveLayout();
   const { isOpen, toggleSidebar } = useContext(SidebarContext);
   const handleToggleSidebar = () => {
     console.log('Toggle sidebar', isOpen);
     toggleSidebar();
   };
-  const { authState } = useContext(AuthContext);
 
   const navLinks = [
     {
@@ -100,7 +97,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed, setIsSidebarColla
           'hover:text-primary-400',
           'bg-background border-none absolute z-10 top-1/2 right-0 transform translate-x-1/2 text-neutral-400'
         )}
-        onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        onClick={() => handleToggleSidebar()}
       />
       <div className="flex gap-5 items-center h-[80px]">
         <div className=" text-roboto text-[24px] font-semibold">REEPLS</div>
@@ -197,8 +194,8 @@ const CreateRegularPostModal = ({
   const [postContent, setPostContent] = useState<string>('');
   const [postImages, setPostImages] = useState<File[]>([]);
   const [postVideos, setPostVideos] = useState<File[]>([]);
-  const [postEvents, setPostEvents] = useState<File[]>([]);
-  const [postOther, setPostOther] = useState<File[]>([]);
+  // const [postEvents, setPostEvents] = useState<File[]>([]);
+  // const [postOther, setPostOther] = useState<File[]>([]);
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState<boolean>(false);
   const { theme } = useTheme();
   const { t } = useTranslation();

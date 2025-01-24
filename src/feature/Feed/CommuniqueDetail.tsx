@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import Topbar from "../../components/atoms/Topbar/Topbar";
-import Communique from "./components/Communique/Communique";
+import React, { useState } from 'react';
+import Topbar from '../../components/atoms/Topbar/Topbar';
+import Communique from './components/Communique/Communique';
 
-import "./feed.scss";
-import Tabs from "../../components/molecules/Tabs/Tabs";
-import BlogProfile from "../../components/atoms/BlogComponents/BlogProfile";
-import PostDetail from "../../components/molecules/sidebar/PostDetail";
+import BlogProfile from '../../components/atoms/BlogComponents/BlogProfile';
+import PostDetail from '../../components/molecules/sidebar/PostDetail';
+import Tabs from '../../components/molecules/Tabs/Tabs';
+import './feed.scss';
 
 const tabs = [
-  { id: 1, title: "For you" },
-  { id: 2, title: "Following" },
+  { id: 1, title: 'For you' },
+  { id: 2, title: 'Following' },
 ];
 
 const CommuniqueDetail: React.FC = () => {
@@ -21,23 +21,14 @@ const CommuniqueDetail: React.FC = () => {
   }
 
   return (
-    <div
-      className={`grid ${
-        isExpandedMode ? "grid-cols-[4fr_1.25fr]" : "grid-cols-[4fr_1.66fr]"
-      } `}
-    >
+    <div className={`grid ${isExpandedMode ? 'grid-cols-[4fr_1.25fr]' : 'grid-cols-[4fr_1.66fr]'} `}>
       {/* Feed Posts Section */}
       <div className="Feed__Posts border-r-[1px] border-neutral-500 ">
         <Topbar>
-          <Tabs
-            tabs={tabs}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            scale={true}
-          />
+          <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} scale={true} />
         </Topbar>
         <div className="px-20 mt-10">
-          <BlogProfile />
+          <BlogProfile id={'Default'} date={'Default'} /> // TODO: Change to user id and date
           <div className="mt-4">
             <PostDetail />
           </div>
@@ -46,10 +37,7 @@ const CommuniqueDetail: React.FC = () => {
 
       {/* Communique Section */}
       <div className="communique flex flex-col">
-        <Communique
-          isExpandedMode={isExpandedMode}
-          handleExpandedMode={handleExpandedMode}
-        />
+        <Communique isExpandedMode={isExpandedMode} handleExpandedMode={handleExpandedMode} />
       </div>
     </div>
   );

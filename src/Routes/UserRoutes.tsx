@@ -1,6 +1,5 @@
 import CreatePost from '../feature/Blog/pages';
 import ArticleView from '../feature/Blog/pages/ArticleView';
-import PostPreview from '../feature/Blog/pages/PostPreview';
 import CommuniqueDetail from '../feature/Feed/CommuniqueDetail';
 import UserFeed from '../feature/Feed/Feed';
 import Notifications from '../feature/Notifications/pages';
@@ -51,10 +50,6 @@ const UserRoutes = {
     {
       path: 'posts/create',
       element: <CreatePost />,
-    },
-    {
-      path: 'posts/create/preview',
-      element: <PostPreview />,
     },
     {
       path: 'posts/article/:articleUid/view',
