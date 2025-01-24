@@ -33,7 +33,7 @@ const UserRoutes = {
       element: <EditProfile />,
     },
     {
-      path: '/profile/:id',
+      path: '/profile/:username',
       element: <Profile />,
     },
     {

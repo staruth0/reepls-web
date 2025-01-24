@@ -30,16 +30,17 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
     }
   }, [userData, id]);
 
-  const handleProfileClick = (id: string) => {
-    goToProfile(id);
+  const handleProfileClick = (username: string) => {
+    console.log('Profile clicked', username);
+    goToProfile(username);
   };
 
   return (
     <div className="blog-profile">
-      <img src={profileAvatar} alt="avatar" onClick={() => handleProfileClick(id)} className="cursor-pointer" />
+      <img src={profileAvatar} alt="avatar" onClick={() => handleProfileClick(user?.username || '')} className="cursor-pointer" />
       <div className="profile-info">
         <div className="profile-name">
-          <p className="hover:underline cursor-pointer" onClick={() => handleProfileClick(id)}>
+          <p className="hover:underline cursor-pointer" onClick={() => handleProfileClick(user?.username || '')}>
             {user?.username}
           </p>
           <LuBadgeCheck className="size-4" />

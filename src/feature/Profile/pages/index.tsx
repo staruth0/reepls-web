@@ -27,12 +27,11 @@ const Profile: React.FC = () => {
   const { authState } = useContext(AuthContext);
   const { username } = useParams();
 
-  const { user, isLoading, error } = username
-    ? useGetUserByUsername(username)
-    : useGetUserById(authState?.userId || '');
+  const { user, isLoading, error } = username? useGetUserByUsername(username) : useGetUserById(authState?.userId || '');
 
   useEffect(() => {
     console.log('profileid', user);
+    console.log('params', username);
   }, [user]);
 
   return (
@@ -52,24 +51,36 @@ const Profile: React.FC = () => {
               <div className="flex items-center">
                 <div className="flex-1">
                   <ProfileDetails
-                    name={user?.username || 'Default Name'}
-                    town={user?.address || 'Default Town'}
-                    occupation={user?.title || 'Default Occupation'}
+                    name={user?.username || "Default Name"}
+                    town={user?.address || "Default Town"}
+                    occupation={user?.title || "Default Occupation"}
                   />
                 </div>
-                <ProfileHeroButtons userId={authState?.userId || ''} />
+                <ProfileHeroButtons userId={authState?.userId || ""} />
               </div>
             </ProfileBody>
 
             <div className="mt-6">
-              <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} scale={false} borderBottom={true} />
+              <Tabs
+                tabs={tabs}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                scale={false}
+                borderBottom={true}
+              />
             </div>
 
             <div className="mt-6 ">
-              {activeTab === 'about' && <ProfileAbout />}
-              {activeTab === 'posts' && <ProfilePosts />}
-              {activeTab === 'articles' && <ProfileArticles />}
-              {activeTab === 'media' && <ProfileMedia />}
+              {activeTab === "about" && (
+                <ProfileAbout bio={user?.bio || "Default Bio"} />
+              )}
+              {activeTab === "posts" && (
+                <ProfilePosts authorId={user?.id || ""} />
+              )}
+              {activeTab === "articles" && (
+                <ProfileArticles authorId={user?.id || ""} />
+              )}
+              {activeTab === "media" && <ProfileMedia />}
             </div>
           </div>
         )}

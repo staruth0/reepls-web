@@ -7,6 +7,7 @@ import {
   deleteArticle,
   getFollowedArticles,
   getCommuniquerArticles,
+  getArticleByAuthorId,
 } from "../api";
 import { Article } from "../../../models/datamodels";
 import { useNavigate } from "react-router-dom";
@@ -32,6 +33,14 @@ export const useGetArticleById = (articleId: string) => {
   return useQuery({
     queryKey: ["article", articleId],
     queryFn: () => getArticleById(articleId),
+   
+  });
+};
+// Hook for fetching a articles by an author with  ID
+export const useGetArticlesByAuthorId = (articleId: string) => {
+  return useQuery({
+    queryKey: ["article", articleId],
+    queryFn: () => getArticleByAuthorId(articleId),
    
   });
 };
