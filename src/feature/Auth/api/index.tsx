@@ -4,29 +4,29 @@ import { CodeVerify, EmailCode, PhoneCode, PhoneVerify, User } from '../../../mo
 import { apiClient } from '../../../services/apiClient';
 
 // Register user
-const registerUser = async (user: User) => {
-  console.log('second', user);
+const registerUser = async (user: User): Promise<User> => {
+  console.log('Registering user:', user);
   const { data } = await apiClient.post('/auth/register', user);
-  return data;
+  return data as User;
 };
 
-// Register user
-const updateUser = async (user: User) => {
+// Update user
+const updateUser = async (user: User): Promise<User | undefined> => {
   const token = localStorage.getItem(AUTH_TOKEN_KEY);
-
-  if (token) {
-    const tokenDecoded = jwtDecode(token);
-    console.log('second', tokenDecoded.sub, user);
-    const { data } = await apiClient.patch(`/users/${tokenDecoded.sub}`, user);
-    return data;
+  if (!token) {
+    return undefined;
   }
+  const tokenDecoded = jwtDecode(token);
+  console.log('Updating user:', tokenDecoded.sub, user);
+  const { data } = await apiClient.patch(`/users/${tokenDecoded.sub}`, user);
+  return data as User;
 };
 
 // Login user
-const loginUser = async (user: User) => {
-  console.log(user);
+const loginUser = async (user: User): Promise<User> => {
+  console.log('Logging in user:', user);
   const { data } = await apiClient.post('/auth/login-email', user);
-  return data;
+  return data as User;
 };
 
 // Get email verification code

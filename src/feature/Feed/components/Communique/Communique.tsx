@@ -1,27 +1,20 @@
 import React from "react";
 import TopRightComponent from "../../../../components/atoms/TopRightComponent";
 import RightRecentComponent from "../../../../components/molecules/RightRecentComponent";
-// import RightOlderComponent from "../../../../components/molecules/RightOlderComponent";
 import { useGetCommuniquerArticles } from "../../../Blog/hooks/useArticleHook";
+import Trending from "../Trending";
 
-interface CommuniqueProps {
-  isExpandedMode: boolean;
-  handleExpandedMode: () => void;
 
-}
 
-const Communique: React.FC<CommuniqueProps> = ({isExpandedMode,handleExpandedMode}) => {
+const Communique: React.FC = () => {
   const {data} = useGetCommuniquerArticles()
 
   
   return (
     <>
-      <TopRightComponent
-        isExpandedMode={isExpandedMode}
-        handleExpandedMode={handleExpandedMode}
-      />
-      <RightRecentComponent isExpandedMode={isExpandedMode}  communiqueList={data}/>
-      {/* <RightOlderComponent isExpandedMode={isExpandedMode} /> */}
+      <TopRightComponent/>
+      <RightRecentComponent  communiqueList={data} />
+      <Trending/>
     </>
   );
 };

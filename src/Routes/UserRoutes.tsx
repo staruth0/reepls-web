@@ -5,6 +5,7 @@ import UserFeed from '../feature/Feed/Feed';
 import Notifications from '../feature/Notifications/pages';
 import Profile from '../feature/Profile/pages';
 import EditProfile from '../feature/Profile/pages/EditProfile';
+import Followers from '../feature/Profile/pages/Followers';
 import ProfileAnalytics from '../feature/Profile/pages/ProfileAnalytics';
 import Bookmarks from '../feature/Saved/pages';
 import Search from '../feature/Search/pages';
@@ -28,7 +29,7 @@ const UserRoutes = {
       element: <Profile />,
     },
     {
-      path: 'profile/edit/:id',
+      path: 'profile/edit/:username',
       element: <EditProfile />,
     },
     {
@@ -36,7 +37,11 @@ const UserRoutes = {
       element: <Profile />,
     },
     {
-      path: '/profile/analytics',
+      path: '/profile/followings/:username',
+      element: <Followers/>,
+    },
+    {
+      path: '/profile/analytics/:username',
       element: <ProfileAnalytics />,
     },
     {

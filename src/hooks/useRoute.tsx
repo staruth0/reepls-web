@@ -7,7 +7,10 @@ export const useRoute = () => {
     const goToProfile = (username:string) => {
         navigate(`/profile/${username}`);
     }
+    const goToFollowingsPage = (username:string) => {
+        navigate(`/profile/followings/${username}`);
+    }
     
 
-    return { goToProfile };
+    return { goToProfile , goToFollowingsPage };
 }

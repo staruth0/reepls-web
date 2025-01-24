@@ -28,26 +28,18 @@ const articles = [
 ];
 
 const Search: React.FC = () => {
-  const [isExpandedMode, setIsExpandedMode] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
   const {t} = useTranslation()
 
-
-  function handleExpandedMode() {
-    setIsExpandedMode((prev) => !prev);
-  }
-
   return (
     <div
-      className={`grid font-roboto  ${
-        isExpandedMode ? "grid-cols-[4fr_1.25fr]" : "grid-cols-[4fr_1.66fr]"
-      } `}
+      className={`grid font-roboto grid-cols-[4fr_1.73fr]`}
     >
       <div className="search border-r-[1px] border-neutral-500 ">
         <Topbar>
           <SearchTopBar />
         </Topbar>
-        <div className="px-20 flex flex-col">
+        <div className="px-20 flex flex-col min-h-screen">
           <div className="mt-10 w-[45%] self-center">
             <Tabs
               tabs={tabs}
@@ -59,7 +51,7 @@ const Search: React.FC = () => {
 
           <div className="mt-8 text-[15px]">
             {activeTab === "Topics" && (
-              <div className="flex flex-wrap gap-x-3 gap-y-2  ">
+              <div className="flex flex-wrap gap-x-3 gap-y-2 justify-center ">
                 {topics.map((topic) => (
                   <span
                     key={topic}
@@ -89,8 +81,6 @@ const Search: React.FC = () => {
       {/* Communique Section */}
       <div className="communique  hidden lg:block">
         <Communique
-          isExpandedMode={isExpandedMode}
-          handleExpandedMode={handleExpandedMode}
         />
       </div>
     </div>
