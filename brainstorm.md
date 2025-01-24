@@ -1,16 +1,23 @@
 Modal, Dialog, Popover, Tooltip, Tabs, Slider,
 Alerts and Toasts
 
+- react-hot-toast or react-toastify
+- sweetalert2 or
+
 npm i @cloudinary/url-gen @cloudinary/react
 
 uninstall: editorjs, radix-ui,
 
 Problemss
 
+- Check if online
+
 - Create Post Pop Over has a slight border radius problem (check in dark mode)
 - There might be possibility fo xss attacks via editor????
 - Alert for everything: account exits with email already in use,
 - Should sideba r show when visiting other users [page?]
+
+- Profile page and link disabled if not logged in
 
 Do Next
 
