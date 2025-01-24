@@ -1,12 +1,37 @@
 import React from 'react'
-import BlogComponent from '../../../components/molecules/BlogComponent'
+import { useGetArticlesByAuthorId } from '../../Blog/hooks/useArticleHook';
+import BlogPost from '../../../components/molecules/BlogPost';
 
-const ProfileArticles:React.FC = () => {
-  return (
-      <div>
-          <BlogComponent/>
-    </div>
-  )
+interface ProfileArticlesProps { 
+  authorId: string; 
+}
+
+const ProfileArticles:React.FC<ProfileArticlesProps> = ({ authorId }) => {
+   
+   const { data, isLoading, error } = useGetArticlesByAuthorId(authorId || "");
+
+   return (
+     <div>
+       {isLoading ? (
+         <p>Loading...</p>
+       ) : error ? (
+         <div>{error.message}</div>
+       ) : (
+         <div>
+           {data?.map((article: any) => (
+             <BlogPost
+               key={article._id}
+               images={article.media}
+               title={article.title}
+               content={article.content}
+               id={article.author_id}
+               date={article.createdAt}
+             />
+           ))}
+         </div>
+       )}
+     </div>
+   );
 }
 
 export default ProfileArticles

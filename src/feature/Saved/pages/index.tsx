@@ -23,7 +23,7 @@ const Bookmarks: React.FC = () => {
         </Topbar>
 
         {/* saved  content */}
-        <div className="notification__content px-20 mt-5">
+        <div className="notification__content px-20 mt-5 min-h-screen">
           <Tabs
             activeTab={activeTab}
             setActiveTab={setActiveTab}

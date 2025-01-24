@@ -14,6 +14,12 @@ const getArticleById = async (articleId: string) => {
   const { data } = await apiClient.get(`/articles/${articleId}`);
   return data;
 };
+// Fetch a single articles by author ID
+const getArticleByAuthorId = async (authorId: string) => {
+  console.log('Fetching article with ID:', authorId);
+  const { data } = await apiClient.get(`/articles/author/${authorId}`);
+  return data;
+};
 
 // Fetch all articles
 const getAllArticles = async () => {
@@ -57,5 +63,6 @@ export {
   getArticleById,
   getCommuniquerArticles,
   getFollowedArticles,
+  getArticleByAuthorId,
   updateArticle,
 };
