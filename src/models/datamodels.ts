@@ -73,10 +73,8 @@ export interface Comment {
 }
 
 export interface Follow {
-  follow_id: string;
   follower_id: string;
   followed_id: string;
-  created_at: string;
 }
 
 export interface Reaction {
