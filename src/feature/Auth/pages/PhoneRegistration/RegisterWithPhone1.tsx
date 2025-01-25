@@ -4,7 +4,7 @@ import "../../styles/authpages.scss";
 import { validatePassword } from "../../../../utils/validatePassword";
 import { useTranslation } from "react-i18next";
 import { useStoreCredential } from "../../hooks/useStoreCredential";
-import { usePhoneRegisterUser} from "../../hooks/AuthHooks";
+import {  usePhoneRegisterUser} from "../../hooks/AuthHooks";
 import { RootState } from "../../../../store";
 import { useSelector } from "react-redux";
 
@@ -56,6 +56,8 @@ function RegisterWithPhone1() {
     });
 
     mutate({ phone: `+237${phone}`, password, username });
+
+   
   };
 
   return (

@@ -41,38 +41,49 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.clear();
   };
 
-  const checkTokenExpiration = useCallback(() => {
-    const token = getStoredToken();
-    if (token) {
-      const decoded = jwtDecode(token);
-      if (decoded.exp! < Date.now() / 1000) {
-        logout();
-        return true;
-      }
+const checkTokenExpiration = useCallback(() => {
+  const token = getStoredToken();
+  if (token) {
+    const decoded = jwtDecode(token);
+    const currentTime = Date.now() / 1000;
+
+  
+    if (decoded.exp! < currentTime + 300) {
+      return true; // Indicates token is about to expire
     }
-    return false;
-  }, []);
+  }
+  return false;
+}, []);
+
+   const validateSession = async () => {
+     if (checkTokenExpiration()) {
+       try {
+         const refreshToken = localStorage.getItem("refresh");
+         if (refreshToken) {
+           const data = await refreshAuthTokens(refreshToken);
+           login(data.accessToken);
+         } else {
+           logout();
+         }
+       } catch {
+         logout();
+       }
+     }
+     setLoading(false);
+   };
 
   useEffect(() => {
-    const validateSession = async () => {
-      if (checkTokenExpiration()) {
-        try {
-          const refreshToken = localStorage.getItem("refresh");
-          if (refreshToken) {
-            const data = await refreshAuthTokens(refreshToken);
-            login(data.accessToken);
-          } else {
-            logout();
-          }
-        } catch {
-          logout();
-        }
-      }
-      setLoading(false);
-    };
+   
 
-    validateSession();
+    const interval = setInterval(() => {
+      validateSession();
+    }, 5 * 60 * 1000); // Run every 5 minutes
+
+    return () => clearInterval(interval);
   }, []);
+
+  
+
 
   return (
     <AuthContext.Provider

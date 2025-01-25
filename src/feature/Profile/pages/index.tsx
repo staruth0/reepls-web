@@ -13,6 +13,9 @@ import ProfileHeroButtons from '../components/ProfileHeroButtons';
 import ProfileMedia from '../components/ProfileMedia';
 import ProfilePosts from '../components/ProfilePosts';
 import { useGetUserById, useGetUserByUsername } from '../hooks';
+import { useUser } from '../../../hooks/useUser';
+import SimilarProfiles from '../components/SimilarProfiles';
+import { User } from "lucide-react";
 
 const tabs = [
   { id: 'about', title: 'About' },
@@ -26,6 +29,7 @@ const Profile: React.FC = () => {
   const { t } = useTranslation();
   const { authState } = useContext(AuthContext);
   const { username } = useParams();
+  const {authUser} = useUser()
 
   const { user, isLoading, error } = username? useGetUserByUsername(username) : useGetUserById(authState?.userId || '');
 
@@ -46,7 +50,7 @@ const Profile: React.FC = () => {
         {isLoading ? (
           <div>Loading</div>
         ) : (
-          <div className="profile__content px-20">
+          <div className="profile__content px-20 min-h-screen">
             <ProfileBody>
               <div className="flex items-center">
                 <div className="flex-1">
@@ -88,7 +92,18 @@ const Profile: React.FC = () => {
 
       {/*configurations Section */}
       <div className="profile__configurationz hidden lg:block">
-        <ProfileConfigurations />
+        {user?.id === authUser?.id ? (
+          <ProfileConfigurations />
+        ) : (
+          <div>
+            <div className="py-7 px-4 font-semibold text-neutral-50 flex items-center gap-2">
+              <User className="text-main-green" size={20} />
+              Similar Profiles
+            </div>
+
+            <SimilarProfiles />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -2,6 +2,8 @@ import axios, { AxiosInstance } from "axios";
 import { ACCESS_TOKEN_KEY, API_URL, REFRESH_TOKEN_KEY } from "../constants";
 import { refreshAuthTokens } from "../feature/Auth/api/index";
 
+
+
 const getToken = () => localStorage.getItem("access");
 const getRefreshToken = () => localStorage.getItem("refresh");
 
@@ -39,24 +41,30 @@ apiClient.interceptors.response.use(
     }
 
     const refreshToken = getRefreshToken();
-    if (refreshToken) {
-      try {
-        const data = await refreshAuthTokens(refreshToken);
-        localStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken);
-        localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
+   if (refreshToken) {
+  try {
+    const data = await refreshAuthTokens(refreshToken);
+    if (!data.accessToken) throw new Error("No access token received");
 
-        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
-        return apiClient(originalRequest); // Retry request with new token
-      } catch (e) {
-        localStorage.clear();
-        window.location.href = "/auth"; // Redirect to login page
-        console.log("Token refresh failed, redirecting to login page", e);
-        return Promise.reject(e);
-      }
-    }
+    localStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken);
+    localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
+
+    // Update headers before retrying the request
+    originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+    return apiClient(originalRequest);
+  } catch (e) {
+    console.error("Token refresh failed:", e);
+    localStorage.clear()
+    return Promise.reject(e);
+  }
+}
 
     return Promise.reject(error);
   }
 );
 
 export { apiClient };
+
+
+
+
