@@ -6,6 +6,7 @@ import { useResponsiveLayout } from "../../hooks/useResposiveLayout";
 import { SidebarContext } from "../../context/SidebarContext/SidebarContext";
 import "./index.scss";
 import { refreshAuthTokens } from "../../feature/Auth/api";
+import { REFRESH_TOKEN_KEY } from "../../constants";
 
 const UserLayout: React.FC = () => {
   const { isTablet, isMobile } = useResponsiveLayout();
@@ -19,7 +20,7 @@ useEffect(() => {
     const isExpired = checkTokenExpiration();
     if (isExpired) {
       try {
-        const refreshToken = localStorage.getItem("refresh");
+        const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
         if (refreshToken) {
           const data = await refreshAuthTokens(refreshToken);
           login(data.accessToken);

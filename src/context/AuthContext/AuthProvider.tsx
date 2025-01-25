@@ -2,12 +2,13 @@ import React, { ReactNode, useState, useEffect, useCallback } from "react";
 import { AuthContext, AuthContextProps } from "./authContext";
 import { jwtDecode } from "jwt-decode";
 import { refreshAuthTokens } from "../../feature/Auth/api/index";
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "../../constants";
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-const getStoredToken = () => localStorage.getItem("access");
+const getStoredToken = () => localStorage.getItem(ACCESS_TOKEN_KEY);
 
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [authState, setAuthState] = useState<AuthContextProps | null>(() => {
@@ -17,7 +18,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const decoded = jwtDecode(token);
         return { userId: decoded.sub!, token };
       } catch {
-        localStorage.removeItem("access");
+        localStorage.removeItem(ACCESS_TOKEN_KEY);
       }
     }
     return null;
@@ -30,7 +31,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const decoded = jwtDecode(token);
       setAuthState({ userId: decoded.sub!, token });
       console.log({ userId: decoded.sub!, token });
-      localStorage.setItem("access", token);
+      localStorage.setItem(ACCESS_TOKEN_KEY, token);
     } catch {
       console.error("Invalid token");
     }
@@ -58,7 +59,7 @@ const checkTokenExpiration = useCallback(() => {
    const validateSession = async () => {
      if (checkTokenExpiration()) {
        try {
-         const refreshToken = localStorage.getItem("refresh");
+         const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
          if (refreshToken) {
            const data = await refreshAuthTokens(refreshToken);
            login(data.accessToken);
