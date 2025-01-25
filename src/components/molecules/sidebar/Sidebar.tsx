@@ -81,7 +81,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed }) => {
       <LuCircleChevronLeft
         className={cn(
           'size-6 p-0 rounded-full cursor-pointer',
-          isSidebarCollapsed && 'rotate-180',
+          isOpen && 'rotate-180',
           'transition-all duration-300 ease-in-out',
           'hover:text-primary-400',
           'bg-background border-none absolute z-10 top-1/2 right-0 transform translate-x-1/2 text-neutral-400'
@@ -100,7 +100,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed }) => {
             name={navItem.name}
             link={navItem.link}
             badgeContent={navItem.badgeContent}
-            isSidebarcollapsed={!isSidebarCollapsed}
+            isSidebarcollapsed={isOpen}
           />
         ))}
       </div>
@@ -114,24 +114,24 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed }) => {
             className={cn(`create__post__button `, 'disabled:text-neutral-400 disabled:cursor-not-allowed')}
             disabled={isCreatingPost}>
             <LuCirclePlus className="create__post__icon" style={{ width: '20px', height: '20px' }} />
-            {!isSidebarCollapsed && t(`Create Post`)}
+            {isOpen && t(`Create Post`)}
           </PopoverButton>
           <PopoverPanel
             anchor="bottom"
-            className={cn('PopoverContent flex flex-col bg-red-500 z-50 mt-2', isSidebarCollapsed ? 'w-32' : 'w-40')}>
+            className={cn('PopoverContent flex flex-col bg-red-500 z-50 mt-2', !isOpen? 'w-32' : 'w-40')}>
             <div className="block text-center">
               <button
                 className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4 hover:text-primary-400"
                 onClick={() => setIsCreatingPost(true)}>
                 <LuPlus className="size-4" />
-                <span className="text-sm">{isSidebarCollapsed ? t(`Post`) : t(`Create Post`)}</span>
+                <span className="text-sm">{!isOpen ? t(`Post`) : t(`Create Post`)}</span>
               </button>
               <hr className="border-neutral-400 w-3/4 mx-auto" />
               <button
                 className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4  hover:text-primary-400"
                 onClick={() => navigate('/posts/create')}>
                 <LuPencilLine className="size-4" />
-                <span className="text-sm">{isSidebarCollapsed ? t(`Write`) : t(`Write Article`)}</span>
+                <span className="text-sm">{!isOpen ? t(`Write`) : t(`Write Article`)}</span>
               </button>
             </div>
           </PopoverPanel>

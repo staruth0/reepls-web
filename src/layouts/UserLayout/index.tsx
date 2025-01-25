@@ -48,7 +48,7 @@ useEffect(() => {
   return (
     <div
       className={`relative sm:grid ${
-        isSidebarCollapsed ? "grid-cols-[.5fr_5.5fr]" : "grid-cols-[1fr_5fr]"
+        !isOpen ? "grid-cols-[.5fr_5.5fr]" : "grid-cols-[1fr_5fr]"
       }`}
     >
       <div
