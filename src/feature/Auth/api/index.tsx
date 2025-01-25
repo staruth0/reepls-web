@@ -4,14 +4,15 @@ import { CodeVerify, EmailCode, PhoneCode, PhoneVerify, User } from '../../../mo
 import { apiClient } from '../../../services/apiClient';
 
 // Register user
-const registerUser = async (user: User): Promise<User> => {
+const registerUser = async (user: User) => {
   console.log('Registering user:', user);
-  const { data } = await apiClient.post('/auth/register', user);
-  return data as User;
+  const data = await apiClient.post('/auth/register', user);
+  return data;
 };
 
 // Update user
-const updateUser = async (user: User): Promise<User | undefined> => {
+const updateUser = async (user: User) => {
+  //Promise<User | undefined>
   const token = localStorage.getItem(AUTH_TOKEN_KEY);
   if (!token) {
     return undefined;
@@ -19,14 +20,14 @@ const updateUser = async (user: User): Promise<User | undefined> => {
   const tokenDecoded = jwtDecode(token);
   console.log('Updating user:', tokenDecoded.sub, user);
   const { data } = await apiClient.patch(`/users/${tokenDecoded.sub}`, user);
-  return data as User;
+  return data;
 };
 
 // Login user
-const loginUser = async (user: User): Promise<User> => {
+const loginUser = async (user: User) => {
   console.log('Logging in user:', user);
   const { data } = await apiClient.post('/auth/login-email', user);
-  return data as User;
+  return data;
 };
 
 // Get email verification code
