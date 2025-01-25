@@ -6,13 +6,14 @@ interface messageTypes {
   author: string;
   messageDate: string;
   messageText: string;
+  postID:string;
 }
 
 const Message = (props: messageTypes) => {
   const navigate = useNavigate();
   const { user } = useGetUserById(props.author!);
   const handleClick = () => {
-    navigate('/posts/communique');
+    navigate(`/posts/communique/${props.postID}`);
   };
 
   return (

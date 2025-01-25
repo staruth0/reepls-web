@@ -11,7 +11,7 @@ const createArticle = async (article: Article) => {
 // Fetch a single article by ID
 const getArticleById = async (articleId: string) => {
   console.log('Fetching article with ID:', articleId);
-  const { data } = await apiClient.get(`/articles/${articleId}`);
+  const { data } = await apiClient.get(`/articles/get-by-id/${articleId}`);
   return data;
 };
 // Fetch a single articles by author ID

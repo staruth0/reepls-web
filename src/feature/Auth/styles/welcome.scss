@@ -10,7 +10,7 @@
   gap: .0rem;
 
   .welcome__text {
-    font-family: var(--instrument-serif-font);
+    font-family: var(--roboto-font);
     font-size: 1.8rem;
     font-weight: 600;
     color: var(--plain-a); 
@@ -33,15 +33,9 @@
     .btn__sign-in {
       background-color: transparent;
       color: var(--plain-a); 
-      border: .08rem solid var(--plain-a); 
       @include mixin.transition(all,.3s);
 
-      &:hover{
-        border: none;
-        box-shadow: 0px 2px 4px rgba(0,0,0,.1);
-        scale: 1.1;
-        
-      }
+    
     }
 
     .divider {
@@ -68,7 +62,7 @@
       @include mixin.transition(all,.3s);
 
       &:hover{
-        scale: 1.1;   
+        background-color: var(--primary-300); 
       }
     }
   }

@@ -61,7 +61,7 @@ const UserRoutes = {
       element: <ArticleView />,
     },
     {
-      path: 'posts/communique',
+      path: 'posts/communique/:id',
       element: <CommuniqueDetail />,
     },
   ],

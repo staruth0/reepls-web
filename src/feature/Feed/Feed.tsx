@@ -41,7 +41,7 @@ const UserFeed: React.FC = () => {
 
   return (
     <div
-      className={`lg:grid grid-cols-[4fr_1.73fr]`}
+      className={`lg:grid grid-cols-[4fr_1.75fr]`}
     >
       {/* Feed Posts Section */}
       <div className="Feed__Posts min-h-screen lg:border-r-[1px] border-neutral-500 ">
@@ -71,7 +71,7 @@ const UserFeed: React.FC = () => {
           Loading
           </div>
         ) : (
-          <div className="px-1 sm:px-10 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse gap-7 ">
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse gap-7 ">
             {displayData?.articles?.map((article: any) => (
               <BlogPost
                 key={article._id}

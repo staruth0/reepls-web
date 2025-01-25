@@ -32,9 +32,7 @@ const Search: React.FC = () => {
   const {t} = useTranslation()
 
   return (
-    <div
-      className={`grid font-roboto grid-cols-[4fr_1.73fr]`}
-    >
+    <div className={`grid font-roboto grid-cols-[4fr_1.75fr]`}>
       <div className="search border-r-[1px] border-neutral-500 ">
         <Topbar>
           <SearchTopBar />
@@ -80,8 +78,7 @@ const Search: React.FC = () => {
 
       {/* Communique Section */}
       <div className="communique  hidden lg:block">
-        <Communique
-        />
+        <Communique />
       </div>
     </div>
   );
