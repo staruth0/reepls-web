@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { LuBadgeCheck } from "react-icons/lu";
 import {
   EllipsisVertical,
@@ -8,12 +8,11 @@ import {
   Share2,
 } from "lucide-react";
 import { profileAvatar } from "../../../assets/icons";
-import { AuthContext } from "../../../context/AuthContext/authContext";
-import { useGetUserById, useUpdateUser } from "../../../feature/Profile/hooks";
+import { useGetUserById} from "../../../feature/Profile/hooks";
 import { useRoute } from "../../../hooks/useRoute";
 import { formatDateWithMonth } from "../../../utils/dateFormater";
-import { handleFollowClick } from "../../../utils/followUtils";
 import "./Blog.scss";
+// import { useFollowUser } from "../../../feature/Interactions/hooks";
 
 interface BlogProfileProps {
   id: string;
@@ -21,24 +20,22 @@ interface BlogProfileProps {
 }
 
 const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
-  const { authState } = useContext(AuthContext);
   const { user } = useGetUserById(id || "");
-  const { user: userData } = useGetUserById(authState?.userId || "");
   const { goToProfile } = useRoute();
-  const { mutate } = useUpdateUser();
 
   const [isFollowing, setIsFollowing] = useState(false);
-  const [showMenu, setShowMenu] = useState(false); // Toggle state for menu
+  const [showMenu, setShowMenu] = useState(false); 
 
-  useEffect(() => {
-    if (userData?.following) {
-      setIsFollowing(userData.following.includes(id));
-    }
-  }, [userData, id]);
+  // const {mutate: followUser, mutate: unFollowUser , isLoading: followLoading, isLoading: unFollowLoading, isSuccess: followSuccess, isSuccess: unFollowSuccess } = useFollowUser()
+
 
   const handleProfileClick = (username: string) => {
     goToProfile(username);
   };
+
+  const handleFollowClick = () => {
+    setIsFollowing(!isFollowing);
+  }
 
   return (
     <div className="blog-profile relative">
@@ -61,15 +58,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
           </p>
           <LuBadgeCheck className="size-4" />
           <div
-            onClick={() =>
-              handleFollowClick(
-                isFollowing,
-                setIsFollowing,
-                userData,
-                id,
-                mutate
-              )
-            }
+           onClick={handleFollowClick}
             className="cursor-pointer"
           >
             {isFollowing ? "" : "Follow"}
