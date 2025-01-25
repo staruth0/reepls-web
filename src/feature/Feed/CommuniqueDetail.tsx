@@ -1,43 +1,38 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Topbar from '../../components/atoms/Topbar/Topbar';
 import Communique from './components/Communique/Communique';
 
 import BlogProfile from '../../components/atoms/BlogComponents/BlogProfile';
 import PostDetail from '../../components/molecules/sidebar/PostDetail';
-import Tabs from '../../components/molecules/Tabs/Tabs';
 import './feed.scss';
+import { useParams } from 'react-router-dom';
+import { useGetArticleById } from '../Blog/hooks/useArticleHook';
 
-const tabs = [
-  { id: 1, title: 'For you' },
-  { id: 2, title: 'Following' },
-];
+
 
 const CommuniqueDetail: React.FC = () => {
-  const [isExpandedMode, setIsExpandedMode] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
+  const { id } = useParams();
+  const {data, isLoading, error} = useGetArticleById(id!);
 
-  function handleExpandedMode() {
-    setIsExpandedMode((prev) => !prev);
-  }
 
   return (
-    <div className={`grid ${isExpandedMode ? 'grid-cols-[4fr_1.25fr]' : 'grid-cols-[4fr_1.66fr]'} `}>
+    <div className={`grid grid-cols-[4fr_1.75fr] `}>
       {/* Feed Posts Section */}
       <div className="Feed__Posts border-r-[1px] border-neutral-500 ">
         <Topbar>
-          <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} scale={true} />
+          Communique
         </Topbar>
-        <div className="px-20 mt-10">
-          <BlogProfile id={'Default'} date={'Default'} /> // TODO: Change to user id and date
+       { isLoading?<div> loading.....</div>  : <div className="px-20 mt-10">
+          <BlogProfile id={data?.author_id} date={data?.createdAt} /> 
           <div className="mt-4">
-            <PostDetail />
+            <PostDetail content={ data?.content} title={data?.title} />
           </div>
-        </div>
+        </div>}
       </div>
 
       {/* Communique Section */}
       <div className="communique flex flex-col">
-        <Communique isExpandedMode={isExpandedMode} handleExpandedMode={handleExpandedMode} />
+        <Communique  />
       </div>
     </div>
   );

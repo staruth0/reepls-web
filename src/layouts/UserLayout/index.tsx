@@ -29,7 +29,7 @@ useEffect(() => {
       } catch (error) {
         console.error("Token refresh failed:", error);
       }
-      navigate("/auth"); // Only navigate if refresh fails
+      navigate("/auth"); 
     }
   };
 
