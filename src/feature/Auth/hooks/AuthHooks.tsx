@@ -172,7 +172,6 @@ export const useVerifyEmailCode = () => {
     mutationFn: (codeVerify: CodeVerify) => verifyEmailCode(codeVerify),
     onSuccess: (data) => {
       console.log("Email code verified:", data);
-
       navigateToName();
     },
     onError: (error) => {
