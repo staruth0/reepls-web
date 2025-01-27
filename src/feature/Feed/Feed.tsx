@@ -72,7 +72,7 @@ const UserFeed: React.FC = () => {
           </div>
         ) : (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse gap-7 ">
-            {displayData?.articles?.map((article: any) => (
+            {displayData?.articles?.map((article) => (
               <BlogPost
                 key={article._id}
                 images={article.media}
