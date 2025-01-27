@@ -12,7 +12,7 @@ import { useGetArticleById } from '../Blog/hooks/useArticleHook';
 
 const CommuniqueDetail: React.FC = () => {
   const { id } = useParams();
-  const {data, isLoading, error} = useGetArticleById(id!);
+  const {data, isLoading} = useGetArticleById(id!); //todo: add error checking
 
 
   return (

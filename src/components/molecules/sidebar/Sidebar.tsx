@@ -23,12 +23,8 @@ import { cn } from '../../../utils';
 import PostModal from '../PostModal';
 import './sidebar.scss';
 
-interface SidebarProps {
-  isSidebarCollapsed: boolean;
-  setIsSidebarCollapsed: (value: boolean) => void;
-}
 
-const Sidebar: React.FC<SidebarProps> = ({ isSidebarCollapsed }) => {
+const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
   const { t } = useTranslation();
