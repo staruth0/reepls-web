@@ -2,6 +2,7 @@ import { Send } from "lucide-react";
 
 interface CommentTabProps {
   toggleCommentTab: () => void;
+
 }
 
 const CommentTab: React.FC<CommentTabProps> = ({ toggleCommentTab }) => {

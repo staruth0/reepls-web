@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { CognitiveModeContext } from '../../context/CognitiveMode/CognitiveModeContext';
 import BlogImagery from '../atoms/BlogComponents/BlogImagery';
 import BlogMessage from '../atoms/BlogComponents/BlogMessage';
@@ -22,14 +22,20 @@ const sampleImages = [
 ];
 const BlogPost: React.FC<BlogPostProps> = ({ images, title, content, id, date }) => {
   const { isCognitiveMode } = useContext(CognitiveModeContext);
+   const [isCommentSectionOpen, setIsCommentSectionOpen] =useState<boolean>(false);
+
+  const toggleCommentSection = () => { 
+     
+    setIsCommentSectionOpen(!isCommentSectionOpen);
+  }
 
   return (
     <div className="each_blog_post mt-5 shadow-md p-2">
       <BlogProfile id={id} date={date} />
       <BlogMessage title={title} content={content} />
       {!isCognitiveMode && <BlogImagery PostImages={sampleImages} />}
-      <BlogReactionStats date={date} />
-      <BlogReactionSession message={content} />
+      <BlogReactionStats toggleCommentSection={toggleCommentSection} date={date} />
+      <BlogReactionSession isCommentSectionOpen={isCommentSectionOpen} message={content}  />
     </div>
   );
 };
