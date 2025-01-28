@@ -4,9 +4,10 @@ import { timeAgo } from "../../../utils/dateFormater";
 
 interface BlogReactionStatsProps {
   date: string;
+  toggleCommentSection: () => void;
 }
 
-const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date }) => {
+const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date,toggleCommentSection }) => {
   return (
     <div className="flex justify-between items-center p-4 text-neutral-50 text-sm font-roboto">
       {/* Reaction Section */}
@@ -35,7 +36,7 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date }) => {
         </div>
 
         {/* Comments Count */}
-        <div className="ml-4 text-neutral-70">57 Comments</div>
+        <div className="ml-4 text-neutral-70" onClick={toggleCommentSection}>57 Comments</div>
       </div>
 
       {/* Time Posted */}
