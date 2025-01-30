@@ -34,7 +34,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ isOpen, onClose, onReact 
       <div className="fixed inset-0 bg-black opacity-0 z-40" onClick={onClose}></div>
 
       <div
-        className={`absolute z-50 mt-2 bg-white border border-gray-200 shadow-lg rounded-full p-3 transition-opacity duration-400 ${
+        className={`absolute z-50 mt-2 bg-background border-neutral-50 shadow-lg rounded-full p-3 transition-opacity duration-400 ${
           isOpen ? 'opacity-100' : 'opacity-0'
         }`}
         style={{ bottom: '40px', left: '0px' }}>
