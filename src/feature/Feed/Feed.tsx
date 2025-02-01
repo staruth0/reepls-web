@@ -1,17 +1,20 @@
-import { Brain } from 'lucide-react';
-import React, { useContext, useEffect, useState } from 'react';
-import Topbar from '../../components/atoms/Topbar/Topbar';
-import BlogPost from '../../components/molecules/BlogPost';
-import Tabs from '../../components/molecules/Tabs/Tabs';
-import { CognitiveModeContext } from '../../context/CognitiveMode/CognitiveModeContext';
-import { useGetAllArticles, useGetFollowedArticles } from '../Blog/hooks/useArticleHook';
-import Communique from './components/Communique/Communique';
-import './feed.scss';
+import { Brain } from "lucide-react";
+import React, { useContext, useEffect, useState } from "react";
+import Topbar from "../../components/atoms/Topbar/Topbar";
+import BlogPost from "../Blog/components/BlogPost";
+import Tabs from "../../components/molecules/Tabs/Tabs";
+import { CognitiveModeContext } from "../../context/CognitiveMode/CognitiveModeContext";
+import {
+  useGetAllArticles,
+  useGetFollowedArticles,
+} from "../Blog/hooks/useArticleHook";
+import Communique from "./components/Communique/Communique";
+import "./feed.scss";
 
 // Tabs configuration
 const tabs = [
-  { id: 1, title: 'For you' },
-  { id: 2, title: 'Following' },
+  { id: 1, title: "For you" },
+  { id: 2, title: "Following" },
 ];
 
 const UserFeed: React.FC = () => {
@@ -21,7 +24,11 @@ const UserFeed: React.FC = () => {
 
   // Fetch all articles and followed articles
   const { data, error, isLoading } = useGetAllArticles();
-  const { data: followedData, error: followedError, isLoading: followedIsLoading } = useGetFollowedArticles();
+  const {
+    data: followedData,
+    error: followedError,
+    isLoading: followedIsLoading,
+  } = useGetFollowedArticles();
 
   // Function to handle cognitive mode toggle
   const handleBrainClick = () => {
@@ -35,14 +42,12 @@ const UserFeed: React.FC = () => {
   const displayError = activeTab === 1 ? error : followedError;
 
   useEffect(() => {
-    console.log('Data:', followedData);
-    console.log('Received Data:', data);
+    console.log("Data:", followedData);
+    console.log("Received Data:", data);
   }, [followedData, data]);
 
   return (
-    <div
-      className={`lg:grid grid-cols-[4fr_1.75fr]`}
-    >
+    <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
       {/* Feed Posts Section */}
       <div className="Feed__Posts min-h-screen lg:border-r-[1px] border-neutral-500 ">
         <Topbar>
@@ -67,14 +72,13 @@ const UserFeed: React.FC = () => {
 
         {/* Display Skeleton or Articles */}
         {isDataLoading ? (
-          <div className="skeleton-loader">
-          Loading
-          </div>
+          <div className="skeleton-loader">Loading</div>
         ) : (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse gap-7 ">
             {displayData?.articles?.map((article) => (
               <BlogPost
                 key={article._id}
+                isArticle={article.isArticle}
                 images={article.media}
                 title={article.title}
                 content={article.content}
@@ -89,8 +93,7 @@ const UserFeed: React.FC = () => {
 
       {/* Communique Section */}
       <div className="communique hidden lg:block">
-        <Communique
-        />
+        <Communique />
       </div>
     </div>
   );

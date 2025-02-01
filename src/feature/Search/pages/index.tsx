@@ -32,7 +32,7 @@ const Search: React.FC = () => {
   const {t} = useTranslation()
 
   return (
-    <div className={`grid font-roboto grid-cols-[4fr_1.75fr]`}>
+    <div className={`grid font-roboto grid-cols-[4fr_1.65fr]`}>
       <div className="search border-r-[1px] border-neutral-500 ">
         <Topbar>
           <SearchTopBar />

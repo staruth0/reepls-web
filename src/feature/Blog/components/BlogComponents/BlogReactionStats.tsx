@@ -1,13 +1,16 @@
 import React from "react";
-import { hand5, heart, thumb } from "../../../assets/icons";
-import { timeAgo } from "../../../utils/dateFormater";
+import { hand5, heart, thumb } from "../../../../assets/icons";
+import { timeAgo } from "../../../../utils/dateFormater";
 
 interface BlogReactionStatsProps {
   date: string;
   toggleCommentSection: () => void;
 }
 
-const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date,toggleCommentSection }) => {
+const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
+  date,
+  toggleCommentSection,
+}) => {
   return (
     <div className="flex justify-between items-center p-4 text-neutral-50 text-sm font-roboto">
       {/* Reaction Section */}
@@ -36,7 +39,9 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date,toggleCommen
         </div>
 
         {/* Comments Count */}
-        <div className="ml-4 text-neutral-70" onClick={toggleCommentSection}>57 Comments</div>
+        <div className="ml-4 text-neutral-70" onClick={toggleCommentSection}>
+          57 Comments
+        </div>
       </div>
 
       {/* Time Posted */}

@@ -1,11 +1,25 @@
-import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
-import Picker, { Theme } from 'emoji-picker-react';
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { LuCalendar, LuClock, LuImage, LuPlus, LuSmile, LuVideo, LuX } from 'react-icons/lu';
-import { allowedImageTypes, allowedVideoTypes } from '../../constants';
-import useTheme from '../../hooks/useTheme';
-import { cn } from '../../utils/';
+import {
+  Button,
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  DialogTitle,
+} from "@headlessui/react";
+import Picker, { Theme } from "emoji-picker-react";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import {
+  LuCalendar,
+  LuClock,
+  LuImage,
+  LuPlus,
+  LuSmile,
+  LuVideo,
+  LuX,
+} from "react-icons/lu";
+import { allowedImageTypes, allowedVideoTypes } from "../../../constants";
+import useTheme from "../../../hooks/useTheme";
+import { cn } from "../../../utils";
 
 const PostModal = ({
   isModalOpen,
@@ -14,9 +28,13 @@ const PostModal = ({
 }: {
   isModalOpen: boolean;
   setIsModalOpen: (value: boolean) => void;
-  handlePost: (postContent: string, postImages: File[], postVideos: File[]) => void;
+  handlePost: (
+    postContent: string,
+    postImages: File[],
+    postVideos: File[]
+  ) => void;
 }) => {
-  const [postContent, setPostContent] = useState<string>('');
+  const [postContent, setPostContent] = useState<string>("");
   const [postImages, setPostImages] = useState<File[]>([]);
   const [postVideos, setPostVideos] = useState<File[]>([]);
   // const [postEvents, setPostEvents] = useState<File[]>([]);
@@ -39,18 +57,18 @@ const PostModal = ({
 
   const onPickVideo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    console.log('picking video', files);
+    console.log("picking video", files);
     if (!files) return;
     let newVideos = [];
-    console.log('picking ');
+    console.log("picking ");
     for (const file of files) {
-      console.log('file', file.type);
+      console.log("file", file.type);
       if (allowedVideoTypes.includes(file.type)) {
         newVideos.push(file);
       }
     }
     setPostVideos([...postVideos, ...newVideos]);
-    console.log('picked video', newVideos);
+    console.log("picked video", newVideos);
   };
 
   return (
@@ -58,7 +76,8 @@ const PostModal = ({
       open={isModalOpen}
       as="div"
       className="relative z-10 focus:outline-none"
-      onClose={() => setIsModalOpen(false)}>
+      onClose={() => setIsModalOpen(false)}
+    >
       <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -66,10 +85,14 @@ const PostModal = ({
           <DialogPanel
             transition
             className={cn(
-              'w-full h-full  md:max-w-xl lg:max-w-2xl xl:max-w-3xl  rounded-xl bg-background p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0',
-              isModalOpen ? 'opacity-100' : 'opacity-0'
-            )}>
-            <DialogTitle as="h3" className="text-base/7 font-medium mb-4 flex-1">
+              "w-full h-full  md:max-w-xl lg:max-w-2xl xl:max-w-3xl  rounded-xl bg-background p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0",
+              isModalOpen ? "opacity-100" : "opacity-0"
+            )}
+          >
+            <DialogTitle
+              as="h3"
+              className="text-base/7 font-medium mb-4 flex-1"
+            >
               <div className="flex justify-between items-center">
                 <div className="text-lg font-semibold">Post to anyone</div>
                 <button onClick={() => setIsModalOpen(false)}>
@@ -89,27 +112,46 @@ const PostModal = ({
               {(postImages.length > 0 || postVideos.length > 0) && (
                 <div className="display-media flex justify-start items-center overflow-x-auto gap-2 my-1 py-1 px-4 border-b border-t border-neutral-400">
                   {postImages.map((image, index) => (
-                    <div key={image.name} className="relative block h-32 w-32 aspect-w-1 aspect-h-1 flex-shrink-0">
-                      <img src={URL.createObjectURL(image)} alt="post image" className="object-cover h-full w-auto" />
+                    <div
+                      key={image.name}
+                      className="relative block h-32 w-32 aspect-w-1 aspect-h-1 flex-shrink-0"
+                    >
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt="post image"
+                        className="object-cover h-full w-auto"
+                      />
                       <button
                         className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
                         onClick={() => {
-                          const updatedImages = postImages.filter((_, i) => i !== index);
+                          const updatedImages = postImages.filter(
+                            (_, i) => i !== index
+                          );
                           setPostImages(updatedImages);
-                        }}>
+                        }}
+                      >
                         <LuX className="size-3" />
                       </button>
                     </div>
                   ))}
                   {postVideos.map((video, index) => (
-                    <div key={video.name} className="relative w-32 h-32 flex-shrink-0">
-                      <video src={URL.createObjectURL(video)} className="object-cover w-auto h-full" />
+                    <div
+                      key={video.name}
+                      className="relative w-32 h-32 flex-shrink-0"
+                    >
+                      <video
+                        src={URL.createObjectURL(video)}
+                        className="object-cover w-auto h-full"
+                      />
                       <button
                         className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
                         onClick={() => {
-                          const updatedVideos = postVideos.filter((_, i) => i !== index);
+                          const updatedVideos = postVideos.filter(
+                            (_, i) => i !== index
+                          );
                           setPostVideos(updatedVideos);
-                        }}>
+                        }}
+                      >
                         <LuX className="size-3" />
                       </button>
                     </div>
@@ -121,19 +163,20 @@ const PostModal = ({
                 <div className="relative">
                   <button
                     className={cn(
-                      'flex items-center justify-center border-none outline-none hover:text-primary-400 cursor-pointer',
-                      isEmojiPickerOpen && 'text-primary-400'
+                      "flex items-center justify-center border-none outline-none hover:text-primary-400 cursor-pointer",
+                      isEmojiPickerOpen && "text-primary-400"
                     )}
                     title="Add Emoji"
-                    onClick={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)}>
+                    onClick={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)}
+                  >
                     <LuSmile className="size-6" />
                   </button>
                   {isEmojiPickerOpen && (
                     <Picker
                       // className="sticky top-0 left-0"
-                      searchPlaceHolder={t('Search Emojis')}
-                      theme={theme === 'light' ? Theme.LIGHT : Theme.DARK}
-                      style={{ position: 'absolute', top: '100%', left: '0' }}
+                      searchPlaceHolder={t("Search Emojis")}
+                      theme={theme === "light" ? Theme.LIGHT : Theme.DARK}
+                      style={{ position: "absolute", top: "100%", left: "0" }}
                       onEmojiClick={(emojiData) => {
                         // console.log('emojiData', emojiData);
                         setPostContent(postContent + emojiData.emoji);
@@ -143,18 +186,42 @@ const PostModal = ({
                 </div>
 
                 <div className="additional__actions flex gap-4">
-                  <label className="hover:text-primary-400 cursor-pointer" title="Add Image">
+                  <label
+                    className="hover:text-primary-400 cursor-pointer"
+                    title="Add Image"
+                  >
                     <LuImage className="size-6" />
-                    <input type="file" accept="image/*" className="hidden" multiple onChange={onPickImage} />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      multiple
+                      onChange={onPickImage}
+                    />
                   </label>
-                  <label className="hover:text-primary-400 cursor-pointer" title="Add Video">
+                  <label
+                    className="hover:text-primary-400 cursor-pointer"
+                    title="Add Video"
+                  >
                     <LuVideo className="size-6" />
-                    <input type="file" accept="video/*" className="hidden" multiple onChange={onPickVideo} />
+                    <input
+                      type="file"
+                      accept="video/*"
+                      className="hidden"
+                      multiple
+                      onChange={onPickVideo}
+                    />
                   </label>
-                  <button className="hover:text-primary-400 cursor-pointer" title="Add Event">
+                  <button
+                    className="hover:text-primary-400 cursor-pointer"
+                    title="Add Event"
+                  >
                     <LuCalendar className="size-6" />
                   </button>
-                  <button className="hover:text-primary-400 cursor-pointer" title="Add Other ">
+                  <button
+                    className="hover:text-primary-400 cursor-pointer"
+                    title="Add Other "
+                  >
                     <LuPlus className="size-6" />
                   </button>
                 </div>
@@ -165,11 +232,14 @@ const PostModal = ({
 
                   <Button
                     className={cn(
-                      'inline-flex items-center gap-2 py-1.5 px-12 border-2  rounded-full text-sm/6 font-semibold  shadow-inner shadow-white/10 hover:bg-primary-400',
-                      'border-primary-400 cursor-pointer',
-                      'transition-all duration-300 ease-in-out'
+                      "inline-flex items-center gap-2 py-1.5 px-12 border-2  rounded-full text-sm/6 font-semibold  shadow-inner shadow-white/10 hover:bg-primary-400",
+                      "border-primary-400 cursor-pointer",
+                      "transition-all duration-300 ease-in-out"
                     )}
-                    onClick={() => handlePost(postContent, postImages, postVideos)}>
+                    onClick={() =>
+                      handlePost(postContent, postImages, postVideos)
+                    }
+                  >
                     Post
                   </Button>
                 </div>

@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { LuBadgeCheck } from "react-icons/lu";
 import {
   EllipsisVertical,
@@ -7,12 +7,12 @@ import {
   UserPlus,
   Share2,
 } from "lucide-react";
-import { profileAvatar } from "../../../assets/icons";
-import { useGetUserById} from "../../../feature/Profile/hooks";
-import { useRoute } from "../../../hooks/useRoute";
-import { formatDateWithMonth } from "../../../utils/dateFormater";
+import { profileAvatar } from "../../../../assets/icons";
+import { useGetUserById } from "../../../Profile/hooks";
+import { useRoute } from "../../../../hooks/useRoute";
+import { formatDateWithMonth } from "../../../../utils/dateFormater";
 import "./Blog.scss";
-// import { useFollowUser } from "../../../feature/Interactions/hooks";
+import { useFollowUser, useUnfollowUser } from "../../../Interactions/hooks";
 
 interface BlogProfileProps {
   id: string;
@@ -22,20 +22,26 @@ interface BlogProfileProps {
 const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
   const { user } = useGetUserById(id || "");
   const { goToProfile } = useRoute();
-
+  const [showMenu, setShowMenu] = useState(false);
+  const { mutate: followUser } = useFollowUser();
+  const { mutate: unfollowUser } = useUnfollowUser();
   const [isFollowing, setIsFollowing] = useState(false);
-  const [showMenu, setShowMenu] = useState(false); 
-
-  // const {mutate: followUser, mutate: unFollowUser , isLoading: followLoading, isLoading: unFollowLoading, isSuccess: followSuccess, isSuccess: unFollowSuccess } = useFollowUser()
-
 
   const handleProfileClick = (username: string) => {
     goToProfile(username);
   };
 
   const handleFollowClick = () => {
-    setIsFollowing(!isFollowing);
-  }
+    if (isFollowing) {
+      unfollowUser(id, {
+        onSuccess: () => setIsFollowing(false),
+      });
+    } else {
+      followUser(id, {
+        onSuccess: () => setIsFollowing(true),
+      });
+    }
+  };
 
   return (
     <div className="blog-profile relative">
@@ -57,10 +63,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
             {user?.username}
           </p>
           <LuBadgeCheck className="size-4" />
-          <div
-           onClick={handleFollowClick}
-            className="cursor-pointer"
-          >
+          <div onClick={handleFollowClick} className="cursor-pointer">
             {isFollowing ? "" : "Follow"}
           </div>
         </div>
@@ -68,7 +71,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
         <span>{formatDateWithMonth(date)}</span>
       </div>
 
-      {/* Ellipsis Icon (Click to Show Menu) */}
+      {/* Ellipsis Icon ,Click to Show Menu*/}
       <div className="relative">
         <EllipsisVertical
           className="size-4 cursor-pointer"
@@ -77,15 +80,19 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
 
         {/* Pop-up Menu */}
         {showMenu && (
-          <div className="absolute right-0 top-6 bg-neutral-800 shadow-md rounded-md p-2 w-52  text-neutral-50">
-            <div className="flex items-center gap-2 px-4 py-2  hover:bg-gray-100 cursor-pointer">
+          <div className="absolute right-0 top-6 bg-neutral-800 shadow-md rounded-md p-2 w-52 text-neutral-50">
+            <div className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
               <Bookmark size={18} className="text-neutral-500" /> Add to Saved
             </div>
             <div className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
               <EyeOff size={18} className="text-neutral-500" /> Hide post
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <UserPlus size={18} className="text-neutral-500" /> Follow author
+            <div
+              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              onClick={handleFollowClick}
+            >
+              <UserPlus size={18} className="text-neutral-500" />{" "}
+              {isFollowing ? "Unfollow" : "Follow author"}
             </div>
             <div className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
               <Share2 size={18} className="text-neutral-500" /> Share
