@@ -8,12 +8,11 @@ import {
   PlayCircle,
   Loader2,
 } from "lucide-react"; // Proper import
-import { VoiceLanguageContext } from "../../../context/VoiceLanguageContext/VoiceLanguageContext";
-import { cn } from "../../../utils";
+import { VoiceLanguageContext } from "../../../../context/VoiceLanguageContext/VoiceLanguageContext";
+import { cn } from "../../../../utils";
 import ReactionModal from "./ReactionModal";
-import CommentTab from "./CommentTab";
-import CommentMessage from "../../../feature/Feed/components/CommentMessage";
-
+import CommentTab from "../../../Comments/components/CommentTab";
+import CommentMessage from "../../../Comments/components/CommentMessage";
 
 const messages = [
   {
@@ -66,22 +65,21 @@ const messages = [
   },
 ];
 
-
-
-
 interface BlogReactionSessionProps {
   message: string;
-  isCommentSectionOpen: boolean; 
+  isCommentSectionOpen: boolean;
 }
 
-const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({ message,isCommentSectionOpen }) => {
+const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
+  message,
+  isCommentSectionOpen,
+}) => {
   const { selectedVoice } = useContext(VoiceLanguageContext);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [commentTabState, setCommentTabState] = useState<boolean>(false);
- 
 
   const synth = window.speechSynthesis;
 
@@ -124,14 +122,11 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({ message,isCom
 
   const toggleCommentTab = () => {
     if (!isCommentSectionOpen) {
-       setCommentTabState(!commentTabState);
+      setCommentTabState(!commentTabState);
     } else {
       console.log("Comment section is not open");
     }
-   
   };
-
- 
 
   return (
     <div>

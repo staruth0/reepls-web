@@ -39,7 +39,7 @@ const Profile: React.FC = () => {
   }, [user]);
 
   return (
-    <div className={`grid grid-cols-[4fr_1.66fr] `}>
+    <div className={`grid grid-cols-[4fr_1.65fr] `}>
       <div className="profile border-r-[1px] border-neutral-500 ">
         <Topbar>
           <p>{t(`Profile`)}</p>

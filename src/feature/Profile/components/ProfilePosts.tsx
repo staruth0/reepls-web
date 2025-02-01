@@ -1,6 +1,6 @@
 import React from "react";
 import { useGetArticlesByAuthorId } from "../../Blog/hooks/useArticleHook";
-import BlogPost from "../../../components/molecules/BlogPost";
+import BlogPost from "../../Blog/components/BlogPost";
 
 interface ProfileArticlesProps {
   authorId: string;

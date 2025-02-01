@@ -1,6 +1,6 @@
 import { apiClient } from "../../../services/apiClient";
 import { Reaction } from "../../../models/datamodels";
-import { Comment } from "../../../models/datamodels";
+
 
 // Create a new reaction
 const createReaction = async (reaction: Reaction) => {
@@ -70,116 +70,11 @@ const getFollowing = async (userId: string) => {
 }
 
 
-//Comments
-
-// Create a comment
-const createComment = async (comment: Comment) => {
-  console.log("Creating comment:", comment);
-  const { data } = await apiClient.post("/comment", comment);
-  return data;
-};
-
-// Get comments for an article
-const getCommentsByArticleId = async (articleId: string) => {
-  console.log("Fetching comments for article with ID:", articleId);
-  const { data } = await apiClient.get(`/comment/article/${articleId}`);
-  return data;
-};
-
-// Update a comment
-const updateComment = async (commentId: string, content: string) => {
-  console.log("Updating comment with ID:", commentId, "Content:", content);
-  const { data } = await apiClient.put(`/comment/${commentId}`, { content });
-  return data;
-};
-
-// Delete a comment
-const deleteComment = async (commentId: string) => {
-  console.log("Deleting comment with ID:", commentId);
-  const { data } = await apiClient.delete(`/comment/${commentId}`);
-  return data;
-};
-
-// Get replies for a comment
-const getRepliesForComment = async (commentId: string) => {
-  console.log("Fetching replies for comment with ID:", commentId);
-  const { data } = await apiClient.get(`/comment/replies/${commentId}`);
-  return data;
-};
 
 
 
-// Reports
-
-import { Report } from "../../../models/datamodels";
-
-// Create a new report
-const createReport = async (report: Report) => {
-  console.log("Creating report:", report);
-  const { data } = await apiClient.post("/report", report);
-  return data;
-};
-
-// Get all reports
-const getAllReports = async () => {
-  console.log("Fetching all reports");
-  const { data } = await apiClient.get("/report");
-  return data;
-};
-
-// Get all reports with filters
-const getReportsWithFilters = async (
-  status: string,
-  startDate: string,
-  endDate: string
-) => {
-  console.log("Fetching reports with filters");
-  const { data } = await apiClient.get(
-    `/report?status=${status}&startDate=${startDate}&endDate=${endDate}`
-  );
-  return data;
-};
-
-// Get a report by ID
-const getReportById = async (reportId: string) => {
-  console.log("Fetching report with ID:", reportId);
-  const { data } = await apiClient.get(`/report/${reportId}`);
-  return data;
-};
-
-// Update report status
-const updateReportStatus = async (reportId: string, status: string) => {
-  console.log(
-    "Updating report status for report with ID:",
-    reportId,
-    "Status:",
-    status
-  );
-  const { data } = await apiClient.patch(`/report/${reportId}/status`, {
-    status,
-  });
-  return data;
-};
-
-// Delete a report
-const deleteReport = async (reportId: string) => {
-  console.log("Deleting report with ID:", reportId);
-  const { data } = await apiClient.delete(`/report/${reportId}`);
-  return data;
-};
 
 export {
-  createReport,
-  getAllReports,
-  getReportsWithFilters,
-  getReportById,
-  updateReportStatus,
-  deleteReport,
-  createComment,
-  getCommentsByArticleId,
-  updateComment,
-  deleteComment,
-  getRepliesForComment,
   createReaction,
   getReactionById,
   updateReaction,
