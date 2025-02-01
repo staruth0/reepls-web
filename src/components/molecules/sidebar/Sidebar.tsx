@@ -22,6 +22,7 @@ import { SidebarContext } from "../../../context/SidebarContext/SidebarContext";
 import { cn } from "../../../utils";
 import PostModal from "../../../feature/Blog/components/PostModal";
 import "./sidebar.scss";
+import { reeplsIcon } from "../../../assets/icons";
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
@@ -88,7 +89,9 @@ const Sidebar: React.FC = () => {
         onClick={() => handleToggleSidebar()}
       />
       <div className="flex gap-5 items-center h-[80px]">
-        <div className=" text-roboto text-[24px] font-semibold">REEPLS</div>
+        <div className=" text-roboto text-[24px] font-semibold flex gap-2 items-center">
+          <img src={reeplsIcon} alt="reeplsicon" className={`${isOpen?'size-8': 'size-9'}`}/>
+         { isOpen && 'REEPLS'}</div>
       </div>
 
       <div className="sidebar__links">

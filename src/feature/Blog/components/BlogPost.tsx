@@ -15,6 +15,7 @@ interface BlogPostProps {
   id: string;
   date: string;
   isArticle: boolean;
+  article_id: string;
 }
 
 const sampleImages = [
@@ -22,7 +23,7 @@ const sampleImages = [
   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 ];
-const BlogPost: React.FC<BlogPostProps> = ({images,title,content,id,date,isArticle}) => {
+const BlogPost: React.FC<BlogPostProps> = ({images,title,content,id,date,isArticle,article_id}) => {
   const { isCognitiveMode } = useContext(CognitiveModeContext);
   const [isCommentSectionOpen, setIsCommentSectionOpen] = useState<boolean>(false);
   
@@ -45,6 +46,7 @@ const BlogPost: React.FC<BlogPostProps> = ({images,title,content,id,date,isArtic
       <BlogReactionSession
         isCommentSectionOpen={isCommentSectionOpen}
         message={content}
+        article_id={article_id}
       />
     </div>
   );

@@ -1,16 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { hand5, heart, thumb } from "../../../../assets/icons";
 import { timeAgo } from "../../../../utils/dateFormater";
+import ReactionsPopup from "../../../Interactions/components/ReactionsPopup";
 
 interface BlogReactionStatsProps {
   date: string;
   toggleCommentSection: () => void;
 }
 
-const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
-  date,
-  toggleCommentSection,
-}) => {
+const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date, toggleCommentSection }) => {
+  const [showReactions, setShowReactions] = useState(false);
+
+  const handlecloseReactionPopup = () => { 
+    setShowReactions(false); 
+  }
+
   return (
     <div className="flex justify-between items-center p-4 text-neutral-50 text-sm font-roboto">
       {/* Reaction Section */}
@@ -35,7 +39,7 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
             />
           </div>
           {/* Reaction Count */}
-          <div className="ml-1">1.1k</div>
+          <div className="ml-1 hover:underline underline-offset-1" onClick={() => setShowReactions(true)}>1.1k</div>
         </div>
 
         {/* Comments Count */}
@@ -43,6 +47,8 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
           57 Comments
         </div>
       </div>
+
+      {showReactions && (<ReactionsPopup isOpen={ showReactions} onClose={handlecloseReactionPopup} /> )}
 
       {/* Time Posted */}
       <div className="text-neutral-70 text-xs">{timeAgo(date)}</div>

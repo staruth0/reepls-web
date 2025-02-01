@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { heart, sadface, smile, thumb } from "../../../../assets/icons";
+import { heart, sadface, smile, thumb, clap } from "../../../assets/icons";
+import { useCreateReaction } from "../hooks";
+import { useUser } from "../../../hooks/useUser";
 
 interface ReactionModalProps {
   isOpen: boolean;
   onClose: () => void;
   onReact: (reaction: string) => void;
+  article_id: string;
 }
 
-const ReactionModal: React.FC<ReactionModalProps> = ({
-  isOpen,
-  onClose,
-  onReact,
-}) => {
+const ReactionModal: React.FC<ReactionModalProps> = ({isOpen,onClose,onReact,article_id}) => {
   const [isVisible, setIsVisible] = useState(false);
-  //   const [likeCount, setLikeCount] = useState(0);
-  //   const [likeCountIcons, setLikeCountIcons] = useState([]);
+  const {authUser} = useUser()
+  const {mutate: createReaction} = useCreateReaction()
+  
 
   useEffect(() => {
     if (isOpen) {
@@ -30,8 +30,20 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
     { icon: heart, name: "Love" },
     { icon: thumb, name: "Like" },
     { icon: smile, name: "Laugh" },
-    { icon: sadface, name: "Sad" },
+    { icon: sadface, name: "Cry" },
+    { icon: clap, name: "clap" },
   ];
+
+  const handleReaction = (
+    reaction: "heart" | "smile" | "clap" | "thumb" | "sad"
+  ) => {
+  
+    createReaction({ type: reaction, article_id, user_id: authUser?.id }, {
+      onSuccess: () => { 
+        console.log("Reaction created successfully");
+      }
+    });
+  };
 
   return (
     <>
@@ -61,6 +73,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
                 src={reaction.icon}
                 alt={reaction.name}
                 className="w-6 h-6"
+                onClick={()=>handleReaction(reaction.name)}
               />
             </button>
           ))}
