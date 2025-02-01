@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../hooks/useUser";
-import { useFollowUser, useUnfollowUser } from "../../Interactions/hooks";
+import { useFollowUser, useUnfollowUser } from "../../Follow/hooks";
+import { useKnowUserFollowings } from "../../Follow/hooks/useKnowUserFollowings";
 
 interface ProfileHeroButtonsProps {
   userId: string;
@@ -12,29 +13,10 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({ userId }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { authUser } = useUser();
+  const { isFollowing: isUserFollowing } = useKnowUserFollowings();
 
-  const {
-    mutate: follow,
-    isPending: isFollowPending,
-    error: followError,
-    isSuccess: isFollowSuccess,
-  } = useFollowUser();
-  const {
-    mutate: unFollow,
-    isPending: isUnfollowPending,
-    error: unfollowError,
-    isSuccess: isUnfollowSuccess,
-  } = useUnfollowUser();
-
-  const [isFollowing, setIsFollowing] = useState(false);
-
-  useEffect(() => {
-    if (isFollowSuccess) {
-      setIsFollowing(true);
-    } else if (isUnfollowSuccess) {
-      setIsFollowing(false);
-    }
-  }, [isFollowSuccess, isUnfollowSuccess]);
+  const { mutate: follow,isPending: isFollowPending,error: followError} = useFollowUser();
+  const {mutate: unFollow,isPending: isUnfollowPending,error: unfollowError} = useUnfollowUser();
 
   const handleEditProfile = (username: string) => {
     navigate(`/profile/edit/${username}`);
@@ -45,10 +27,10 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({ userId }) => {
   };
 
   const handleFollowClick = () => {
-    if (isFollowing) {
-      unFollow(userId);
+    if (isUserFollowing(userId)) {
+      unFollow(userId); // Unfollow the user
     } else {
-      follow(userId);
+      follow(userId); // Follow the user
     }
   };
 
@@ -72,12 +54,14 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({ userId }) => {
       ) : (
         <div>
           <button
-            className={`px-8 py-3 rounded-full text-sm bg-main-green text-white  ${
-              isFollowing ? "bg-neutral-600 text-slate-700 " : ""
+            className={`px-8 py-3 rounded-full text-sm ${
+              isUserFollowing(userId)
+                ? "bg-neutral-600 text-neutral-50"
+                : "bg-main-green text-white"
             }`}
             onClick={handleFollowClick}
           >
-            {isFollowing
+            {isUserFollowing(userId)
               ? t(`${isUnfollowPending ? "Unfollowing..." : "Unfollow"}`)
               : t(`${isFollowPending ? "Following..." : "Follow"}`)}
           </button>

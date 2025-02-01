@@ -84,6 +84,7 @@ const UserFeed: React.FC = () => {
                 content={article.content}
                 id={article.author_id}
                 date={article.createdAt}
+                article_id={article._id}
               />
             ))}
           </div>

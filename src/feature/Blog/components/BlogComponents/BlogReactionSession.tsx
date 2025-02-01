@@ -10,7 +10,7 @@ import {
 } from "lucide-react"; // Proper import
 import { VoiceLanguageContext } from "../../../../context/VoiceLanguageContext/VoiceLanguageContext";
 import { cn } from "../../../../utils";
-import ReactionModal from "./ReactionModal";
+import ReactionModal from "../../../Interactions/components/ReactionModal";
 import CommentTab from "../../../Comments/components/CommentTab";
 import CommentMessage from "../../../Comments/components/CommentMessage";
 
@@ -68,11 +68,13 @@ const messages = [
 interface BlogReactionSessionProps {
   message: string;
   isCommentSectionOpen: boolean;
+  article_id:string
 }
 
 const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   message,
   isCommentSectionOpen,
+  article_id
 }) => {
   const { selectedVoice } = useContext(VoiceLanguageContext);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
@@ -177,6 +179,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
           isOpen={isModalOpen}
           onClose={() => setModalOpen(false)}
           onReact={(reaction) => console.log(`Reacted with ${reaction}`)}
+          article_id={article_id}
         />
       </div>
 

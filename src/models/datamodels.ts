@@ -78,11 +78,11 @@ export interface Follow {
 }
 
 export interface Reaction {
-  reaction_id: string;
-  type: "Like" | "Insightful" | "Love";
+  reaction_id?: string;
+  type: "heart" | "smile" | "clap" | "thumb" | "sad";
   user_id: string;
   article_id: string;
-  created_at: string;
+  created_at?: string;
 }
 
 export interface Notification {

@@ -1,18 +1,13 @@
 import React, { useState } from "react";
 import { LuBadgeCheck } from "react-icons/lu";
-import {
-  EllipsisVertical,
-  Bookmark,
-  EyeOff,
-  UserPlus,
-  Share2,
-} from "lucide-react";
+import { EllipsisVertical,Bookmark,EyeOff,UserPlus,Share2} from "lucide-react";
 import { profileAvatar } from "../../../../assets/icons";
 import { useGetUserById } from "../../../Profile/hooks";
 import { useRoute } from "../../../../hooks/useRoute";
 import { formatDateWithMonth } from "../../../../utils/dateFormater";
 import "./Blog.scss";
-import { useFollowUser, useUnfollowUser } from "../../../Interactions/hooks";
+import { useFollowUser, useUnfollowUser } from "../../../Follow/hooks";
+import { useKnowUserFollowings } from "../../../Follow/hooks/useKnowUserFollowings";
 
 interface BlogProfileProps {
   id: string;
@@ -23,23 +18,19 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
   const { user } = useGetUserById(id || "");
   const { goToProfile } = useRoute();
   const [showMenu, setShowMenu] = useState(false);
-  const { mutate: followUser } = useFollowUser();
-  const { mutate: unfollowUser } = useUnfollowUser();
-  const [isFollowing, setIsFollowing] = useState(false);
+  const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
+  const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
+  const { isFollowing } = useKnowUserFollowings();
 
   const handleProfileClick = (username: string) => {
     goToProfile(username);
   };
 
   const handleFollowClick = () => {
-    if (isFollowing) {
-      unfollowUser(id, {
-        onSuccess: () => setIsFollowing(false),
-      });
+    if (isFollowing(id)) {
+      unfollowUser(id); // Unfollow the user
     } else {
-      followUser(id, {
-        onSuccess: () => setIsFollowing(true),
-      });
+      followUser(id); // Follow the user
     }
   };
 
@@ -63,9 +54,11 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
             {user?.username}
           </p>
           <LuBadgeCheck className="size-4" />
-          <div onClick={handleFollowClick} className="cursor-pointer">
-            {isFollowing ? "" : "Follow"}
-          </div>
+          {!isFollowing(user?.id) && (
+            <div onClick={handleFollowClick} className="cursor-pointer">
+              {isFollowPending ? "Following..." : "Follow"}
+            </div>
+          )}
         </div>
         <p>Writer @ CMR FA magazine...</p>
         <span>{formatDateWithMonth(date)}</span>
@@ -92,7 +85,13 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
               onClick={handleFollowClick}
             >
               <UserPlus size={18} className="text-neutral-500" />{" "}
-              {isFollowing ? "Unfollow" : "Follow author"}
+              {isFollowing(user?.id)
+                ? isUnfollowPending
+                  ? "Unfollowing..."
+                  : "Unfollow author"
+                : isFollowPending
+                ? "Following..."
+                : "Follow author"}
             </div>
             <div className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
               <Share2 size={18} className="text-neutral-500" /> Share

@@ -5,10 +5,7 @@ import {
   updateReaction,
   deleteReaction,
   getAuthorScoresByCategory,
-  followUser,
-  unfollowUser,
-  getFollowers,
-  getFollowing,
+
 } from "../api";
 import { Reaction} from "../../../models/datamodels";
 
@@ -64,43 +61,6 @@ export const useGetAuthorScoresByCategory = (category: string) => {
   });
 };
 
-// Following Hooks
-export const useFollowUser = () => {
-  return useMutation({
-    mutationFn: (followedId: string) => followUser(followedId),
-    onSuccess: (data) => {
-      console.log("User followed:", data);
-    },
-    onError: (error) => {
-      console.error("Error following user:", error);
-    },
-  });
-};
 
-export const useUnfollowUser = () => {
-  return useMutation({
-    mutationFn: (followedId: string) => unfollowUser(followedId),
-    onSuccess: (data) => {
-      console.log("User unfollowed:", data);
-    },
-    onError: (error) => {
-      console.error("Error unfollowing user:", error);
-    },
-  });
-};
-
-export const useGetFollowers = (userId: string) => {
-  return useQuery({
-    queryKey: ["followers", userId],
-    queryFn: () => getFollowers(userId),
-  });
-};
-
-export const useGetFollowing = (userId: string) => {
-  return useQuery({
-    queryKey: ["following", userId],
-    queryFn: () => getFollowing(userId)
-  });
-};
 
 
