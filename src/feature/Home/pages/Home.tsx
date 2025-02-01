@@ -25,8 +25,6 @@ function Home() {
     }
   };
 
-  const test = t('Get Started');
-
   return (
     <div className="home__container">
       <h1>{t('Welcome to REEPLS')}</h1>
@@ -38,7 +36,7 @@ function Home() {
         <div className="togglebtn__mover"></div>
       </div>
 
-      <h2 onClick={handleClick}>{loading ? 'updating state' : test}</h2>
+      <h2 onClick={handleClick}>{t('Get Started')}</h2>
     </div>
   );
 }
