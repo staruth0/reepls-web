@@ -16,6 +16,7 @@ export interface AuthTokens {
 }
 
 export interface User {
+  id?: string;
   user_id?: string;
   googleId?: string;
   username?: string;
@@ -64,12 +65,13 @@ export interface Article {
 }
 
 export interface Comment {
-  comment_id: string;
-  content: string;
-  author_id: string;
-  article_id: string;
+  comment_id?: string;
+  content?: string;
+  author_id?: string;
+  article_id?: string;
   parent_comment_id?: string;
-  created_at: string;
+  is_audio_comment?: boolean;
+  created_at?: string;
 }
 
 export interface Follow {
