@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LuBadgeCheck } from "react-icons/lu";
 import { EllipsisVertical,Bookmark,EyeOff,UserPlus,Share2} from "lucide-react";
 import { profileAvatar } from "../../../../assets/icons";
@@ -22,17 +22,31 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
   const { isFollowing } = useKnowUserFollowings();
 
+  const [followingText, setFollowingText] = useState<"Follow Author" | "Unfollow Author">("Follow Author");
+
   const handleProfileClick = (username: string) => {
     goToProfile(username);
   };
 
   const handleFollowClick = () => {
     if (isFollowing(id)) {
-      unfollowUser(id); // Unfollow the user
+      unfollowUser(id, {
+        onSuccess: () => setFollowingText("Follow Author"),
+      });
     } else {
-      followUser(id); // Follow the user
+      followUser(id, {
+        onSuccess: () => setFollowingText("Unfollow Author"),
+      });
     }
   };
+
+  useEffect(() => {
+    if (isFollowing(id)) {
+      setFollowingText("Unfollow Author");
+    } else {
+      setFollowingText("Follow Author");
+    }
+  }, [isFollowing, id]);
 
   return (
     <div className="blog-profile relative">
@@ -54,9 +68,9 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
             {user?.username}
           </p>
           <LuBadgeCheck className="size-4" />
-          {!isFollowing(user?.id) && (
+          {!isFollowing(id) && (
             <div onClick={handleFollowClick} className="cursor-pointer">
-              {isFollowPending ? "Following..." : "Follow"}
+              {isFollowPending ? "Following..." : followingText }
             </div>
           )}
         </div>
@@ -85,13 +99,13 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
               onClick={handleFollowClick}
             >
               <UserPlus size={18} className="text-neutral-500" />{" "}
-              {isFollowing(user?.id)
+              {isFollowing(id)
                 ? isUnfollowPending
                   ? "Unfollowing..."
-                  : "Unfollow author"
+                  : followingText
                 : isFollowPending
                 ? "Following..."
-                : "Follow author"}
+                : followingText}
             </div>
             <div className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
               <Share2 size={18} className="text-neutral-500" /> Share

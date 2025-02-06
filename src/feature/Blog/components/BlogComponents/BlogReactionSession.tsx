@@ -183,13 +183,13 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
         />
       </div>
 
-      {commentTabState && <CommentTab toggleCommentTab={toggleCommentTab} />}
+      {commentTabState && <CommentTab article_id={article_id} toggleCommentTab={toggleCommentTab} />}
       {isCommentSectionOpen && (
         <div className="flex flex-col gap-2">
           {messages.map((msg, index) => (
             <CommentMessage key={index} {...msg} />
           ))}
-          <CommentTab toggleCommentTab={toggleCommentTab} />
+          <CommentTab article_id={article_id} toggleCommentTab={toggleCommentTab} />
         </div>
       )}
     </div>
