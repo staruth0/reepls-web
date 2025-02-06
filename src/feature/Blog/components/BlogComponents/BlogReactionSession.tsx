@@ -1,69 +1,12 @@
 import React, { useContext, useState } from "react";
-import {
-  AudioLines,
-  MessageCircle,
-  ThumbsUp,
-  Volume2,
-  PauseCircle,
-  PlayCircle,
-  Loader2,
-} from "lucide-react"; // Proper import
+import {AudioLines,MessageCircle,ThumbsUp,Volume2,PauseCircle,PlayCircle,Loader2} from "lucide-react"; // Proper import
 import { VoiceLanguageContext } from "../../../../context/VoiceLanguageContext/VoiceLanguageContext";
 import { cn } from "../../../../utils";
 import ReactionModal from "../../../Interactions/components/ReactionModal";
 import CommentTab from "../../../Comments/components/CommentTab";
-import CommentMessage from "../../../Comments/components/CommentMessage";
+import CommentSection from "../../../Comments/components/CommentSection";
 
-const messages = [
-  {
-    username: "Ojong Mensah",
-    role: "Writer @ CMR FA magazine",
-    timeAgo: "2h",
-    message: "Your view on this is insightful. This is so on point.",
-    reactions: 1300,
-    replies: 500,
-  },
-  {
-    username: "Denis O. Baron",
-    role: "CEO @ Atar Inc.",
-    timeAgo: "1h",
-    message: "Your view on this is insightful. This is very accurate.",
-    reactions: 1200,
-    replies: 450,
-  },
-  {
-    username: "Sarah Kim",
-    role: "Editor @ Global News",
-    timeAgo: "3h",
-    message: "This perspective adds great value to the discussion.",
-    reactions: 1100,
-    replies: 400,
-  },
-  {
-    username: "Elijah Brooks",
-    role: "Tech Analyst @ InnovateX",
-    timeAgo: "30m",
-    message: "A very well-articulated point. Thanks for sharing!",
-    reactions: 900,
-    replies: 350,
-  },
-  {
-    username: "Linda Carter",
-    role: "Researcher @ DataWorld",
-    timeAgo: "4h",
-    message: "Couldn't agree more! This is exactly my thought.",
-    reactions: 800,
-    replies: 300,
-  },
-  {
-    username: "Michael Trent",
-    role: "Investor & Advisor",
-    timeAgo: "5h",
-    message: "Interesting viewpoint. Brings a fresh perspective.",
-    reactions: 750,
-    replies: 275,
-  },
-];
+
 
 interface BlogReactionSessionProps {
   message: string;
@@ -71,11 +14,7 @@ interface BlogReactionSessionProps {
   article_id:string
 }
 
-const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
-  message,
-  isCommentSectionOpen,
-  article_id
-}) => {
+const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({message,isCommentSectionOpen, article_id}) => {
   const { selectedVoice } = useContext(VoiceLanguageContext);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [isPending, setIsPending] = useState<boolean>(false);
@@ -132,7 +71,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
 
   return (
     <div>
-      <div className="blog-reaction-session flex gap-4">
+      <div className="blog-reaction-session border-t border-neutral-500 flex gap-4">
         <button
           onMouseEnter={() => setModalOpen(true)}
           onClick={() => setModalOpen(true)}
@@ -183,14 +122,9 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
         />
       </div>
 
-      {commentTabState && <CommentTab article_id={article_id} toggleCommentTab={toggleCommentTab} />}
+      {commentTabState && <CommentTab article_id={article_id}  />}
       {isCommentSectionOpen && (
-        <div className="flex flex-col gap-2">
-          {messages.map((msg, index) => (
-            <CommentMessage key={index} {...msg} />
-          ))}
-          <CommentTab article_id={article_id} toggleCommentTab={toggleCommentTab} />
-        </div>
+       <CommentSection article_id={article_id} />
       )}
     </div>
   );
