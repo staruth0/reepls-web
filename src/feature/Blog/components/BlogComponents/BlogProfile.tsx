@@ -22,7 +22,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
   const { isFollowing } = useKnowUserFollowings();
 
-  const [followingText, setFollowingText] = useState<"Follow Author" | "Unfollow Author">("Follow Author");
+  const [followingText, setFollowingText] = useState<"Follow" | "Unfollow">("Follow");
 
   const handleProfileClick = (username: string) => {
     goToProfile(username);
@@ -31,20 +31,20 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
   const handleFollowClick = () => {
     if (isFollowing(id)) {
       unfollowUser(id, {
-        onSuccess: () => setFollowingText("Follow Author"),
+        onSuccess: () => setFollowingText("Follow"),
       });
     } else {
       followUser(id, {
-        onSuccess: () => setFollowingText("Unfollow Author"),
+        onSuccess: () => setFollowingText("Unfollow"),
       });
     }
   };
 
   useEffect(() => {
     if (isFollowing(id)) {
-      setFollowingText("Unfollow Author");
+      setFollowingText("Unfollow");
     } else {
-      setFollowingText("Follow Author");
+      setFollowingText("Follow");
     }
   }, [isFollowing, id]);
 
@@ -102,10 +102,10 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
               {isFollowing(id)
                 ? isUnfollowPending
                   ? "Unfollowing..."
-                  : followingText
+                  : followingText + ' Author'
                 : isFollowPending
                 ? "Following..."
-                : followingText}
+                : followingText + ' Author'}
             </div>
             <div className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
               <Share2 size={18} className="text-neutral-500" /> Share

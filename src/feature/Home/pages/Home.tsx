@@ -10,7 +10,7 @@ function Home() {
   const { t, i18n } = useTranslation();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  const { loading, authState } = useContext(AuthContext);
+  const {  authState } = useContext(AuthContext);
 
   const handleClick = () => {
     console.log('Current authState:', authState);

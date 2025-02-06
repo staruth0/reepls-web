@@ -2,28 +2,26 @@ import { Send } from "lucide-react";
 import { Comment } from "../../../models/datamodels";
 import { useUser } from "../../../hooks/useUser";
 import { useState } from "react";
+import { useCreateComment } from "../hooks";
+import { Spinner } from "../../../components/atoms/Spinner"; 
 
 interface CommentTabProps {
-  toggleCommentTab: () => void;
   article_id: string;
-
 }
 
-const CommentTab: React.FC<CommentTabProps> = ({ toggleCommentTab, article_id }) => {
+const CommentTab: React.FC<CommentTabProps> = ({article_id}) => {
   const { authUser } = useUser();
   const [comment, setComment] = useState<string>("");
-  
-  const handleCommentSubmit = () => { 
-    const commentValues: Comment = {
-      article_id,
-      author_id: authUser?.id,
-      content: comment,
-      is_audio_comment: false,
-      parent_comment_id: article_id,
-    } 
 
-    console.log(commentValues);
-  }
+  const { mutate, isPending} = useCreateComment();
+
+  const handleCommentSubmit = () => {
+    const commentValues: Comment = {article_id,author_id: authUser?.id,content: comment,is_audio_comment: false};
+
+    mutate(commentValues); 
+    console.log(commentValues)
+    setComment("");
+  };
 
   return (
     <div className="flex items-center w-full p-2 border border-neutral-300 rounded-full bg-background transition-colors mb-5">
@@ -34,11 +32,12 @@ const CommentTab: React.FC<CommentTabProps> = ({ toggleCommentTab, article_id })
         value={comment}
         onChange={(e) => setComment(e.target.value)}
       />
-      <button
-        onClick={toggleCommentTab}
-        className="ml-2 p-1 text-neutral-100 hover:text-primary-400 transition-colors"
-      >
-        <Send size={20} onClick={handleCommentSubmit}/>
+      <button onClick={handleCommentSubmit} className="ml-2 p-1 text-neutral-100 hover:text-primary-400 transition-colors" disabled={isPending} >
+        {isPending ? (
+          <Spinner size={20} /> 
+        ) : (
+          <Send size={20} /> 
+        )}
       </button>
     </div>
   );

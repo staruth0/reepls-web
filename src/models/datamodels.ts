@@ -65,13 +65,14 @@ export interface Article {
 }
 
 export interface Comment {
-  comment_id?: string;
   content?: string;
   author_id?: string;
   article_id?: string;
   parent_comment_id?: string;
   is_audio_comment?: boolean;
-  created_at?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  _id?: string;
 }
 
 export interface Follow {
