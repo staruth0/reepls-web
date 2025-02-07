@@ -29,16 +29,15 @@ const ReactionModal: React.FC<ReactionModalProps> = ({isOpen,onClose,onReact,art
   const reactions = [
     { icon: heart, name: "Love" },
     { icon: thumb, name: "Like" },
-    { icon: smile, name: "Laugh" },
+    { icon: smile, name: "smile" },
     { icon: sadface, name: "Cry" },
     { icon: clap, name: "clap" },
   ];
 
-  const handleReaction = (
-    reaction: "heart" | "smile" | "clap" | "thumb" | "sad"
-  ) => {
+  const handleReaction = ( reaction: string ) => {
   
-    createReaction({ type: reaction, article_id, user_id: authUser?.id }, {
+    console.log({ type: reaction, article_id, user_id: authUser?.id || "" });
+    createReaction({ type: reaction, article_id, user_id: authUser?.id || "" }, {
       onSuccess: () => { 
         console.log("Reaction created successfully");
       }
@@ -53,7 +52,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({isOpen,onClose,onReact,art
       ></div>
 
       <div
-        className={`absolute z-50 mt-2 bg-white border border-gray-200 shadow-lg rounded-full p-3 transition-opacity duration-400 ${
+        className={`absolute z-50 mt-2 bg-background  shadow-lg rounded-full p-3 transition-opacity duration-400 ${
           isOpen ? "opacity-100" : "opacity-0"
         }`}
         style={{ bottom: "40px", left: "0px" }}

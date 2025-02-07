@@ -1,24 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+
 
 interface TabsProps {
-  tabs: { id: number | string; title: string }[]; // title is now only a string
+  tabs: { id: number | string; title: JSX.Element }[];
   activeTab: number | string;
   setActiveTab: (tabId: number | string) => void;
   scale?: boolean;
   borderBottom?: boolean;
+  children?: React.ReactNode;
 }
 
-const Tabs: React.FC<TabsProps> = ({
-  tabs,
-  activeTab,
-  setActiveTab,
-  scale,
-  borderBottom,
-}) => {
+const ReactionTab: React.FC<TabsProps> = ({tabs,activeTab,setActiveTab,scale,borderBottom}) => {
   const [tabStyle, setTabStyle] = useState<React.CSSProperties>({});
   const tabRef = useRef<HTMLDivElement>(null);
-  const { t } = useTranslation();
 
   useEffect(() => {
     const activeTabElement = tabRef.current?.querySelector(
@@ -38,9 +32,10 @@ const Tabs: React.FC<TabsProps> = ({
 
   return (
     <div className="flex flex-col items-center backdrop-blur-sm">
+      {/* Tabs */}
       <div
         ref={tabRef}
-        className={`relative flex justify-between w-full ${
+        className={`relative flex justify-between w-full  ${
           borderBottom ? "border-b" : ""
         }`}
       >
@@ -56,10 +51,11 @@ const Tabs: React.FC<TabsProps> = ({
                 : "border-transparent text-neutral-50"
             }`}
             onClick={() => handleTabClick(tab.id)}
-          >
-            {t(tab.title)} 
+            >
+            {tab.title}
           </span>
         ))}
+        {/* Tab slider */}
         <div
           className="absolute bottom-0 h-[2px] bg-primary-400 transition-all duration-300"
           style={tabStyle}
@@ -69,4 +65,4 @@ const Tabs: React.FC<TabsProps> = ({
   );
 };
 
-export default Tabs;
+export default ReactionTab;
