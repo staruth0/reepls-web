@@ -34,7 +34,7 @@ const BlogPost: React.FC<BlogPostProps> = ({images,title,content,id,date,isArtic
   };
 
   return (
-    <div className="each_blog_post mt-5 shadow-md p-2 max-w-[680px] self-center w-full">
+    <div className="each_blog_post mt-5 shadow-md p-2 max-w-[680px] self-center w-full bg-background">
       { isArticle && <BlogArticleHeader /> }
       <BlogProfile id={id} date={date} />
       <BlogMessage title={title} content={content} />
@@ -42,6 +42,7 @@ const BlogPost: React.FC<BlogPostProps> = ({images,title,content,id,date,isArtic
       <BlogReactionStats
         toggleCommentSection={toggleCommentSection}
         date={date}
+        article_id={article_id}
       />
       <BlogReactionSession
         isCommentSectionOpen={isCommentSectionOpen}

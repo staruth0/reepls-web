@@ -1,7 +1,6 @@
 import { apiClient } from "../../../services/apiClient";
 import { Reaction } from "../../../models/datamodels";
 
-
 // Create a new reaction
 const createReaction = async (reaction: Reaction) => {
   console.log("Creating reaction:", reaction);
@@ -37,9 +36,31 @@ const getAuthorScoresByCategory = async (category: string) => {
   return data;
 };
 
+// Fetch users who reacted to an article
+const getReactedUsers = async (articleId: string) => {
+  console.log("Fetching users who reacted to article:", articleId);
+  const { data } = await apiClient.get(`/react/${articleId}/reacted-users`);
+  return data;
+};
 
+// Fetch all reactions of an article
+const getArticleReactions = async (articleId: string) => {
+  console.log("Fetching all reactions for article:", articleId);
+  const { data } = await apiClient.get(`/react/${articleId}/reactions`);
+  return data;
+};
 
-
+// Fetch users grouped by reaction type for an article
+const getReactionsPerType = async (articleId: string) => {
+  console.log(
+    "Fetching users grouped by reaction type for article:",
+    articleId
+  );
+  const { data } = await apiClient.get(
+    `/react/${articleId}/reactions/per-type`
+  );
+  return data;
+};
 
 export {
   createReaction,
@@ -47,5 +68,7 @@ export {
   updateReaction,
   deleteReaction,
   getAuthorScoresByCategory,
-
+  getReactedUsers,
+  getArticleReactions,
+  getReactionsPerType,
 };

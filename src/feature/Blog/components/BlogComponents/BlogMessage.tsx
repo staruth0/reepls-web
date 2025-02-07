@@ -13,7 +13,7 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content }) => {
 
   return (
     <div className="blog-message">
-      <h2 className="text-xl font-semibold mb-2">{title}</h2>
+      <div className="text-[15px] font-semibold mb-2">{title}</div>
       <p
         className={`text-neutral-50 text-[14px] transition-all duration-300 ${
           isExpanded ? "line-clamp-none" : "line-clamp-3"

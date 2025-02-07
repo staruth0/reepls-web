@@ -1,20 +1,34 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   createReaction,
   getReactionById,
   updateReaction,
   deleteReaction,
   getAuthorScoresByCategory,
-
+  getReactedUsers,
+  getArticleReactions,
+  getReactionsPerType,
 } from "../api";
-import { Reaction} from "../../../models/datamodels";
+import { Reaction } from "../../../models/datamodels";
 
 // Reactions Hooks
 export const useCreateReaction = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (reaction: Reaction) => createReaction(reaction),
     onSuccess: (data) => {
       console.log("Reaction created:", data);
+      // Invalidate queries that might be affected by the creation of a reaction
+      queryClient.invalidateQueries({
+        queryKey: ["articleReactions"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["reactionsPerType"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["reactedUsers"],
+      });
     },
     onError: (error) => {
       console.error("Error creating reaction:", error);
@@ -30,11 +44,26 @@ export const useGetReactionById = (reactionId: string) => {
 };
 
 export const useUpdateReaction = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({ reactionId, type }: { reactionId: string; type: string }) =>
       updateReaction(reactionId, type),
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       console.log("Reaction updated:", data);
+      // Invalidate queries that might be affected by the update of a reaction
+      queryClient.invalidateQueries({
+        queryKey: ["reaction", variables.reactionId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["articleReactions", data.articleId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["reactionsPerType", data.articleId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["reactedUsers", data.articleId],
+      });
     },
     onError: (error) => {
       console.error("Error updating reaction:", error);
@@ -43,10 +72,23 @@ export const useUpdateReaction = () => {
 };
 
 export const useDeleteReaction = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (reactionId: string) => deleteReaction(reactionId),
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       console.log("Reaction deleted:", data);
+      // Invalidate queries that might be affected by the deletion of a reaction
+      queryClient.invalidateQueries({ queryKey: ["reaction", variables] });
+      queryClient.invalidateQueries({
+        queryKey: ["articleReactions", data.articleId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["reactionsPerType", data.articleId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["reactedUsers", data.articleId],
+      });
     },
     onError: (error) => {
       console.error("Error deleting reaction:", error);
@@ -61,6 +103,23 @@ export const useGetAuthorScoresByCategory = (category: string) => {
   });
 };
 
+export const useGetReactedUsers = (articleId: string) => {
+  return useQuery({
+    queryKey: ["reactedUsers", articleId],
+    queryFn: () => getReactedUsers(articleId),
+  });
+};
 
+export const useGetArticleReactions = (articleId: string) => {
+  return useQuery({
+    queryKey: ["articleReactions", articleId],
+    queryFn: () => getArticleReactions(articleId),
+  });
+};
 
-
+export const useGetReactionsPerType = (articleId: string) => {
+  return useQuery({
+    queryKey: ["reactionsPerType", articleId],
+    queryFn: () => getReactionsPerType(articleId),
+  });
+};

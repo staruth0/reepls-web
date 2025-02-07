@@ -82,10 +82,10 @@ export interface Follow {
 
 export interface Reaction {
   reaction_id?: string;
-  type: "heart" | "smile" | "clap" | "thumb" | "sad";
+  type: string;
   user_id: string;
   article_id: string;
-  created_at?: string;
+  createdAt?: string;
 }
 
 export interface Notification {

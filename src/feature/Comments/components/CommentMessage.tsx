@@ -16,7 +16,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({ content,createdAt,aut
 
   return (
     <div
-      className={`w-[60%] max-w-[70%] p-4 ${
+      className={`min-w-[70%] p-4 relative  ${
         index % 2 === 0 ? "self-end" : "self-start"
       }`}
     >

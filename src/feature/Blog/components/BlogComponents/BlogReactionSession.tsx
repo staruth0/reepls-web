@@ -71,7 +71,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({message,isComm
 
   return (
     <div>
-      <div className="blog-reaction-session border-t border-neutral-500 flex gap-4">
+      <div className="blog-reaction-session border-t border-neutral-500 flex gap-4 ">
         <button
           onMouseEnter={() => setModalOpen(true)}
           onClick={() => setModalOpen(true)}

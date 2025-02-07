@@ -1,143 +1,123 @@
 import { X } from "lucide-react";
-import React, { useState } from "react";
-import Tabs from "../../../components/molecules/Tabs/Tabs";
+import React, { useEffect, useState } from "react";
 import UserReactionContainer from "./UserReactionContainer";
+import { clap, heart, sadface, smile, thumb } from "../../../assets/icons";
+import ReactionTab from "./ReactionTab";
+import { useGetArticleReactions, useGetReactionsPerType } from "../hooks";
 
 interface ReactionProps {
+  article_id: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
+const ReactionsPopup: React.FC<ReactionProps> = ({
+  isOpen,
+  onClose,
+  article_id,
+}) => {
+  const {
+    data: allReactions,
+    isLoading: isLoadingAllReactions,
+    isError: isErrorAllReactions,
+  } = useGetArticleReactions(article_id);
+  const {
+    data: reactionsPerType,
+    isLoading: isLoadingReactionsPerType,
+    isError: isErrorReactionsPerType,
+  } = useGetReactionsPerType(article_id);
 
+  const reactionsTab = [
+    {
+      id: "All",
+      title: (
+        <div className="font-semibold text-[16px] space-x-1">
+          <span>All</span>
+          <span>{allReactions?.length || 0}</span>
+        </div>
+      ),
+    },
+    {
+      id: "love",
+      title: (
+        <div className="flex items-center gap-1 font-semibold text-[16px]">
+          <img src={heart} alt="Heart" className="w-5 h-5" />
+          <span>{reactionsPerType?.love?.length || 0}</span>
+        </div>
+      ),
+    },
+    {
+      id: "cry",
+      title: (
+        <div className="flex items-center gap-1 font-semibold text-[16px]">
+          <img src={sadface} alt="Sad Face" className="w-5 h-5" />
+          <span>{reactionsPerType?.cry?.length || 0}</span>
+        </div>
+      ),
+    },
+    {
+      id: "smile",
+      title: (
+        <div className="flex items-center gap-1 font-semibold text-[16px]">
+          <img src={smile} alt="Smile" className="w-5 h-5" />
+          <span>{reactionsPerType?.smile?.length || 0}</span>
+        </div>
+      ),
+    },
+    {
+      id: "like",
+      title: (
+        <div className="flex items-center gap-1 font-semibold text-[16px]">
+          <img src={thumb} alt="Thumb" className="w-5 h-5" />
+          <span>{reactionsPerType?.like?.length || 0}</span>
+        </div>
+      ),
+    },
+    {
+      id: "clap",
+      title: (
+        <div className="flex items-center gap-1 font-semibold text-[16px]">
+          <img src={clap} alt="Clap" className="w-5 h-5" />
+          <span>{reactionsPerType?.clap?.length || 0}</span>
+        </div>
+      ),
+    },
+  ];
 
-const reactionsTab = [
-  { id: "All", title: "All" },
-  { id: "heart", title: "heart" },
-  { id: "sadface", title: "sadface" },
-  { id: "smile", title: "smile" },
-  { id: "thumb", title: "thumb" },
-  { id: "clap", title: "clap" },
-];
-
-const allReactions = [
-  {
-    name: "John Doe",
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    reaction: "heart",
-    title: "Staruth Manager",
-  },
-  {
-    name: "Jane Smith",
-    image:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    reaction: "smile",
-    title: "Software Engineer",
-  },
-  {
-    name: "Alice Johnson",
-    image:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    reaction: "clap",
-    title: "Product Manager",
-  },
-  {
-    name: "Bob Williams",
-    image:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    reaction: "thumb",
-    title: "Tech Lead",
-  },
-  {
-    name: "Charlie Brown",
-    image:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    reaction: "sadface",
-    title: "Data Scientist",
-  },
-  {
-    name: "Diana Prince",
-    image:
-      "https://images.unsplash.com/photo-1507537297725-24a1c029d3ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    reaction: "heart",
-    title: "UX Designer",
-  },
-  {
-    name: "Ethan Hunt",
-    image:
-      "https://images.unsplash.com/photo-1554151228-14d9def656e4?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    reaction: "clap",
-    title: "Scrum Master",
-  },
-  {
-    name: "Fiona Green",
-    image:
-      "https://images.unsplash.com/photo-1573497019440-badf5f4283d2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    reaction: "thumb",
-    title: "AI Researcher",
-  },
-  {
-    name: "George White",
-    image:
-      "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    reaction: "sadface",
-    title: "Marketing Specialist",
-  },
-  {
-    name: "Hannah Black",
-    image:
-      "https://images.unsplash.com/photo-1511367461989-f85a21fda167?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    reaction: "smile",
-    title: "Community Manager",
-  },
-];
-
-const heartReactions = allReactions.filter(
-  (reaction) => reaction.reaction === "heart"
-);
-const sadfaceReactions = allReactions.filter(
-  (reaction) => reaction.reaction === "sadface"
-);
-const smileReactions = allReactions.filter(
-  (reaction) => reaction.reaction === "smile"
-);
-const thumbReactions = allReactions.filter(
-  (reaction) => reaction.reaction === "thumb"
-);
-const clapReactions = allReactions.filter(
-  (reaction) => reaction.reaction === "clap"
-);
-
-const ReactionsPopup: React.FC<ReactionProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState<number | string>(
     reactionsTab[0].id
   );
 
+  useEffect(() => {
+    console.log("allReactions", allReactions);
+  }, [allReactions]);
+
   if (!isOpen) return null;
 
-  // Function to get the reactions for the active tab
-  const getReactionsForTab = () => {
-    switch (activeTab) {
-      case "All":
-        return allReactions;
-      case "heart":
-        return heartReactions;
-      case "sadface":
-        return sadfaceReactions;
-      case "smile":
-        return smileReactions;
-      case "thumb":
-        return thumbReactions;
-      case "clap":
-        return clapReactions;
-      default:
-        return [];
-    }
-  };
+  // Handle loading and error states
+  if (isLoadingAllReactions || isLoadingReactionsPerType) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="bg-white rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh] p-4 flex items-center justify-center">
+          <p>Loading reactions...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isErrorAllReactions || isErrorReactionsPerType) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="bg-white rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh] p-4 flex items-center justify-center">
+          <p>Error loading reactions. Please try again later.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white rounded-lg w-[50vw] max-w-full shadow-lg">
+      <div className="bg-white rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh]">
         <div className="border-b">
           <div className="flex items-center justify-between p-4">
             <h2 className="text-lg font-semibold">Reactions</h2>
@@ -148,26 +128,76 @@ const ReactionsPopup: React.FC<ReactionProps> = ({ isOpen, onClose }) => {
               <X size={20} />
             </button>
           </div>
+
           <div className="w-[70%] px-2">
-            <Tabs
+            <ReactionTab
               tabs={reactionsTab}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
-              scale={false}
-              isReaction={true}
+              scale={true}
+              borderBottom={true}
             />
           </div>
         </div>
-        <div className="p-4 space-y-3 min-h-[30vh] max-h-[70vh] overflow-y-auto">
-          {getReactionsForTab().map((reaction, index) => (
-            <UserReactionContainer
-              key={index}
-              name={reaction.name}
-              image={reaction.image}
-              reaction={reaction.reaction}
-              title={reaction.title}
-            />
-          ))}
+        <div className="p-4 space-y-3 min-h-[30vh] max-h-[63vh] overflow-y-auto">
+          {activeTab === "All" &&
+            allReactions?.map((reaction, index) => (
+              <UserReactionContainer
+                key={index}
+                type={reaction.type}
+                user_id={reaction.user_id}
+              />
+            ))}
+          {activeTab === "smile" &&
+            allReactions
+              ?.filter((reaction) => reaction.type === "smile")
+              .map((reaction, index) => (
+                <UserReactionContainer
+                  key={index}
+                  type={reaction.type}
+                  user_id={reaction.user_id}
+                />
+              ))}
+          {activeTab === "cry" &&
+            allReactions
+              ?.filter((reaction) => reaction.type === "cry")
+              .map((reaction, index) => (
+                <UserReactionContainer
+                  key={index}
+                  type={reaction.type}
+                  user_id={reaction.user_id}
+                />
+              ))}
+          {activeTab === "love" &&
+            allReactions
+              ?.filter((reaction) => reaction.type === "love")
+              .map((reaction, index) => (
+                <UserReactionContainer
+                  key={index}
+                  type={reaction.type}
+                  user_id={reaction.user_id}
+                />
+              ))}
+          {activeTab === "clap" &&
+            allReactions
+              ?.filter((reaction) => reaction.type === "clap")
+              .map((reaction, index) => (
+                <UserReactionContainer
+                  key={index}
+                  type={reaction.type}
+                  user_id={reaction.user_id}
+                />
+              ))}
+          {activeTab === "like" &&
+            allReactions
+              ?.filter((reaction) => reaction.type === "like")
+              .map((reaction, index) => (
+                <UserReactionContainer
+                  key={index}
+                  type={reaction.type}
+                  user_id={reaction.user_id}
+                />
+              ))}
         </div>
       </div>
     </div>

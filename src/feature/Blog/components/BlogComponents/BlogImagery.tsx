@@ -11,7 +11,7 @@ interface BlogImageryProps {
 
 const BlogImagery: React.FC<BlogImageryProps> = ({ PostImages }) => {
   return (
-    <div className="relative w-full max-w-[300px] md:max-w-[500px] lg:max-w-[700px] mx-auto z-0 transition-all duration-300  ">
+    <div className="relative w-full max-w-[300px] md:max-w-[500px] lg:max-w-[700px] mx-auto transition-all duration-300  ">
       <Swiper
         modules={[Navigation, Pagination]}
         navigation
