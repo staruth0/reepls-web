@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createArticle,
   getArticleById,
@@ -8,18 +8,23 @@ import {
   getFollowedArticles,
   getCommuniquerArticles,
   getArticleByAuthorId,
+  getRecommendedArticles,
+  getArticlesByCategory,
 } from "../api";
 import { Article } from "../../../models/datamodels";
 import { useNavigate } from "react-router-dom";
 
 // Hook for creating an article
 export const useCreateArticle = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   return useMutation({
     mutationFn: (article: Article) => createArticle(article),
     onSuccess: (data) => {
       console.log("Article created:", data);
+      // Invalidatx the "articles" query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ["articles"] });
       navigate("/articles");
     },
     onError: (error) => {
@@ -33,15 +38,14 @@ export const useGetArticleById = (articleId: string) => {
   return useQuery({
     queryKey: ["article", articleId],
     queryFn: () => getArticleById(articleId),
-   
   });
 };
-// Hook for fetching a articles by an author with  ID
-export const useGetArticlesByAuthorId = (articleId: string) => {
+
+// Hook for fetching articles by an author with ID
+export const useGetArticlesByAuthorId = (authorId: string) => {
   return useQuery({
-    queryKey: ["article", articleId],
-    queryFn: () => getArticleByAuthorId(articleId),
-   
+    queryKey: ["articles-by-author", authorId],
+    queryFn: () => getArticleByAuthorId(authorId),
   });
 };
 
@@ -50,7 +54,6 @@ export const useGetAllArticles = () => {
   return useQuery({
     queryKey: ["articles"],
     queryFn: () => getAllArticles(),
-    
   });
 };
 
@@ -70,8 +73,25 @@ export const useGetCommuniquerArticles = () => {
   });
 };
 
+// Hook for fetching recommended articles
+export const useGetRecommendedArticles = () => {
+  return useQuery({
+    queryKey: ["recommended-articles"],
+    queryFn: () => getRecommendedArticles(),
+  });
+};
+
+// Hook for fetching articles by category
+export const useGetArticlesByCategory = (category: string) => {
+  return useQuery({
+    queryKey: ["articles-by-category", category],
+    queryFn: () => getArticlesByCategory(category),
+  });
+};
+
 // Hook for updating an article
 export const useUpdateArticle = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   return useMutation({
@@ -84,6 +104,11 @@ export const useUpdateArticle = () => {
     }) => updateArticle(articleId, article),
     onSuccess: (data, variables) => {
       console.log("Article updated:", data);
+      // Invalidatx the "article" and "articles" queries to refresh the data
+      queryClient.invalidateQueries({
+        queryKey: ["article", variables.articleId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["articles"] });
       navigate(`/articles/${variables.articleId}`);
     },
     onError: (error) => {
@@ -94,12 +119,15 @@ export const useUpdateArticle = () => {
 
 // Hook for deleting an article
 export const useDeleteArticle = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   return useMutation({
     mutationFn: (articleId: string) => deleteArticle(articleId),
     onSuccess: () => {
       console.log("Article deleted");
+      // Invalidatx the "articles" query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ["articles"] });
       navigate("/articles");
     },
     onError: (error) => {
