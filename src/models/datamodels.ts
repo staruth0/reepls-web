@@ -25,6 +25,7 @@ export interface User {
   password?: string;
   role?: UserRole; 
   profile_picture?: string;
+  saved_articles?: string[];
   banner_image?: string;
   bio?: string;
   address?: string;

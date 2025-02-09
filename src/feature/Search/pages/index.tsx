@@ -3,7 +3,9 @@ import Topbar from "../../../components/atoms/Topbar/Topbar";
 import Tabs from "../../../components/molecules/Tabs/Tabs";
 import Communique from "../../Feed/components/Communique/Communique";
 import SearchTopBar from "../components/SearchTopBar";
-import { useTranslation } from "react-i18next";
+import SearchTopics from "./SearchTopics";
+import SearchRecent from "./SearchRecent";
+import SearchPeople from "./SearchPeople";
 
 const tabs = [
   { id: "Topics", title: "Topics" },
@@ -11,25 +13,11 @@ const tabs = [
   { id: "People", title: "People" },
 ];
 
-const topics = [
-  "Politics",
-  "Journalism",
-  "Tech",
-  "Art",
-  "History",
-  "Culture",
-  "Film",
-  "Crime",
-];
-const articles = [
-  "Anglophone crisis",
-  "Angel investments 2024",
-  "Anglophone journalists",
-];
+
 
 const Search: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
-  const {t} = useTranslation()
+
 
   return (
     <div className={`grid font-roboto grid-cols-[4fr_1.65fr]`}>
@@ -49,28 +37,13 @@ const Search: React.FC = () => {
 
           <div className="mt-8 text-[15px]">
             {activeTab === "Topics" && (
-              <div className="flex flex-wrap gap-x-3 gap-y-2 justify-center ">
-                {topics.map((topic) => (
-                  <span
-                    key={topic}
-                    className="py-2 px-6 text-neutral-100 rounded-full border-[1px] border-neutral-500 hover:border-none hover:bg-primary-400 hover:text-white transition-all transition-300 cursor-pointer "
-                  >
-                    {t(`${topic}`)}
-                  </span>
-                ))}
-              </div>
+               <SearchTopics/>
             )}
             {activeTab === "Recent" && (
-              <div className="recent">
-                {articles.map((article) => (
-                  <p key={article}>{article}</p>
-                ))}
-              </div>
+             <SearchRecent/>
             )}
             {activeTab === "People" && (
-              <div className="people">
-                <p>No people suggestions yet.</p>
-              </div>
+             <SearchPeople/>
             )}
           </div>
         </div>
