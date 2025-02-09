@@ -1,25 +1,24 @@
-import React, { useState } from "react";
-import InputField from "../../components/InputField";
-import "../../styles/authpages.scss";
-import { validatePassword } from "../../../../utils/validatePassword";
-import { useTranslation } from "react-i18next";
-import { useStoreCredential } from "../../hooks/useStoreCredential";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../store";
-import { useRegisterUser } from "../../hooks/AuthHooks";
-
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../store';
+import { validatePassword } from '../../../../utils/validatePassword';
+import InputField from '../../components/InputField';
+import { useRegisterUser } from '../../hooks/AuthHooks';
+import { useStoreCredential } from '../../hooks/useStoreCredential';
+import '../../styles/authpages.scss';
 
 function RegisterWithEmail1() {
   const { t } = useTranslation();
-  const {mutate,isPending,error} = useRegisterUser()
+  const { mutate, isPending, error } = useRegisterUser();
 
   const { email, password, username } = useSelector((state: RootState) => state.user);
 
   //custom-hooks
-  const {storePassword}= useStoreCredential()
+  const { storePassword } = useStoreCredential();
 
   //states
-  const [passwords, setPassword] = useState<string>("");
+  const [passwords, setPassword] = useState<string>('');
   const [passwordInputError, setPasswordInputError] = useState<boolean>(false);
   //functions to handle DOM events
 
@@ -28,7 +27,7 @@ function RegisterWithEmail1() {
     setPassword(passwordValue);
     storePassword(passwordValue);
 
-    if (validatePassword(passwordValue) || passwordValue === "") {
+    if (validatePassword(passwordValue) || passwordValue === '') {
       setPasswordInputError(false);
     } else {
       setPasswordInputError(true);
@@ -36,43 +35,39 @@ function RegisterWithEmail1() {
   };
 
   const handlePasswordBlur = () => {
-    if (passwords === "") {
+    if (passwords === '') {
       setPasswordInputError(false);
     }
   };
-  
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("password stored", { email, password, username });
-      
+    console.log('password stored', { email, password, username });
+
     mutate({ email, password, username });
   };
-
- 
 
   return (
     <div className="register__phone__container">
       <div className="insightful__texts">
-        <div>{t("Create your password")}</div>
-        <p>{t("Create your password - description")}</p>
+        <div>{t('Create your password')}</div>
+        <p>{t('Create your password - description')}</p>
       </div>
       <form onSubmit={handleSubmit}>
         <div>
           <InputField
             textValue={passwords}
-            label={t("PasswordLabel")}
+            label={t('PasswordLabel')}
             type="password"
-            placeholder={t("PasswordPlaceholder")}
+            placeholder={t('PasswordPlaceholder')}
             handleInputChange={handlePasswordChange}
             handleBlur={handlePasswordBlur}
             isInputError={passwordInputError}
-            inputErrorMessage={t("PasswordErrorMessage")}
+            inputErrorMessage={t('PasswordErrorMessage')}
           />
         </div>
-        {error && <div>{error.message}</div>}
-        <button type="submit">
-          {isPending ? "Loading....." : t("ContinueButton")}
-        </button>
+        {error && <div className="text-red-500">{error.message}</div>}
+        <button type="submit">{isPending ? 'Loading.....' : t('ContinueButton')}</button>
       </form>
     </div>
   );
