@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { LuBadgeCheck } from "react-icons/lu";
-import { EllipsisVertical,Bookmark,EyeOff,UserPlus,Share2} from "lucide-react";
+import { EllipsisVertical,Bookmark,EyeOff,UserPlus,Share2,X} from "lucide-react";
 import { profileAvatar } from "../../../../assets/icons";
 import { useGetUserById } from "../../../Profile/hooks";
 import { useRoute } from "../../../../hooks/useRoute";
@@ -70,7 +70,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
           <LuBadgeCheck className="size-4" />
           {!isFollowing(id) && (
             <div onClick={handleFollowClick} className="cursor-pointer">
-              {isFollowPending ? "Following..." : followingText }
+              {isFollowPending ? "Following..." : followingText}
             </div>
           )}
         </div>
@@ -80,10 +80,17 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
 
       {/* Ellipsis Icon ,Click to Show Menu*/}
       <div className="relative">
-        <EllipsisVertical
-          className="size-4 cursor-pointer"
-          onClick={() => setShowMenu(!showMenu)}
-        />
+        {showMenu ? (
+          <X
+            className="size-4 cursor-pointer"
+            onClick={() => setShowMenu(!showMenu)}
+          />
+        ) : (
+          <EllipsisVertical
+            className="size-4 cursor-pointer"
+            onClick={() => setShowMenu(!showMenu)}
+          />
+        )}
 
         {/* Pop-up Menu */}
         {showMenu && (
@@ -98,14 +105,14 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date }) => {
               className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer"
               onClick={handleFollowClick}
             >
-              <UserPlus size={18} className="text-neutral-500" />{" "}
+              <UserPlus size={18} className="text-neutral-500" />
               {isFollowing(id)
                 ? isUnfollowPending
                   ? "Unfollowing..."
-                  : followingText + ' Author'
+                  : followingText + " Author"
                 : isFollowPending
                 ? "Following..."
-                : followingText + ' Author'}
+                : followingText + " Author"}
             </div>
             <div className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
               <Share2 size={18} className="text-neutral-500" /> Share

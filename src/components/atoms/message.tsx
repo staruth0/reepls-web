@@ -22,7 +22,7 @@ const Message = (props: messageTypes) => {
       onClick={handleClick}>
       <header className="flex gap-2">
         <span className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-14 h-14 text-center">
-          E
+          {user?.username?.charAt(0).toUpperCase() }
         </span>
 
         <div className="flex flex-col justify-center items-start gap-1">

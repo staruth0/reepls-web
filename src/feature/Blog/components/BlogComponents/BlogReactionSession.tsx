@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {AudioLines,MessageCircle,ThumbsUp,Volume2,PauseCircle,PlayCircle,Loader2} from "lucide-react"; // Proper import
 import { VoiceLanguageContext } from "../../../../context/VoiceLanguageContext/VoiceLanguageContext";
 import { cn } from "../../../../utils";
@@ -69,6 +69,12 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({message,isComm
     }
   };
 
+  useEffect(() => {
+    if (isCommentSectionOpen) {
+      setCommentTabState(false);
+    }
+  }, [isCommentSectionOpen]);
+  
   return (
     <div>
       <div className="blog-reaction-session border-t border-neutral-500 flex gap-4 ">
