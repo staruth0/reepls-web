@@ -37,7 +37,7 @@ const BlogPost: React.FC<BlogPostProps> = ({images,title,content,id,date,isArtic
     <div className="each_blog_post mt-5 shadow-md p-2 max-w-[680px] self-center w-full bg-background">
       { isArticle && <BlogArticleHeader /> }
       <BlogProfile id={id} date={date} />
-      <BlogMessage title={title} content={content} />
+      <BlogMessage title={title} content={content} article_id={article_id} isArticle={ isArticle} />
       {!isCognitiveMode && <BlogImagery PostImages={sampleImages} />}
       <BlogReactionStats
         toggleCommentSection={toggleCommentSection}

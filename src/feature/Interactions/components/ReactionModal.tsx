@@ -29,9 +29,9 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ isOpen, onClose, onReact,
   if (!isVisible) return null;
 
   const reactions = [
-    { icon: heart, name: "love" },
-    { icon: thumb, name: "like" },
-    { icon: smile, name: "smile" },
+    { icon: heart, name: "love"},
+    { icon: thumb, name: "like"},
+    { icon: smile, name: "smile"},
     { icon: sadface, name: "cry" },
     { icon: clap, name: "clap" },
   ];

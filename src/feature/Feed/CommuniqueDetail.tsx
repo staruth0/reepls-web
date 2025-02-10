@@ -15,7 +15,7 @@ const CommuniqueDetail: React.FC = () => {
   return (
     <div className={`grid grid-cols-[4fr_1.75fr] `}>
       {/* Feed Posts Section */}
-      <div className="Feed__Posts border-r-[1px] border-neutral-500 ">
+      <div className="Feed__Posts border-r-[1px] border-neutral-500 pb-10">
         <Topbar>Communique</Topbar>
         {isLoading ? (
           <div> loading.....</div>

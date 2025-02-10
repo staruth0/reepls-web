@@ -19,16 +19,16 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id}) => {
 
   return (
     <div className="flex flex-col gap-2">
+      <CommentTab article_id={article_id} />
       {articleComments?.data.map((comment, index) => (
         <CommentMessage
           key={index}
           content={comment.content}
           createdAt={comment.createdAt}
           author_id={comment.author_id}
-          index={index } 
+          index={index}
         />
       ))}
-      <CommentTab article_id={article_id} />
     </div>
   );
 };
