@@ -28,7 +28,7 @@ export const useGetAllUsers = (): { users: User[] | undefined; isLoading: boolea
     queryKey: ['users'],
     queryFn: () => getAllUsers(),
   });
-  return { users: data, isLoading, error };
+  return { users: data?.results , isLoading, error };
 };
 
 // Hook for updating a user

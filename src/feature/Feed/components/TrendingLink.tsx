@@ -6,9 +6,9 @@ interface TrendingLinkProps {
 
 const TrendingLink:React.FC<TrendingLinkProps> = ({ title }) => {
     return (
-      <div className="w-full shadow-sm py-3">
+      <div >
         <Link
-          to="/#"
+          to="#"
           className=" py-3 text-neutral-50  font-semibold hover:underline "
         >
           #{title}

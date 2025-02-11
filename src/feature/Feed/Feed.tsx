@@ -10,6 +10,8 @@ import {
 } from "../Blog/hooks/useArticleHook";
 import Communique from "./components/Communique/Communique";
 import "./feed.scss";
+import BlogShadowSkeleton from "../Blog/components/BlogSkeleton";
+import BlogSkeletonComponent from "../Blog/components/BlogSkeleton";
 
 // Tabs configuration
 const tabs = [
@@ -72,7 +74,10 @@ const UserFeed: React.FC = () => {
 
         {/* Display Skeleton or Articles */}
         {isDataLoading ? (
-          <div className="skeleton-loader">Loading</div>
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col">
+            <BlogSkeletonComponent />
+            <BlogSkeletonComponent />
+          </div>
         ) : (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse gap-7 ">
             {displayData?.articles?.map((article) => (

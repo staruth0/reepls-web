@@ -3,18 +3,27 @@ import TopRightComponent from "../../../../components/atoms/TopRightComponent";
 import RightRecentComponent from "../../../../components/molecules/RightRecentComponent";
 import { useGetCommuniquerArticles } from "../../../Blog/hooks/useArticleHook";
 import Trending from "../Trending";
+import CommuniqueSkeleton from "../CommuniqueSkeleton";
+
 
 
 
 const Communique: React.FC = () => {
-  const {data} = useGetCommuniquerArticles()
+  const {data, isLoading} = useGetCommuniquerArticles()
 
   
   return (
     <>
       <TopRightComponent/>
-      <RightRecentComponent  communiqueList={data} />
-      <Trending/>
+      {isLoading ? <div className="flex flex-col gap-4 mt-5">
+        <CommuniqueSkeleton/>
+        <CommuniqueSkeleton/>
+
+      </div> :
+        <RightRecentComponent communiqueList={data} />
+      }
+      <Trending />
+     
     </>
   );
 };
