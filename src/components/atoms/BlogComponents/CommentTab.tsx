@@ -1,4 +1,4 @@
-import { Send } from "lucide-react";
+import { Send, Mic } from "lucide-react";
 import { useState } from "react";
 import EmojiPack from "./EmojiPack";
 
@@ -18,6 +18,10 @@ const CommentTab: React.FC<CommentTabProps> = ({ toggleCommentTab }) => {
     setComment((prevComment) => prevComment + emoji);
   };
 
+  const handleMicClick = () => {
+    alert("Voice functionality coming soon!");
+  };
+
   return (
     <div className="relative flex flex-col items-start w-full">
       <div className="flex items-center w-full p-2 border border-neutral-300 rounded-full bg-background transition-colors mb-5 mt-5">
@@ -28,17 +32,19 @@ const CommentTab: React.FC<CommentTabProps> = ({ toggleCommentTab }) => {
           placeholder="Add a comment..."
           className="flex-grow bg-transparent outline-none text-sm text-neutral-100 placeholder-neutral-300"
         />
+
         <button
           className="ml-2 p-1 text-neutral-100 hover:text-primary-400 transition-colors"
           onClick={toggleEmojiPack}
         >
           😀
         </button>
+
         <button
-          onClick={toggleCommentTab}
+          onClick={comment.trim() === "" ? handleMicClick : toggleCommentTab}
           className="ml-2 p-1 text-neutral-100 hover:text-primary-400 transition-colors"
         >
-          <Send size={20} />
+          {comment.trim() === "" ? <Mic size={20} /> : <Send size={20} />}
         </button>
       </div>
 

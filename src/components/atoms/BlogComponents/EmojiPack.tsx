@@ -16,7 +16,7 @@ interface EmojiPackProps {
 
 const EmojiPack: React.FC<EmojiPackProps> = ({ onSelectEmoji, onClose }) => {
   return (
-    <div className="absolute bottom-full mb-2 right-0 w-80 bg-white shadow-lg rounded-xl border border-neutral-200 z-10">
+    <div className="absolute bottom-full mb-2 right-0 w-80 bg-background shadow-md rounded-xl  z-10">
       <div
         className="p-4 grid grid-cols-8 gap-3 max-h-64 overflow-y-auto"
         style={{
