@@ -1,30 +1,64 @@
-import React from "react";
-import { TrendingUp } from "lucide-react";
+import React, { useState } from "react";
+import { ArrowRight, TrendingUp } from "lucide-react";
 import TrendingLink from "./TrendingLink";
-import SeeMore from "./SeeMore";
+import AuthorSuggestions from "./AuthorSuggestions";
 
 const TrendingTopics = [
   "Politics",
   "Anglophone Crisis",
   "Economic Crisis",
   "Election 2025",
+  "Technology",
+  "Health",
+  "Education",
+  "Environment",
+  "Sports",
+  "Entertainment",
 ];
 
 const Trending: React.FC = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
-    <div className="border-t-[.5px] w-full border-neutral-500 flex flex-col gap-3 px-6 py-1 sticky top-0">
-      
-      <div className="text-neutral-100 text-md font-semibold my-2 mb-4 flex items-center gap-2">
+    <div className="w-full flex flex-col gap-3 px-6 py-1 sticky top-0">
+      <div className="text-neutral-100 text-md font-semibold my-2 mb-2 flex items-center gap-2">
         <TrendingUp size={20} className="text-yellow-500" />
         <span>Trending</span>
       </div>
 
-     
-      {TrendingTopics.map((topic, index) => (
-        <TrendingLink key={index} title={topic} />
-      ))}
+      <div
+        className={`flex flex-wrap gap-2 overflow-hidden transition-all duration-300 ${
+          isExpanded ? "max-h-[500px]" : "max-h-[100px]"
+        }`}
+      >
+        {TrendingTopics.map((topic, index) => (
+          <TrendingLink key={index} title={topic} />
+        ))}
+      </div>
 
-      <SeeMore />
+      <div
+        className="flex justify-center items-center text-[14px] py-2 text-neutral-50 gap-1 cursor-pointer"
+        onClick={toggleExpand}
+      >
+        <span>{isExpanded ? "See less" : "See more"}</span>
+        <ArrowRight
+          size={18}
+          className={`transition-transform duration-300 ${
+            isExpanded ? "rotate-90" : ""
+          }`}
+        />
+      </div>
+
+      <div>
+        <div className="text-neutral-50 mt-1 font-semibold text-[16px]">
+          REPL SUGGESTIONS
+        </div>
+        <AuthorSuggestions />
+      </div>
     </div>
   );
 };

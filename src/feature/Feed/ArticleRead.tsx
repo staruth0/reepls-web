@@ -10,7 +10,7 @@ import { useGetUserById } from '../Profile/hooks';
 const ArticleRead: React.FC = () => {
       const { id } = useParams();
     const { data, isLoading } = useGetArticleById(id!); //todo: add error checking
-    const {user} = useGetUserById(data?.author_id!)
+    const {user} = useGetUserById(data?.author_id)
 
   return (
     <div className={`grid grid-cols-[4fr_1.75fr] `}>
