@@ -1,6 +1,6 @@
-@use '../../../styles/mixin.scss';
-@use '../../../styles/variable.scss';
-@use '../../../styles/main.scss';
+@use '../../../../styles/mixin.scss';
+@use '../../../../styles/variable.scss';
+@use '../../../../styles/main.scss';
 
 .blog-profile {
   display: flex;
@@ -78,13 +78,13 @@
     font-size: 14px;
     margin: 10px 0;
     line-height: 1.5;
-    max-height: 3rem; 
+    max-height: 3rem;
     overflow: hidden;
     transition: max-height 0.5s ease;
   }
 
   .paragraph.expanded {
-    max-height: 100rem; 
+    max-height: 100rem;
   }
 
   .toggle-text {
@@ -112,8 +112,6 @@
   }
 }
 
-
-
 .blog-reaction-stats {
   display: flex;
   justify-content: space-between;
@@ -128,49 +126,48 @@
     align-items: center;
     gap: 0.5rem;
     height: 30px;
-    position: relative; 
+    position: relative;
 
-    .icons-count-wrapper{
-       display: flex;
-       gap: 0;
-       align-items: center;
-
-    .icon-wrapper {
+    .icons-count-wrapper {
       display: flex;
-      position: relative;  
-      gap: 0.2rem;
+      gap: 0;
+      align-items: center;
 
-      img {
-        width: 24px;  
-        height: 24px;
-        border-radius: 50%;
-        box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease-in-out;
-        position: sticky;  // Ensures overlap
-        z-index: 1; 
+      .icon-wrapper {
+        display: flex;
+        position: relative;
+        gap: 0.2rem;
+
+        img {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+          transition: transform 0.2s ease-in-out;
+          position: sticky; // Ensures overlap
+          z-index: 1;
+        }
+
+        img:nth-child(1) {
+          left: 0;
+          z-index: 3;
+        }
+
+        img:nth-child(2) {
+          left: 10px;
+          z-index: 2;
+        }
+
+        img:nth-child(3) {
+          left: 20px;
+          z-index: 1;
+        }
       }
 
-      img:nth-child(1) {
-        left: 0;
-        z-index: 3;  
+      .reaction-count {
+        margin-left: 1rem;
       }
-
-      img:nth-child(2) {
-        left: 10px; 
-        z-index: 2;  
-      }
-
-      img:nth-child(3) {
-        left: 20px; 
-        z-index: 1; 
-      }
-
     }
-
-    .reaction-count {
-      margin-left: 1rem;
-    }
-  }
 
     .comment-count {
       margin-left: 1rem;
@@ -184,16 +181,11 @@
   }
 }
 
-
-
-
-
 .blog-reaction-session {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  border-top: 1px solid #e5e5e5;
   position: relative;
 
   button {

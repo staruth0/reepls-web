@@ -16,6 +16,7 @@ export interface AuthTokens {
 }
 
 export interface User {
+  id?: string;
   user_id?: string;
   googleId?: string;
   username?: string;
@@ -24,6 +25,7 @@ export interface User {
   password?: string;
   role?: UserRole; 
   profile_picture?: string;
+  saved_articles?: string[];
   banner_image?: string;
   bio?: string;
   address?: string;
@@ -64,27 +66,27 @@ export interface Article {
 }
 
 export interface Comment {
-  comment_id: string;
-  content: string;
-  author_id: string;
-  article_id: string;
+  content?: string;
+  author_id?: string;
+  article_id?: string;
   parent_comment_id?: string;
-  created_at: string;
+  is_audio_comment?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+  _id?: string;
 }
 
 export interface Follow {
-  follow_id: string;
   follower_id: string;
   followed_id: string;
-  created_at: string;
 }
 
 export interface Reaction {
-  reaction_id: string;
-  type: "Like" | "Insightful" | "Love";
+  reaction_id?: string;
+  type: string;
   user_id: string;
   article_id: string;
-  created_at: string;
+  createdAt?: string;
 }
 
 export interface Notification {

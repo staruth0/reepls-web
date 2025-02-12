@@ -25,6 +25,7 @@
 
     &::placeholder {
       font-size: 16px;
+      color: var(--neutral-500);
     }
 
     &.error {

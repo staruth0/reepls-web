@@ -6,13 +6,14 @@ interface messageTypes {
   author: string;
   messageDate: string;
   messageText: string;
+  postID:string;
 }
 
 const Message = (props: messageTypes) => {
   const navigate = useNavigate();
   const { user } = useGetUserById(props.author!);
   const handleClick = () => {
-    navigate('/posts/communique');
+    navigate(`/posts/communique/${props.postID}`);
   };
 
   return (
@@ -21,12 +22,12 @@ const Message = (props: messageTypes) => {
       onClick={handleClick}>
       <header className="flex gap-2">
         <span className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-14 h-14 text-center">
-          E
+          {user?.username?.charAt(0).toUpperCase() }
         </span>
 
         <div className="flex flex-col justify-center items-start gap-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold m-0">{user?.username || 'ENEO'}</h2>
+            <h2 className="text-base font-semibold m-0 line-clamp-1 text-ellipsis">{user?.username || 'ENEO'}</h2>
             <LuBadgeCheck className="text-primary-500 size-5" strokeWidth={2.5} />
           </div>
 

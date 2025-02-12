@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import Tabs from '../../../components/molecules/Tabs/Tabs';
-import ProfilePosts from '../../Profile/components/ProfilePosts';
-import ProfileArticles from '../../Profile/components/ProfileArticles';
-import ProfileAbout from '../../Profile/components/ProfileAbout';
 import AuthorComponent from '../Components/AuthorComponent';
 
 const tabs = [
@@ -16,7 +13,7 @@ const Bookmarks: React.FC = () => {
     const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
 
   return (
-    <div className={`grid grid-cols-[4fr_1.66fr] `}>
+    <div className={`grid grid-cols-[4fr_1.65fr] `}>
       <div className="saved border-r-[1px] border-neutral-500 ">
         <Topbar>
           <p>Saved</p>
@@ -31,12 +28,12 @@ const Bookmarks: React.FC = () => {
             tabs={tabs}
             borderBottom={true}
           />
-          <div className="px-6 mt-4">14 saved posts</div>
+          <div className="px-2 mt-4">14 saved posts</div>
 
-          <div className="mt-6 ">
-            {activeTab === "posts" && <ProfilePosts />}
-            {activeTab === "articles" && <ProfileArticles />}
-            {activeTab === "history" && <ProfileAbout />}
+          <div className=" px-2 mt-6 ">
+            {activeTab === "posts" && <div  >saved Posts</div> }
+            {activeTab === "articles" && <div>Saved Articles</div> }
+            {activeTab === "history" && <div>Reading History</div> }
           </div>
         </div>
       </div>

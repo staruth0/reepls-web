@@ -1,23 +1,20 @@
-import React, { useContext, useState } from "react";
-import {
-  AudioLines,
-  MessageCircle,
-  ThumbsUp,
-  Volume2,
-  PauseCircle,
-  PlayCircle,
-  Loader2,
-} from "lucide-react"; // Proper import
-import { VoiceLanguageContext } from "../../../context/VoiceLanguageContext/VoiceLanguageContext";
-import { cn } from "../../../utils";
-import ReactionModal from "./ReactionModal";
-import CommentTab from "./CommentTab";
+import React, { useContext, useEffect, useState } from "react";
+import {AudioLines,MessageCircle,ThumbsUp,Volume2,PauseCircle,PlayCircle,Loader2} from "lucide-react"; // Proper import
+import { VoiceLanguageContext } from "../../../../context/VoiceLanguageContext/VoiceLanguageContext";
+import { cn } from "../../../../utils";
+import ReactionModal from "../../../Interactions/components/ReactionModal";
+import CommentTab from "../../../Comments/components/CommentTab";
+import CommentSection from "../../../Comments/components/CommentSection";
+
+
 
 interface BlogReactionSessionProps {
   message: string;
+  isCommentSectionOpen: boolean;
+  article_id:string
 }
 
-const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({ message }) => {
+const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({message,isCommentSectionOpen, article_id}) => {
   const { selectedVoice } = useContext(VoiceLanguageContext);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [isPending, setIsPending] = useState<boolean>(false);
@@ -65,12 +62,22 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({ message }) =>
   };
 
   const toggleCommentTab = () => {
-    setCommentTabState(!commentTabState);
+    if (!isCommentSectionOpen) {
+      setCommentTabState(!commentTabState);
+    } else {
+      console.log("Comment section is not opened");
+    }
   };
 
+  useEffect(() => {
+    if (isCommentSectionOpen) {
+      setCommentTabState(false);
+    }
+  }, [isCommentSectionOpen]);
+  
   return (
     <div>
-      <div className="blog-reaction-session flex gap-4">
+      <div className="blog-reaction-session border-t border-neutral-500 flex gap-4 ">
         <button
           onMouseEnter={() => setModalOpen(true)}
           onClick={() => setModalOpen(true)}
@@ -117,10 +124,14 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({ message }) =>
           isOpen={isModalOpen}
           onClose={() => setModalOpen(false)}
           onReact={(reaction) => console.log(`Reacted with ${reaction}`)}
+          article_id={article_id}
         />
       </div>
 
-      {commentTabState && <CommentTab toggleCommentTab={toggleCommentTab} />}
+      {commentTabState && <CommentTab article_id={article_id}  />}
+      {isCommentSectionOpen && (
+       <CommentSection article_id={article_id} />
+      )}
     </div>
   );
 };

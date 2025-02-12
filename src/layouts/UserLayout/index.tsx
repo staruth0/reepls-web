@@ -5,19 +5,37 @@ import { AuthContext } from "../../context/AuthContext/authContext";
 import { useResponsiveLayout } from "../../hooks/useResposiveLayout";
 import { SidebarContext } from "../../context/SidebarContext/SidebarContext";
 import "./index.scss";
+import { refreshAuthTokens } from "../../feature/Auth/api";
+import { REFRESH_TOKEN_KEY } from "../../constants";
 
 const UserLayout: React.FC = () => {
   const { isTablet, isMobile } = useResponsiveLayout();
-  const { checkTokenExpiration } = useContext(AuthContext);
+  const { checkTokenExpiration,login } = useContext(AuthContext);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(isTablet);
   const { isOpen } = useContext(SidebarContext);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (checkTokenExpiration()) {
-      navigate("/auth");
+useEffect(() => {
+  const checkAndRefresh = async () => {
+    const isExpired = checkTokenExpiration();
+    if (isExpired) {
+      try {
+        const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+        if (refreshToken) {
+          const data = await refreshAuthTokens(refreshToken);
+          login(data.accessToken);
+          return;
+        }
+      } catch (error) {
+        console.error("Token refresh failed:", error);
+      }
+      navigate("/auth"); 
     }
-  }, []);
+  };
+
+  checkAndRefresh();
+}, []);
+
 
   useEffect(() => {
     setIsSidebarCollapsed(isTablet);
@@ -30,7 +48,7 @@ const UserLayout: React.FC = () => {
   return (
     <div
       className={`relative sm:grid ${
-        isSidebarCollapsed ? "grid-cols-[.5fr_5.5fr]" : "grid-cols-[1fr_5fr]"
+        !isOpen ? "grid-cols-[.5fr_5.5fr]" : "grid-cols-[1fr_5fr]"
       }`}
     >
       <div

@@ -199,7 +199,7 @@ function TipTapRichTextEditor({
         extensions={extensions}
         dark={theme === 'dark'}
         disabled={false}
-        hideToolbar
+        // hideToolbar
         resetCSS
       />
     </div>

@@ -2,10 +2,10 @@ import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headl
 import Picker, { Theme } from 'emoji-picker-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LuCalendar, LuClock, LuImage, LuPlus, LuSmile, LuVideo, LuX } from 'react-icons/lu';
-import { allowedImageTypes, allowedVideoTypes } from '../../constants';
-import useTheme from '../../hooks/useTheme';
-import { cn } from '../../utils/';
+import { LuCalendar, LuImage, LuPlus, LuSmile, LuVideo, LuX } from 'react-icons/lu';
+import { allowedImageTypes, allowedVideoTypes, SHORT_POST_LENGTH } from '../../../constants';
+import useTheme from '../../../hooks/useTheme';
+import { cn } from '../../../utils';
 
 const PostModal = ({
   isModalOpen,
@@ -84,7 +84,11 @@ const PostModal = ({
                 placeholder="What's on your mind?"
                 rows={15}
                 value={postContent}
-                onChange={(e) => setPostContent(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= SHORT_POST_LENGTH) {
+                    setPostContent(e.target.value);
+                  }
+                }}
               />
               {(postImages.length > 0 || postVideos.length > 0) && (
                 <div className="display-media flex justify-start items-center overflow-x-auto gap-2 my-1 py-1 px-4 border-b border-t border-neutral-400">
@@ -136,7 +140,9 @@ const PostModal = ({
                       style={{ position: 'absolute', top: '100%', left: '0' }}
                       onEmojiClick={(emojiData) => {
                         // console.log('emojiData', emojiData);
-                        setPostContent(postContent + emojiData.emoji);
+                        if (postContent.length <= SHORT_POST_LENGTH) {
+                          setPostContent(postContent + emojiData.emoji);
+                        }
                       }}
                     />
                   )}
@@ -159,8 +165,14 @@ const PostModal = ({
                   </button>
                 </div>
                 <div className="mt-4 flex justify-end items-center gap-2 w-full">
+                  <span className="mr-3">
+                    <span className={cn('text-primary-400', postContent.length > SHORT_POST_LENGTH && 'text-red-500')}>
+                      {postContent.length}
+                    </span>
+                    /{SHORT_POST_LENGTH}
+                  </span>
                   <Button className="flex items-center gap-2 hover:text-primary-400 cursor-pointer">
-                    <LuClock className="size-6" />
+                    <LuCalendar className="size-6" />
                   </Button>
 
                   <Button

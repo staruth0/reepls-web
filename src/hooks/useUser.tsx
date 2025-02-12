@@ -9,13 +9,12 @@ export const useUser = () => {
   const [isLoading, setIsLoading] = useState(loading);
 
   useEffect(() => {
-    if (authState) {
+    if (authState && authState.userId) {
       getUserById(authState.userId)
         .then(setAuthUser)
         .finally(() => setIsLoading(false));
     }
   }, [authState]);
-
 
   return { authUser, isLoading };
 };

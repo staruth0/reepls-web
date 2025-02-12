@@ -1,19 +1,28 @@
 import { useMutation } from "@tanstack/react-query";
-import {registerUser,loginUser,getEmailVerificationCode,verifyEmailCode,getPhoneVerificationCode,verifyPhoneCode,updateUser,refreshAuthTokens} from "../api";
-import { User,EmailCode,PhoneCode,CodeVerify,PhoneVerify,} from "../../../models/datamodels";
+import {
+  registerUser,
+  loginUser,
+  getEmailVerificationCode,
+  verifyEmailCode,
+  getPhoneVerificationCode,
+  verifyPhoneCode,
+  updateUser,
+  refreshAuthTokens,
+} from "../api";
+import {
+  User,
+  EmailCode,
+  PhoneCode,
+  CodeVerify,
+  PhoneVerify,
+} from "../../../models/datamodels";
 import { useTokenStorage } from "./useTokenStorage";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../../context/AuthContext/authContext";
 
 // Hook for registering a user
-export const useRegisterUser = (): {
-  mutate: (user: User) => void;
-  isPending: boolean;
-  error: Error | null;
-  isError: boolean;
-  isSuccess: boolean;
-} => {
+export const useRegisterUser = () => {
   const { storeAccessToken, storeRefreshToken } = useTokenStorage();
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
@@ -22,72 +31,50 @@ export const useRegisterUser = (): {
     navigate("/auth/register/checkemail", { state: userEmail });
   };
 
-  const { mutate, isPending, error, isError, isSuccess } = useMutation({
-    mutationFn: (user: User) => registerUser(user), // Ensure registerUser returns a Promise
+  return useMutation({
+    mutationFn: (user: User) => registerUser(user),
     onSuccess: (data) => {
-      if (data.tokens?.access?.token) {
-        console.log("User registered:", data);
-        storeAccessToken(data.tokens.access.token);
-        storeRefreshToken(data.tokens.refresh.token);
-        login(data.tokens.access.token);
-      } else {
-        console.warn("No tokens received upon registration.");
-      }
+      console.log("User registered:", data);
+      storeAccessToken(data.tokens.access.token);
+      storeRefreshToken(data.tokens.refresh.token);
+      login(data.tokens.access.token);
+
       navigateToCheckMail({ email: data.user.email });
     },
     onError: (error) => {
       console.error("Error registering user:", error);
     },
   });
-
-  return { mutate, isPending, error, isError, isSuccess };
 };
 
-// Hook for registering a user with a phone number
-export const usePhoneRegisterUser = (): {
-  mutate: (user: User) => void;
-  isPending: boolean;
-  error: Error | null;
-  isError: boolean;
-  isSuccess: boolean;
-} => {
+// Hook for registering a user with phone number
+export const usePhoneRegisterUser = () => {
   const { storeAccessToken, storeRefreshToken } = useTokenStorage();
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
-  const navigateToCheckPhone = (phoneCode: PhoneCode) => {
-    navigate("/auth/register/checkphone", { state: phoneCode });
+  const navigateToCheckPhone = (phonecode: PhoneCode) => {
+    navigate("/auth/register/checkphone", { state: phonecode });
   };
 
-  const { mutate, isPending, error, isError, isSuccess } = useMutation({
+  return useMutation({
     mutationFn: (user: User) => registerUser(user),
     onSuccess: (data) => {
-      if (data.tokens?.access?.token) {
-        console.log("User registered:", data);
-        storeAccessToken(data.tokens.access.token);
-        storeRefreshToken(data.tokens.refresh.token);
-        login(data.tokens.access.token);
-      } else {
-        console.warn("No tokens received upon phone registration.");
-      }
+      console.log("User registered:", data);
+      storeAccessToken(data.tokens.access.token);
+      storeRefreshToken(data.tokens.refresh.token);
+      login(data.tokens.access.token);
+
       navigateToCheckPhone({ phone: data.user.phone });
     },
     onError: (error) => {
       console.error("Error registering user:", error);
     },
   });
-
-  return { mutate, isPending, error, isError, isSuccess };
 };
 
 // Hook for logging in a user
-export const useLoginUser = (): {
-  mutate: (user: User) => void;
-  isPending: boolean;
-  error: Error | null;
-  isError: boolean;
-  isSuccess: boolean;
-} => {
+export const useLoginUser = () => {
   const navigate = useNavigate();
   const { storeAccessToken, storeRefreshToken } = useTokenStorage();
   const { login } = useContext(AuthContext);
@@ -95,44 +82,31 @@ export const useLoginUser = (): {
   const navigateToFeed = () => {
     navigate("/feed");
   };
-
-  const { mutate, isPending, error, isError, isSuccess } = useMutation({
+  return useMutation({
     mutationFn: (user: User) => loginUser(user),
     onSuccess: (data) => {
-      if (data.tokens?.access?.token) {
-        console.log("User logged in:", data);
-        storeAccessToken(data.tokens.access.token);
-        storeRefreshToken(data.tokens.refresh.token);
-        login(data.tokens.access.token);
-        navigateToFeed();
-      } else {
-        console.warn("No tokens received upon login.");
-      }
+      console.log("User logged in:", data);
+      storeAccessToken(data.tokens.access.token);
+      storeRefreshToken(data.tokens.refresh.token);
+      login(data.tokens.access.token);
+
+      navigateToFeed();
     },
     onError: (error) => {
       console.error("Error logging in:", error);
     },
   });
-
-  return { mutate, isPending, error, isError, isSuccess };
 };
 
-
 // Hook for updating a user
-export const useUpdateUser = (): {
-  mutate: (user: User) => void;
-  isPending: boolean;
-  error: Error | null;
-  isError: boolean;
-  isSuccess: boolean;
-} => {
+export const useUpdateUser = () => {
   const navigate = useNavigate();
 
   const navigateToUserProfile = () => {
     navigate("/feed");
   };
 
-  const { mutate, isPending, error, isError, isSuccess } = useMutation({
+  return useMutation({
     mutationFn: (user: User) => updateUser(user),
     onSuccess: (data) => {
       console.log("User updated successfully:", data);
@@ -142,8 +116,6 @@ export const useUpdateUser = (): {
       console.error("Error updating user:", error);
     },
   });
-
-  return { mutate, isPending, error, isError, isSuccess };
 };
 
 // Hook for getting email verification code

@@ -9,7 +9,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  height: 100%;
+  height: 100vh;
   padding: 1rem 1.5rem;
 
   .swiper__logo {
@@ -58,8 +58,8 @@
 
     h2 {
       font-size: 32px;
-      font-weight: 600;
-      font-family: var(--instrument-serif-font);
+      font-weight: 400;
+      font-family: var(--roboto-font);
       margin-bottom: 10px;
     }
 
@@ -74,6 +74,7 @@
     display: flex;
     gap: 10px;
     margin-top: 2.3rem;
+    justify-content: center;
 
     .swiper__indicator {
       width: 80px;

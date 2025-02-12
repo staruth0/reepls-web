@@ -22,8 +22,8 @@ function Welcome() {
     <div className="welcome__container">
       <div className="welcome__text">{t("WelcomeMessage")}</div>
 
-      <div className="welcome__buttons">
-        <button className="btn__sign-in" onClick={navigateToSignUp}>
+      <div className="welcome__buttons p-8">
+        <button className="btn__sign-in shadow-md hover:shadow-sm" onClick={navigateToSignUp}>
           {t("SignInButton")}
         </button>
         <div className="divider">

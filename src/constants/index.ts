@@ -4,6 +4,8 @@ const MAX_VIDEO_COUNT = 1;
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
 
+const SHORT_POST_LENGTH = 500;
+
 const PREVIEW_SLUG = 'preview';
 
 const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
@@ -49,6 +51,8 @@ const REFRESH_TOKEN_KEY = 'RefreshToken';
 
 export {
   ACCESS_TOKEN_KEY,
+  allowedImageTypes,
+  allowedVideoTypes,
   API_BASE_URL,
   API_URL,
   AUTH_TOKEN_KEY,
@@ -58,6 +62,5 @@ export {
   MAX_VIDEO_SIZE,
   PREVIEW_SLUG,
   REFRESH_TOKEN_KEY,
-  allowedImageTypes,
-  allowedVideoTypes,
+  SHORT_POST_LENGTH,
 };
