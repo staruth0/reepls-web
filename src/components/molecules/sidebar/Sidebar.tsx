@@ -89,7 +89,7 @@ const Sidebar: React.FC = () => {
         onClick={() => handleToggleSidebar()}
       />
       <div className="flex gap-5 items-center h-[80px]">
-        <div className=" text-roboto text-[24px] font-semibold flex gap-2 items-center">
+        <div className=" text-roboto text-[24px] font-semibold flex gap-2 items-center cursor-pointer" onClick={() => navigate('/feed')}>
           <img src={reeplsIcon} alt="reeplsicon" className={`${isOpen?'size-8': 'size-9'}`}/>
          { isOpen && 'REEPLS'}</div>
       </div>

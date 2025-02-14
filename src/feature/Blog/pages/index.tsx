@@ -109,7 +109,7 @@ const CreatePost: React.FC = () => {
 
       <div className="mt-10">
         <div className="md:px-4">
-          <ImageSection onImageChange={setThumbnailUrl} />
+         <ImageSection onImageChange={setThumbnailUrl} />
           <div className="mx-auto mt-3 pl-20 max-w-5xl">
             <div className="">
               <textarea

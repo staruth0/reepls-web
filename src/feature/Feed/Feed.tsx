@@ -4,13 +4,9 @@ import Topbar from "../../components/atoms/Topbar/Topbar";
 import BlogPost from "../Blog/components/BlogPost";
 import Tabs from "../../components/molecules/Tabs/Tabs";
 import { CognitiveModeContext } from "../../context/CognitiveMode/CognitiveModeContext";
-import {
-  useGetAllArticles,
-  useGetFollowedArticles,
-} from "../Blog/hooks/useArticleHook";
+import {useGetAllArticles,useGetFollowedArticles} from "../Blog/hooks/useArticleHook";
 import Communique from "./components/Communique/Communique";
 import "./feed.scss";
-import BlogShadowSkeleton from "../Blog/components/BlogSkeleton";
 import BlogSkeletonComponent from "../Blog/components/BlogSkeleton";
 
 // Tabs configuration
@@ -64,9 +60,7 @@ const UserFeed: React.FC = () => {
               size={isBrainActive ? 35 : 30}
               onClick={handleBrainClick}
               className={`cursor-pointer transition-all ${
-                isBrainActive
-                  ? "text-green-600 bg-green-100 rounded-full p-1"
-                  : "text-neutral-50 hover:text-green-600 hover:bg-green-100 hover:rounded-full hover:p-1 transition-all"
+                isBrainActive ? "text-green-600 bg-green-100 rounded-full p-1" : "text-neutral-50 hover:text-green-600 hover:bg-green-100 hover:rounded-full hover:p-1 transition-all"
               }`}
             />
           </div>

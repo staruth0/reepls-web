@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   registerUser,
   loginUser,
@@ -8,6 +8,7 @@ import {
   verifyPhoneCode,
   updateUser,
   refreshAuthTokens,
+  registerWithGoogle,
 } from "../api";
 import {
   User,
@@ -44,6 +45,25 @@ export const useRegisterUser = () => {
     onError: (error) => {
       console.error("Error registering user:", error);
     },
+  });
+};
+// Hook for registering a user with google
+export const useRegisterUserWithGoogle = () => {
+  // const { storeAccessToken, storeRefreshToken } = useTokenStorage();
+  // // const navigate = useNavigate();
+  // const { login } = useContext(AuthContext);
+  return useQuery({
+    queryKey: ["registerWithGoogle"],
+    queryFn: () => registerWithGoogle()
+    // onSuccess: (data) => {
+    //   console.log("User registered:", data);
+    //   storeAccessToken(data.tokens.access.token);
+    //   storeRefreshToken(data.tokens.refresh.token);
+    //   login(data.tokens.access.token);
+    // },
+    // onError: (error) => {
+    //   console.error("Error registering user with google:", error);
+    // },
   });
 };
 

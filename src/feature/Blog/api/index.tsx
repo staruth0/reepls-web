@@ -25,7 +25,7 @@ const getArticleByAuthorId = async (authorId: string) => {
 // Fetch all articles
 const getAllArticles = async () => {
   console.log("Fetching all articles");
-  const { data } = await apiClient.get("/articles?page=1&limit=20");
+  const { data } = await apiClient.get("/articles?page=1&limit=100");
   return data;
 };
 

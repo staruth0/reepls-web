@@ -5,12 +5,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { google } from "../../../../assets/icons";
 import { useStoreCredential } from "../../hooks/useStoreCredential";
+import { registerWithGoogle } from "../../api";
 
 function Registerwithemail() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const {storeEmail,storeName}= useStoreCredential()
+  const { storeEmail, storeName } = useStoreCredential()
+  
 
   //states
   const [email, setEmail] = useState<string>("");
@@ -30,7 +32,12 @@ function Registerwithemail() {
 
  const navigateToPassword = () => {
    navigate("/auth/register/email/one");
- };
+  };
+  
+  const handleGoogleRegister = async () => { 
+    const data = await registerWithGoogle();
+    console.log("googledata",data);
+  }
 
   return (
     <div className="register__phone__container">
@@ -51,7 +58,7 @@ function Registerwithemail() {
         <div className="divider">
           <p>{t("OrDivider")}</p>
         </div>
-        <button type="button" className="create__account__btn">
+        <button type="button" className="create__account__btn" onClick={handleGoogleRegister}>
           <img src={google} alt="google_image" />
           <span>{t("Create account with google")}</span>
         </button>
@@ -59,7 +66,7 @@ function Registerwithemail() {
       <div className="bottom__links">
         <p>
           {t("LoginPrompt")}{" "}
-          <Link to={"/auth/login/phone"} className="bottom__link_login">
+          <Link to={"/auth/login/phone"} className="bottom__link_login hover:underline">
             {t("LoginLink")}
           </Link>
         </p>

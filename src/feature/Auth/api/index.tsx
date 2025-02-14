@@ -17,6 +17,13 @@ const registerUser = async (user: User) => {
 };
 
 // Register user
+const registerWithGoogle = async () => {
+  console.log("registering with google");
+  const { data } = await apiClient.get("/googleAuth/google");
+  return data;
+};
+
+// Register user
 const updateUser = async (user: User) => {
   const token = localStorage.getItem(ACCESS_TOKEN_KEY);
 
@@ -120,6 +127,7 @@ const resetPassword = async (
 
 export {
   registerUser,
+  registerWithGoogle,
   loginUser,
   getEmailVerificationCode,
   verifyEmailCode,

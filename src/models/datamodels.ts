@@ -52,17 +52,20 @@ export interface Article {
   is_communiquer?: boolean;
   subTitle?: string;
   content?: string;
-  category?: string[];
+  category?: string[] | string; 
   keywords?: string[];
   media?: string[];
   text_to_speech?: string;
   flagged?: boolean;
-  author_id?: string;
+  author_id?: string ; 
   status?: "Draft" | "Published" | "Archived";
   createdAt?: string;
   updatedAt?: string;
   views_count?: number;
   reports_count?: number;
+  _id?: string; 
+  shares_count?: number;
+  isArticle?: boolean;
 }
 
 export interface Comment {

@@ -3,23 +3,36 @@ import { Comment } from "../../../models/datamodels";
 import { useUser } from "../../../hooks/useUser";
 import { useState } from "react";
 import { useCreateComment } from "../hooks";
-import { Spinner } from "../../../components/atoms/Spinner"; 
+import { Spinner } from "../../../components/atoms/Spinner";
 
 interface CommentTabProps {
   article_id: string;
+  setIsCommentSectionOpen: (isOpen: boolean) => void; 
 }
 
-const CommentTab: React.FC<CommentTabProps> = ({article_id}) => {
+const CommentTab: React.FC<CommentTabProps> = ({
+  article_id,
+  setIsCommentSectionOpen, 
+}) => {
   const { authUser } = useUser();
   const [comment, setComment] = useState<string>("");
 
-  const { mutate, isPending} = useCreateComment();
+  const { mutate, isPending } = useCreateComment();
 
   const handleCommentSubmit = () => {
-    const commentValues: Comment = {article_id,author_id: authUser?.id,content: comment,is_audio_comment: false};
+    const commentValues: Comment = {
+      article_id,
+      author_id: authUser?.id,
+      content: comment,
+      is_audio_comment: false,
+    };
 
-    mutate(commentValues); 
-    console.log(commentValues)
+    mutate(commentValues, {
+      onSuccess: () => {
+        setIsCommentSectionOpen(true); 
+      },
+    });
+    console.log(commentValues);
     setComment("");
   };
 

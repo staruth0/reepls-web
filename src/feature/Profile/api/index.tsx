@@ -1,5 +1,5 @@
 import { jwtDecode } from 'jwt-decode';
-import { AUTH_TOKEN_KEY } from '../../../constants';
+import { ACCESS_TOKEN_KEY } from '../../../constants';
 import { User } from '../../../models/datamodels';
 import { apiClient } from '../../../services/apiClient';
 
@@ -26,7 +26,7 @@ const getAllUsers = async (): Promise<User[]> => {
 
 // Update a user by ID
 const updateUser = async (user: User): Promise<User | undefined> => {
-  const token = localStorage.getItem(AUTH_TOKEN_KEY);
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
   if (!token) {
     return undefined;
   }

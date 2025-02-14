@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import Tabs from '../../../components/molecules/Tabs/Tabs';
 import AuthorComponent from '../Components/AuthorComponent';
+import { useUser } from '../../../hooks/useUser';
+import SavedPostsContainer from '../Components/SavedPostsContaniner';
+import SavedArticlesContainer from '../Components/SavedArticleContainer';
 
 const tabs = [
   { id: "posts", title: "Posts" },
@@ -10,7 +13,8 @@ const tabs = [
 ];
 
 const Bookmarks: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
+  const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
+  const {authUser} = useUser()
 
   return (
     <div className={`grid grid-cols-[4fr_1.65fr] `}>
@@ -31,9 +35,22 @@ const Bookmarks: React.FC = () => {
           <div className="px-2 mt-4">14 saved posts</div>
 
           <div className=" px-2 mt-6 ">
-            {activeTab === "posts" && <div  >saved Posts</div> }
-            {activeTab === "articles" && <div>Saved Articles</div> }
-            {activeTab === "history" && <div>Reading History</div> }
+            {activeTab === "posts" && (
+              <div className="pb-10">
+                {authUser?.saved_articles?.map((article) => (
+                  <SavedPostsContainer key={article} article_id={article} />
+                ))}
+              </div>
+            )}
+            {activeTab === "articles" && (
+              <div>
+                
+                {authUser?.saved_articles?.map((article) => (
+                  <SavedArticlesContainer key={article} article_id={article} />
+                ))}
+              </div>
+            )}
+            {activeTab === "history" && <div>Reading History</div>}
           </div>
         </div>
       </div>
