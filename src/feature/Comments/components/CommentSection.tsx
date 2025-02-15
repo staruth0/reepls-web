@@ -5,9 +5,10 @@ import { useGetCommentsByArticleId } from "../hooks";
 
 interface CommentSectionProps {
   article_id: string;
+  setIsCommentSectionOpen: (isOpen: boolean) => void;
 }
 
-const CommentSection: React.FC<CommentSectionProps> = ({ article_id}) => {
+const CommentSection: React.FC<CommentSectionProps> = ({ article_id, setIsCommentSectionOpen }) => {
   const { data: articleComments, isLoading, isError } = useGetCommentsByArticleId(article_id);
 
   useEffect(() => {
@@ -19,7 +20,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id}) => {
 
   return (
     <div className="flex flex-col gap-2">
-      <CommentTab article_id={article_id} />
+      <CommentTab article_id={article_id}  setIsCommentSectionOpen={setIsCommentSectionOpen} />
       {articleComments?.data.map((comment, index) => (
         <CommentMessage
           key={index}
@@ -27,6 +28,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id}) => {
           createdAt={comment.createdAt}
           author_id={comment.author_id}
           index={index}
+     
         />
       ))}
     </div>

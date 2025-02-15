@@ -143,10 +143,16 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
       {commentTabState && (
         <CommentTab
           article_id={article_id}
-          setIsCommentSectionOpen={setIsCommentSectionOpen} 
+          setIsCommentSectionOpen={setIsCommentSectionOpen}
+          
         />
       )}
-      {isCommentSectionOpen && <CommentSection article_id={article_id} />}
+      {isCommentSectionOpen && (
+        <CommentSection
+          article_id={article_id}
+          setIsCommentSectionOpen={setIsCommentSectionOpen}
+        />
+      )}
     </div>
   );
 };

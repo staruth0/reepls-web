@@ -11,6 +11,7 @@ import Followers from "../feature/Profile/pages/Followers";
 import ProfileAnalytics from "../feature/Profile/pages/ProfileAnalytics";
 import Bookmarks from "../feature/Saved/pages";
 import Search from "../feature/Search/pages";
+import ResultsPage from "../feature/Search/pages/ResultsPages";
 import UserLayout from "../layouts/UserLayout";
 // import Home from "../feature/Home/pages/Home";
 
@@ -25,6 +26,10 @@ const UserRoutes = {
     {
       path: "explore",
       element: <Search />,
+    },
+    {
+      path: "search/results/:query",
+      element: <ResultsPage />,
     },
     {
       path: "profile",
