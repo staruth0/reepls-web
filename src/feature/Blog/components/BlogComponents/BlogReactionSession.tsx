@@ -1,20 +1,32 @@
 import React, { useContext, useEffect, useState } from "react";
-import {AudioLines,MessageCircle,ThumbsUp,Volume2,PauseCircle,PlayCircle,Loader2} from "lucide-react"; // Proper import
+import {
+  AudioLines,
+  MessageCircle,
+  ThumbsUp,
+  Volume2,
+  PauseCircle,
+  PlayCircle,
+  Loader2,
+} from "lucide-react";
 import { VoiceLanguageContext } from "../../../../context/VoiceLanguageContext/VoiceLanguageContext";
 import { cn } from "../../../../utils";
 import ReactionModal from "../../../Interactions/components/ReactionModal";
 import CommentTab from "../../../Comments/components/CommentTab";
 import CommentSection from "../../../Comments/components/CommentSection";
 
-
-
 interface BlogReactionSessionProps {
   message: string;
   isCommentSectionOpen: boolean;
-  article_id:string
+  setIsCommentSectionOpen: (isOpen: boolean) => void; 
+  article_id: string;
 }
 
-const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({message,isCommentSectionOpen, article_id}) => {
+const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
+  message,
+  isCommentSectionOpen,
+  article_id,
+  setIsCommentSectionOpen,
+}) => {
   const { selectedVoice } = useContext(VoiceLanguageContext);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [isPending, setIsPending] = useState<boolean>(false);
@@ -25,7 +37,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({message,isComm
   const synth = window.speechSynthesis;
 
   const handleSpeak = () => {
-    if (synth.speaking || isPending) return; // Prevent multiple plays
+    if (synth.speaking || isPending) return;
 
     setIsPending(true);
     const utterance = new SpeechSynthesisUtterance(message);
@@ -74,7 +86,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({message,isComm
       setCommentTabState(false);
     }
   }, [isCommentSectionOpen]);
-  
+
   return (
     <div>
       <div className="blog-reaction-session border-t border-neutral-500 flex gap-4 ">
@@ -128,9 +140,18 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({message,isComm
         />
       </div>
 
-      {commentTabState && <CommentTab article_id={article_id}  />}
+      {commentTabState && (
+        <CommentTab
+          article_id={article_id}
+          setIsCommentSectionOpen={setIsCommentSectionOpen}
+          
+        />
+      )}
       {isCommentSectionOpen && (
-       <CommentSection article_id={article_id} />
+        <CommentSection
+          article_id={article_id}
+          setIsCommentSectionOpen={setIsCommentSectionOpen}
+        />
       )}
     </div>
   );

@@ -84,16 +84,21 @@ function Loginwithemail() {
           isInputError={passwordInputError}
           inputErrorMessage={t("IncorrectPasswordMessage")}
         />
-        {Login.error && <div>{Login.error.message}</div>}
-        <button type="submit">
+        {Login.error && <div >{Login.error.message}</div>}
+        <button type="submit" className=" hover:text-white">
           {Login.isPending ? "Loging in......" : t("ContinueButton")}
         </button>
         <div className="divider">
           <p>{t("OrDivider")}</p>
         </div>
-        <button type="button" className="create__account__btn">
+        <button
+          type="button"
+          className="create__account__btn hover:bg-primary-500 hover:text-white"
+        >
           <img src={google} alt="google_image" />
-          <span>{t("Create account with google")}</span>
+          <span className="text-neutral-100 ">
+            {t("Create account with google")}
+          </span>
         </button>
       </form>
       <div className="bottom__links">

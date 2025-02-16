@@ -63,7 +63,7 @@
         @include mixin.flex-center;
         @include mixin.button;
         @include mixin.transition(all,.3s);
-        background-color:#fff;
+        background-color:var(--plain-a);
         color: var(--neutral-100);
         border: 1px solid var(--neutral-100);
         gap: .2rem;

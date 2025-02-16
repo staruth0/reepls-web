@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { heart, sadface, smile, thumb, clap } from "../../../assets/icons";
 import { useCreateReaction } from "../hooks";
 import { useUser } from "../../../hooks/useUser";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface ReactionModalProps {
   isOpen: boolean;
@@ -29,9 +28,9 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ isOpen, onClose, onReact,
   if (!isVisible) return null;
 
   const reactions = [
-    { icon: heart, name: "love"},
-    { icon: thumb, name: "like"},
-    { icon: smile, name: "smile"},
+    { icon: heart, name: "love" },
+    { icon: thumb, name: "like" },
+    { icon: smile, name: "smile" },
     { icon: sadface, name: "cry" },
     { icon: clap, name: "clap" },
   ];
@@ -42,30 +41,13 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ isOpen, onClose, onReact,
       onSuccess: () => {
         setIsPending(false);
         setSuccessReaction(reaction);
-        setTimeout(() => setSuccessReaction(null), 1000); // Reset after animation
+        setTimeout(() => setSuccessReaction(null), 1000); 
         console.log("Reaction created successfully");
       },
       onError: () => {
         setIsPending(false);
       }
     });
-  };
-
-  const getAnimation = (reaction: string) => {
-    switch (reaction) {
-      case "love":
-        return { scale: [1, 1.5, 1], rotate: [0, 20, -20, 0], transition: { duration: 0.5 } };
-      case "like":
-        return { scale: [1, 1.3, 1], transition: { duration: 0.3 } };
-      case "smile":
-        return { scale: [1, 1.2, 1], rotate: [0, 10, -10, 0], transition: { duration: 0.4 } };
-      case "cry":
-        return { scale: [1, 1.1, 1], y: [0, -10, 0], transition: { duration: 0.5 } };
-      case "clap":
-        return { scale: [1, 1.4, 1], transition: { duration: 0.3 } };
-      default:
-        return {};
-    }
   };
 
   return (
@@ -83,7 +65,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ isOpen, onClose, onReact,
       >
         <div className="flex space-x-4">
           {reactions.map((reaction) => (
-            <motion.button
+            <button
               key={reaction.name}
               className="flex flex-col items-center hover:scale-110 transform transition cursor-pointer"
               onClick={() => {
@@ -91,31 +73,21 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ isOpen, onClose, onReact,
                 handleReaction(reaction.name);
               }}
               title={reaction.name}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
             >
-              <AnimatePresence>
-                {isPending && successReaction === reaction.name && (
-                  <motion.img
-                    src={reaction.icon}
-                    alt={reaction.name}
-                    className="w-6 h-6"
-                    initial={{ scale: 0 }}
-                    animate={getAnimation(reaction.name)}
-                    exit={{ scale: 0 }}
-                  />
-                )}
-                {!isPending && (
-                  <motion.img
-                    src={reaction.icon}
-                    alt={reaction.name}
-                    className="w-6 h-6"
-                    whileHover={{ scale: 1.2 }}
-                    whileTap={{ scale: 0.8 }}
-                  />
-                )}
-              </AnimatePresence>
-            </motion.button>
+              {isPending && successReaction === reaction.name ? (
+                <img
+                  src={reaction.icon}
+                  alt={reaction.name}
+                  className="w-6 h-6"
+                />
+              ) : (
+                <img
+                  src={reaction.icon}
+                  alt={reaction.name}
+                  className="w-6 h-6"
+                />
+              )}
+            </button>
           ))}
         </div>
       </div>

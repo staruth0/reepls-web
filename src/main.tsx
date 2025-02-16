@@ -13,7 +13,15 @@ import { ThemeProvider } from './context/Theme/themeProvider.tsx';
 import SideBarProvider from './context/SidebarContext/SideBarProvider.tsx';
 import VoiceLanguageProvider from './context/VoiceLanguageContext/VoiceLanguageProvider.tsx';
 
-const queryClient = new QueryClient({});
+const queryClient = new QueryClient({ defaultOptions: {
+    queries: {
+      staleTime: 10 * 60 * 1000, 
+      refetchOnWindowFocus: false, 
+      refetchOnReconnect: true, 
+      refetchOnMount: false, 
+    },
+  },
+});
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

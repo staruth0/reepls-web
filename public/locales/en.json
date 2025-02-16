@@ -14,7 +14,7 @@
   "PhonePlaceholder": "678566385",
   "PhoneNumberPlaceholder": "678566385",
   "PhoneNumberLabel": "Phone number",
-  "PhoneErrorMessage": "Invalid phone number: must contain just numbers and 9 characters",
+  "PhoneErrorMessage": "Invalid phone number",
   "PasswordPlaceholder": "dfwni8y5*inikfmn",
   "PasswordErrorMessage": "Invalid: password must contain a number and a special character of at least 8 characters",
   "NameLabel": "Username",
