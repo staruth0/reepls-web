@@ -1,22 +1,70 @@
-// Utility function to format date 9+
+// src/utils/dateFormatter.ts
+
 export const formatDateWithMonth = (isoString: string) => {
-  const date = new Date(isoString);
-  const options: Intl.DateTimeFormatOptions = { day: "numeric", month: "long" };
-  return date.toLocaleDateString("en-US", options);
+  try {
+    const date = new Date(isoString);
+
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      return "Invalid date";
+    }
+
+    const options: Intl.DateTimeFormatOptions = {
+      day: "numeric",
+      month: "long",
+    };
+
+    return date.toLocaleDateString("en-US", options);
+  } catch (error) {
+    console.error("Error formatting date:", error);
+    return "Invalid date";
+  }
 };
 
-// Utility function to get relative time like "10 hours ago"
 export const timeAgo = (isoString: string) => {
-  const now = new Date();
-  const past = new Date(isoString);
-  const seconds = Math.floor((now.getTime() - past.getTime()) / 1000);
+  try {
+    const now = new Date();
+    const past = new Date(isoString);
 
-  if (seconds < 60) return `${seconds} s ago`;
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes} mins ago`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} hrs ago`;
-  const days = Math.floor(hours / 24);
-  if (days < 1) return `${days} days ago`;
-  return formatDateWithMonth(isoString);
+    // Check if date is valid
+    if (isNaN(past.getTime())) {
+      return "Invalid date";
+    }
+
+    const msPerMinute = 60 * 1000;
+    const msPerHour = msPerMinute * 60;
+    const msPerDay = msPerHour * 24;
+    const msPerMonth = msPerDay * 30;
+    const msPerYear = msPerDay * 365;
+
+    const elapsed = now.getTime() - past.getTime();
+
+    // Handle future dates
+    if (elapsed < 0) {
+      return formatDateWithMonth(isoString);
+    }
+
+    // More granular time differences
+    if (elapsed < msPerMinute) {
+      const seconds = Math.round(elapsed / 1000);
+      return seconds <= 1 ? "just now" : `${seconds} seconds ago`;
+    } else if (elapsed < msPerHour) {
+      const minutes = Math.round(elapsed / msPerMinute);
+      return minutes === 1 ? "1 minute ago" : `${minutes} minutes ago`;
+    } else if (elapsed < msPerDay) {
+      const hours = Math.round(elapsed / msPerHour);
+      return hours === 1 ? "1 hour ago" : `${hours} hours ago`;
+    } else if (elapsed < msPerMonth) {
+      const days = Math.round(elapsed / msPerDay);
+      return days === 1 ? "1 day ago" : `${days} days ago`;
+    } else if (elapsed < msPerYear) {
+      const months = Math.round(elapsed / msPerMonth);
+      return months === 1 ? "1 month ago" : `${months} months ago`;
+    } else {
+      return formatDateWithMonth(isoString);
+    }
+  } catch (error) {
+    console.error("Error parsing date:", error);
+    return "Invalid date";
+  }
 };

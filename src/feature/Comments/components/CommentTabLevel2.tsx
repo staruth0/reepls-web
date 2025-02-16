@@ -7,21 +7,21 @@ import { Spinner } from "../../../components/atoms/Spinner";
 
 interface CommentTabProps {
   article_id: string;
-  setIsCommentSectionOpen: (isOpen: boolean) => void; 
+  parent_comment_id: string;
 }
 
-const CommentTab: React.FC<CommentTabProps> = ({
+const CommentTabLevel2: React.FC<CommentTabProps> = ({
   article_id,
-  setIsCommentSectionOpen, 
+   parent_comment_id
 }) => {
   const { authUser } = useUser();
   const [comment, setComment] = useState<string>("");
 
- const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === "Enter") {
-        handleCommentSubmit();
-      }
-    };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleCommentSubmit();
+    }
+  };
 
   const { mutate, isPending } = useCreateComment();
 
@@ -31,20 +31,17 @@ const CommentTab: React.FC<CommentTabProps> = ({
       author_id: authUser?.id,
       content: comment,
       is_audio_comment: false,
+      parent_comment_id,
     };
 
-    mutate(commentValues, {
-      onSuccess: () => {
-        setIsCommentSectionOpen(true); 
-      },
-    });
+    mutate(commentValues);
     console.log(commentValues);
     setComment("");
   };
 
   return (
     <div className="px-4">
-      <div className="flex items-center w-full p-2 border border-neutral-300 rounded-full bg-background transition-colors mb-5">
+      <div className="flex items-center w-full p-2 border border-neutral-300 rounded-full bg-background transition-colors mb-2">
         <input
           type="text"
           placeholder="What are your thoughts..."
@@ -65,4 +62,4 @@ const CommentTab: React.FC<CommentTabProps> = ({
   );
 };
 
-export default CommentTab;
+export default CommentTabLevel2;

@@ -1,23 +1,23 @@
 import React, { useEffect } from "react";
-import CommentMessage from "./CommentMessage";
-import CommentTab from "./CommentTab";
-import { useGetCommentsByArticleId } from "../hooks";
+import {  useGetRepliesForComment } from "../hooks";
 import { Comment } from "../../../models/datamodels";
+import CommentTabLevel2 from "./CommentTabLevel2";
+import CommentMessageLevel2 from "./CommentMessageLevel2";
 
 interface CommentSectionProps {
-  article_id: string;
-  setIsCommentSectionOpen: (isOpen: boolean) => void;
+    article_id: string;
+    comment_id: string;
 }
 
-const CommentSection: React.FC<CommentSectionProps> = ({
+const CommentSectionLevel2: React.FC<CommentSectionProps> = ({
   article_id,
-  setIsCommentSectionOpen,
+   comment_id,
 }) => {
   const {
     data: articleComments,
     isLoading,
     isError,
-  } = useGetCommentsByArticleId(article_id);
+  } = useGetRepliesForComment(comment_id);
 
   useEffect(() => {
     console.log(articleComments?.data);
@@ -27,30 +27,28 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   if (isError) return <div>Error loading comments</div>;
 
   return (
-    <div className="flex flex-col gap-2">
-      <CommentTab
-        article_id={article_id}
-        setIsCommentSectionOpen={setIsCommentSectionOpen}
-      />
+    <div className="flex flex-col  mt-3">
       {articleComments?.data.map((comment: Comment, index: number) => {
         const isSameAuthorAsPrevious =
           index > 0 &&
           comment.author_id === articleComments.data[index - 1].author_id;
 
         return (
-          <CommentMessage
-            key={comment._id} 
+          <CommentMessageLevel2
+            key={comment._id} // Use a unique identifier like comment.id instead of index
             content={comment.content!}
             createdAt={comment.createdAt!}
             author_id={comment.author_id!}
             isSameAuthorAsPrevious={isSameAuthorAsPrevious}
-            article_id={article_id}
-            comment_id={comment._id!}
           />
         );
       })}
+      <CommentTabLevel2
+        article_id={article_id}
+        parent_comment_id={comment_id}
+      />
     </div>
   );
 };
 
-export default CommentSection;
+export default CommentSectionLevel2;

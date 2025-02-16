@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { LuBadgeCheck } from "react-icons/lu";
 import {
   EllipsisVertical,
@@ -38,39 +38,25 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date, article_id }) => {
     isPending: isUpdatePending,
     isSuccess: isUpdateSuccess,
   } = useUpdateUser();
-  const [followingText, setFollowingText] = useState<"Follow" | "Unfollow">(
-    "Follow"
-  );
+
 
   const handleProfileClick = (username: string) => {
     goToProfile(username);
   };
 
-  const handleFollowClick = () => {
+  const handleFollowClick = useCallback(() => {
     if (isFollowing(id)) {
-      unfollowUser(id, {
-        onSuccess: () => setFollowingText("Follow"),
-      });
+      unfollowUser(id);
     } else {
-      followUser(id, {
-        onSuccess: () => setFollowingText("Unfollow"),
-      });
+      followUser(id);
     }
-  };
+  }, [isFollowing, id, unfollowUser, followUser]);
 
  const handleSavedArticle = () => {
    const updatedSavedArticles = [...(authUser?.saved_articles || []), article_id];
    console.log({ saved_articles: updatedSavedArticles });
    updateUser({ saved_articles: updatedSavedArticles });
  };
-
-  useEffect(() => {
-    if (isFollowing(id)) {
-      setFollowingText("Unfollow");
-    } else {
-      setFollowingText("Follow");
-    }
-  }, [isFollowing, id]);
 
   useEffect(() => {
     console.log('reaching here', authUser?.username, authUser?.saved_articles, article_id,)
@@ -104,7 +90,11 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date, article_id }) => {
           <LuBadgeCheck className="size-4" />
           {!isFollowing(id) && (
             <div onClick={handleFollowClick} className="cursor-pointer">
-              {isFollowPending ? "Following..." : <div>{ isFollowSuccess ? "" : "Follow" }</div> }
+              {isFollowPending ? (
+                "Following..."
+              ) : (
+                <div>{isFollowSuccess ? "" : "Follow"}</div>
+              )}
             </div>
           )}
         </div>
@@ -128,42 +118,68 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date, article_id }) => {
 
         {/* Pop-up Menu */}
         {showMenu && (
-          <div className="absolute right-0 top-6 bg-neutral-800 shadow-md rounded-md p-2 w-52 text-neutral-50">
+          <>
             <div
-              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              onClick={handleSavedArticle}
-            >
-              <Bookmark size={18} className="text-neutral-500" />{" "}
-              {saved ? (
-                <div>Saved Post</div>
-              ) : (
-                <div>
-                  {isUpdatePending ? (
-                    <div>Saving...</div>
-                  ) : (
-                    <div>{isUpdateSuccess ? "Saved Post" : "Add To Saved"}</div>
-                  )}
-                </div>
-              )}
+              className="fixed inset-0 bg-black opacity-0 z-40"
+              onClick={() => setShowMenu(false)}
+            ></div>
+            <div className="absolute right-0 top-6 bg-neutral-800 shadow-md rounded-md p-2 w-52 text-neutral-50 z-50">
+              <div
+                className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                onClick={handleSavedArticle}
+              >
+                <Bookmark size={18} className="text-neutral-500" />{" "}
+                {saved ? (
+                  <div>Saved Post</div>
+                ) : (
+                  <div>
+                    {isUpdatePending ? (
+                      <div>Saving...</div>
+                    ) : (
+                      <div>
+                        {isUpdateSuccess ? "Saved Post" : "Add To Saved"}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <EyeOff size={18} className="text-neutral-500" /> Hide post
+              </div>
+              <div
+                className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                onClick={handleFollowClick}
+              >
+                <UserPlus size={18} className="text-neutral-500" />
+                {isFollowing(id) ? (
+                  <div>
+                    {isUnfollowPending ? (
+                      "Unfollowing..."
+                    ) : (
+                      <div>
+                        {isUnfollowSuccess
+                          ? "Follow Author"
+                          : "Unfollow Author"}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div>
+                    {isFollowPending ? (
+                      <div>Following...</div>
+                    ) : (
+                      <div>
+                        {isFollowSuccess ? "Unfollow Author" : "Follow Author"}
+                      </div>
+                    )}{" "}
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <Share2 size={18} className="text-neutral-500" /> Share
+              </div>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <EyeOff size={18} className="text-neutral-500" /> Hide post
-            </div>
-            <div
-              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              onClick={handleFollowClick}
-            >
-              <UserPlus size={18} className="text-neutral-500" />
-              {isFollowing(id) ? (
-                <div>{isUnfollowPending ? "Unfollowing..." : <div>{ isUnfollowSuccess ? 'Follow Author':'Unfollow Author'}</div> }</div>
-              ) : (
-                  <div>{isFollowPending ? <div>Following...</div> : <div>{ isFollowSuccess ? 'Unfollow Author':'Follow Author'}</div> } </div>
-              )}
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <Share2 size={18} className="text-neutral-500" /> Share
-            </div>
-          </div>
+          </>
         )}
       </div>
     </div>

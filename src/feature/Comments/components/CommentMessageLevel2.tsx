@@ -1,31 +1,23 @@
-import React, { useState } from "react";
-import { ThumbsUp, MessageCircle } from "lucide-react";
+import React from "react";
+import { ThumbsUp } from "lucide-react";
 import { LuBadgeCheck } from "react-icons/lu";
 import { timeAgo } from "../../../utils/dateFormater";
 import { useGetUserById } from "../../Profile/hooks";
-import CommentSectionLevel2 from "./CommentSectionLevel2";
-import { useGetRepliesForComment } from "../hooks";
 
 interface MessageComponentProps {
   content: string;
   createdAt: Date | string;
   author_id: string;
   isSameAuthorAsPrevious: boolean;
-  article_id: string;
-  comment_id: string;
 }
 
-const CommentMessage: React.FC<MessageComponentProps> = ({
+const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
   content,
   createdAt,
   author_id,
   isSameAuthorAsPrevious,
-  article_id,
-  comment_id
 }) => {
   const { user } = useGetUserById(author_id);
-  const [isLevelTwoCommentOpen, setIsLevelTwoCommentOpen] = useState(false)
-  const {data} = useGetRepliesForComment(comment_id)
 
   const formatDate = () => {
     try {
@@ -40,7 +32,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
 
   return (
     <div
-      className={`min-w-[70%] p-4 relative self-start ${
+      className={`min-w-[90%] p-2 relative self-start ${
         isSameAuthorAsPrevious ? "self-end" : ""
       }`}
     >
@@ -74,27 +66,13 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
       </div>
 
       {/* Actions (React & Reply) */}
-      <div className="flex gap-4 mt-2 text-gray-600 text-[11px] px-4 ">
+      <div className="flex gap-4 mt-2 text-gray-600 text-[11px] px-4">
         <button className="flex items-center gap-1 hover:text-primary-400">
           <ThumbsUp className="size-4" /> React • 500
         </button>
-        <button
-          className="flex items-center gap-1 hover:text-primary-400"
-          onClick={() => setIsLevelTwoCommentOpen(!isLevelTwoCommentOpen)}
-        >
-          <MessageCircle className="size-4" />
-          Reply • {data?.data?.length} replies
-        </button>
       </div>
-
-      {isLevelTwoCommentOpen && (
-        <CommentSectionLevel2
-          article_id={article_id}
-          comment_id={comment_id!}
-        />
-      )}
     </div>
   );
 };
 
-export default CommentMessage;
+export default CommentMessageLevel2;
