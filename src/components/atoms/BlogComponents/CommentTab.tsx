@@ -1,4 +1,4 @@
-import { Send, Mic } from "lucide-react";
+import { Send, Mic, Smile } from "lucide-react";
 import { useState } from "react";
 import EmojiPack from "./EmojiPack";
 
@@ -33,12 +33,11 @@ const CommentTab: React.FC<CommentTabProps> = ({ toggleCommentTab }) => {
           className="flex-grow bg-transparent outline-none text-sm text-neutral-100 placeholder-neutral-300"
         />
 
-        <button
-          className="ml-2 p-1 text-neutral-100 hover:text-primary-400 transition-colors"
+        <Smile
+          size={20}
+          className="ml-2 cursor-pointer text-neutral-100 transition-colors hover:text-primary-400"
           onClick={toggleEmojiPack}
-        >
-          😀
-        </button>
+        />
 
         <button
           onClick={comment.trim() === "" ? handleMicClick : toggleCommentTab}
@@ -47,6 +46,7 @@ const CommentTab: React.FC<CommentTabProps> = ({ toggleCommentTab }) => {
           {comment.trim() === "" ? <Mic size={20} /> : <Send size={20} />}
         </button>
       </div>
+
 
       {emojiPackState && (
         <EmojiPack
