@@ -1,6 +1,8 @@
 Modal, Dialog, Popover, Tooltip, Tabs, Slider,
 Alerts and Toasts
 
+-Reactions + confeti/indicaion
+
 - react-hot-toast or react-toastify
 - sweetalert2 or
 
