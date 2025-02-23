@@ -14,11 +14,11 @@ export const useCreateComment = () => {
 
   return useMutation({
     mutationFn: (comment: Comment) => createComment(comment),
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       console.log("Comment created:", data);
      
       queryClient.invalidateQueries({
-        queryKey: ["comments", variables.article_id],
+        queryKey: ["comments"],
       });
     },
     onError: (error) => {
@@ -35,13 +35,14 @@ export const useGetCommentsByArticleId = (articleId: string) => {
   });
 };
 
+
 // Hook to update an existing comment
 export const useUpdateComment = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({commentId,content}: {  commentId: string;content: string;}) => updateComment(commentId, content),
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       console.log("Comment updated:", data);
   
       queryClient.invalidateQueries({
@@ -49,7 +50,7 @@ export const useUpdateComment = () => {
       });
      
       queryClient.invalidateQueries({
-        queryKey: ["replies", variables.commentId],
+        queryKey: ["replies"],
       });
     },
     onError: (error) => {

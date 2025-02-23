@@ -4,6 +4,7 @@ import UserReactionContainer from "./UserReactionContainer";
 import { clap, heart, sadface, smile, thumb } from "../../../assets/icons";
 import ReactionTab from "./ReactionTab";
 import { useGetArticleReactions, useGetReactionsPerType } from "../hooks";
+import { Reaction } from "../../../models/datamodels";
 
 interface ReactionProps {
   article_id: string;
@@ -97,9 +98,32 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
   // Handle loading and error states
   if (isLoadingAllReactions || isLoadingReactionsPerType) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div className="bg-white rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh] p-4 flex items-center justify-center">
-          <p>Loading reactions...</p>
+      <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-50">
+        <div className="bg-[var(--plain-b)] rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh] p-4">
+          <div className="">
+            <div className="flex items-center justify-between p-4">
+              <div className="h-6 w-24 bg-[var(--neutral-300)] rounded animate-pulse"></div>
+              <div className="h-6 w-6 bg-[var(--neutral-300)] rounded animate-pulse"></div>
+            </div>
+            <div className="w-[70%] px-4">
+              <div className="flex gap-4">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="h-5 w-16 bg-[var(--neutral-300)] rounded animate-pulse"
+                  ></div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="p-4 space-y-3 min-h-[30vh] max-h-[63vh] overflow-y-auto">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <div
+                key={index}
+                className="h-16 bg-[var(--neutral-300)] rounded animate-pulse"
+              ></div>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -107,93 +131,102 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
 
   if (isErrorAllReactions || isErrorReactionsPerType) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div className="bg-white rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh] p-4 flex items-center justify-center">
-          <p>Error loading reactions. Please try again later.</p>
+      <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-50">
+        <div className="bg-[var(--plain-b)] rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh] p-4 flex items-center justify-center">
+          <p className="text-[var(--text-color)]">
+            Error loading reactions. Please try again later.
+          </p>
+          <button
+            onClick={onClose}
+            className=""
+          >
+            Cancel
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh]">
-        <div className="border-b">
+    <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-50">
+      <div className="bg-[var(--plain-b)] rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh]">
+        <div className="border-b border-[var(--neutral-400-main)]">
           <div className="flex items-center justify-between p-4">
-            <h2 className="text-lg font-semibold">Reactions</h2>
+            <h2 className="text-lg font-semibold text-[var(--text-color)]">
+              Reactions
+            </h2>
             <button
               onClick={onClose}
-              className="text-gray-600 hover:text-black"
+              className="text-[var(--neutral-300)] hover:text-[var(--neutral-50)]"
             >
               <X size={20} />
             </button>
           </div>
-
           <div className="w-[70%] px-2">
             <ReactionTab
               tabs={reactionsTab}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
               scale={true}
-              borderBottom={true}
+              borderBottom={false}
             />
           </div>
         </div>
         <div className="p-4 space-y-3 min-h-[30vh] max-h-[63vh] overflow-y-auto">
           {activeTab === "All" &&
-            allReactions?.map((reaction, index) => (
+            allReactions?.map((reaction: Reaction) => (
               <UserReactionContainer
-                key={index}
+                key={reaction.type}
                 type={reaction.type}
                 user_id={reaction.user_id}
               />
             ))}
           {activeTab === "smile" &&
             allReactions
-              ?.filter((reaction) => reaction.type === "smile")
-              .map((reaction, index) => (
+              ?.filter((reaction: Reaction) => reaction.type === "smile")
+              .map((reaction: Reaction) => (
                 <UserReactionContainer
-                  key={index}
+                  key={reaction.type}
                   type={reaction.type}
                   user_id={reaction.user_id}
                 />
               ))}
           {activeTab === "cry" &&
             allReactions
-              ?.filter((reaction) => reaction.type === "cry")
-              .map((reaction, index) => (
+              ?.filter((reaction: Reaction) => reaction.type === "cry")
+              .map((reaction: Reaction) => (
                 <UserReactionContainer
-                  key={index}
+                  key={reaction.type}
                   type={reaction.type}
                   user_id={reaction.user_id}
                 />
               ))}
           {activeTab === "love" &&
             allReactions
-              ?.filter((reaction) => reaction.type === "love")
-              .map((reaction, index) => (
+              ?.filter((reaction: Reaction) => reaction.type === "love")
+              .map((reaction: Reaction) => (
                 <UserReactionContainer
-                  key={index}
+                  key={reaction.type}
                   type={reaction.type}
                   user_id={reaction.user_id}
                 />
               ))}
           {activeTab === "clap" &&
             allReactions
-              ?.filter((reaction) => reaction.type === "clap")
-              .map((reaction, index) => (
+              ?.filter((reaction: Reaction) => reaction.type === "clap")
+              .map((reaction: Reaction) => (
                 <UserReactionContainer
-                  key={index}
+                  key={reaction.type}
                   type={reaction.type}
                   user_id={reaction.user_id}
                 />
               ))}
           {activeTab === "like" &&
             allReactions
-              ?.filter((reaction) => reaction.type === "like")
-              .map((reaction, index) => (
+              ?.filter((reaction: Reaction) => reaction.type === "like")
+              .map((reaction: Reaction) => (
                 <UserReactionContainer
-                  key={index}
+                  key={reaction.type}
                   type={reaction.type}
                   user_id={reaction.user_id}
                 />

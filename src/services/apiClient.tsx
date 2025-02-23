@@ -46,7 +46,10 @@ apiClient.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
           return apiClient(originalRequest);
         } catch (e) {
-          return Promise.reject(e);
+         localStorage.removeItem(ACCESS_TOKEN_KEY);
+         localStorage.removeItem(REFRESH_TOKEN_KEY);
+         window.location.href = "/auth"; 
+         return Promise.reject(e);
         }
       }
     }
@@ -55,3 +58,5 @@ apiClient.interceptors.response.use(
 );
 
 export { apiClient };
+
+

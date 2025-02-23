@@ -1,17 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/molecules/sidebar/Sidebar";
 import { AuthContext } from "../../context/AuthContext/authContext";
-import { useResponsiveLayout } from "../../hooks/useResposiveLayout";
 import { SidebarContext } from "../../context/SidebarContext/SidebarContext";
 import "./index.scss";
 import { refreshAuthTokens } from "../../feature/Auth/api";
 import { REFRESH_TOKEN_KEY } from "../../constants";
 
 const UserLayout: React.FC = () => {
-  const { isTablet, isMobile } = useResponsiveLayout();
   const { checkTokenExpiration,login } = useContext(AuthContext);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(isTablet);
   const { isOpen } = useContext(SidebarContext);
   const navigate = useNavigate();
 
@@ -37,14 +34,6 @@ useEffect(() => {
 }, []);
 
 
-  useEffect(() => {
-    setIsSidebarCollapsed(isTablet);
-  }, [isTablet]);
-
-  useEffect(() => {
-    if (isMobile) setIsSidebarCollapsed(false);
-  }, [isMobile]);
-
   return (
     <div
       className={`relative sm:grid ${
@@ -56,10 +45,7 @@ useEffect(() => {
           isOpen ? "translate-x-0" : "-translate-x-96"
         } transition-all duration-700 ease-linear sm:relative bg-neutral-800 sm:bg-inherit top-0 bottom-0 z-50 h-full w-[60%] sm:w-auto`}
       >
-        <Sidebar
-          isSidebarCollapsed={isSidebarCollapsed}
-          setIsSidebarCollapsed={setIsSidebarCollapsed}
-        />
+        <Sidebar/>
       </div>
 
       <div className="user__content relative">

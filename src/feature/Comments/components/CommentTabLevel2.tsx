@@ -4,6 +4,7 @@ import { useUser } from "../../../hooks/useUser";
 import { useState } from "react";
 import { useCreateComment } from "../hooks";
 import { Spinner } from "../../../components/atoms/Spinner";
+import {toast} from "react-toastify";
 
 interface CommentTabProps {
   article_id: string;
@@ -34,7 +35,15 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
       parent_comment_id,
     };
 
-    mutate(commentValues);
+    mutate(commentValues, {
+      onSuccess: () => { 
+        toast.success("replied to Comment successfully");
+        setComment("");  
+      },
+      onError: () => { 
+        toast.error("Failed to reply to Comment");
+      },
+    });
     console.log(commentValues);
     setComment("");
   };
