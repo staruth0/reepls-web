@@ -4,16 +4,14 @@ import { useUser } from "../../../hooks/useUser";
 import { useState } from "react";
 import { useCreateComment } from "../hooks";
 import { Spinner } from "../../../components/atoms/Spinner";
+import {toast} from 'react-toastify'
 
 interface CommentTabProps {
   article_id: string;
   setIsCommentSectionOpen: (isOpen: boolean) => void; 
 }
 
-const CommentTab: React.FC<CommentTabProps> = ({
-  article_id,
-  setIsCommentSectionOpen, 
-}) => {
+const CommentTab: React.FC<CommentTabProps> = ({article_id,setIsCommentSectionOpen}) => {
   const { authUser } = useUser();
   const [comment, setComment] = useState<string>("");
 
@@ -36,6 +34,11 @@ const CommentTab: React.FC<CommentTabProps> = ({
     mutate(commentValues, {
       onSuccess: () => {
         setIsCommentSectionOpen(true); 
+        toast.success("Comment posted successfully");
+        
+      },
+      onError: () => { 
+        toast.error("Failed to post comment");
       },
     });
     console.log(commentValues);

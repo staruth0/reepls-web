@@ -7,14 +7,17 @@ import './index.css';
 import { AuthRoutes } from './Routes/AuthRoutes';
 import { UserRoutes } from './Routes/UserRoutes';
 import { WebRoutes } from './Routes/WebRoutes';
+
 const router = createBrowserRouter([WebRoutes, AuthRoutes, UserRoutes, { path: '*', element: <NotFound /> }]);
 
 function App() {
   const { theme } = useTheme();
 
+
   useEffect(() => {
     document.body.className = theme === 'dark' ? 'dark-theme' : '';
   }, [theme]);
+
 
   return (
     <>
@@ -29,7 +32,7 @@ function App() {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light"
+        theme={theme}
         transition={Bounce}
       />
     </>

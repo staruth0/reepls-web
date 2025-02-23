@@ -4,7 +4,7 @@ import { LuBadgeCheck } from "react-icons/lu";
 import { timeAgo } from "../../../utils/dateFormater";
 import { useGetUserById } from "../../Profile/hooks";
 import CommentSectionLevel2 from "./CommentSectionLevel2";
-import { useGetRepliesForComment } from "../hooks";
+import { Comment } from "../../../models/datamodels";
 
 interface MessageComponentProps {
   content: string;
@@ -13,19 +13,12 @@ interface MessageComponentProps {
   isSameAuthorAsPrevious: boolean;
   article_id: string;
   comment_id: string;
+  replies:Comment[]
 }
 
-const CommentMessage: React.FC<MessageComponentProps> = ({
-  content,
-  createdAt,
-  author_id,
-  isSameAuthorAsPrevious,
-  article_id,
-  comment_id
-}) => {
+const CommentMessage: React.FC<MessageComponentProps> = ({content,createdAt,author_id,isSameAuthorAsPrevious,article_id,comment_id,replies}) => {
   const { user } = useGetUserById(author_id);
   const [isLevelTwoCommentOpen, setIsLevelTwoCommentOpen] = useState(false)
-  const {data} = useGetRepliesForComment(comment_id)
 
   const formatDate = () => {
     try {
@@ -83,7 +76,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
           onClick={() => setIsLevelTwoCommentOpen(!isLevelTwoCommentOpen)}
         >
           <MessageCircle className="size-4" />
-          Reply • {data?.data?.length} replies
+          Reply • {replies?.length} replies
         </button>
       </div>
 
@@ -91,6 +84,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
         <CommentSectionLevel2
           article_id={article_id}
           comment_id={comment_id!}
+          comments={replies}
         />
       )}
     </div>

@@ -6,25 +6,12 @@ export const useFollowUser = () => {
 
   return useMutation({
     mutationFn: (followedId: string) => followUser(followedId),
-    onSuccess: (data, followedId) => {
+    onSuccess: (data) => {
       console.log("User followed:", data);
-
-      // Manually update the "following" query cache
-      queryClient.setQueryData(
-        ["following", data.followerId], 
-        (oldData: any) => {
-          if (!oldData) return oldData;
-          return {
-            ...oldData,
-            data: [...oldData.data, { followed_id: followedId }],
-          };
-        }
-      );
-
       // Invalidate queries to refetch data in the background
-      queryClient.invalidateQueries({ queryKey: ["followers", followedId] });
+      queryClient.invalidateQueries({ queryKey: ["followers"] });
       queryClient.invalidateQueries({
-        queryKey: ["following", data.followerId],
+        queryKey: ["following"],
       });
     },
     onError: (error) => {
@@ -38,28 +25,12 @@ export const useUnfollowUser = () => {
 
   return useMutation({
     mutationFn: (followedId: string) => unfollowUser(followedId),
-    onSuccess: (data, followedId) => {
+    onSuccess: (data) => {
       console.log("User unfollowed:", data);
-
-      // Manually update the "following" query cache
-      queryClient.setQueryData(
-        ["following", data.followerId], // Query key for the following list
-        (oldData: any) => {
-          if (!oldData) return oldData;
-          return {
-            ...oldData,
-            data: oldData.data.filter(
-              (following: { followed_id: string }) =>
-                following.followed_id !== followedId
-            ), // Remove the unfollowed user
-          };
-        }
-      );
-
       // Invalidate queries to refetch data in the background
-      queryClient.invalidateQueries({ queryKey: ["followers", followedId] });
+      queryClient.invalidateQueries({ queryKey: ["followers"] });
       queryClient.invalidateQueries({
-        queryKey: ["following", data.followerId],
+        queryKey: ["following"],
       });
     },
     onError: (error) => {

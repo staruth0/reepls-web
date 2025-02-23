@@ -7,11 +7,7 @@ import { allowedImageTypes, allowedVideoTypes, SHORT_POST_LENGTH } from '../../.
 import useTheme from '../../../hooks/useTheme';
 import { cn } from '../../../utils';
 
-const PostModal = ({
-  isModalOpen,
-  setIsModalOpen,
-  handlePost,
-}: {
+const PostModal = ({isModalOpen,setIsModalOpen,handlePost}: {
   isModalOpen: boolean;
   setIsModalOpen: (value: boolean) => void;
   handlePost: (postContent: string, postImages: File[], postVideos: File[]) => void;
@@ -61,7 +57,7 @@ const PostModal = ({
       onClose={() => setIsModalOpen(false)}>
       <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
-      <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+      <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-4">
           <DialogPanel
             transition

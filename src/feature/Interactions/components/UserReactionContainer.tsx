@@ -25,10 +25,10 @@ const UserReactionContainer: React.FC<UserReactionProps> = ({ user_id, type }) =
         </div>
       </div>
 
-      {type === "heart" && <img src={heart} className="w-5 h-5" />}
-      {type === "thumb" && <img src={thumb} className="w-5 h-5" />}
+      {type === "love" && <img src={heart} className="w-5 h-5" />}
+      {type === "like" && <img src={thumb} className="w-5 h-5" />}
       {type === "clap" && <img src={clap} className="w-5 h-5" />}
-      {type === "sad" && <img src={sadface} className="w-5 h-5" />}
+      {type === "cry" && <img src={sadface} className="w-5 h-5" />}
       {type === "smile" && <img src={smile} className="w-5 h-5" />}
     </div>
   );

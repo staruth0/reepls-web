@@ -7,11 +7,13 @@ import CommentMessageLevel2 from "./CommentMessageLevel2";
 interface CommentSectionProps {
     article_id: string;
     comment_id: string;
+    comments: Comment[];
 }
 
 const CommentSectionLevel2: React.FC<CommentSectionProps> = ({
   article_id,
    comment_id,
+   comments
 }) => {
   const {
     data: articleComments,
@@ -28,7 +30,7 @@ const CommentSectionLevel2: React.FC<CommentSectionProps> = ({
 
   return (
     <div className="flex flex-col  mt-3">
-      {articleComments?.data.map((comment: Comment, index: number) => {
+      {comments?.map((comment: Comment, index: number) => {
         const isSameAuthorAsPrevious =
           index > 0 &&
           comment.author_id === articleComments.data[index - 1].author_id;

@@ -23,11 +23,17 @@ import { cn } from "../../../utils";
 import PostModal from "../../../feature/Blog/components/PostModal";
 import "./sidebar.scss";
 import { reeplsIcon } from "../../../assets/icons";
+import { useCreateArticle } from "../../../feature/Blog/hooks/useArticleHook";
+import { Article } from "../../../models/datamodels";
+import { toast } from "react-toastify";
+import { Spinner } from "../../atoms/Spinner";
+
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
   const { t } = useTranslation();
+  const { mutate ,isPending} = useCreateArticle();
   // const { isTablet } = useResponsiveLayout();
   const { isOpen, toggleSidebar } = useContext(SidebarContext);
   const handleToggleSidebar = () => {
@@ -64,11 +70,29 @@ const Sidebar: React.FC = () => {
     },
   ];
 
-  const handlePost = (
-    postContent: string,
-    postImages: File[],
-    postVideos: File[]
-  ) => {
+  const handlePost = ( postContent: string,postImages: File[],postVideos: File[]) => {
+    const post: Article = {
+      title: "Dreams Beyond the Classroom",
+      content: postContent,
+      category: "Religion",
+      status: "Published",
+    };
+
+    mutate(post, {
+      onSuccess: () => {
+        setIsCreatingPost(false);
+        console.log("Article created successfully");
+        toast.success("Article created successfully");
+        navigate("/feed")
+      },
+      onError: (error) => {
+        console.error("Error creating article", error);
+        toast.error("Error creating article"+ error);
+      },
+    });
+
+    console.log("post", post);
+        
     console.log("postContent", postContent);
     console.log("postImages", postImages);
     console.log("postVideos", postVideos);
@@ -89,9 +113,17 @@ const Sidebar: React.FC = () => {
         onClick={() => handleToggleSidebar()}
       />
       <div className="flex gap-5 items-center h-[80px]">
-        <div className=" text-roboto text-[24px] font-semibold flex gap-2 items-center cursor-pointer" onClick={() => navigate('/feed')}>
-          <img src={reeplsIcon} alt="reeplsicon" className={`${isOpen?'size-8': 'size-9'}`}/>
-         { isOpen && 'REEPLS'}</div>
+        <div
+          className=" text-roboto text-[24px] font-semibold flex gap-2 items-center cursor-pointer"
+          onClick={() => navigate("/feed")}
+        >
+          <img
+            src={reeplsIcon}
+            alt="reeplsicon"
+            className={`${isOpen ? "size-8" : "size-9"}`}
+          />
+          {isOpen && "REEPLS"}
+        </div>
       </div>
 
       <div className="sidebar__links">
@@ -108,11 +140,17 @@ const Sidebar: React.FC = () => {
       </div>
 
       {isCreatingPost && (
-        <PostModal
-          isModalOpen={isCreatingPost}
-          setIsModalOpen={setIsCreatingPost}
-          handlePost={handlePost}
-        />
+        <>
+          {isPending ? (
+            <Spinner/>
+          ) : (
+            <PostModal
+              isModalOpen={isCreatingPost}
+              setIsModalOpen={setIsCreatingPost}
+              handlePost={handlePost}
+            />
+          )}
+        </>
       )}
       <div className="create__post__btn">
         <Popover className="relative">

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../hooks/useUser";
 import { useFollowUser, useUnfollowUser } from "../../Follow/hooks";
 import { useKnowUserFollowings } from "../../Follow/hooks/useKnowUserFollowings";
+import { toast } from "react-toastify";
 
 interface ProfileHeroButtonsProps {
   userId: string;
@@ -15,8 +16,17 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({ userId }) => {
   const { authUser } = useUser();
   const { isFollowing: isUserFollowing } = useKnowUserFollowings();
 
-  const { mutate: follow,isPending: isFollowPending,error: followError} = useFollowUser();
-  const {mutate: unFollow,isPending: isUnfollowPending,error: unfollowError} = useUnfollowUser();
+  const {
+    mutate: follow,
+    isPending: isFollowPending,
+ 
+  } = useFollowUser();
+
+  const {
+    mutate: unFollow,
+    isPending: isUnfollowPending,
+
+  } = useUnfollowUser();
 
   const handleEditProfile = (username: string) => {
     navigate(`/profile/edit/${username}`);
@@ -27,11 +37,25 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({ userId }) => {
   };
 
   const handleFollowClick = () => {
+    if (isFollowPending || isUnfollowPending) return;
+
     if (isUserFollowing(userId)) {
-      unFollow(userId); // Unfollow the user
+      unFollow(userId, {
+        onSuccess: () => toast.success(t("User unfollowed successfully")),
+        onError: () => toast.error(t("Failed to unfollow user")),
+      });
     } else {
-      follow(userId); // Follow the user
+      follow(userId, {
+        onSuccess: () => toast.success(t("User followed successfully")),
+        onError: () => toast.error(t("Failed to follow user")),
+      });
     }
+  };
+
+  const getFollowStatusText = () => {
+    if (isFollowPending) return t("Following...");
+    if (isUnfollowPending) return t("Unfollowing...");
+    return isUserFollowing(userId) ? t("Following") : t("Follow");
   };
 
   return (
@@ -42,35 +66,26 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({ userId }) => {
             className="px-8 py-3 border border-gray-300 rounded-full text-sm hover:bg-gray-100"
             onClick={() => handleEditProfile(authUser?.username || "")}
           >
-            {t(`Edit Profile`)}
+            {t("Edit Profile")}
           </button>
           <button
             className="px-8 py-3 bg-neutral-600 rounded-full text-sm hover:bg-gray-200"
             onClick={() => handleViewAnalytics(authUser?.username || "")}
           >
-            {t(`View Analytics`)}
+            {t("View Analytics")}
           </button>
         </>
       ) : (
-        <div>
-          <button
-            className={`px-8 py-3 rounded-full text-sm ${
-              isUserFollowing(userId)
-                ? "bg-neutral-600 text-neutral-50"
-                : "bg-main-green text-white"
-            }`}
-            onClick={handleFollowClick}
-          >
-            {isUserFollowing(userId)
-              ? t(`${isUnfollowPending ? "Unfollowing..." : "Unfollow"}`)
-              : t(`${isFollowPending ? "Following..." : "Follow"}`)}
-          </button>
-          {(followError || unfollowError) && (
-            <div className="text-red-500 text-sm mt-2">
-              {(followError || unfollowError)?.message}
-            </div>
-          )}
-        </div>
+        <button
+          className={`px-8 py-3 rounded-full text-sm ${
+            isUserFollowing(userId)
+              ? "bg-neutral-600 text-neutral-50"
+              : "bg-main-green text-white"
+          }`}
+          onClick={handleFollowClick}
+        >
+          {getFollowStatusText()}
+        </button>
       )}
     </div>
   );

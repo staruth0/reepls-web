@@ -1,5 +1,6 @@
 import { Brain } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; 
 import Topbar from "../../components/atoms/Topbar/Topbar";
 import BlogPost from "../Blog/components/BlogPost";
 import Tabs from "../../components/molecules/Tabs/Tabs";
@@ -8,6 +9,7 @@ import {useGetAllArticles,useGetFollowedArticles} from "../Blog/hooks/useArticle
 import Communique from "./components/Communique/Communique";
 import "./feed.scss";
 import BlogSkeletonComponent from "../Blog/components/BlogSkeleton";
+import TokenExpiredModal from "../../components/atoms/TokenExpiredModal"; 
 
 // Tabs configuration
 const tabs = [
@@ -18,7 +20,9 @@ const tabs = [
 const UserFeed: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
   const [isBrainActive, setIsBrainActive] = useState<boolean>(false);
+  const [tokenExpired, setTokenExpired] = useState(false); 
   const { toggleCognitiveMode } = useContext(CognitiveModeContext);
+  const navigate = useNavigate();
 
   // Fetch all articles and followed articles
   const { data, error, isLoading } = useGetAllArticles();
@@ -33,6 +37,17 @@ const UserFeed: React.FC = () => {
     setIsBrainActive((prev) => !prev);
     toggleCognitiveMode();
   };
+
+  useEffect(() => {
+    const checkFor401 = (err: any) => {
+      if (err?.response?.status === 401) {
+        setTokenExpired(true);
+      }
+    };
+
+    if (error) checkFor401(error);
+    if (followedError) checkFor401(followedError);
+  }, [error, followedError]);
 
   // Select data based on the active tab
   const displayData = activeTab === 1 ? data : followedData;
@@ -60,7 +75,9 @@ const UserFeed: React.FC = () => {
               size={isBrainActive ? 35 : 30}
               onClick={handleBrainClick}
               className={`cursor-pointer transition-all ${
-                isBrainActive ? "text-green-600 bg-green-100 rounded-full p-1" : "text-neutral-50 hover:text-green-600 hover:bg-green-100 hover:rounded-full hover:p-1 transition-all"
+                isBrainActive
+                  ? "text-green-600 bg-green-100 rounded-full p-1"
+                  : "text-neutral-50 hover:text-green-600 hover:bg-green-100 hover:rounded-full hover:p-1 transition-all"
               }`}
             />
           </div>
@@ -95,6 +112,15 @@ const UserFeed: React.FC = () => {
       <div className="communique hidden lg:block">
         <Communique />
       </div>
+
+      {/* Token Expired Modal */}
+      <TokenExpiredModal
+        isOpen={tokenExpired}
+        onClose={() => {
+          setTokenExpired(false);
+          navigate("/auth"); 
+        }}
+      />
     </div>
   );
 };

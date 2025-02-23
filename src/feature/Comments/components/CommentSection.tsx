@@ -46,6 +46,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             isSameAuthorAsPrevious={isSameAuthorAsPrevious}
             article_id={article_id}
             comment_id={comment._id!}
+            replies={comment.replies!}
           />
         );
       })}

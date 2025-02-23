@@ -76,6 +76,7 @@ export interface Comment {
   is_audio_comment?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  replies?: Comment[];
   _id?: string;
 }
 
