@@ -5,6 +5,7 @@ import {
   useGetRecommendedArticles,
 } from "../../Blog/hooks/useArticleHook";
 import BlogPost from "../../Blog/components/BlogPost";
+import { Article } from "../../../models/datamodels";
 
 const topics = [
   "Politics",
@@ -61,16 +62,16 @@ const SearchTopics: React.FC = () => {
             <div className="skeleton-loader">Loading</div>
           ) : (
             <div className=" ">
-              {displayedData?.map((article) => (
+              {displayedData?.map((article:Article) => (
                 <BlogPost
                   key={article._id}
-                  isArticle={article.isArticle}
-                  images={article.media}
-                  title={article.title}
-                  content={article.content}
-                  id={article.author_id}
-                  date={article.createdAt}
-                  article_id={article._id}
+                  isArticle={article.isArticle!}
+                  images={article.media!}
+                  title={article.title!}
+                  content={article.content!}
+                  id={article.author_id!}
+                  date={article.createdAt!}
+                  article_id={article._id!}
                 />
               ))}
             </div>

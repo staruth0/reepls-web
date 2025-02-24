@@ -7,7 +7,7 @@ import { useGetArticleReactions } from "../../../Interactions/hooks";
 
 interface BlogReactionStatsProps {
   date: string;
-  toggleCommentSection: () => void;
+  toggleCommentSection?: () => void;
   article_id: string;
 }
 

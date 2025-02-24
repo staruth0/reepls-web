@@ -1,5 +1,4 @@
-import { useCallback } from 'react';
-
+import { useCallback } from "react";
 import RichTextEditor, {
   Attachment,
   BaseKit,
@@ -46,22 +45,25 @@ import RichTextEditor, {
   Twitter,
   Underline,
   Video,
+  Editor, // Import the Editor type
   locale,
-} from 'reactjs-tiptap-editor';
+} from "reactjs-tiptap-editor";
+import "katex/dist/katex.min.css";
+import "reactjs-tiptap-editor/style.css";
+import useTheme from "../../../hooks/useTheme";
+import "../../../styles/shadcn.scss";
+import { convertBase64ToBlob, debounce } from "../../../utils";
+import "../styles/editor.scss";
 
-import 'katex/dist/katex.min.css';
-import 'reactjs-tiptap-editor/style.css';
-import useTheme from '../../../hooks/useTheme';
-import '../../../styles/shadcn.scss';
-import { convertBase64ToBlob, debounce } from '../../../utils';
-import '../styles/editor.scss';
+// Type for editor content (assuming HTML string output)
+type EditorContent = string;
 
+// Extensions configuration
 const extensions = [
   BaseKit.configure({
     placeholder: {
       showOnlyCurrent: true,
     },
-
     characterCount: false,
   }),
   History,
@@ -83,7 +85,7 @@ const extensions = [
   Highlight,
   BulletList,
   OrderedList,
-  TextAlign.configure({ types: ['heading', 'paragraph'], spacer: true }),
+  TextAlign.configure({ types: ["heading", "paragraph"], spacer: true }),
   Indent,
   LineHeight,
   TaskList.configure({
@@ -94,19 +96,19 @@ const extensions = [
   }),
   Link,
   Image.configure({
-    upload: (files: File) => {
+    upload: (file: File): Promise<string> => {
       return new Promise((resolve) => {
         setTimeout(() => {
-          resolve(URL.createObjectURL(files));
+          resolve(URL.createObjectURL(file));
         }, 500);
       });
     },
   }),
   Video.configure({
-    upload: (files: File) => {
+    upload: (file: File): Promise<string> => {
       return new Promise((resolve) => {
         setTimeout(() => {
-          resolve(URL.createObjectURL(files));
+          resolve(URL.createObjectURL(file));
         }, 500);
       });
     },
@@ -120,13 +122,13 @@ const extensions = [
   Code.configure({
     toolbar: false,
   }),
-  CodeBlock.configure({ defaultTheme: 'dracula' }),
+  CodeBlock.configure({ defaultTheme: "dracula" }),
   ColumnActionButton,
   Table,
   Iframe,
   ExportPdf.configure({ spacer: true }),
   ImportWord.configure({
-    upload: (files: File[]) => {
+    upload: (files: File[]): Promise<{ src: string; alt: string }[]> => {
       const f = files.map((file) => ({
         src: URL.createObjectURL(file),
         alt: file.name,
@@ -139,8 +141,7 @@ const extensions = [
   TextDirection,
   Mention,
   Attachment.configure({
-    upload: (file: any) => {
-      // fake upload return base 64
+    upload: (file: File): Promise<string> => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
 
@@ -153,8 +154,7 @@ const extensions = [
     },
   }),
   Mermaid.configure({
-    upload: (file: any) => {
-      // fake upload return base 64
+    upload: (file: File): Promise<string> => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
 
@@ -173,33 +173,35 @@ function TipTapRichTextEditor({
   handleContentChange,
   editorRef,
 }: {
-  handleContentChange: (content: string) => void;
-  editorRef: React.RefObject<any>;
+  handleContentChange: (content: EditorContent) => void;
+  editorRef: React.RefObject<{ editor: Editor | null }>; // Update to match the correct type
 }) {
   const { theme } = useTheme();
 
   const onValueChange = useCallback(
-    debounce((value: any) => {
+    debounce((value: EditorContent) => {
       handleContentChange(value);
     }, 1000),
     []
   );
-  locale.setLang('en');
+
+  locale.setLang("en");
+
   return (
     <div
       className="block max-w-full bg-primary-100 mx-auto my-1 static"
       style={{
         maxWidth: 1024,
-      }}>
+      }}
+    >
       <RichTextEditor
         ref={editorRef}
         output="html"
-        content={'' as any}
+        content={"" as EditorContent}
         onChangeContent={onValueChange}
         extensions={extensions}
-        dark={theme === 'dark'}
+        dark={theme === "dark"}
         disabled={false}
-        // hideToolbar
         resetCSS
       />
     </div>

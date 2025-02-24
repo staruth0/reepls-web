@@ -117,7 +117,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date, article_id }) => {
           </p>
           <LuBadgeCheck className="size-4" />
           <span
-            className="cursor-pointer hover:underline"
+            className="cursor-pointer text-primary-500 hover:underline"
             onClick={handleFollowClick}
           >
             {getFollowStatusText()}

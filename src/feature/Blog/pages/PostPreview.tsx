@@ -12,7 +12,7 @@ const PostPreview: React.FC<{ title: string }> = ({ title }) => {
       </Topbar>
 
       <div className="mt-10 flex justify-center">
-        <PostDetail />
+        <PostDetail title={title}  />
       </div>
     </div>
   );

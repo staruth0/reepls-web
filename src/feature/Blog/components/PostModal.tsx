@@ -12,11 +12,9 @@ const PostModal = ({isModalOpen,setIsModalOpen,handlePost}: {
   setIsModalOpen: (value: boolean) => void;
   handlePost: (postContent: string, postImages: File[], postVideos: File[]) => void;
 }) => {
-  const [postContent, setPostContent] = useState<string>('');
+ const [postContent, setPostContent] = useState<string>("");
   const [postImages, setPostImages] = useState<File[]>([]);
   const [postVideos, setPostVideos] = useState<File[]>([]);
-  // const [postEvents, setPostEvents] = useState<File[]>([]);
-  // const [postOther, setPostOther] = useState<File[]>([]);
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState<boolean>(false);
   const { theme } = useTheme();
   const { t } = useTranslation();
@@ -24,7 +22,7 @@ const PostModal = ({isModalOpen,setIsModalOpen,handlePost}: {
   const onPickImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-    let newImages = [];
+    const newImages: File[] = []; 
     for (const file of files) {
       if (allowedImageTypes.includes(file.type)) {
         newImages.push(file);
@@ -35,18 +33,18 @@ const PostModal = ({isModalOpen,setIsModalOpen,handlePost}: {
 
   const onPickVideo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    console.log('picking video', files);
+    console.log("picking video", files);
     if (!files) return;
-    let newVideos = [];
-    console.log('picking ');
+    const newVideos: File[] = []; 
+    console.log("picking ");
     for (const file of files) {
-      console.log('file', file.type);
+      console.log("file", file.type);
       if (allowedVideoTypes.includes(file.type)) {
         newVideos.push(file);
       }
     }
     setPostVideos([...postVideos, ...newVideos]);
-    console.log('picked video', newVideos);
+    console.log("picked video", newVideos);
   };
 
   return (

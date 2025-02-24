@@ -1,11 +1,5 @@
 import { apiClient} from "../../../services/apiClient";
-import {
-  CodeVerify,
-  EmailCode,
-  PhoneCode,
-  PhoneVerify,
-  User,
-} from "../../../models/datamodels";
+import {CodeVerify,EmailCode,PhoneCode,PhoneVerify,User} from "../../../models/datamodels";
 import { jwtDecode } from "jwt-decode";
 import { ACCESS_TOKEN_KEY } from "../../../constants";
 

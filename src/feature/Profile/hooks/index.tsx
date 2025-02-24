@@ -32,16 +32,11 @@ export const useGetUserByUsername = (
 };
 
 // Hook for fetching all users
-export const useGetAllUsers = (): {
-  users: User[] | undefined;
-  isLoading: boolean;
-  error: Error | null;
-} => {
-  const { data, isLoading, error } = useQuery({
+export const useGetAllUsers = () => {
+  return useQuery({
     queryKey: ["users"],
     queryFn: () => getAllUsers(),
   });
-  return { users: data?.results, isLoading, error };
 };
 
 // Hook for updating a user

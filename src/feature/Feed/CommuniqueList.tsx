@@ -3,6 +3,7 @@ import Topbar from '../../components/atoms/Topbar/Topbar';
 import { useGetCommuniquerArticles } from '../Blog/hooks/useArticleHook';
 import BlogPost from '../Blog/components/BlogPost';
 import Communique from './components/Communique/Communique';
+import { Article } from '../../models/datamodels';
 
 const CommuniqueList: React.FC = () => {
     
@@ -23,16 +24,16 @@ const CommuniqueList: React.FC = () => {
           <div className="skeleton-loader">Loading</div>
         ) : (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse gap-7 pb-10">
-            {data?.map((article) => (
+            {data?.map((article:Article) => (
               <BlogPost
                 key={article._id}
-                isArticle={article.isArticle}
-                images={article.media}
-                title={article.title}
-                content={article.content}
-                id={article.author_id}
-                date={article.createdAt}
-                article_id={article._id}
+                isArticle={article.isArticle!}
+                images={article.media!}
+                title={article.title!}
+                content={article.content!}
+                id={article.author_id!}
+                date={article.createdAt!}
+                article_id={article._id!}
               />
             ))}
           </div>

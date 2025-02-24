@@ -72,10 +72,7 @@ const Sidebar: React.FC = () => {
 
   const handlePost = ( postContent: string,postImages: File[],postVideos: File[]) => {
     const post: Article = {
-      title: "Dreams Beyond the Classroom",
       content: postContent,
-      category: "Religion",
-      status: "Published",
     };
 
     mutate(post, {
