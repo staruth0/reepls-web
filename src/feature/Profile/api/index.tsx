@@ -9,6 +9,12 @@ const getUserById = async (userId: string): Promise<User> => {
   const { data } = await apiClient.get(`/users/${userId}`);
   return data as User;
 };
+// Fetch a single user by ID
+const getReccomendedUsersById = async (userId: string): Promise<User> => {
+  console.log('Fetching user with ID:', userId);
+  const { data } = await apiClient.get(`/author/suggestions/${userId}`);
+  return data as User;
+};
 
 // Fetch a single user by username
 const getUserByUsername = async (username: string): Promise<User> => {
@@ -43,4 +49,4 @@ const deleteUser = async (userId: string): Promise<User | undefined> => {
   return data as User;
 };
 
-export { deleteUser, getAllUsers, getUserById, getUserByUsername, updateUser };
+export { deleteUser, getAllUsers, getUserById, getUserByUsername, updateUser,getReccomendedUsersById };
