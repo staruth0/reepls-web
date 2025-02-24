@@ -58,10 +58,10 @@ function Registerwithemail() {
         <div className="divider">
           <p>{t("OrDivider")}</p>
         </div>
-        <button type="button" className="create__account__btn" onClick={handleGoogleRegister}>
-          <img src={google} alt="google_image" />
+        <div className="flex items-center justify-center gap-2 bg-white rounded-full px-2 py-3 text-neutral-50 shadow-sm hover:shadow-none cursor-pointer" onClick={handleGoogleRegister}>
+          <img src={google} alt="google_image" className="size-6" />
           <span>{t("Create account with google")}</span>
-        </button>
+        </div>
       </form>
       <div className="bottom__links">
         <p>

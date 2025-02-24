@@ -4,7 +4,7 @@ const MAX_VIDEO_COUNT = 1;
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
 
-const SHORT_POST_LENGTH = 1000;
+const SHORT_POST_LENGTH = 1500;
 
 const PREVIEW_SLUG = 'preview';
 

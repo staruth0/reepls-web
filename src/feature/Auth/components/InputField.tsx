@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaRegEyeSlash } from 'react-icons/fa6';
-import { LuChevronDown } from 'react-icons/lu';
+// import { LuChevronDown } from 'react-icons/lu';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import 'react-phone-input-2/lib/style.css';
 import { cm } from '../../../assets/icons';
@@ -60,7 +60,7 @@ const InputField: React.FC<InputProps> = ({
             <p>+237</p>
           </div>
 
-          <LuChevronDown className="size-4" />
+
         </div>
         <div className="input__wrapper">
           <input

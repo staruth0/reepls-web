@@ -8,12 +8,14 @@ import { interests } from '../../../data';
 import { RootState } from '../../../store';
 import { cn } from '../../../utils';
 import { useUpdateUser } from '../hooks/AuthHooks';
+import { useLocation } from 'react-router-dom';
 
 function Interests() {
   const { t } = useTranslation();
   //   const navigate = useNavigate();
   const { username } = useSelector((state: RootState) => state.user);
   const updateUser = useUpdateUser();
+  const location = useLocation();
 
   const [interest, setInterest] = useState<string[]>([]);
 
@@ -30,10 +32,16 @@ function Interests() {
     updateUser.mutate({ interests: interest, username });
   };
 
+  const handleSkip = () => { 
+    updateUser.mutate({ interests: interest, username }, {
+      
+    });
+  }
+
   return (
     <div className="interest__container">
       <div className="head__interests">
-        <div>{t('Enow, you’re in! Select your interests')}</div>
+        <div>{t(`${location.state}, you’re in! Select your interests`)}</div>
         <p>{t('Last! Pick at least one topic that you are interested in')}</p>
       </div>
       <div className={cn(`counter__interests`, { green: interest.length > 0 })}>{interest.length} Selected</div>
@@ -54,7 +62,7 @@ function Interests() {
             {interest.length > 0 ? 'Done' : 'Sign up'}
           </button>
         )}
-        <div>Skip</div>
+        <div className="cursor-pointer hover:underline" onClick={handleSkip}>Skip</div>
       </div>
     </div>
   );

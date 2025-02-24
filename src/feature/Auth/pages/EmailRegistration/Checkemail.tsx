@@ -9,6 +9,7 @@ function Checkemail() {
   const { t } = useTranslation();
   const location = useLocation();
   const { email } = location.state || {};
+   const [isCodeResent, setIsCodeResent] = useState(false);
 
   const [otp, setOtp] = useState<string>('');
 
@@ -37,6 +38,7 @@ function Checkemail() {
 
   // Function to handle resend link
   const handleResendCode = () => {
+      setIsCodeResent(true);
     handleCodeVerification();
   };
 
@@ -51,22 +53,35 @@ function Checkemail() {
   return (
     <div className="register__phone__container">
       <div className="insightful__texts">
-        <div>{t('CheckMailHeader')}</div>
-        <div className="code__message">{t('CheckMailMessage')}</div>
+        <div>{t("CheckMailHeader")}</div>
+        <div className="code__message">{t("CheckMailMessage")}</div>
       </div>
       <OTPInput length={6} onComplete={handleOtpComplete} />
       {CodeFetch.error && <div className="text-red-500">Fetching Code</div>}
-      {CodeVerify.error && <div className="text-red-500">An Error Occured While Verifying the code</div>}
+      {CodeVerify.error && (
+        <div className="text-red-500">
+          An Error Occured While Verifying the code
+        </div>
+      )}
       <form onSubmit={handleSubmit}>
-        <button type="submit">{CodeVerify.isPending ? 'Verifying.....' : t('VerifyButton')}</button>
+        <button type="submit">
+          {CodeVerify.isPending ? "Verifying....." : t("VerifyButton")}
+        </button>
       </form>
       <div className="bottom__links">
-        <div className="resend__text">
-          {t('ResendPrompt')}
-          <div onClick={handleResendCode} className="bottom__link_resend">
-            {t('ResendLink')}
+        {isCodeResent ? (
+          <div> Code Resent: Check your email</div>
+        ) : (
+          <div className="resend__text">
+            {t("ResendPrompt")}
+            <div
+              className="bottom__link_resend cursor-pointer hover:underline"
+              onClick={handleResendCode}
+            >
+              {t("ResendButton")}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
