@@ -10,6 +10,7 @@ import Communique from "./components/Communique/Communique";
 import "./feed.scss";
 import BlogSkeletonComponent from "../Blog/components/BlogSkeleton";
 import TokenExpiredModal from "../../components/atoms/TokenExpiredModal"; 
+import { Article } from "../../models/datamodels";
 
 // Tabs configuration
 const tabs = [
@@ -26,11 +27,7 @@ const UserFeed: React.FC = () => {
 
   // Fetch all articles and followed articles
   const { data, error, isLoading } = useGetAllArticles();
-  const {
-    data: followedData,
-    error: followedError,
-    isLoading: followedIsLoading,
-  } = useGetFollowedArticles();
+  const {data: followedData,error: followedError,isLoading: followedIsLoading} = useGetFollowedArticles();
 
   // Function to handle cognitive mode toggle
   const handleBrainClick = () => {
@@ -38,16 +35,7 @@ const UserFeed: React.FC = () => {
     toggleCognitiveMode();
   };
 
-  useEffect(() => {
-    const checkFor401 = (err: any) => {
-      if (err?.response?.status === 401) {
-        setTokenExpired(true);
-      }
-    };
 
-    if (error) checkFor401(error);
-    if (followedError) checkFor401(followedError);
-  }, [error, followedError]);
 
   // Select data based on the active tab
   const displayData = activeTab === 1 ? data : followedData;
@@ -91,16 +79,16 @@ const UserFeed: React.FC = () => {
           </div>
         ) : (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse gap-7 ">
-            {displayData?.articles?.map((article) => (
+            {displayData?.articles?.map((article:Article) => (
               <BlogPost
                 key={article._id}
-                isArticle={article.isArticle}
-                images={article.media}
-                title={article.title}
-                content={article.content}
-                id={article.author_id}
-                date={article.createdAt}
-                article_id={article._id}
+                isArticle={article.isArticle!}
+                images={article.media!}
+                title={article.title!}
+                content={article.content!}
+                id={article.author_id!}
+                date={article.createdAt!}
+                article_id={article._id!}
               />
             ))}
           </div>

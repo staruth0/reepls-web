@@ -3,7 +3,7 @@ import { Pics } from '../../../assets/images';
 
 
 interface PostDetailProps { 
-  content: string;
+  content?: string;
   title: string;
 }
 

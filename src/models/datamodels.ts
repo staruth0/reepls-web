@@ -52,7 +52,7 @@ export interface Article {
   is_communiquer?: boolean;
   subTitle?: string;
   content?: string;
-  category?: string[] | string; 
+  category?: string[] ; 
   keywords?: string[];
   media?: string[];
   text_to_speech?: string;

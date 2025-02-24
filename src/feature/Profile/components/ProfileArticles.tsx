@@ -1,6 +1,7 @@
 import React from "react";
 import { useGetArticlesByAuthorId } from "../../Blog/hooks/useArticleHook";
 import BlogPost from "../../Blog/components/BlogPost";
+import { Article } from "../../../models/datamodels";
 
 interface ProfileArticlesProps {
   authorId: string;
@@ -17,14 +18,16 @@ const ProfileArticles: React.FC<ProfileArticlesProps> = ({ authorId }) => {
         <div>{error.message}</div>
       ) : data && data.length > 0 ? (
         <div>
-          {data.map((article: any) => (
+          {data.map((article: Article) => (
             <BlogPost
               key={article._id}
-              images={article.media}
-              title={article.title}
-              content={article.content}
-              id={article.author_id}
-              date={article.createdAt}
+              images={article.media!}
+              title={article.title!}
+              content={article.content!}
+              id={article.author_id!}
+              date={article.createdAt!}
+              isArticle={article.isArticle!}
+              article_id={article._id!}
             />
           ))}
         </div>

@@ -57,7 +57,7 @@ const ArticleView: React.FC = () => {
         </div>
         <div className="stats mx-auto">
           <div className="flex justify-center">
-            <BlogReactionStats date={new Date().toISOString()} />
+            <BlogReactionStats article_id={articleUid!} date={new Date().toISOString()}  />
           </div>
         </div>
       </div>

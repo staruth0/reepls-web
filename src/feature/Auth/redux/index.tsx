@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { User } from "../../../models/datamodels";
+import { User, UserRole } from "../../../models/datamodels";
 
 const initialState: User = {
   username: "",
   email: "",
   password: "",
   phone: "",
-  role: "Reader", 
+  role: UserRole.Reader, 
   interests: [], 
   is_verified_writer: false, 
  

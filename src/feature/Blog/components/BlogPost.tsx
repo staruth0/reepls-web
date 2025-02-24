@@ -17,11 +17,11 @@ interface BlogPostProps {
   article_id: string;
 }
 
-const sampleImages = [
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-];
+// const sampleImages = [
+//   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+// ];
 
 const BlogPost: React.FC<BlogPostProps> = ({
   images,
@@ -33,8 +33,7 @@ const BlogPost: React.FC<BlogPostProps> = ({
   article_id,
 }) => {
   const { isCognitiveMode } = useContext(CognitiveModeContext);
-  const [isCommentSectionOpen, setIsCommentSectionOpen] =
-    useState<boolean>(false);
+  const [isCommentSectionOpen, setIsCommentSectionOpen] = useState<boolean>(false);
 
   const toggleCommentSection = () => {
     setIsCommentSectionOpen(!isCommentSectionOpen);
@@ -50,7 +49,7 @@ const BlogPost: React.FC<BlogPostProps> = ({
         article_id={article_id}
         isArticle={isArticle}
       />
-      {!isCognitiveMode && <BlogImagery PostImages={sampleImages} />}
+      {!isCognitiveMode && <BlogImagery PostImages={images} />}
       <BlogReactionStats
         toggleCommentSection={toggleCommentSection}
         date={date}

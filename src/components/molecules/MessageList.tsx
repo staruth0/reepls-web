@@ -27,7 +27,7 @@ const MessageList: React.FC<MessageListProps> = ({
               author={communique.author_id!}
               messageDate={formatDateWithMonth(communique.createdAt!)}
               messageText={communique.content!}
-              postID={communique._id}
+              postID={communique._id!}
             
             />
           )

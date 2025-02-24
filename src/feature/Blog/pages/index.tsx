@@ -8,6 +8,7 @@ import CreatePostTopBar from '../components/CreatePostTopBar';
 import ImageSection from '../components/ImageSection';
 import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
 import useDraft from '../hooks/useDraft';
+import { type Editor } from "reactjs-tiptap-editor";
 
 const CreatePost: React.FC = () => {
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
@@ -17,7 +18,8 @@ const CreatePost: React.FC = () => {
   const [content, setContent] = useState<string>('');
   const { saveDraftArticle, loadDraftArticle } = useDraft();
 
-  const editorRef = useRef<any>(null);
+  // const editorRef = useRef<any>(null);
+  const editorRef = useRef<{ editor: Editor | null }>(null);
 
   const navigate = useNavigate();
   const { t } = useTranslation();
