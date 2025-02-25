@@ -108,16 +108,16 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date, article_id }) => {
 
       {/* Profile Info */}
       <div className="profile-info">
-        <div className="profile-name">
+        <div className="profile-name ">
           <p
             className="hover:underline cursor-pointer"
             onClick={() => handleProfileClick(user?.username || "")}
           >
             {user?.username}
           </p>
-          <LuBadgeCheck className="size-4" />
+          <LuBadgeCheck className="size-4 text-primary-400 ml-1" />
           <span
-            className="cursor-pointer text-primary-500 hover:underline"
+            className="cursor-pointer text-primary-400 hover:underline ml-1"
             onClick={handleFollowClick}
           >
             {getFollowStatusText()}

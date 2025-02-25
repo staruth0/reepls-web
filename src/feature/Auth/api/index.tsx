@@ -38,6 +38,11 @@ const loginUser = async (user: User) => {
   const { data } = await apiClient.post("/auth/login-email", user);
   return data;
 };
+const loginUserWithPhone = async (user: User) => {
+  console.log(user);
+  const { data } = await apiClient.post("/auth/login-phone", user);
+  return data;
+};
 
 // Get email verification code
 const getEmailVerificationCode = async (user: EmailCode) => {
@@ -133,4 +138,5 @@ export {
   verifyResetPasswordCode,
   resetPassword,
   updateUser,
+  loginUserWithPhone
 };

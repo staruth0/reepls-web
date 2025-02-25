@@ -1,17 +1,32 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Topbar from "../../../components/atoms/Topbar/Topbar";
 import Communique from "../../Feed/components/Communique/Communique";
 import SearchTopBar from "../components/SearchTopBar";
 import { useParams } from "react-router-dom";
-import { useGetSearchResults } from "../hooks";
+import { useGetSearchResults, useStoreSearchSuggestion } from "../hooks";
 import BlogSkeletonComponent from "../../Blog/components/BlogSkeleton";
 import BlogPost from "../../Blog/components/BlogPost";
 import { Article } from "../../../models/datamodels";
+import { useUser } from "../../../hooks/useUser";
 
 const ResultsPage: React.FC = () => {
   const { query } = useParams<{ query: string }>();
   const { data: results, isPending, error } = useGetSearchResults(query || ""); 
+    const { authUser } = useUser();
+    const { mutate } = useStoreSearchSuggestion();
+  
 
+
+  useEffect(() => { 
+   mutate({
+        userid: authUser?.id || "",
+        searchSuggestions: query || "",
+      }, {
+        onSuccess: () => { 
+          console.log("Search suggestion saved successfully");
+        },
+      })
+  }, [query]);
   // Render loading state
   if (isPending) {
     return (

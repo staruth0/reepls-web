@@ -31,7 +31,7 @@ function RegisterWithPhone2() {
     
   // functions to navigate
   const navigateToInterests = () => {
-     navigate("/auth/interests");
+     navigate("/auth/interests",{state:name});
   };
   
 

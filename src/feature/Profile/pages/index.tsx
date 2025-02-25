@@ -16,6 +16,7 @@ import { useGetUserById, useGetUserByUsername } from "../hooks";
 import { useUser } from "../../../hooks/useUser";
 import SimilarProfiles from "../components/SimilarProfiles";
 import { User } from "lucide-react";
+import ProfileSkeleton from "../components/ProfileSkeleton";
 
 const tabs = [
   { id: "about", title: "About" },
@@ -50,11 +51,13 @@ const Profile: React.FC = () => {
   if (isLoading) {
     return (
       <div className="grid grid-cols-[4fr_1.65fr]">
-        <div className="profile border-r-[1px] border-neutral-500">
+        <div className="profile border-r-[1px] border-neutral-500 min-h-screen">
           <Topbar>
             <p>{t("Profile")}</p>
           </Topbar>
-          <div>Loading...</div>
+          <div className="px-20">
+            <ProfileSkeleton />
+          </div>
         </div>
       </div>
     );
@@ -63,7 +66,7 @@ const Profile: React.FC = () => {
   if (error) {
     return (
       <div className="grid grid-cols-[4fr_1.65fr]">
-        <div className="profile border-r-[1px] border-neutral-500">
+        <div className="profile border-r-[1px] border-neutral-500 min-h-screen">
           <Topbar>
             <p>{t("Profile")}</p>
           </Topbar>
@@ -76,7 +79,7 @@ const Profile: React.FC = () => {
   if (!user) {
     return (
       <div className="grid grid-cols-[4fr_1.65fr]">
-        <div className="profile border-r-[1px] border-neutral-500">
+        <div className="profile border-r-[1px] border-neutral-500 min-h-screen">
           <Topbar>
             <p>{t("Profile")}</p>
           </Topbar>
@@ -101,6 +104,8 @@ const Profile: React.FC = () => {
                   name={user.username || "Default Name"}
                   town={user.address || "Default Town"}
                   occupation={user.title || "Default Occupation"}
+                  user_id={user.id || ""}
+                  bio={user.bio || "Default Bio"}
                 />
               </div>
               <ProfileHeroButtons userId={user?.id || ""} />

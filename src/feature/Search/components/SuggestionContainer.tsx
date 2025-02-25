@@ -1,14 +1,25 @@
 import React from 'react'
 import { ArrowUpRight, Search } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 
 interface SuggestionContainerProps { 
     text: string;
 }
 
-const SuggestionContainer:React.FC<SuggestionContainerProps> = ({text}) => {
+const SuggestionContainer: React.FC<SuggestionContainerProps> = ({ text }) => {
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+      const trimmedSearchTerm = text.trim();
+      if (trimmedSearchTerm) {
+        navigate(`/search/results/${trimmedSearchTerm.replace(/ /g, "+")}`);
+      }
+  };
+  
   return (
     <div
       className="flex items-center gap-3 cursor-pointer p-2 hover:shadow-sm rounded-lg transition-all"
+      onClick={handleSearch}
     >
       <ArrowUpRight className="w-4 h-4 text-neutral-50" />
 

@@ -10,6 +10,7 @@ function Checkphone() {
   
   const location = useLocation();
   const { phone } = location.state || {}; 
+  const [isCodeResent, setIsCodeResent] = useState(false);
 
   //states
   const [otp,setOtp] = useState<string>('')
@@ -30,7 +31,12 @@ function Checkphone() {
        setOtp(otp);
   };
   
-    const handleCodeVerification = async () => {
+  const handleResendCode = () => {
+    setIsCodeResent(true);
+    handleCodeVerification();
+  };
+
+  const handleCodeVerification = async () => {
       codeGet.mutate({phone});
     };
 
@@ -59,10 +65,10 @@ function Checkphone() {
         </button>
       </form>
       <div className="bottom__links">
-        <div className="resend__text">
+        { isCodeResent? <div> Code Resent: Check your phone</div>: <div className="resend__text">
           {t("ResendPrompt")}
-          <div className="bottom__link_resend">{t("ResendButton")}</div>
-        </div>
+          <div className="bottom__link_resend cursor-pointer hover:underline" onClick={handleResendCode}>{t("ResendButton")}</div>
+        </div>}
       </div>
     </div>
   );

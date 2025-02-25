@@ -9,6 +9,7 @@ import {
   updateUser,
   refreshAuthTokens,
   registerWithGoogle,
+  loginUserWithPhone,
 } from "../api";
 import {
   User,
@@ -104,6 +105,30 @@ export const useLoginUser = () => {
   };
   return useMutation({
     mutationFn: (user: User) => loginUser(user),
+    onSuccess: (data) => {
+      console.log("User logged in:", data);
+      storeAccessToken(data.tokens.access.token);
+      storeRefreshToken(data.tokens.refresh.token);
+      login(data.tokens.access.token);
+
+      navigateToFeed();
+    },
+    onError: (error) => {
+      console.error("Error logging in:", error);
+    },
+  });
+};
+// Hook for logging in a user
+export const useLoginUserWithPhone = () => {
+  const navigate = useNavigate();
+  const { storeAccessToken, storeRefreshToken } = useTokenStorage();
+  const { login } = useContext(AuthContext);
+
+  const navigateToFeed = () => {
+    navigate("/feed");
+  };
+  return useMutation({
+    mutationFn: (user: User) => loginUserWithPhone(user),
     onSuccess: (data) => {
       console.log("User logged in:", data);
       storeAccessToken(data.tokens.access.token);

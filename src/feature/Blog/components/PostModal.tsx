@@ -51,7 +51,7 @@ const PostModal = ({isModalOpen,setIsModalOpen,handlePost}: {
     <Dialog
       open={isModalOpen}
       as="div"
-      className="relative z-10 focus:outline-none"
+      className="relative z-[999] focus:outline-none"
       onClose={() => setIsModalOpen(false)}>
       <DialogBackdrop className="fixed inset-0 bg-black/30" />
 

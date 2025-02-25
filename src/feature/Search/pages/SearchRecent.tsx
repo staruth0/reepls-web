@@ -1,18 +1,17 @@
 import React from "react";
 import SuggestionContainer from "../components/SuggestionContainer";
 
-const articles = [
-  "Anglophone crisis",
-  "Angel investments 2024",
-  "Anglophone journalists",
-];
+interface SearchRecentProps { 
+  history: string[];
+}
 
-const SearchRecent: React.FC = () => {
+const SearchRecent: React.FC<SearchRecentProps> = ({ history }) => {
   return (
     <div className="recent space-y-3">
-      {articles.map((article,index) => (
+      {history.map((article,index) => (
         <SuggestionContainer key={index} text={ article} />
       ))}
+      {history.length === 0 && <p>No recent searches</p>}
     </div>
   );
 };

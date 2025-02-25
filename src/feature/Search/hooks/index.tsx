@@ -13,21 +13,19 @@ export const useGetSearchResults = (query: string) => {
   });
 };
 
+type SearchSuggestion = {
+  userid: string;
+  searchSuggestions: string;
+}
 // Hook for storing search suggestions
 export const useStoreSearchSuggestion = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      userId,
-      searchSuggestion,
-    }: {
-      userId: string;
-      searchSuggestion: string;
-    }) => storeSearchSuggestion(userId, searchSuggestion),
-    onSuccess: (_, { userId }) => {
+    mutationFn: (search: SearchSuggestion) => storeSearchSuggestion(search.userid,search.searchSuggestions),
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["searchSuggestions", userId],
+        queryKey: ["searchSuggestions"],
       });
     },
   });
@@ -36,7 +34,7 @@ export const useStoreSearchSuggestion = () => {
 // Hook for fetching search suggestions
 export const useGetSearchSuggestions = (userId: string) => {
   return useQuery({
-    queryKey: ["searchSuggestions", userId],
+    queryKey: ["searchSuggestions"],
     queryFn: () => fetchSearchSuggestions(userId),
   });
 };

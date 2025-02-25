@@ -27,10 +27,12 @@ import { useCreateArticle } from "../../../feature/Blog/hooks/useArticleHook";
 import { Article } from "../../../models/datamodels";
 import { toast } from "react-toastify";
 import { Spinner } from "../../atoms/Spinner";
+import { useUser } from "../../../hooks/useUser";
 
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
+  const {authUser} = useUser()
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
   const { t } = useTranslation();
   const { mutate ,isPending} = useCreateArticle();
@@ -66,7 +68,7 @@ const Sidebar: React.FC = () => {
     {
       icon: FaRegUserCircle,
       name: "Profile",
-      link: `/profile/`,
+      link: `/profile/${authUser?.username}`,
     },
   ];
 

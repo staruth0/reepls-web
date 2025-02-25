@@ -7,7 +7,7 @@ import { validatePassword } from "../../../utils/validatePassword";
 import { useStoreCredential } from "../hooks/useStoreCredential";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
-import { useLoginUser } from "../hooks/AuthHooks";
+import { useLoginUserWithPhone } from "../hooks/AuthHooks";
 
 function Login() {
   const { t } = useTranslation(); 
@@ -15,7 +15,7 @@ function Login() {
   const { phone:enteredPhone, password:enteredPassword } = useSelector((state:RootState) => state.user);
 
   //custom'hooks
-  const Login = useLoginUser()
+  const Login = useLoginUserWithPhone()
   // const { storeAccessToken,storeRefreshToken } = useTokenStorage();
 
   // states

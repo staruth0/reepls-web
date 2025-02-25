@@ -10,10 +10,10 @@ const getUserById = async (userId: string): Promise<User> => {
   return data as User;
 };
 // Fetch a single user by ID
-const getReccomendedUsersById = async (userId: string): Promise<User> => {
+const getReccomendedUsersById = async (userId: string): Promise<User[]> => {
   console.log('Fetching user with ID:', userId);
   const { data } = await apiClient.get(`/author/suggestions/${userId}`);
-  return data as User;
+  return data as User[];
 };
 
 // Fetch a single user by username
