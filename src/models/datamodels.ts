@@ -17,6 +17,7 @@ export interface AuthTokens {
 
 export interface User {
   id?: string;
+  _id?: string;
   user_id?: string;
   googleId?: string;
   username?: string;

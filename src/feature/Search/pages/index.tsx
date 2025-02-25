@@ -6,6 +6,8 @@ import SearchTopBar from "../components/SearchTopBar";
 import SearchTopics from "./SearchTopics";
 import SearchRecent from "./SearchRecent";
 import SearchPeople from "./SearchPeople";
+import { useUser } from "../../../hooks/useUser";
+import { useGetSearchSuggestions } from "../hooks";
 
 const tabs = [
   { id: "Topics", title: "Topics" },
@@ -17,6 +19,9 @@ const tabs = [
 
 const Search: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
+  const {authUser} = useUser()
+  
+    const {data} = useGetSearchSuggestions(authUser?.id || "")
 
 
   return (
@@ -36,15 +41,11 @@ const Search: React.FC = () => {
           </div>
 
           <div className="mt-8 text-[15px]">
-            {activeTab === "Topics" && (
-               <SearchTopics/>
-            )}
+            {activeTab === "Topics" && <SearchTopics />}
             {activeTab === "Recent" && (
-             <SearchRecent/>
+              <SearchRecent history={data?.searchHistory} />
             )}
-            {activeTab === "People" && (
-             <SearchPeople/>
-            )}
+            {activeTab === "People" && <SearchPeople />}
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ import {
   getUserById,
   getUserByUsername,
   updateUser,
+  getReccomendedUsersById,
 } from "../api";
 
 // Hook for fetching a single user by ID
@@ -91,4 +92,17 @@ export const useDeleteUser = (): {
     },
   });
   return { mutate, isPending, error };
+};
+
+
+
+
+
+export const useGetRecommendedUsersById = ( userId: string) => {
+  return useQuery({
+    queryKey: ["recommended-users"],
+    queryFn: () => getReccomendedUsersById(userId),
+    enabled: !!userId, 
+  });
+  
 };

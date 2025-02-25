@@ -15,36 +15,40 @@ const CommentSectionLevel2: React.FC<CommentSectionProps> = ({
    comment_id,
    comments
 }) => {
-  const {
-    data: articleComments,
-    isLoading,
-    isError,
-  } = useGetRepliesForComment(comment_id);
+  const {data: articleComments,isLoading} = useGetRepliesForComment(comment_id);
 
   useEffect(() => {
     console.log(articleComments?.data);
   }, [article_id, articleComments?.data]);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error loading comments</div>;
-
   return (
     <div className="flex flex-col  mt-3">
-      {comments?.map((comment: Comment, index: number) => {
-        const isSameAuthorAsPrevious =
-          index > 0 &&
-          comment.author_id === articleComments.data[index - 1].author_id;
+      <>
+        {isLoading ? (
+          <div className="text-[12px]">Loading Replies..</div>
+        ) : (
+          <>
+            {comments?.map((comment: Comment, index: number) => {
+              const isSameAuthorAsPrevious =
+                index > 0 &&
+                comment.author_id === articleComments.data[index - 1].author_id;
 
-        return (
-          <CommentMessageLevel2
-            key={comment._id} // Use a unique identifier like comment.id instead of index
-            content={comment.content!}
-            createdAt={comment.createdAt!}
-            author_id={comment.author_id!}
-            isSameAuthorAsPrevious={isSameAuthorAsPrevious}
-          />
-        );
-      })}
+              return (
+                <>
+                  <CommentMessageLevel2
+                    key={comment._id}
+                    content={comment.content!}
+                    createdAt={comment.createdAt!}
+                    author_id={comment.author_id!}
+                    isSameAuthorAsPrevious={isSameAuthorAsPrevious}
+                  />
+                </>
+              );
+            })}
+          </>
+        )}
+      </>
+
       <CommentTabLevel2
         article_id={article_id}
         parent_comment_id={comment_id}

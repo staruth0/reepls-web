@@ -3,12 +3,20 @@ import { useTranslation } from "react-i18next";
 import { LuSearch, LuX } from "react-icons/lu";
 import SearchContainer from "./SearchContainer";
 import { useNavigate } from "react-router-dom";
+import { useGetSearchSuggestions } from "../hooks";
+import { useUser } from "../../../hooks/useUser";
+
+
 
 const SearchTopBar: React.FC = () => {
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const {authUser} = useUser()
+
+  const {data} = useGetSearchSuggestions(authUser?.id || "")
+
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -23,6 +31,7 @@ const SearchTopBar: React.FC = () => {
     const trimmedSearchTerm = searchTerm.trim();
     if (trimmedSearchTerm) {
       navigate(`/search/results/${trimmedSearchTerm.replace(/ /g, "+")}`);
+   
     }
     setIsOpen(false);
   };
@@ -33,6 +42,13 @@ const SearchTopBar: React.FC = () => {
     }
   };
 
+
+  useEffect(() => {
+    if (data) { 
+      console.log(data.searchHistory)
+    }
+  }, [data])
+  
   useEffect(() => {
     if (searchTerm) {
       setIsOpen(true);
@@ -57,8 +73,8 @@ const SearchTopBar: React.FC = () => {
       </div>
 
       {isOpen && (
-        <div className="absolute top-14 left-0 w-full bg-neutral-600 rounded-lg shadow-lg z-4000">
-          <SearchContainer />
+        <div className="absolute top-14 left-0 w-full bg-neutral-600 rounded-lg shadow-lg z-50 ">
+          <SearchContainer searches={data.searchHistory} />
         </div>
       )}
     </div>

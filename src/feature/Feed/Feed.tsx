@@ -1,6 +1,5 @@
 import { Brain } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; 
 import Topbar from "../../components/atoms/Topbar/Topbar";
 import BlogPost from "../Blog/components/BlogPost";
 import Tabs from "../../components/molecules/Tabs/Tabs";
@@ -9,7 +8,6 @@ import {useGetAllArticles,useGetFollowedArticles} from "../Blog/hooks/useArticle
 import Communique from "./components/Communique/Communique";
 import "./feed.scss";
 import BlogSkeletonComponent from "../Blog/components/BlogSkeleton";
-import TokenExpiredModal from "../../components/atoms/TokenExpiredModal"; 
 import { Article } from "../../models/datamodels";
 
 // Tabs configuration
@@ -21,9 +19,7 @@ const tabs = [
 const UserFeed: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
   const [isBrainActive, setIsBrainActive] = useState<boolean>(false);
-  const [tokenExpired, setTokenExpired] = useState(false); 
   const { toggleCognitiveMode } = useContext(CognitiveModeContext);
-  const navigate = useNavigate();
 
   // Fetch all articles and followed articles
   const { data, error, isLoading } = useGetAllArticles();
@@ -101,14 +97,7 @@ const UserFeed: React.FC = () => {
         <Communique />
       </div>
 
-      {/* Token Expired Modal */}
-      <TokenExpiredModal
-        isOpen={tokenExpired}
-        onClose={() => {
-          setTokenExpired(false);
-          navigate("/auth"); 
-        }}
-      />
+  
     </div>
   );
 };

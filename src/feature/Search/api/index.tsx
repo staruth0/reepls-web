@@ -8,14 +8,9 @@ const getSearchResults = async (query: string) => {
 };
 
 // Store search suggestion
-const storeSearchSuggestion = async (
-  userId: string,
-  searchSuggestion: string
-) => {
+const storeSearchSuggestion = async (userId: string,searchSuggestion: string) => {
   const { data } = await apiClient.post(
-    `/search/suggestions/${userId}?searchSuggestion=${encodeURIComponent(
-      searchSuggestion
-    )}`
+    `/search/suggestions/${userId}?searchSuggestion=${searchSuggestion}`
   );
   return data;
 };
