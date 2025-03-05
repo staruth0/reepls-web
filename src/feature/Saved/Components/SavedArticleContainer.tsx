@@ -11,9 +11,7 @@ const SavedArticlesContainer: React.FC<SavedContainerProps> = ({
 }) => {
   return (
     <>
-      <div className="px-2 mt-4">
-        {`${articles.length} saved articles`}
-      </div>
+      <div className="px-2 mt-4">{`${articles.length} saved articles`}</div>
       <div className="transition-all duration-300 ease-linear flex flex-col-reverse gap-7">
         {articles.map((article) => (
           <BlogPost
@@ -22,7 +20,7 @@ const SavedArticlesContainer: React.FC<SavedContainerProps> = ({
             images={article.media!}
             title={article.title!}
             content={article.content!}
-            id={article.author_id!}
+            user={article.author_id!}
             date={article.createdAt!}
             article_id={article._id!}
           />

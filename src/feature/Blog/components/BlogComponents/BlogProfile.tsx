@@ -9,7 +9,6 @@ import {
   X,
 } from "lucide-react";
 import { profileAvatar } from "../../../../assets/icons";
-import { useGetUserById, useUpdateUser } from "../../../Profile/hooks";
 import { useRoute } from "../../../../hooks/useRoute";
 import { formatDateWithMonth } from "../../../../utils/dateFormater";
 import "./Blog.scss";
@@ -18,83 +17,121 @@ import {
   useGetFollowing,
   useUnfollowUser,
 } from "../../../Follow/hooks";
+import {
+  useSaveArticle,
+  useRemoveSavedArticle,
+  useGetSavedArticles,
+} from "../../../Saved/hooks";
 import { useUser } from "../../../../hooks/useUser";
-import { Follow } from "../../../../models/datamodels";
-import { toast } from "react-toastify"; 
+import { Article, Follow, User } from "../../../../models/datamodels";
+import { toast } from "react-toastify";
+import SharePopup from "../../../../components/molecules/share/SharePopup";
 
 interface BlogProfileProps {
-  id: string;
   date: string;
   article_id: string;
+  user: User;
+  content: string;
+  title:string
 }
 
-const BlogProfile: React.FC<BlogProfileProps> = ({ id, date, article_id }) => {
+const BlogProfile: React.FC<BlogProfileProps> = ({
+  user,
+  date,
+  article_id,
+  title,
+  content
+}) => {
   const { authUser } = useUser();
-  const { user } = useGetUserById(id || "");
   const { goToProfile } = useRoute();
   const [showMenu, setShowMenu] = useState(false);
-  const {
-    mutate: followUser,
-    isPending: isFollowPending,
-
-  } = useFollowUser();
-  const {
-    mutate: unfollowUser,
-    isPending: isUnfollowPending,
-
-  } = useUnfollowUser();
+  const [showSharePopup, setShowSharePopup] = useState(false); // New state for share popup
+  const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
+  const { mutate: unfollowUser, isPending: isUnfollowPending } =
+    useUnfollowUser();
   const { data: followings } = useGetFollowing(authUser?.id || "");
+  const { mutate: saveArticle, isPending: isSavePending } = useSaveArticle();
+  const { mutate: removeSavedArticle, isPending: isRemovePending } =
+    useRemoveSavedArticle();
+  const { data: savedArticles } = useGetSavedArticles();
   const [saved, setSaved] = useState(false);
-  const {
-    mutate: updateUser,
-    isPending: isUpdatePending,
-    isSuccess: isUpdateSuccess,
-  } = useUpdateUser();
 
   // Extract followed IDs into an array
   const followedIds =
     followings?.data?.map((following: Follow) => following.followed_id) || [];
-  const isFollowing = followedIds.includes(id);
+  const isFollowing = followedIds.includes(user?.id);
 
   const handleProfileClick = (username: string) => {
     goToProfile(username);
   };
 
   const handleSavedArticle = () => {
-    const updatedSavedArticles = [
-      ...(authUser?.saved_articles || []),
-      article_id,
-    ];
-    updateUser({ saved_articles: updatedSavedArticles });
+    if (isSavePending || isRemovePending) return;
+
+    if (saved) {
+      removeSavedArticle(article_id, {
+        onSuccess: () => {
+          toast.success("Article removed from saved");
+          setSaved(false);
+        },
+        onError: () => toast.error("Failed to remove article"),
+      });
+    } else {
+      saveArticle(article_id, {
+        onSuccess: () => {
+          toast.success("Article saved successfully");
+          setSaved(true);
+        },
+        onError: () => toast.error("Failed to save article"),
+      });
+    }
   };
 
   const handleFollowClick = () => {
     if (isFollowPending || isUnfollowPending) return;
 
     if (isFollowing) {
-      unfollowUser(id, {
+      unfollowUser(user?.id || "", {
         onSuccess: () => toast.success("User unfollowed successfully"),
         onError: () => toast.error("Failed to unfollow user"),
       });
     } else {
-      followUser(id, {
+      followUser(user?.id || "", {
         onSuccess: () => toast.success("User followed successfully"),
         onError: () => toast.error("Failed to follow user"),
       });
     }
   };
 
+  const handleShareClick = () => {
+    setShowSharePopup(true); 
+    setShowMenu(false); 
+  };
+
   useEffect(() => {
-    if (authUser?.saved_articles?.includes(article_id)) {
-      setSaved(true);
-    }
-  }, [authUser?.saved_articles, article_id]);
+    const isSaved = savedArticles?.some(
+      (article: Article) => article._id === article_id
+    );
+    setSaved(isSaved || false);
+  }, [savedArticles, article_id]);
 
   const getFollowStatusText = (isMenu = false) => {
     if (isFollowPending) return "Following...";
     if (isUnfollowPending) return "Unfollowing...";
     return isFollowing ? "Following" : isMenu ? "Follow author" : "Follow";
   };
+
+  const getSaveStatusText = () => {
+    if (isSavePending) return "Saving...";
+    if (isRemovePending) return "Removing...";
+    return saved ? "Unsave Post" : "Add To Saved";
+  };
+
+  // Construct the article URL and title for sharing
+  const articleUrl = `https://reepls.netlify.app/posts/article/${article_id}`;
+  const articleTitle = `${
+    title ? title : content.split(" ").slice(0, 10).join(" ") + '...'
+  }`; 
 
   return (
     <div className="blog-profile relative">
@@ -108,7 +145,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date, article_id }) => {
 
       {/* Profile Info */}
       <div className="profile-info">
-        <div className="profile-name ">
+        <div className="profile-name">
           <p
             className="hover:underline cursor-pointer"
             onClick={() => handleProfileClick(user?.username || "")}
@@ -154,19 +191,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date, article_id }) => {
                 onClick={handleSavedArticle}
               >
                 <Bookmark size={18} className="text-neutral-500" />
-                {saved ? (
-                  <div>Saved Post</div>
-                ) : (
-                  <div>
-                    {isUpdatePending ? (
-                      <div>Saving...</div>
-                    ) : (
-                      <div>
-                        {isUpdateSuccess ? "Saved Post" : "Add To Saved"}
-                      </div>
-                    )}
-                  </div>
-                )}
+                <div>{getSaveStatusText()}</div>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
                 <EyeOff size={18} className="text-neutral-500" /> Hide post
@@ -178,13 +203,25 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ id, date, article_id }) => {
                 <UserPlus size={18} className="text-neutral-500" />
                 {getFollowStatusText(true)}
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
+              <div
+                className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                onClick={handleShareClick} // Trigger share popup
+              >
                 <Share2 size={18} className="text-neutral-500" /> Share
               </div>
             </div>
           </>
         )}
       </div>
+
+      {/* Share Popup */}
+      {showSharePopup && (
+        <SharePopup
+          url={articleUrl}
+          title={articleTitle}
+          onClose={() => setShowSharePopup(false)}
+        />
+      )}
     </div>
   );
 };

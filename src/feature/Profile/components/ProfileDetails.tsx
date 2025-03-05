@@ -6,12 +6,12 @@ import { useGetFollowers, useGetFollowing } from '../../Follow/hooks';
 interface ProfileDetailsProps {
   name: string;
   town: string;
-  occupation: string;
   user_id: string;
   bio: string;
+  role: string;
 }
 
-const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town, occupation,user_id,bio }) => {
+const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town,role,user_id,bio }) => {
   const { t } = useTranslation();
   const { goToFollowingsPage } = useRoute();
   const { data: followingData } = useGetFollowing(user_id);
@@ -20,7 +20,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town, occupation,
 
   const handleFollowingsClick = () => { 
     // Handle followings click
-    goToFollowingsPage('glo');
+    goToFollowingsPage(`${user_id}`);
     
   }
 
@@ -28,12 +28,12 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town, occupation,
     <div className="text-neutral-50">
       <div className="flex font-semibold gap-2">
         {name}
-        <LuBadgeCheck className="size-4" />
+        <LuBadgeCheck className="size-4 text-primary-400 mt-1" />
       </div>
-      <p className="text-[13px]">{occupation}</p>
-      <div className="flex flex-col-reverse text-[13px] gap-3 mt-1">
+      <p className="text-[13px]">{bio}</p>
+      <div className="flex flex-wrap-reverse text-[13px] gap-3 mt-1">
         <div className="flex gap-1">
-          <LuBriefcase className="size-4" /> {bio}
+          <LuBriefcase className="size-4" /> {role}
         </div>
         <div className="flex gap-1">
           <LuMapPin className="size-4" /> {town},Cameroon
@@ -41,11 +41,11 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town, occupation,
       </div>
       <div className="flex text-[13px] gap-3 mt-1 items-center">
         <div className="flex gap-1 cursor-pointer" onClick={handleFollowingsClick}>
-          <p className="font-bold">{ followingData?.data?.length || 0 }</p> {t(`Following`)}
+          <p className="font-bold hover:underline">{ followingData?.data?.length || 0 }</p> {t(`Following`)}
         </div>
         <div className="w-[5px] h-[5px] rounded-full bg-neutral-50 "></div>
         <div className="flex gap-1 cursor-pointer" onClick={handleFollowingsClick}>
-          <p className="font-bold">{ followersData?.data?.length || 0 }</p> {t(`Followers`)}
+          <p className="font-bold hover:underline">{ followersData?.data?.length || 0 }</p> {t(`Followers`)}
         </div>
       </div>
     </div>

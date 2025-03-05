@@ -6,15 +6,16 @@ import BlogProfile from "./BlogComponents/BlogProfile";
 import BlogReactionSession from "./BlogComponents/BlogReactionSession";
 import BlogReactionStats from "./BlogComponents/BlogReactionStats";
 import BlogArticleHeader from "./BlogArticleHeader";
+import { User } from "../../../models/datamodels";
 
 interface BlogPostProps {
   images: string[];
   title: string;
   content: string;
-  id: string;
   date: string;
   isArticle: boolean;
   article_id: string;
+  user: User;
 }
 
 // const sampleImages = [
@@ -27,10 +28,10 @@ const BlogPost: React.FC<BlogPostProps> = ({
   images,
   title,
   content,
-  id,
   date,
   isArticle,
   article_id,
+  user
 }) => {
   const { isCognitiveMode } = useContext(CognitiveModeContext);
   const [isCommentSectionOpen, setIsCommentSectionOpen] = useState<boolean>(false);
@@ -42,7 +43,7 @@ const BlogPost: React.FC<BlogPostProps> = ({
   return (
     <div className="each_blog_post mt-5 shadow-md p-2 max-w-[680px] self-center w-full bg-background">
       {isArticle && <BlogArticleHeader />}
-      <BlogProfile id={id} date={date} article_id={article_id} />
+      <BlogProfile title={title} user={user} content={content}  date={date} article_id={article_id} />
       <BlogMessage
         title={title}
         content={content}
@@ -59,7 +60,7 @@ const BlogPost: React.FC<BlogPostProps> = ({
         isCommentSectionOpen={isCommentSectionOpen}
         message={content}
         article_id={article_id}
-        setIsCommentSectionOpen={setIsCommentSectionOpen} 
+        setIsCommentSectionOpen={toggleCommentSection} 
       />
     </div>
   );

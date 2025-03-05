@@ -24,7 +24,7 @@ const ProfileArticles: React.FC<ProfileArticlesProps> = ({ authorId }) => {
               images={article.media!}
               title={article.title!}
               content={article.content!}
-              id={article.author_id!}
+              user={article.author_id!}
               date={article.createdAt!}
               isArticle={article.isArticle!}
               article_id={article._id!}

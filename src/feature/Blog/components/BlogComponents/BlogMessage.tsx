@@ -26,9 +26,7 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content,isArticle,arti
     <div className="blog-message">
       <div className="text-[15px] font-semibold mb-2">{title}</div>
       <p
-        className={`text-neutral-50 text-[14px] transition-all duration-300 ${
-          isExpanded ? "line-clamp-none" : "line-clamp-3"
-        }`}
+        className={`text-neutral-100 text-[14px] leading-[20px] transition-all duration-300 ${isExpanded ? "line-clamp-none" : "line-clamp-3"}`}
       >
         {content}
       </p>

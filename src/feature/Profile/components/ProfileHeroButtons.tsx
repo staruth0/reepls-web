@@ -8,9 +8,10 @@ import { toast } from "react-toastify";
 
 interface ProfileHeroButtonsProps {
   userId: string;
+  isAuthUser: boolean;
 }
 
-const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({ userId }) => {
+const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({ userId,isAuthUser }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { authUser } = useUser();
@@ -60,16 +61,16 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({ userId }) => {
 
   return (
     <div className="flex gap-2 text-neutral-50 justify-center items-center">
-      {userId === authUser?.id ? (
+      {isAuthUser ? (
         <>
           <button
-            className="px-8 py-3 border border-gray-300 rounded-full text-sm hover:bg-gray-100"
+            className="px-8 py-3 border text-neutral-50 border-neutral-100 text-[14px] rounded-full text-sm hover:bg-neutral-600 hover:border-none transition-all duration-300 ease-in-out"
             onClick={() => handleEditProfile(authUser?.username || "")}
           >
             {t("Edit Profile")}
           </button>
           <button
-            className="px-8 py-3 bg-neutral-600 rounded-full text-sm hover:bg-gray-200"
+            className="px-8 py-3 text-neutral-50 bg-neutral-600 rounded-full text-[14px] hover:bg-transparent hover:border hover:border-neutral-100 transition-all duration-300 ease-in-out"
             onClick={() => handleViewAnalytics(authUser?.username || "")}
           >
             {t("View Analytics")}

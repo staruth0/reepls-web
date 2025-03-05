@@ -1,9 +1,10 @@
 import { LuBadgeCheck } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
-import { useGetUserById } from '../../feature/Profile/hooks';
+
+import { User } from '../../models/datamodels';
 
 interface messageTypes {
-  author: string;
+  author: User;
   messageDate: string;
   messageText: string;
   postID:string;
@@ -11,7 +12,7 @@ interface messageTypes {
 
 const Message = (props: messageTypes) => {
   const navigate = useNavigate();
-  const { user } = useGetUserById(props.author!);
+  
   const handleClick = () => {
     navigate(`/posts/communique/${props.postID}`);
   };
@@ -22,18 +23,18 @@ const Message = (props: messageTypes) => {
       onClick={handleClick}>
       <header className="flex gap-2">
         <span className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-14 h-14 text-center">
-          {user?.username?.charAt(0).toUpperCase() }
+          {props.author?.username?.charAt(0).toUpperCase()  || 'D'}
         </span>
 
         <div className="flex flex-col justify-center items-start gap-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold m-0 line-clamp-1 text-ellipsis">{user?.username || 'ENEO'}</h2>
-            <LuBadgeCheck className="text-primary-500 size-5" strokeWidth={2.5} />
+            <h2 className="text-base font-semibold m-0 line-clamp-1 text-ellipsis">{props.author?.username || 'Default'}</h2>
+            <LuBadgeCheck className="text-primary-400 size-5" strokeWidth={2.5} />
           </div>
 
           <p
             className={`text-neutral-50 text-xs whitespace-nowrap overflow-hidden text-ellipsis line-clamp-1`}>
-            {user?.title || 'Writer @ CMR FA magazine..'}
+            {props.author?.title || 'Writer @ CMR FA magazine..'}
           </p>
 
           <span className="text-sm">{props.messageDate}</span>

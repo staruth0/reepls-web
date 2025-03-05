@@ -82,18 +82,18 @@ const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({
               {username}
             </h2>
             <LuBadgeCheck
-              className="text-primary-500 size-5 "
+              className="text-primary-400 size-5"
               strokeWidth={2.5}
             />
             <div
-              className="text-primary-500 text-[14px]  cursor-pointer hover:underline"
+              className="text-primary-400 text-[13px]  cursor-pointer hover:underline"
               onClick={handleFollowClick}
             >
               {getFollowStatusText()}
             </div>
           </div>
 
-          <p className="text-neutral-50 text-xs whitespace-nowrap overflow-hidden text-ellipsis line-clamp-1">
+          <p className="text-neutral-100 text-xs whitespace-nowrap overflow-hidden text-ellipsis line-clamp-1">
             {title}
           </p>
         </div>

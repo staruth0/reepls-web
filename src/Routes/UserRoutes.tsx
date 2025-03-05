@@ -44,7 +44,7 @@ const UserRoutes = {
       element: <Profile />,
     },
     {
-      path: "/profile/followings/:username",
+      path: "/profile/followings/:user_id",
       element: <Followers />,
     },
     {

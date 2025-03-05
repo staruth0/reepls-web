@@ -1,8 +1,6 @@
-import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
-
-// import * as RadixPopover from '@radix-ui/react-popover';
-import React, { useContext, useState } from 'react';
-import { FaRegUserCircle } from 'react-icons/fa';
+import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
+import React, { useContext, useState } from "react";
+import { FaRegUserCircle } from "react-icons/fa";
 import {
   LuBell,
   LuBookmark,
@@ -12,22 +10,20 @@ import {
   LuPencilLine,
   LuPlus,
   LuSearch,
-} from 'react-icons/lu';
-import { useNavigate } from 'react-router-dom';
-import SidebarItem from '../../atoms/SidebarItem';
-
-import { useTranslation } from 'react-i18next';
-// import { AuthContext } from '../../../context/AuthContext/authContext';
-import { toast } from 'react-toastify';
-import { reeplsIcon } from '../../../assets/icons';
-import { SidebarContext } from '../../../context/SidebarContext/SidebarContext';
-import PostModal from '../../../feature/Blog/components/PostModal';
-import { useCreateArticle } from '../../../feature/Blog/hooks/useArticleHook';
-import { useUser } from '../../../hooks/useUser';
-import { Article } from '../../../models/datamodels';
-import { cn } from '../../../utils';
-import { Spinner } from '../../atoms/Spinner';
-import './sidebar.scss';
+} from "react-icons/lu";
+import { useNavigate } from "react-router-dom";
+import SidebarItem from "../../atoms/SidebarItem";
+import { useTranslation } from "react-i18next";
+import { SidebarContext } from "../../../context/SidebarContext/SidebarContext";
+import { cn } from "../../../utils";
+import PostModal from "../../../feature/Blog/components/PostModal";
+import "./sidebar.scss";
+import { reeplsIcon } from "../../../assets/icons";
+import { useCreateArticle } from "../../../feature/Blog/hooks/useArticleHook";
+import { useUser } from "../../../hooks/useUser";
+import { Article } from "../../../models/datamodels";
+import { toast } from "react-toastify";
+import { Spinner } from "../../atoms/Spinner";
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
@@ -35,38 +31,38 @@ const Sidebar: React.FC = () => {
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
   const { t } = useTranslation();
   const { mutate, isPending } = useCreateArticle();
-  // const { isTablet } = useResponsiveLayout();
   const { isOpen, toggleSidebar } = useContext(SidebarContext);
+
   const handleToggleSidebar = () => {
-    console.log('Toggle sidebar', isOpen);
+    console.log("Toggle sidebar", isOpen);
     toggleSidebar();
   };
 
   const navLinks = [
     {
       icon: LuHouse,
-      name: 'Feed',
-      link: '/feed',
+      name: "Feed",
+      link: "/feed",
     },
     {
-      icon: LuSearch, // or LuCompass
-      name: 'Search', // or Explore
-      link: '/explore',
+      icon: LuSearch,
+      name: "Search",
+      link: "/explore",
     },
     {
       icon: LuBookmark,
-      name: 'Bookmarks',
-      link: '/bookmarks',
+      name: "Bookmarks",
+      link: "/bookmarks",
     },
     {
       icon: LuBell,
-      name: 'Notifications',
-      link: '/notifications',
+      name: "Notifications",
+      link: "/notifications",
       badgeContent: 14,
     },
     {
       icon: FaRegUserCircle,
-      name: 'Profile',
+      name: "Profile",
       link: `/profile/${authUser?.username}`,
     },
   ];
@@ -79,43 +75,41 @@ const Sidebar: React.FC = () => {
     mutate(post, {
       onSuccess: () => {
         setIsCreatingPost(false);
-        console.log('Article created successfully');
-        toast.success('Article created successfully');
-        navigate('/feed');
+        console.log("Article created successfully");
+        toast.success("Article created successfully");
+        navigate("/feed");
       },
       onError: (error) => {
-        console.error('Error creating article', error);
-        toast.error('Error creating article' + error);
+        console.error("Error creating article", error);
+        toast.error("Error creating article: " + error);
       },
     });
 
-    console.log('post', post);
-
-    console.log('postContent', postContent);
-    console.log('postImages', postImages);
-    console.log('postVideos', postVideos);
+    console.log("post", post);
+    console.log("postContent", postContent);
+    console.log("postImages", postImages);
+    console.log("postVideos", postVideos);
   };
-
-  // fixed top-0 h-screen w-[65%] bg-white z-10
 
   return (
     <div className="side">
       <LuCircleChevronRight
         className={cn(
-          'size-6 p-0 rounded-full cursor-pointer',
-          isOpen && 'rotate-180',
-          'transition-all duration-300 ease-in-out',
-          'hover:text-primary-400',
-          'bg-background border-none absolute z-10 top-1/2 right-0 transform translate-x-1/2 text-neutral-400'
+          "size-6 p-0 rounded-full cursor-pointer",
+          isOpen && "rotate-180",
+          "transition-all duration-300 ease-in-out",
+          "hover:text-primary-400",
+          "bg-background border-none absolute z-10 top-1/2 right-0 transform translate-x-1/2 text-neutral-400"
         )}
         onClick={() => handleToggleSidebar()}
       />
       <div className="flex gap-5 items-center h-[80px]">
         <div
-          className=" text-roboto text-[24px] font-semibold flex gap-2 items-center cursor-pointer"
-          onClick={() => navigate('/feed')}>
-          <img src={reeplsIcon} alt="reeplsicon" className={`${isOpen ? 'size-8' : 'size-9'}`} />
-          {isOpen && 'REEPLS'}
+          className="text-roboto text-[24px] font-semibold flex gap-2 items-center cursor-pointer"
+          onClick={() => navigate("/feed")}
+        >
+          <img src={reeplsIcon} alt="reeplsicon" className={`${isOpen ? "size-8" : "size-9"}`} />
+          {isOpen && "REEPLS"}
         </div>
       </div>
 
@@ -137,73 +131,55 @@ const Sidebar: React.FC = () => {
           {isPending ? (
             <Spinner />
           ) : (
-            <PostModal isModalOpen={isCreatingPost} setIsModalOpen={setIsCreatingPost} handlePost={handlePost} />
+            <PostModal
+              isModalOpen={isCreatingPost}
+              setIsModalOpen={setIsCreatingPost}
+              handlePost={handlePost}
+              isPending={isPending}
+            />
           )}
         </>
       )}
+
       <div className="create__post__btn">
         <Popover className="relative">
           <PopoverButton
-            className={cn(`create__post__button `, 'disabled:text-neutral-400 disabled:cursor-not-allowed')}
-            disabled={isCreatingPost}>
-            <LuCirclePlus className="create__post__icon" style={{ width: '20px', height: '20px' }} />
-            {isOpen && t(`Create Post`)}
+            className={cn(
+              "create__post__button",
+              "disabled:text-neutral-400 disabled:cursor-not-allowed"
+            )}
+            disabled={isCreatingPost}
+          >
+            <LuCirclePlus className="create__post__icon" style={{ width: "20px", height: "20px" }} />
+            {isOpen && t("Create Post")}
           </PopoverButton>
           <PopoverPanel
             anchor="bottom"
-            className={cn('PopoverContent flex flex-col bg-red-500 z-50 mt-2', !isOpen ? 'w-32' : 'w-40')}>
+            className={cn(
+              "PopoverContent flex flex-col bg-red-500 z-50 mt-2",
+              !isOpen ? "w-32" : "w-40"
+            )}
+          >
             <div className="block text-center">
               <button
                 className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4 hover:text-primary-400"
-                onClick={() => setIsCreatingPost(true)}>
+                onClick={() => setIsCreatingPost(true)}
+              >
                 <LuPlus className="size-4" />
-                <span className="text-sm">{!isOpen ? t(`Post`) : t(`Create Post`)}</span>
+                <span className="text-sm">{!isOpen ? t("Post") : t("Create Post")}</span>
               </button>
               <hr className="border-neutral-400 w-3/4 mx-auto" />
               <button
-                className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4  hover:text-primary-400"
-                onClick={() => navigate('/posts/create')}>
+                className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4 hover:text-primary-400"
+                onClick={() => navigate("/posts/create")}
+              >
                 <LuPencilLine className="size-4" />
-                <span className="text-sm">{!isOpen ? t(`Write`) : t(`Write Article`)}</span>
+                <span className="text-sm">{!isOpen ? t("Write") : t("Write Article")}</span>
               </button>
             </div>
           </PopoverPanel>
         </Popover>
       </div>
-      {/* <div className="create__post__btn">
-        <RadixPopover.Root>
-          <RadixPopover.Trigger asChild>
-            <button
-              className={cn(`create__post__button `, 'disabled:text-neutral-400 disabled:cursor-not-allowed')}
-              disabled={isCreatingPost}>
-              <LuCirclePlus className="size-5" />
-              {!isSidebarCollapsed && t(`Create Post`)}
-            </button>
-          </RadixPopover.Trigger>
-          <RadixPopover.Portal>
-            <RadixPopover.Content
-              className={cn('PopoverContent rounded-full', isSidebarCollapsed ? 'w-32' : 'w-44')}
-              sideOffset={5}>
-              <div className="block text-center">
-                <button
-                  className="flex items-center justify-center gap-2 cursor-pointer py-4 px-4 hover:text-primary-400"
-                  onClick={() => setIsCreatingPost(true)}>
-                  <LuPlus className="size-4" />
-                  <span className="text-sm">{isSidebarCollapsed ? t(`Post`) : t(`Create Post`)}</span>
-                </button>
-                <hr className="border-neutral-400 w-3/4 mx-auto" />
-                <button
-                  className="flex items-center justify-center gap-2 cursor-pointer py-4 px-4  hover:text-primary-400"
-                  onClick={() => navigate('/posts/create')}>
-                  <LuPencilLine className="size-4" />
-                  <span className="text-sm">{isSidebarCollapsed ? t(`Write`) : t(`Write Article`)}</span>
-                </button>
-              </div>
-              <RadixPopover.Arrow className="PopoverArrow" />
-            </RadixPopover.Content>
-          </RadixPopover.Portal>
-        </RadixPopover.Root>
-      </div> */}
     </div>
   );
 };

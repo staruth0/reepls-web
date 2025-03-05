@@ -11,7 +11,7 @@ import {
 import { VoiceLanguageContext } from "../../../../context/VoiceLanguageContext/VoiceLanguageContext";
 import { cn } from "../../../../utils";
 import ReactionModal from "../../../Interactions/components/ReactionModal";
-import CommentTab from "../../../Comments/components/CommentTab";
+// import CommentTab from "../../../Comments/components/CommentTab";
 import CommentSection from "../../../Comments/components/CommentSection";
 
 interface BlogReactionSessionProps {
@@ -141,10 +141,9 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
       </div>
 
       {commentTabState && (
-        <CommentTab
+        <CommentSection
           article_id={article_id}
           setIsCommentSectionOpen={setIsCommentSectionOpen}
-          
         />
       )}
       {isCommentSectionOpen && (

@@ -29,6 +29,7 @@ export interface User {
   saved_articles?: string[];
   banner_image?: string;
   bio?: string;
+  about?: string;
   address?: string;
   title?: string; // Formerly 'job'
   interests?: string[];
@@ -58,7 +59,7 @@ export interface Article {
   media?: string[];
   text_to_speech?: string;
   flagged?: boolean;
-  author_id?: string ; 
+  author_id?: User ; 
   status?: "Draft" | "Published" | "Archived";
   createdAt?: string;
   updatedAt?: string;
@@ -79,6 +80,7 @@ export interface Comment {
   updatedAt?: Date;
   replies?: Comment[];
   _id?: string;
+  author?: User;
 }
 
 export interface Follow {
@@ -90,6 +92,13 @@ export interface Reaction {
   reaction_id?: string;
   type: string;
   user_id: string;
+  article_id: string;
+  createdAt?: string;
+}
+export interface ReactionReceived {
+  reaction_id?: string;
+  type: string;
+  user_id: User;
   article_id: string;
   createdAt?: string;
 }

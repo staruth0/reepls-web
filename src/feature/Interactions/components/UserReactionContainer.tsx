@@ -1,17 +1,15 @@
 import React from "react";
 import { heart,sadface,smile,thumb,clap} from "../../../assets/icons/index";
-import { useGetUserById } from "../../Profile/hooks";
+import { User } from "../../../models/datamodels";
 
 
 
 interface UserReactionProps {
-    user_id: string;
+    user: User ;
     type: string;
 }
 
-const UserReactionContainer: React.FC<UserReactionProps> = ({ user_id, type }) => {
-  
-  const { user} = useGetUserById(user_id);
+const UserReactionContainer: React.FC<UserReactionProps> = ({ user, type }) => {
 
   return (
     <div className="flex items-center justify-between border-b gap-3 px-2 py-4 hover:bg-neutral-600 rounded-md">

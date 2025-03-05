@@ -49,7 +49,7 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date, toggleComme
         </div>
 
         {/* Comments Count */}
-        <div className="ml-4 text-neutral-70 hover:text-primary-500 hover:underline underline-offset-1" onClick={toggleCommentSection}>
+        <div className="ml-4 text-neutral-50 hover:text-primary-500 hover:underline underline-offset-1" onClick={toggleCommentSection}>
           {articleComments?.data?.length} Comments
         </div>
       </div>

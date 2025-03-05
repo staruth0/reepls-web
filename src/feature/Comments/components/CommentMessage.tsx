@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { ThumbsUp, MessageCircle } from "lucide-react";
 import { LuBadgeCheck } from "react-icons/lu";
 import { timeAgo } from "../../../utils/dateFormater";
-import { useGetUserById } from "../../Profile/hooks";
 import CommentSectionLevel2 from "./CommentSectionLevel2";
-import { Comment } from "../../../models/datamodels";
+import { Comment, User } from "../../../models/datamodels";
 
 interface MessageComponentProps {
   content: string;
@@ -13,11 +12,12 @@ interface MessageComponentProps {
   isSameAuthorAsPrevious: boolean;
   article_id: string;
   comment_id: string;
+  author: User;
   replies:Comment[]
 }
 
-const CommentMessage: React.FC<MessageComponentProps> = ({content,createdAt,author_id,isSameAuthorAsPrevious,article_id,comment_id,replies}) => {
-  const { user } = useGetUserById(author_id);
+const CommentMessage: React.FC<MessageComponentProps> = ({content,createdAt,isSameAuthorAsPrevious,article_id,comment_id,replies,author}) => {
+  // const { user } = useGetUserById(author_id);
   const [isLevelTwoCommentOpen, setIsLevelTwoCommentOpen] = useState(false)
 
   const formatDate = () => {
@@ -41,14 +41,14 @@ const CommentMessage: React.FC<MessageComponentProps> = ({content,createdAt,auth
         <div className="flex items-center gap-2">
           {/* Avatar */}
           <div className="size-6 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-[13px]">
-            {user?.username?.charAt(0)}
+            {author?.username?.charAt(0)}
           </div>
 
           {/* User Details */}
           <div className="flex-1">
             <div className="font-semibold flex items-center justify-between text-neutral-50 text-[14px]">
               <div className="flex items-center gap-2">
-                {user?.username}
+                {author?.username}
                 <LuBadgeCheck
                   className="text-primary-500 size-4"
                   strokeWidth={2.5}
@@ -58,7 +58,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({content,createdAt,auth
                 {formatDate()}
               </div>
             </div>
-            <p className="text-[12px] text-gray-500">{user?.title}</p>
+            <p className="text-[12px] text-gray-500">{author?.title}</p>
           </div>
         </div>
 

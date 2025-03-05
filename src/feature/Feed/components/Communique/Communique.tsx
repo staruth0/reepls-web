@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TopRightComponent from "../../../../components/atoms/TopRightComponent";
 import RightRecentComponent from "../../../../components/molecules/RightRecentComponent";
 import { useGetCommuniquerArticles } from "../../../Blog/hooks/useArticleHook";
@@ -10,7 +10,10 @@ import CommuniqueSkeleton from "../CommuniqueSkeleton";
 
 const Communique: React.FC = () => {
   const {data, isLoading} = useGetCommuniquerArticles()
-
+ 
+  useEffect(() => {
+    if(data) console.log('parsing ds',data)
+  },[data])
   
   return (
     <>

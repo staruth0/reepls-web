@@ -4,7 +4,7 @@ import UserReactionContainer from "./UserReactionContainer";
 import { clap, heart, sadface, smile, thumb } from "../../../assets/icons";
 import ReactionTab from "./ReactionTab";
 import { useGetArticleReactions, useGetReactionsPerType } from "../hooks";
-import { Reaction } from "../../../models/datamodels";
+import { ReactionReceived } from "../../../models/datamodels";
 
 interface ReactionProps {
   article_id: string;
@@ -174,61 +174,61 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
         </div>
         <div className="p-4 space-y-3 min-h-[30vh] max-h-[63vh] overflow-y-auto">
           {activeTab === "All" &&
-            allReactions?.map((reaction: Reaction) => (
+            allReactions?.map((reaction: ReactionReceived) => (
               <UserReactionContainer
                 key={reaction.type}
                 type={reaction.type}
-                user_id={reaction.user_id}
+                user={reaction.user_id}
               />
             ))}
           {activeTab === "smile" &&
             allReactions
-              ?.filter((reaction: Reaction) => reaction.type === "smile")
-              .map((reaction: Reaction) => (
+              ?.filter((reaction: ReactionReceived) => reaction.type === "smile")
+              .map((reaction: ReactionReceived) => (
                 <UserReactionContainer
                   key={reaction.type}
                   type={reaction.type}
-                  user_id={reaction.user_id}
+                  user={reaction.user_id}
                 />
               ))}
           {activeTab === "cry" &&
             allReactions
-              ?.filter((reaction: Reaction) => reaction.type === "cry")
-              .map((reaction: Reaction) => (
+              ?.filter((reaction: ReactionReceived) => reaction.type === "cry")
+              .map((reaction: ReactionReceived) => (
                 <UserReactionContainer
                   key={reaction.type}
                   type={reaction.type}
-                  user_id={reaction.user_id}
+                  user={reaction.user_id}
                 />
               ))}
           {activeTab === "love" &&
             allReactions
-              ?.filter((reaction: Reaction) => reaction.type === "love")
-              .map((reaction: Reaction) => (
+              ?.filter((reaction: ReactionReceived) => reaction.type === "love")
+              .map((reaction: ReactionReceived) => (
                 <UserReactionContainer
                   key={reaction.type}
                   type={reaction.type}
-                  user_id={reaction.user_id}
+                  user={reaction.user_id}
                 />
               ))}
           {activeTab === "clap" &&
             allReactions
-              ?.filter((reaction: Reaction) => reaction.type === "clap")
-              .map((reaction: Reaction) => (
+              ?.filter((reaction: ReactionReceived) => reaction.type === "clap")
+              .map((reaction: ReactionReceived) => (
                 <UserReactionContainer
                   key={reaction.type}
                   type={reaction.type}
-                  user_id={reaction.user_id}
+                  user={reaction.user_id}
                 />
               ))}
           {activeTab === "like" &&
             allReactions
-              ?.filter((reaction: Reaction) => reaction.type === "like")
-              .map((reaction: Reaction) => (
+              ?.filter((reaction: ReactionReceived) => reaction.type === "like")
+              .map((reaction: ReactionReceived) => (
                 <UserReactionContainer
                   key={reaction.type}
                   type={reaction.type}
-                  user_id={reaction.user_id}
+                  user={reaction.user_id}
                 />
               ))}
         </div>

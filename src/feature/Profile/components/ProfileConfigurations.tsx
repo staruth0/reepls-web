@@ -141,12 +141,12 @@ useEffect(() => {
           <div className="flex gap-2 items-center">
             {t(isExplicitContent ? "On" : "Off")}
             <div
-              className={`w-[40px] h-[20px] bg-neutral-50 rounded-[2rem] flex items-center px-[2px] cursor-pointer ${
+              className={`w-[40px] h-[20px] bg-primary-200 rounded-[2rem] flex items-center px-[2px] cursor-pointer ${
                 isExplicitContent ? "justify-end" : "justify-start"
               }`}
               onClick={handleToggleExplicitContent}
             >
-              <div className="w-[18px] h-[18px] rounded-full bg-white"></div>
+              <div className="w-[18px] h-[18px] rounded-full bg-primary-600"></div>
             </div>
           </div>
         </ConfigurationWrapper>
@@ -156,12 +156,12 @@ useEffect(() => {
           <div className="flex gap-2 items-center">
             {t(isVideoAutoPlay ? "On" : "Off")}
             <div
-              className={`w-[40px] h-[20px] bg-neutral-50 rounded-[2rem] flex items-center px-[2px] cursor-pointer ${
+              className={`w-[40px] h-[20px] bg-primary-200 rounded-[2rem] flex items-center px-[2px] cursor-pointer ${
                 isVideoAutoPlay ? "justify-end" : "justify-start"
               }`}
               onClick={handleToggleAutoPlay}
             >
-              <div className="w-[18px] h-[18px] rounded-full bg-white"></div>
+              <div className="w-[18px] h-[18px] rounded-full bg-primary-600"></div>
             </div>
           </div>
         </ConfigurationWrapper>
@@ -171,12 +171,12 @@ useEffect(() => {
           <div className="flex gap-2 items-center">
             {t(theme === "light" ? "Light" : "Dark")}
             <div
-              className={`w-[40px] h-[20px] bg-neutral-50 rounded-[2rem] flex items-center px-[2px] cursor-pointer ${
+              className={`w-[40px] h-[20px] bg-primary-200 rounded-[2rem] flex items-center px-[2px] cursor-pointer ${
                 theme === "light" ? "justify-start" : "justify-end"
               }`}
               onClick={handleToggleTheme}
             >
-              <div className="w-[18px] h-[18px] rounded-full bg-white"></div>
+              <div className="w-[18px] h-[18px] rounded-full bg-primary-600"></div>
             </div>
           </div>
         </ConfigurationWrapper>

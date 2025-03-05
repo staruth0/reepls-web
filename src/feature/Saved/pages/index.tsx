@@ -1,13 +1,14 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Topbar from "../../../components/atoms/Topbar/Topbar";
 import Tabs from "../../../components/molecules/Tabs/Tabs";
 import AuthorComponent from "../Components/AuthorComponent";
-import { useUser } from "../../../hooks/useUser";
-import { useGetAllArticles } from "../../Blog/hooks/useArticleHook";
-import { Article } from "../../../models/datamodels";
+import { useGetSavedArticles } from "../../Saved/hooks"; // Updated import
+import { Article, Follow } from "../../../models/datamodels";
 import SavedPostsContainer from "../Components/SavedPostsContaniner";
 import SavedArticlesContainer from "../Components/SavedArticleContainer";
-import BlogSkeletonComponent  from "../../Blog/components/BlogSkeleton";
+import BlogSkeletonComponent from "../../Blog/components/BlogSkeleton";
+import { useUser } from "../../../hooks/useUser";
+import { useGetFollowing } from "../../Follow/hooks";
 
 const tabs = [
   { id: "posts", title: "Posts" },
@@ -16,27 +17,33 @@ const tabs = [
 ];
 
 const Bookmarks: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
   const { authUser } = useUser();
-  const { data: articles , isLoading: isLoadingArticles,error } = useGetAllArticles();
+  const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
+  const { data: savedArticlesData, isLoading: isLoadingSavedArticles, error } = useGetSavedArticles();
+    const { data: followingsData } = useGetFollowing(authUser?.id || ""); 
 
   // Filter and separate saved articles into posts and articles
   const { savedPosts, savedArticles } = useMemo(() => {
-    if (!articles?.articles || !authUser?.saved_articles) {
+    if (!savedArticlesData) {
       return { savedPosts: [], savedArticles: [] };
     }
 
-    // Filter articles whose IDs are in authUser.saved_articles
-    const savedItems = articles.articles.filter((article:Article) =>
-      authUser?.saved_articles?.includes(article._id!)
+    // Separate into posts and articles based on isArticle property
+    const savedPosts = savedArticlesData.filter(
+      (item: Article) => !item.isArticle
+    );
+    const savedArticles = savedArticlesData.filter(
+      (item: Article) => item.isArticle
     );
 
-    // Separate into posts and articles
-    const savedPosts = savedItems.filter((item:Article) => !item.isArticle);
-    const savedArticles = savedItems.filter((item:Article) => item.isArticle);
-
     return { savedPosts, savedArticles };
-  }, [articles, authUser]);
+  }, [savedArticlesData]);
+
+  useEffect(() => {
+    console.log('saved articles',savedArticlesData)
+  }, [savedArticlesData])
+  
+    const followings = followingsData?.data || [];
 
   return (
     <div className={`grid grid-cols-[4fr_1.65fr] `}>
@@ -58,7 +65,7 @@ const Bookmarks: React.FC = () => {
             {activeTab === "posts" && (
               <>
                 <div className="pb-10">
-                  {isLoadingArticles ? (
+                  {isLoadingSavedArticles ? (
                     <div>
                       <BlogSkeletonComponent />
                       <BlogSkeletonComponent />
@@ -73,7 +80,7 @@ const Bookmarks: React.FC = () => {
             {activeTab === "articles" && (
               <>
                 <div>
-                  {isLoadingArticles ? (
+                  {isLoadingSavedArticles ? (
                     <div>
                       <BlogSkeletonComponent />
                       <BlogSkeletonComponent />
@@ -93,9 +100,16 @@ const Bookmarks: React.FC = () => {
       <div className="saved__authors px-6 py-4 hidden lg:block">
         <p className="">Your top saved Authors</p>
         <div className="mt-10 flex flex-col gap-6">
-          <AuthorComponent />
-          <AuthorComponent />
-          <AuthorComponent />
+          {followings.length > 0 ? (
+            followings.map((following: Follow) => (
+              <AuthorComponent
+                key={following.followed_id}
+                user_id={following.followed_id}
+              />
+            ))
+          ) : (
+            <p className="text-neutral-500 text-center">No followings yet</p>
+          )}
         </div>
       </div>
     </div>
