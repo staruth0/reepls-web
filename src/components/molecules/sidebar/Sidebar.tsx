@@ -4,7 +4,7 @@ import { FaRegUserCircle } from "react-icons/fa";
 import {
   LuBell,
   LuBookmark,
-  LuCircleChevronLeft,
+  LuCircleChevronRight,
   LuCirclePlus,
   LuHouse,
   LuPencilLine,
@@ -20,9 +20,10 @@ import PostModal from "../../../feature/Blog/components/PostModal";
 import "./sidebar.scss";
 import { reeplsIcon } from "../../../assets/icons";
 import { useCreateArticle } from "../../../feature/Blog/hooks/useArticleHook";
+import { useUser } from "../../../hooks/useUser";
 import { Article } from "../../../models/datamodels";
 import { toast } from "react-toastify";
-import { useUser } from "../../../hooks/useUser";
+import { Spinner } from "../../atoms/Spinner";
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
@@ -38,9 +39,21 @@ const Sidebar: React.FC = () => {
   };
 
   const navLinks = [
-    { icon: LuHouse, name: "Feed", link: "/feed" },
-    { icon: LuSearch, name: "Search", link: "/explore" },
-    { icon: LuBookmark, name: "Bookmarks", link: "/bookmarks" },
+    {
+      icon: LuHouse,
+      name: "Feed",
+      link: "/feed",
+    },
+    {
+      icon: LuSearch,
+      name: "Search",
+      link: "/explore",
+    },
+    {
+      icon: LuBookmark,
+      name: "Bookmarks",
+      link: "/bookmarks",
+    },
     {
       icon: LuBell,
       name: "Notifications",
@@ -54,11 +67,7 @@ const Sidebar: React.FC = () => {
     },
   ];
 
-  const handlePost = (
-    postContent: string,
-    postImages: File[],
-    postVideos: File[]
-  ) => {
+  const handlePost = (postContent: string, postImages: File[], postVideos: File[]) => {
     const post: Article = {
       content: postContent,
     };
@@ -84,7 +93,7 @@ const Sidebar: React.FC = () => {
 
   return (
     <div className="side">
-      <LuCircleChevronLeft
+      <LuCircleChevronRight
         className={cn(
           "size-6 p-0 rounded-full cursor-pointer",
           isOpen && "rotate-180",
@@ -99,11 +108,7 @@ const Sidebar: React.FC = () => {
           className="text-roboto text-[24px] font-semibold flex gap-2 items-center cursor-pointer"
           onClick={() => navigate("/feed")}
         >
-          <img
-            src={reeplsIcon}
-            alt="reeplsicon"
-            className={`${isOpen ? "size-8" : "size-9"}`}
-          />
+          <img src={reeplsIcon} alt="reeplsicon" className={`${isOpen ? "size-8" : "size-9"}`} />
           {isOpen && "REEPLS"}
         </div>
       </div>
@@ -122,28 +127,31 @@ const Sidebar: React.FC = () => {
       </div>
 
       {isCreatingPost && (
-        <PostModal
-          isModalOpen={isCreatingPost}
-          setIsModalOpen={setIsCreatingPost}
-          handlePost={handlePost}
-          isPending={isPending} // Pass isPending to PostModal
-        />
+        <>
+          {isPending ? (
+            <Spinner />
+          ) : (
+            <PostModal
+              isModalOpen={isCreatingPost}
+              setIsModalOpen={setIsCreatingPost}
+              handlePost={handlePost}
+              isPending={isPending}
+            />
+          )}
+        </>
       )}
 
       <div className="create__post__btn">
         <Popover className="relative">
           <PopoverButton
             className={cn(
-              `create__post__button`,
+              "create__post__button",
               "disabled:text-neutral-400 disabled:cursor-not-allowed"
             )}
             disabled={isCreatingPost}
           >
-            <LuCirclePlus
-              className="create__post__icon"
-              style={{ width: "20px", height: "20px" }}
-            />
-            {isOpen && t(`Create Post`)}
+            <LuCirclePlus className="create__post__icon" style={{ width: "20px", height: "20px" }} />
+            {isOpen && t("Create Post")}
           </PopoverButton>
           <PopoverPanel
             anchor="bottom"
@@ -158,9 +166,7 @@ const Sidebar: React.FC = () => {
                 onClick={() => setIsCreatingPost(true)}
               >
                 <LuPlus className="size-4" />
-                <span className="text-sm">
-                  {!isOpen ? t(`Post`) : t(`Create Post`)}
-                </span>
+                <span className="text-sm">{!isOpen ? t("Post") : t("Create Post")}</span>
               </button>
               <hr className="border-neutral-400 w-3/4 mx-auto" />
               <button
@@ -168,9 +174,7 @@ const Sidebar: React.FC = () => {
                 onClick={() => navigate("/posts/create")}
               >
                 <LuPencilLine className="size-4" />
-                <span className="text-sm">
-                  {!isOpen ? t(`Write`) : t(`Write Article`)}
-                </span>
+                <span className="text-sm">{!isOpen ? t("Write") : t("Write Article")}</span>
               </button>
             </div>
           </PopoverPanel>

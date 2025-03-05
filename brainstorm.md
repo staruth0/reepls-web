@@ -1,5 +1,45 @@
+Some Tasks for everyone:
+
+-Implement a simple profanity filter with this package: https://www.npmjs.com/package/obscenity and reject post creation as needed based on the content profanity
+-Put together the infrastructure for TTS with google cloud api but dont integrate it with in the service yet; the api will be provided soon for testing
+
+Do cleanup: That means to go throughtout the site and remove the goffy things that were put there in development: for example,
+-remove _unncessary_ console logs,
+-change things like placeholders to appropariate ones,
+-displaying the appropriate messages for example login failed because of incorrect password not saying eror 404etc,
+
+- Adding default views when content is empty; for example, when there are no posts, when there are no comments, when there are no saved posts, nothing in the following feed, etc
+
+Clean up the frontend: There is still a lot of problematic inconsistencies in the frontend: for example,
+-the fonts for the text vs the titles are not showing as the design stipulates,
+-some shadows are not applied such as the signin button in dark mode,
+-the text colors are not properly applied sometimes like profile page text in dark mode, the feed page in dark mode as well,
+
+- the input to collect the username has still not been implmentedyou have still no
+- the profile page behaves oposite of what I expect: when you click on profile button to go to _YOUR_ profile page, it should goto profile/ and when you click on other user's profile button it should goto profile/otheruser'susername but currently it is the other way around
+- States shopuld be updated properly: when i click on follwoing, it should show the 'following or unfollow' if it successfully follows, after saving should go to saved, etc
+- i see lots of failing requests: fetching the user profile sometimes, reactions failing, commenting failing,
+- The loading component being used is not good(i meaning like for posting, sending comment); use an icon or a proper spinner
+- React on comment has not been implemented
+- I should be able to close the comment box after posting a comment/opening it to read comments
+- When i click to comment, the other comments should automatically load and show up
+- We have to start thinking about the scrolling situation for the right sidebar/communiques
+- on feed page some things show over the sidebar
+
+Things I will do:
+
+- Style the media viewer to look better
+- Implement storage of media to cloudinary
+- Complete the creation and viewing of posts
+
+Final Ui
+
+- As Fabrice mentioned, continue working on the admin dashboard
+
 Modal, Dialog, Popover, Tooltip, Tabs, Slider,
 Alerts and Toasts
+
+-Reactions + confeti/indicaion
 
 - react-hot-toast or react-toastify
 - sweetalert2 or
