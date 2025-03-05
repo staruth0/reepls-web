@@ -40,7 +40,7 @@ const UserFeed: React.FC = () => {
 
   useEffect(() => {
     console.log("Data:", followedData);
-    console.log("Received Data:", data);
+    console.log("Received Data:", data?.articles);
   }, [followedData, data]);
 
   return (
@@ -82,9 +82,9 @@ const UserFeed: React.FC = () => {
                 images={article.media!}
                 title={article.title!}
                 content={article.content!}
-                id={article.author_id!}
                 date={article.createdAt!}
                 article_id={article._id!}
+                user={article.author_id!}
               />
             ))}
           </div>

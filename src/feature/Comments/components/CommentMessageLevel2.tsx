@@ -2,22 +2,23 @@ import React from "react";
 import { ThumbsUp } from "lucide-react";
 import { LuBadgeCheck } from "react-icons/lu";
 import { timeAgo } from "../../../utils/dateFormater";
-import { useGetUserById } from "../../Profile/hooks";
+import { User } from "../../../models/datamodels";
 
 interface MessageComponentProps {
   content: string;
   createdAt: Date | string;
   author_id: string;
   isSameAuthorAsPrevious: boolean;
+  author: User;
 }
 
 const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
   content,
   createdAt,
-  author_id,
   isSameAuthorAsPrevious,
+  author,
 }) => {
-  const { user } = useGetUserById(author_id);
+
 
   const formatDate = () => {
     try {
@@ -40,14 +41,14 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
         <div className="flex items-center gap-2">
           {/* Avatar */}
           <div className="size-6 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-[13px]">
-            {user?.username?.charAt(0)}
+            {author?.username?.charAt(0)}
           </div>
 
           {/* User Details */}
           <div className="flex-1">
             <div className="font-semibold flex items-center justify-between text-neutral-50 text-[14px]">
               <div className="flex items-center gap-2">
-                {user?.username}
+                {author?.username}
                 <LuBadgeCheck
                   className="text-primary-500 size-4"
                   strokeWidth={2.5}
@@ -57,7 +58,7 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
                 {formatDate()}
               </div>
             </div>
-            <p className="text-[12px] text-gray-500">{user?.title}</p>
+            <p className="text-[12px] text-gray-500">{author?.title}</p>
           </div>
         </div>
 

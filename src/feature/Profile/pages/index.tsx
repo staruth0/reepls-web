@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import Topbar from "../../../components/atoms/Topbar/Topbar";
 import Tabs from "../../../components/molecules/Tabs/Tabs";
-import { AuthContext } from "../../../context/AuthContext/authContext";
+// import { AuthContext } from "../../../context/AuthContext/authContext";
 import ProfileAbout from "../components/ProfileAbout";
 import ProfileArticles from "../components/ProfileArticles";
 import ProfileBody from "../components/ProfileBody";
@@ -12,7 +12,7 @@ import ProfileDetails from "../components/ProfileDetails";
 import ProfileHeroButtons from "../components/ProfileHeroButtons";
 import ProfileMedia from "../components/ProfileMedia";
 import ProfilePosts from "../components/ProfilePosts";
-import { useGetUserById, useGetUserByUsername } from "../hooks";
+import { useGetUserByUsername } from "../hooks";
 import { useUser } from "../../../hooks/useUser";
 import SimilarProfiles from "../components/SimilarProfiles";
 import { User } from "lucide-react";
@@ -30,21 +30,22 @@ const Profile: React.FC = () => {
   const { t } = useTranslation();
   const { username } = useParams<{ username?: string }>();
   const { authUser } = useUser();
-  const { authState } = useContext(AuthContext);
+  // const { authState } = useContext(AuthContext);
 
   
   const {user: userByUsername,isLoading: isLoadingUsername,error: errorUsername} = useGetUserByUsername(username || "");
-  const {user: userById,isLoading: isLoadingId,error: errorId} = useGetUserById(authState?.userId || "");
+  // const {user: userById,isLoading: isLoadingId,error: errorId} = useGetUserById(authState?.userId || "");
 
   // Determine which user data to display
-  const user = username ? userByUsername : userById;
-  const isLoading = username ? isLoadingUsername : isLoadingId;
-  const error = username ? errorUsername : errorId;
+  const user =  userByUsername ;
+  const isLoading =  isLoadingUsername ;
+  const error = errorUsername ;
 
   useEffect(() => {
     if (user) {
       console.log("Displayed user:", user);
       console.log("Username from params:", username);
+      console.log(username === authUser?.username);
     }
   }, [user, username]);
 
@@ -99,16 +100,19 @@ const Profile: React.FC = () => {
         <div className="profile__content px-20 min-h-screen">
           <ProfileBody>
             <div className="flex items-center">
-              <div className="flex-1">
+              <div className="flex-1 ">
                 <ProfileDetails
                   name={user.username || "Default Name"}
                   town={user.address || "Default Town"}
-                  occupation={user.title || "Default Occupation"}
+                  role={user.role || "Reader"}
                   user_id={user.id || ""}
                   bio={user.bio || "Default Bio"}
                 />
               </div>
-              <ProfileHeroButtons userId={user?.id || ""} />
+              <ProfileHeroButtons
+                userId={user?.id || ""}
+                isAuthUser={username === authUser?.username}
+              />
             </div>
           </ProfileBody>
 
@@ -124,10 +128,14 @@ const Profile: React.FC = () => {
 
           <div className="mt-6">
             {activeTab === "about" && (
-              <ProfileAbout bio={user.bio || "Default Bio"} />
+              <ProfileAbout about={user?.about || "Default About"} />
             )}
-            {activeTab === "posts" && <ProfilePosts authorId={user.id || ""} />}
-            {activeTab === "articles" && <ProfileArticles authorId={user.id || ""} />}
+            {activeTab === "posts" && (
+              <ProfilePosts authorId={user?.id || ""} />
+            )}
+            {activeTab === "articles" && (
+              <ProfileArticles authorId={user?.id || ""} />
+            )}
             {activeTab === "media" && <ProfileMedia />}
           </div>
         </div>
@@ -135,7 +143,7 @@ const Profile: React.FC = () => {
 
       {/* Configurations Section */}
       <div className="profile__configurations hidden lg:block">
-        {user.id === authUser?.id ? (
+        {username === authUser?.username ? (
           <ProfileConfigurations />
         ) : (
           <div>

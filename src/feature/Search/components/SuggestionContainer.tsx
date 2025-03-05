@@ -18,8 +18,7 @@ const SuggestionContainer: React.FC<SuggestionContainerProps> = ({ text }) => {
   
   return (
     <div
-      className="flex items-center gap-3 cursor-pointer p-2 hover:shadow-sm rounded-lg transition-all"
-      onClick={handleSearch}
+      className="flex items-center gap-3 cursor-pointer p-2 hover:shadow-sm rounded-lg transition-all" onClick={handleSearch}
     >
       <ArrowUpRight className="w-4 h-4 text-neutral-50" />
 

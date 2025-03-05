@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { LuSearch, LuX } from "react-icons/lu";
 import SearchContainer from "./SearchContainer";
@@ -6,17 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { useGetSearchSuggestions } from "../hooks";
 import { useUser } from "../../../hooks/useUser";
 
-
-
 const SearchTopBar: React.FC = () => {
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const {authUser} = useUser()
-
-  const {data} = useGetSearchSuggestions(authUser?.id || "")
-
+  const { authUser } = useUser();
+  const { data } = useGetSearchSuggestions(authUser?.id || "");
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -31,7 +27,6 @@ const SearchTopBar: React.FC = () => {
     const trimmedSearchTerm = searchTerm.trim();
     if (trimmedSearchTerm) {
       navigate(`/search/results/${trimmedSearchTerm.replace(/ /g, "+")}`);
-   
     }
     setIsOpen(false);
   };
@@ -42,13 +37,22 @@ const SearchTopBar: React.FC = () => {
     }
   };
 
+  // Filter searchHistory using regex based on searchTerm
+  const filteredSearchHistory = useMemo(() => {
+    if (!data?.searchHistory || !searchTerm) return data?.searchHistory || [];
+
+    const regex = new RegExp(searchTerm, "i"); // Case-insensitive search
+    return data.searchHistory.filter((historyItem: string) =>
+      regex.test(historyItem)
+    );
+  }, [data?.searchHistory, searchTerm]);
 
   useEffect(() => {
-    if (data) { 
-      console.log(data.searchHistory)
+    if (data) {
+      console.log("Search History:", data.searchHistory);
     }
-  }, [data])
-  
+  }, [data]);
+
   useEffect(() => {
     if (searchTerm) {
       setIsOpen(true);
@@ -73,8 +77,14 @@ const SearchTopBar: React.FC = () => {
       </div>
 
       {isOpen && (
-        <div className="absolute top-14 left-0 w-full bg-neutral-600 rounded-lg shadow-lg z-50 ">
-          <SearchContainer searches={data.searchHistory} />
+        <div className="absolute top-14 left-0 w-full bg-neutral-600 rounded-lg shadow-lg z-50">
+          {filteredSearchHistory.length > 0 ? (
+            <SearchContainer searches={filteredSearchHistory} />
+          ) : (
+            <div className="p-4 text-neutral-300 text-center">
+              No matching search 
+            </div>
+          )}
         </div>
       )}
     </div>

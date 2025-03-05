@@ -3,10 +3,10 @@ import profileImage from "../../../assets/images/profile__image.svg";
 import ImageBanner from "../../../assets/images/image__banner.svg";
 
 interface ProfileBodyProps {
-  children:ReactNode
+  children: ReactNode;
 }
 
-const ProfileBody: React.FC<ProfileBodyProps> = ({children}) => {
+const ProfileBody: React.FC<ProfileBodyProps> = ({ children }) => {
   return (
     <>
       <div
@@ -21,7 +21,7 @@ const ProfileBody: React.FC<ProfileBodyProps> = ({children}) => {
           />
         </div>
       </div>
-      
+
       <div className="mt-20 px-4">{children}</div>
     </>
   );

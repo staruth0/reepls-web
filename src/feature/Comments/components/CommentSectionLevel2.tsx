@@ -41,6 +41,7 @@ const CommentSectionLevel2: React.FC<CommentSectionProps> = ({
                     createdAt={comment.createdAt!}
                     author_id={comment.author_id!}
                     isSameAuthorAsPrevious={isSameAuthorAsPrevious}
+                    author={comment.author!}
                   />
                 </>
               );

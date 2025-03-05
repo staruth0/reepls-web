@@ -1,15 +1,15 @@
 import React from 'react'
 
 interface ProfileAboutProps {
-  bio: string;
+  about: string;
  }
 
 
-const ProfileAbout:React.FC<ProfileAboutProps> = ({ bio }) => {
+const ProfileAbout:React.FC<ProfileAboutProps> = ({ about }) => {
   return (
     <div>
       <div className="text-neutral-100 text-[14px] leading-[18px] px-4">
-      {bio ? bio: 'No bio available'}
+      {about}
     </div>
     </div>
     

@@ -21,7 +21,13 @@ const CommuniqueDetail: React.FC = () => {
           <div> loading.....</div>
         ) : (
           <div className="px-20 mt-10">
-            <BlogProfile id={data?.author_id} date={data?.createdAt} article_id={id!} />
+            <BlogProfile
+              user={data?.author_id}
+              content={data?.content}
+              title={data?.title}
+              date={data?.createdAt}
+              article_id={id!}
+            />
             <div className="mt-4">
               <PostDetail content={data?.content} title={data?.title} />
             </div>

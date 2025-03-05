@@ -1,6 +1,4 @@
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
-
-// import * as RadixPopover from '@radix-ui/react-popover';
 import React, { useContext, useState } from "react";
 import { FaRegUserCircle } from "react-icons/fa";
 import {
@@ -15,9 +13,7 @@ import {
 } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import SidebarItem from "../../atoms/SidebarItem";
-
 import { useTranslation } from "react-i18next";
-// import { AuthContext } from '../../../context/AuthContext/authContext';
 import { SidebarContext } from "../../../context/SidebarContext/SidebarContext";
 import { cn } from "../../../utils";
 import PostModal from "../../../feature/Blog/components/PostModal";
@@ -26,39 +22,25 @@ import { reeplsIcon } from "../../../assets/icons";
 import { useCreateArticle } from "../../../feature/Blog/hooks/useArticleHook";
 import { Article } from "../../../models/datamodels";
 import { toast } from "react-toastify";
-import { Spinner } from "../../atoms/Spinner";
 import { useUser } from "../../../hooks/useUser";
-
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
-  const {authUser} = useUser()
+  const { authUser } = useUser();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
   const { t } = useTranslation();
-  const { mutate ,isPending} = useCreateArticle();
-  // const { isTablet } = useResponsiveLayout();
+  const { mutate, isPending } = useCreateArticle();
   const { isOpen, toggleSidebar } = useContext(SidebarContext);
+
   const handleToggleSidebar = () => {
     console.log("Toggle sidebar", isOpen);
     toggleSidebar();
   };
 
   const navLinks = [
-    {
-      icon: LuHouse,
-      name: "Feed",
-      link: "/feed",
-    },
-    {
-      icon: LuSearch, // or LuCompass
-      name: "Search", // or Explore
-      link: "/explore",
-    },
-    {
-      icon: LuBookmark,
-      name: "Bookmarks",
-      link: "/bookmarks",
-    },
+    { icon: LuHouse, name: "Feed", link: "/feed" },
+    { icon: LuSearch, name: "Search", link: "/explore" },
+    { icon: LuBookmark, name: "Bookmarks", link: "/bookmarks" },
     {
       icon: LuBell,
       name: "Notifications",
@@ -72,7 +54,11 @@ const Sidebar: React.FC = () => {
     },
   ];
 
-  const handlePost = ( postContent: string,postImages: File[],postVideos: File[]) => {
+  const handlePost = (
+    postContent: string,
+    postImages: File[],
+    postVideos: File[]
+  ) => {
     const post: Article = {
       content: postContent,
     };
@@ -82,22 +68,19 @@ const Sidebar: React.FC = () => {
         setIsCreatingPost(false);
         console.log("Article created successfully");
         toast.success("Article created successfully");
-        navigate("/feed")
+        navigate("/feed");
       },
       onError: (error) => {
         console.error("Error creating article", error);
-        toast.error("Error creating article"+ error);
+        toast.error("Error creating article: " + error);
       },
     });
 
     console.log("post", post);
-        
     console.log("postContent", postContent);
     console.log("postImages", postImages);
     console.log("postVideos", postVideos);
   };
-
-  // fixed top-0 h-screen w-[65%] bg-white z-10
 
   return (
     <div className="side">
@@ -113,7 +96,7 @@ const Sidebar: React.FC = () => {
       />
       <div className="flex gap-5 items-center h-[80px]">
         <div
-          className=" text-roboto text-[24px] font-semibold flex gap-2 items-center cursor-pointer"
+          className="text-roboto text-[24px] font-semibold flex gap-2 items-center cursor-pointer"
           onClick={() => navigate("/feed")}
         >
           <img
@@ -139,23 +122,19 @@ const Sidebar: React.FC = () => {
       </div>
 
       {isCreatingPost && (
-        <>
-          {isPending ? (
-            <Spinner/>
-          ) : (
-            <PostModal
-              isModalOpen={isCreatingPost}
-              setIsModalOpen={setIsCreatingPost}
-              handlePost={handlePost}
-            />
-          )}
-        </>
+        <PostModal
+          isModalOpen={isCreatingPost}
+          setIsModalOpen={setIsCreatingPost}
+          handlePost={handlePost}
+          isPending={isPending} // Pass isPending to PostModal
+        />
       )}
+
       <div className="create__post__btn">
         <Popover className="relative">
           <PopoverButton
             className={cn(
-              `create__post__button `,
+              `create__post__button`,
               "disabled:text-neutral-400 disabled:cursor-not-allowed"
             )}
             disabled={isCreatingPost}
@@ -185,7 +164,7 @@ const Sidebar: React.FC = () => {
               </button>
               <hr className="border-neutral-400 w-3/4 mx-auto" />
               <button
-                className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4  hover:text-primary-400"
+                className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4 hover:text-primary-400"
                 onClick={() => navigate("/posts/create")}
               >
                 <LuPencilLine className="size-4" />
@@ -197,40 +176,6 @@ const Sidebar: React.FC = () => {
           </PopoverPanel>
         </Popover>
       </div>
-      {/* <div className="create__post__btn">
-        <RadixPopover.Root>
-          <RadixPopover.Trigger asChild>
-            <button
-              className={cn(`create__post__button `, 'disabled:text-neutral-400 disabled:cursor-not-allowed')}
-              disabled={isCreatingPost}>
-              <LuCirclePlus className="size-5" />
-              {!isSidebarCollapsed && t(`Create Post`)}
-            </button>
-          </RadixPopover.Trigger>
-          <RadixPopover.Portal>
-            <RadixPopover.Content
-              className={cn('PopoverContent rounded-full', isSidebarCollapsed ? 'w-32' : 'w-44')}
-              sideOffset={5}>
-              <div className="block text-center">
-                <button
-                  className="flex items-center justify-center gap-2 cursor-pointer py-4 px-4 hover:text-primary-400"
-                  onClick={() => setIsCreatingPost(true)}>
-                  <LuPlus className="size-4" />
-                  <span className="text-sm">{isSidebarCollapsed ? t(`Post`) : t(`Create Post`)}</span>
-                </button>
-                <hr className="border-neutral-400 w-3/4 mx-auto" />
-                <button
-                  className="flex items-center justify-center gap-2 cursor-pointer py-4 px-4  hover:text-primary-400"
-                  onClick={() => navigate('/posts/create')}>
-                  <LuPencilLine className="size-4" />
-                  <span className="text-sm">{isSidebarCollapsed ? t(`Write`) : t(`Write Article`)}</span>
-                </button>
-              </div>
-              <RadixPopover.Arrow className="PopoverArrow" />
-            </RadixPopover.Content>
-          </RadixPopover.Portal>
-        </RadixPopover.Root>
-      </div> */}
     </div>
   );
 };
