@@ -1,3 +1,6 @@
+- Recommended user and other recomended items have duplicates
+- Comment with replies showing 0 reply count, comment with no replies showing >0 replies
+
 Some Tasks for everyone:
 
 -Implement a simple profanity filter with this package: https://www.npmjs.com/package/obscenity and reject post creation as needed based on the content profanity
