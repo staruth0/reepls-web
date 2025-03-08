@@ -13,12 +13,14 @@ import { cn } from "../../../../utils";
 import ReactionModal from "../../../Interactions/components/ReactionModal";
 // import CommentTab from "../../../Comments/components/CommentTab";
 import CommentSection from "../../../Comments/components/CommentSection";
+import { User } from "../../../../models/datamodels";
 
 interface BlogReactionSessionProps {
   message: string;
   isCommentSectionOpen: boolean;
   setIsCommentSectionOpen: (isOpen: boolean) => void; 
   article_id: string;
+  author_of_post: User;
 }
 
 const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
@@ -26,6 +28,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   isCommentSectionOpen,
   article_id,
   setIsCommentSectionOpen,
+  author_of_post,
 }) => {
   const { selectedVoice } = useContext(VoiceLanguageContext);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
@@ -144,12 +147,14 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
         <CommentSection
           article_id={article_id}
           setIsCommentSectionOpen={setIsCommentSectionOpen}
+          author_of_post={author_of_post}
         />
       )}
       {isCommentSectionOpen && (
         <CommentSection
           article_id={article_id}
           setIsCommentSectionOpen={setIsCommentSectionOpen}
+          author_of_post={author_of_post}
         />
       )}
     </div>

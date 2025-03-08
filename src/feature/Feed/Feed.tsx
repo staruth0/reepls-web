@@ -1,60 +1,70 @@
 import { Brain } from "lucide-react";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import Topbar from "../../components/atoms/Topbar/Topbar";
 import BlogPost from "../Blog/components/BlogPost";
-import Tabs from "../../components/molecules/Tabs/Tabs";
 import { CognitiveModeContext } from "../../context/CognitiveMode/CognitiveModeContext";
-import {useGetAllArticles,useGetFollowedArticles} from "../Blog/hooks/useArticleHook";
+import {useGetAllArticles
+} from "../Blog/hooks/useArticleHook";
 import Communique from "./components/Communique/Communique";
 import "./feed.scss";
 import BlogSkeletonComponent from "../Blog/components/BlogSkeleton";
 import { Article } from "../../models/datamodels";
+import ToggleFeed from "./components/ToogleFeed";
 
-// Tabs configuration
-const tabs = [
-  { id: 1, title: "For you" },
-  { id: 2, title: "Following" },
-];
 
 const UserFeed: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
   const [isBrainActive, setIsBrainActive] = useState<boolean>(false);
   const { toggleCognitiveMode } = useContext(CognitiveModeContext);
+  const bottomRef = useRef<HTMLDivElement>(null); // Ref for the bottom
 
-  // Fetch all articles and followed articles
-  const { data, error, isLoading } = useGetAllArticles();
-  const {data: followedData,error: followedError,isLoading: followedIsLoading} = useGetFollowedArticles();
+ 
 
-  // Function to handle cognitive mode toggle
+  // Fetch data
+  const { data, isLoading, error,fetchNextPage, hasNextPage, isFetchingNextPage } = useGetAllArticles();
+
+  // Handle cognitive mode toggle
   const handleBrainClick = () => {
     setIsBrainActive((prev) => !prev);
     toggleCognitiveMode();
   };
 
+  // Auto-fetch next page when scrolling to the bottom
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          console.log("Bottom reached, fetching next page!"); // Debug log
+          fetchNextPage();
+        }
+      },
+      {
+        root: null, // Use the viewport as the scroll container
+        rootMargin: "100px", // Trigger when the bottomRef is 100px from the viewport edge
+        threshold: 0.5, // Trigger when 50% of the bottomRef is visible
+      }
+    );
 
+    if (bottomRef.current) {
+      observer.observe(bottomRef.current);
+    }
 
-  // Select data based on the active tab
-  const displayData = activeTab === 1 ? data : followedData;
-  const isDataLoading = activeTab === 1 ? isLoading : followedIsLoading;
-  const displayError = activeTab === 1 ? error : followedError;
+    return () => {
+      if (bottomRef.current) {
+        observer.unobserve(bottomRef.current);
+      }
+    };
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   useEffect(() => {
-    console.log("Data:", followedData);
-    console.log("Received Data:", data?.articles);
-  }, [followedData, data]);
+    console.log('data', data);
+  }, [data]);
 
   return (
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
-      {/* Feed Posts Section */}
-      <div className="Feed__Posts min-h-screen lg:border-r-[1px] border-neutral-500 ">
+      <div className="Feed__Posts min-h-screen lg:border-r-[1px] border-neutral-500">
         <Topbar>
           <div className="px-3 flex justify-between items-center">
-            <Tabs
-              tabs={tabs}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              scale={true}
-            />
+            <ToggleFeed />
             <Brain
               size={isBrainActive ? 35 : 30}
               onClick={handleBrainClick}
@@ -68,36 +78,51 @@ const UserFeed: React.FC = () => {
         </Topbar>
 
         {/* Display Skeleton or Articles */}
-        {isDataLoading ? (
-          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col">
+        {isLoading ? (
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse">
             <BlogSkeletonComponent />
             <BlogSkeletonComponent />
           </div>
         ) : (
-          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse gap-7 ">
-            {displayData?.articles?.map((article:Article) => (
-              <BlogPost
-                key={article._id}
-                isArticle={article.isArticle!}
-                images={article.media!}
-                title={article.title!}
-                content={article.content!}
-                date={article.createdAt!}
-                article_id={article._id!}
-                user={article.author_id!}
-              />
-            ))}
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse gap-7">
+            {
+              <>
+                {/* Render all pages of articles */}
+                {data?.pages.map((page, i) => (
+                  <div className="flex flex-col-reverse" key={i}>
+                    {page.articles.map((article: Article) => (
+                      <BlogPost
+                        key={article._id}
+                        isArticle={article.isArticle!}
+                        images={article.media!}
+                        title={article.title!}
+                        content={article.content!}
+                        date={article.createdAt!}
+                        article_id={article._id!}
+                        user={article.author_id!}
+                      />
+                    ))}
+                  </div>
+                ))}
+                {/* Loading indicator for next page */}
+              </>
+            }
           </div>
         )}
-        {displayError && <div>Error: {displayError.message}</div>}
+        {/* Bottom trigger point */}
+        {isFetchingNextPage && (
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse mt-4">
+            <BlogSkeletonComponent />
+            <BlogSkeletonComponent />
+          </div>
+        )}
+        <div ref={bottomRef} style={{ height: "100px" }} />
+        {error && <div>Error: {error.message}</div>}
       </div>
 
-      {/* Communique Section */}
       <div className="communique hidden lg:block">
         <Communique />
       </div>
-
-  
     </div>
   );
 };

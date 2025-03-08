@@ -1,5 +1,6 @@
 import { useGetFollowing } from ".";
 import { useUser } from "../../../hooks/useUser";
+import { User } from "../../../models/datamodels";
 
 export const useKnowUserFollowings = () => {
   const { authUser } = useUser();
@@ -7,7 +8,7 @@ export const useKnowUserFollowings = () => {
 
   const isFollowing = (id: string): boolean => {
     return followings?.data.some(
-      (following: { followed_id: string }) => following.followed_id === id
+      (following: { followed_id: User }) => following.followed_id.id === id
     );
   };
 

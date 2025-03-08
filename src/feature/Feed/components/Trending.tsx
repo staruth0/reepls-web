@@ -54,7 +54,7 @@ const Trending: React.FC = () => {
       </div>
 
       <div>
-        <div className="text-neutral-50 mt-1 font-semibold text-[16px]">
+        <div className="text-neutral-50 mt-1 font-semibold text-[15px]">
           REEPLS SUGGESTIONS
         </div>
         <AuthorSuggestions />

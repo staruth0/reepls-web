@@ -9,7 +9,7 @@ const TrendingLink:React.FC<TrendingLinkProps> = ({ title }) => {
       <div >
         <Link
           to="#"
-          className=" py-3 text-neutral-50 text-[16px]  font-semibold hover:underline "
+          className=" py-3 text-neutral-50 text-[14px]  font-semibold hover:underline hover:text-primary-400"
         >
           #{title}
         </Link>

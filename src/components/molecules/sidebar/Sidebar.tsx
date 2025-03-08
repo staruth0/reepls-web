@@ -160,7 +160,7 @@ const Sidebar: React.FC = () => {
               !isOpen ? "w-32" : "w-40"
             )}
           >
-            <div className="block text-center">
+            <div className="block text-center z-[999]">
               <button
                 className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4 hover:text-primary-400"
                 onClick={() => setIsCreatingPost(true)}

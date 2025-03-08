@@ -12,6 +12,7 @@ import CognitiveModeProvider from './context/CognitiveMode/CognitiveModeProvider
 import { ThemeProvider } from './context/Theme/themeProvider.tsx';
 import SideBarProvider from './context/SidebarContext/SideBarProvider.tsx';
 import VoiceLanguageProvider from './context/VoiceLanguageContext/VoiceLanguageProvider.tsx';
+import FeedFollowingProvider from './context/Feedcontext/IsFeedFollowingProvider.tsx';
 
 const queryClient = new QueryClient({ defaultOptions: {
     queries: {
@@ -32,7 +33,9 @@ createRoot(document.getElementById("root")!).render(
             <QueryClientProvider client={queryClient}>
               <SideBarProvider>
                 <VoiceLanguageProvider>
-                  <App />
+                  <FeedFollowingProvider>
+                    <App />
+                  </FeedFollowingProvider>
                 </VoiceLanguageProvider>
               </SideBarProvider>
             </QueryClientProvider>

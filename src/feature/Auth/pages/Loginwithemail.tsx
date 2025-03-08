@@ -91,15 +91,12 @@ function Loginwithemail() {
         <div className="divider">
           <p>{t("OrDivider")}</p>
         </div>
-        <button
-          type="button"
-          className="create__account__btn hover:bg-primary-500 hover:text-white"
+        <div
+          className="flex items-center justify-center gap-2 bg-background rounded-full px-2 py-3 text-neutral-50 shadow-md hover:shadow-none cursor-pointer"
         >
-          <img src={google} alt="google_image" />
-          <span className="text-neutral-100 ">
-            {t("Create account with google")}
-          </span>
-        </button>
+         <img src={google} alt="google_image" className="size-6" />
+                   <span>{t("Create account with google")}</span>
+        </div>
       </form>
       <div className="bottom__links">
         {/* <div className="alternate__email" onClick={navigateToSignInWithPhone}>

@@ -20,7 +20,6 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({ userId,isAuthUs
   const {
     mutate: follow,
     isPending: isFollowPending,
- 
   } = useFollowUser();
 
   const {

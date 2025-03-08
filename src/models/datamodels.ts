@@ -31,7 +31,7 @@ export interface User {
   bio?: string;
   about?: string;
   address?: string;
-  title?: string; // Formerly 'job'
+  title?: string; 
   interests?: string[];
   is_verified_writer?: boolean;
   is_email_verified?: boolean;
@@ -84,8 +84,8 @@ export interface Comment {
 }
 
 export interface Follow {
-  follower_id: string;
-  followed_id: string;
+  follower_id: User;
+  followed_id: User;
 }
 
 export interface Reaction {

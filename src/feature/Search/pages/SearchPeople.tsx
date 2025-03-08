@@ -21,8 +21,8 @@ const SearchPeople: React.FC = () => {
         {followings.length > 0 ? (
           followings.map((following: Follow) => (
             <AuthorComponent
-              key={following.followed_id}
-              user_id={following.followed_id}
+              key={following.followed_id?.user_id}
+              user={following?.followed_id}
             />
           ))
         ) : (
@@ -34,8 +34,8 @@ const SearchPeople: React.FC = () => {
         {followings.length > 0 ? (
           followings.map((following: Follow) => (
             <AuthorComponent
-              key={following.followed_id}
-              user_id={following.followed_id}
+              key={following.followed_id?.user_id}
+              user={following.followed_id}
             />
           ))
         ) : (

@@ -1,10 +1,10 @@
 import { Send } from "lucide-react";
 import { Comment } from "../../../models/datamodels";
 import { useUser } from "../../../hooks/useUser";
-import { useState } from "react";
+import { useRef, useState, useEffect } from "react"; // Added useEffect
 import { useCreateComment } from "../hooks";
 import { Spinner } from "../../../components/atoms/Spinner";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 
 interface CommentTabProps {
   article_id: string;
@@ -13,10 +13,18 @@ interface CommentTabProps {
 
 const CommentTabLevel2: React.FC<CommentTabProps> = ({
   article_id,
-   parent_comment_id
+  parent_comment_id,
 }) => {
   const { authUser } = useUser();
   const [comment, setComment] = useState<string>("");
+  const CommentTabLevel2ref = useRef<HTMLInputElement | null>(null); 
+
+  // Focus the input field when the component mounts
+  useEffect(() => {
+    if (CommentTabLevel2ref.current) {
+      CommentTabLevel2ref.current.focus();
+    }
+  }, []);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -27,25 +35,28 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
   const { mutate, isPending } = useCreateComment();
 
   const handleCommentSubmit = () => {
+    if (!authUser?.id) {
+      toast.error("You must be logged in to comment.");
+      return;
+    }
+
     const commentValues: Comment = {
       article_id,
-      author_id: authUser?.id,
+      author_id: authUser.id,
       content: comment,
       is_audio_comment: false,
       parent_comment_id,
     };
 
     mutate(commentValues, {
-      onSuccess: () => { 
-        toast.success("replied to Comment successfully");
-        setComment("");  
+      onSuccess: () => {
+        toast.success("Replied to comment successfully");
+        setComment("");
       },
-      onError: () => { 
-        toast.error("Failed to reply to Comment");
+      onError: () => {
+        toast.error("Failed to reply to comment");
       },
     });
-    console.log(commentValues);
-    setComment("");
   };
 
   return (
@@ -58,6 +69,7 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           onKeyDown={handleKeyDown}
+          ref={CommentTabLevel2ref} // Ref is used here
         />
         <button
           onClick={handleCommentSubmit}

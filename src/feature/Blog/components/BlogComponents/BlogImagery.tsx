@@ -22,7 +22,7 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ PostImages }) => {
         className="rounded-sm absolute w-full z-0">
         {PostImages.map((image, index) => (
           <SwiperSlide key={index} className="flex justify-center">
-            <img src={image} alt={`Blog Visual ${index}`} className="w-full h-96 object-cover rounded-sm  z-0" />
+            <img src={image} alt={`Blog Visual ${index}`} className="w-full h-96 object-cover rounded-sm  z-0" loading="lazy" />
           </SwiperSlide>
         ))}
       </Swiper>
