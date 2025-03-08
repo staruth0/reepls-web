@@ -53,3 +53,14 @@ div {
   color: var(--main-green);
   font-size: 0.2rem;
 }
+
+//TODO: add custom icons for swiper buttons directly
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  font-size: 2rem;
+}
+
+.swiper-pagination-bullet {
+  background-color: var(--main-green);
+  color: var(--main-green);
+}
