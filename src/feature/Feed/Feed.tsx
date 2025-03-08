@@ -1,26 +1,22 @@
-import { Brain } from "lucide-react";
-import React, { useContext, useEffect, useState, useRef } from "react";
-import Topbar from "../../components/atoms/Topbar/Topbar";
-import BlogPost from "../Blog/components/BlogPost";
-import { CognitiveModeContext } from "../../context/CognitiveMode/CognitiveModeContext";
-import {useGetAllArticles
-} from "../Blog/hooks/useArticleHook";
-import Communique from "./components/Communique/Communique";
-import "./feed.scss";
-import BlogSkeletonComponent from "../Blog/components/BlogSkeleton";
-import { Article } from "../../models/datamodels";
-import ToggleFeed from "./components/ToogleFeed";
-
+import { Brain } from 'lucide-react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import Topbar from '../../components/atoms/Topbar/Topbar';
+import { CognitiveModeContext } from '../../context/CognitiveMode/CognitiveModeContext';
+import { Article } from '../../models/datamodels';
+import BlogPost from '../Blog/components/BlogPost';
+import BlogSkeletonComponent from '../Blog/components/BlogSkeleton';
+import { useGetAllArticles } from '../Blog/hooks/useArticleHook';
+import Communique from './components/Communique/Communique';
+import ToggleFeed from './components/ToogleFeed';
+import './feed.scss';
 
 const UserFeed: React.FC = () => {
   const [isBrainActive, setIsBrainActive] = useState<boolean>(false);
   const { toggleCognitiveMode } = useContext(CognitiveModeContext);
   const bottomRef = useRef<HTMLDivElement>(null); // Ref for the bottom
 
- 
-
   // Fetch data
-  const { data, isLoading, error,fetchNextPage, hasNextPage, isFetchingNextPage } = useGetAllArticles();
+  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetAllArticles();
 
   // Handle cognitive mode toggle
   const handleBrainClick = () => {
@@ -33,13 +29,13 @@ const UserFeed: React.FC = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-          console.log("Bottom reached, fetching next page!"); // Debug log
+          console.log('Bottom reached, fetching next page!'); // Debug log
           fetchNextPage();
         }
       },
       {
         root: null, // Use the viewport as the scroll container
-        rootMargin: "100px", // Trigger when the bottomRef is 100px from the viewport edge
+        rootMargin: '100px', // Trigger when the bottomRef is 100px from the viewport edge
         threshold: 0.5, // Trigger when 50% of the bottomRef is visible
       }
     );
@@ -70,8 +66,8 @@ const UserFeed: React.FC = () => {
               onClick={handleBrainClick}
               className={`cursor-pointer transition-all ${
                 isBrainActive
-                  ? "text-green-600 bg-green-100 rounded-full p-1"
-                  : "text-neutral-50 hover:text-green-600 hover:bg-green-100 hover:rounded-full hover:p-1 transition-all"
+                  ? 'text-green-600 bg-green-100 rounded-full p-1'
+                  : 'text-neutral-50 hover:text-green-600 hover:bg-green-100 hover:rounded-full hover:p-1 transition-all'
               }`}
             />
           </div>
@@ -116,7 +112,7 @@ const UserFeed: React.FC = () => {
             <BlogSkeletonComponent />
           </div>
         )}
-        <div ref={bottomRef} style={{ height: "100px" }} />
+        <div ref={bottomRef} style={{ height: '100px' }} />
         {error && <div>Error: {error.message}</div>}
       </div>
 

@@ -1,11 +1,11 @@
 @use 'variable' as *;
 @use 'mixin' as *;
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+// * {
+//   margin: 0;
+//   padding: 0;
+//   box-sizing: border-box;
+// }
 
 body {
   font-size: 16px;
@@ -24,8 +24,12 @@ h4,
 h5,
 h6 {
   // font-family: var(--instrument-serif-font);
-    font-family: var(--inter-font);
+  font-family: var(--inter-font);
   text-overflow: ellipsis;
+}
+
+button {
+  cursor: pointer;
 }
 
 p,
@@ -39,13 +43,13 @@ select {
   // font-family: var(--roboto-font);
 }
 
-
-div{
+div {
   // font-family: var(--roboto-font);
   font-family: var(--inter-font);
 }
 
-.swiper-button-next,.swiper-button-prev{
-  color: var( --main-green);
-  font-size: .2rem;
+.swiper-button-next,
+.swiper-button-prev {
+  color: var(--main-green);
+  font-size: 0.2rem;
 }

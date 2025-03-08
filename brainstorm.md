@@ -1,5 +1,29 @@
 - Recommended user and other recomended items have duplicates
 - Comment with replies showing 0 reply count, comment with no replies showing >0 replies
+- Find way to extract the actual error message from the backend not the generic axios error in react-query
+
+- Only see more if theere is more
+- You dont need a toast for every success or error; just a few strategically placed ones
+
+- Basic validation: comment should not be empty, comment should not be more than 255 characters,
+- Comments should have see more and see less
+- add profanity checking on frontend
+
+- what shows on feed is recommended articles not all articles
+- once user has viewed, it should not show in recommended articles or at least show with lower priority
+
+- some data should be packaged from backend in one eg article data(article_data, ...reactions, ...comments,)
+- loading icon
+
+- group comments by author before rendering
+- Refreshing not working well or something because requests keep failing
+- Distinguish clearly btween what anonymous users can do and what logged in users can do
+
+- if token refresh fails, redirect to login
+
+- Way to extract the actual words from the html content so the TTS can read it
+
+- Auto reize and compress images
 
 Some Tasks for everyone:
 

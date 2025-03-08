@@ -1,23 +1,18 @@
-import { Send } from "lucide-react";
-import { Comment } from "../../../models/datamodels";
-import { useUser } from "../../../hooks/useUser";
-import { useRef, useState, useEffect } from "react"; // Added useEffect
-import { useCreateComment } from "../hooks";
-import { Spinner } from "../../../components/atoms/Spinner";
-import { toast } from "react-toastify";
+import { useEffect, useRef, useState } from 'react'; // Added useEffect
+import { toast } from 'react-toastify';
+import { useUser } from '../../../hooks/useUser';
+import { Comment } from '../../../models/datamodels';
+import { useCreateComment } from '../hooks';
 
 interface CommentTabProps {
   article_id: string;
   parent_comment_id: string;
 }
 
-const CommentTabLevel2: React.FC<CommentTabProps> = ({
-  article_id,
-  parent_comment_id,
-}) => {
+const CommentTabLevel2: React.FC<CommentTabProps> = ({ article_id, parent_comment_id }) => {
   const { authUser } = useUser();
-  const [comment, setComment] = useState<string>("");
-  const CommentTabLevel2ref = useRef<HTMLInputElement | null>(null); 
+  const [comment, setComment] = useState<string>('');
+  const CommentTabLevel2ref = useRef<HTMLInputElement | null>(null);
 
   // Focus the input field when the component mounts
   useEffect(() => {
@@ -27,7 +22,7 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
   }, []);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       handleCommentSubmit();
     }
   };
@@ -36,7 +31,7 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
 
   const handleCommentSubmit = () => {
     if (!authUser?.id) {
-      toast.error("You must be logged in to comment.");
+      toast.error('You must be logged in to comment.');
       return;
     }
 
@@ -50,11 +45,11 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
 
     mutate(commentValues, {
       onSuccess: () => {
-        toast.success("Replied to comment successfully");
-        setComment("");
+        toast.success('Replied to comment successfully');
+        setComment('');
       },
       onError: () => {
-        toast.error("Failed to reply to comment");
+        toast.error('Failed to reply to comment');
       },
     });
   };
@@ -74,9 +69,8 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
         <button
           onClick={handleCommentSubmit}
           className="ml-2 p-1 text-neutral-100 hover:text-primary-400 transition-colors"
-          disabled={isPending}
-        >
-          {isPending ? <Spinner size={20} /> : <Send size={20} />}
+          disabled={isPending || comment.trim() === ''}>
+          {isPending ? <LuLoader className="animate-spin inline-block mx-1" /> : <LuSend size={20} />}
         </button>
       </div>
     </div>

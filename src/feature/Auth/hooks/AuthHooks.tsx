@@ -1,27 +1,21 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../../context/AuthContext/authContext';
+import { CodeVerify, EmailCode, PhoneCode, PhoneVerify, User } from '../../../models/datamodels';
 import {
-  registerUser,
-  loginUser,
   getEmailVerificationCode,
-  verifyEmailCode,
   getPhoneVerificationCode,
-  verifyPhoneCode,
-  updateUser,
-  refreshAuthTokens,
-  registerWithGoogle,
+  loginUser,
   loginUserWithPhone,
-} from "../api";
-import {
-  User,
-  EmailCode,
-  PhoneCode,
-  CodeVerify,
-  PhoneVerify,
-} from "../../../models/datamodels";
-import { useTokenStorage } from "./useTokenStorage";
-import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../../../context/AuthContext/authContext";
+  refreshAuthTokens,
+  registerUser,
+  registerWithGoogle,
+  updateUser,
+  verifyEmailCode,
+  verifyPhoneCode,
+} from '../api';
+import { useTokenStorage } from './useTokenStorage';
 
 // Hook for registering a user
 export const useRegisterUser = () => {
@@ -30,13 +24,13 @@ export const useRegisterUser = () => {
   const { login } = useContext(AuthContext);
 
   const navigateToCheckMail = (userEmail: EmailCode) => {
-    navigate("/auth/register/checkemail", { state: userEmail });
+    navigate('/auth/register/checkemail', { state: userEmail });
   };
 
   return useMutation({
     mutationFn: (user: User) => registerUser(user),
     onSuccess: (data) => {
-      console.log("User registered:", data);
+      console.log('User registered:', data);
       storeAccessToken(data.tokens.access.token);
       storeRefreshToken(data.tokens.refresh.token);
       login(data.tokens.access.token);
@@ -44,7 +38,8 @@ export const useRegisterUser = () => {
       navigateToCheckMail({ email: data.user.email });
     },
     onError: (error) => {
-      console.error("Error registering user:", error);
+      console.error('Error registering user:', error);
+      return 'Error registering user';
     },
   });
 };
@@ -54,8 +49,8 @@ export const useRegisterUserWithGoogle = () => {
   // // const navigate = useNavigate();
   // const { login } = useContext(AuthContext);
   return useQuery({
-    queryKey: ["registerWithGoogle"],
-    queryFn: () => registerWithGoogle()
+    queryKey: ['registerWithGoogle'],
+    queryFn: () => registerWithGoogle(),
     // onSuccess: (data) => {
     //   console.log("User registered:", data);
     //   storeAccessToken(data.tokens.access.token);
@@ -75,13 +70,13 @@ export const usePhoneRegisterUser = () => {
   const { login } = useContext(AuthContext);
 
   const navigateToCheckPhone = (phonecode: PhoneCode) => {
-    navigate("/auth/register/checkphone", { state: phonecode });
+    navigate('/auth/register/checkphone', { state: phonecode });
   };
 
   return useMutation({
     mutationFn: (user: User) => registerUser(user),
     onSuccess: (data) => {
-      console.log("User registered:", data);
+      console.log('User registered:', data);
       storeAccessToken(data.tokens.access.token);
       storeRefreshToken(data.tokens.refresh.token);
       login(data.tokens.access.token);
@@ -89,7 +84,7 @@ export const usePhoneRegisterUser = () => {
       navigateToCheckPhone({ phone: data.user.phone });
     },
     onError: (error) => {
-      console.error("Error registering user:", error);
+      console.error('Error registering user:', error);
     },
   });
 };
@@ -101,12 +96,12 @@ export const useLoginUser = () => {
   const { login } = useContext(AuthContext);
 
   const navigateToFeed = () => {
-    navigate("/feed");
+    navigate('/feed');
   };
   return useMutation({
     mutationFn: (user: User) => loginUser(user),
     onSuccess: (data) => {
-      console.log("User logged in:", data);
+      console.log('User logged in:', data);
       storeAccessToken(data.tokens.access.token);
       storeRefreshToken(data.tokens.refresh.token);
       login(data.tokens.access.token);
@@ -114,7 +109,7 @@ export const useLoginUser = () => {
       navigateToFeed();
     },
     onError: (error) => {
-      console.error("Error logging in:", error);
+      console.error('Error logging in:', error);
     },
   });
 };
@@ -125,12 +120,12 @@ export const useLoginUserWithPhone = () => {
   const { login } = useContext(AuthContext);
 
   const navigateToFeed = () => {
-    navigate("/feed");
+    navigate('/feed');
   };
   return useMutation({
     mutationFn: (user: User) => loginUserWithPhone(user),
     onSuccess: (data) => {
-      console.log("User logged in:", data);
+      console.log('User logged in:', data);
       storeAccessToken(data.tokens.access.token);
       storeRefreshToken(data.tokens.refresh.token);
       login(data.tokens.access.token);
@@ -138,7 +133,7 @@ export const useLoginUserWithPhone = () => {
       navigateToFeed();
     },
     onError: (error) => {
-      console.error("Error logging in:", error);
+      console.error('Error logging in:', error);
     },
   });
 };
@@ -148,17 +143,17 @@ export const useUpdateUser = () => {
   const navigate = useNavigate();
 
   const navigateToUserProfile = () => {
-    navigate("/feed");
+    navigate('/feed');
   };
 
   return useMutation({
     mutationFn: (user: User) => updateUser(user),
     onSuccess: (data) => {
-      console.log("User updated successfully:", data);
+      console.log('User updated successfully:', data);
       navigateToUserProfile();
     },
     onError: (error) => {
-      console.error("Error updating user:", error);
+      console.error('Error updating user:', error);
     },
   });
 };
@@ -168,10 +163,10 @@ export const useGetEmailCode = () => {
   return useMutation({
     mutationFn: (emailCode: EmailCode) => getEmailVerificationCode(emailCode),
     onSuccess: (data) => {
-      console.log("Email verification code sent:", data);
+      console.log('Email verification code sent:', data);
     },
     onError: (error) => {
-      console.error("Error getting email code:", error);
+      console.error('Error getting email code:', error);
     },
   });
 };
@@ -182,18 +177,18 @@ export const useVerifyEmailCode = () => {
   const navigate = useNavigate();
 
   const navigateToName = () => {
-    navigate("/auth/register/email/two");
+    navigate('/auth/register/email/two');
   };
 
   return useMutation({
     mutationFn: (codeVerify: CodeVerify) => verifyEmailCode(codeVerify),
     onSuccess: (data) => {
-      console.log("Email code verified:", data);
+      console.log('Email code verified:', data);
 
       navigateToName();
     },
     onError: (error) => {
-      console.error("Error verifying email code:", error);
+      console.error('Error verifying email code:', error);
     },
   });
 };
@@ -203,10 +198,10 @@ export const useGetPhoneCode = () => {
   return useMutation({
     mutationFn: (phoneCode: PhoneCode) => getPhoneVerificationCode(phoneCode),
     onSuccess: (data) => {
-      console.log("Phone verification code sent:", data);
+      console.log('Phone verification code sent:', data);
     },
     onError: (error) => {
-      console.error("Error getting phone code:", error);
+      console.error('Error getting phone code:', error);
     },
   });
 };
@@ -216,16 +211,16 @@ export const useVerifyPhoneCode = () => {
   const navigate = useNavigate();
 
   const navigateToName = () => {
-    navigate("/auth/register/phone/two");
+    navigate('/auth/register/phone/two');
   };
   return useMutation({
     mutationFn: (phoneVerify: PhoneVerify) => verifyPhoneCode(phoneVerify),
     onSuccess: (data) => {
-      console.log("Phone code verified:", data);
+      console.log('Phone code verified:', data);
       navigateToName();
     },
     onError: (error) => {
-      console.error("Error verifying phone code:", error);
+      console.error('Error verifying phone code:', error);
     },
   });
 };
@@ -237,7 +232,7 @@ export const useRefreshToken = () => {
   return useMutation({
     mutationFn: () => refreshAuthTokens(getRefreshToken()!),
     onSuccess: (data) => {
-      console.log("Token refreshed:", data);
+      console.log('Token refreshed:', data);
     },
     onError: (error) => {
       console.error(error);

@@ -1,4 +1,5 @@
-import { useCallback } from "react";
+import 'katex/dist/katex.min.css';
+import { useCallback } from 'react';
 import RichTextEditor, {
   Attachment,
   BaseKit,
@@ -10,6 +11,7 @@ import RichTextEditor, {
   CodeBlock,
   Color,
   ColumnActionButton,
+  Editor,
   Emoji,
   Excalidraw,
   ExportPdf,
@@ -29,7 +31,8 @@ import RichTextEditor, {
   Italic,
   Katex,
   LineHeight,
-  Link,
+  Link, // Import the Editor type
+  locale,
   Mention,
   Mermaid,
   MoreMark,
@@ -45,15 +48,12 @@ import RichTextEditor, {
   Twitter,
   Underline,
   Video,
-  Editor, // Import the Editor type
-  locale,
-} from "reactjs-tiptap-editor";
-import "katex/dist/katex.min.css";
-import "reactjs-tiptap-editor/style.css";
-import useTheme from "../../../hooks/useTheme";
-import "../../../styles/shadcn.scss";
-import { convertBase64ToBlob, debounce } from "../../../utils";
-import "../styles/editor.scss";
+} from 'reactjs-tiptap-editor';
+import 'reactjs-tiptap-editor/style.css';
+import useTheme from '../../../hooks/useTheme';
+import '../../../styles/shadcn.scss';
+import { convertBase64ToBlob, debounce } from '../../../utils';
+import '../styles/editor.scss';
 
 // Type for editor content (assuming HTML string output)
 type EditorContent = string;
@@ -85,7 +85,7 @@ const extensions = [
   Highlight,
   BulletList,
   OrderedList,
-  TextAlign.configure({ types: ["heading", "paragraph"], spacer: true }),
+  TextAlign.configure({ types: ['heading', 'paragraph'], spacer: true }),
   Indent,
   LineHeight,
   TaskList.configure({
@@ -100,6 +100,7 @@ const extensions = [
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve(URL.createObjectURL(file));
+          alert('image uploaded');
         }, 500);
       });
     },
@@ -109,6 +110,7 @@ const extensions = [
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve(URL.createObjectURL(file));
+          alert('video uploaded');
         }, 500);
       });
     },
@@ -122,7 +124,7 @@ const extensions = [
   Code.configure({
     toolbar: false,
   }),
-  CodeBlock.configure({ defaultTheme: "dracula" }),
+  CodeBlock.configure({ defaultTheme: 'dracula' }),
   ColumnActionButton,
   Table,
   Iframe,
@@ -185,22 +187,22 @@ function TipTapRichTextEditor({
     []
   );
 
-  locale.setLang("en");
+  locale.setLang('en');
 
   return (
     <div
       className="block max-w-full bg-primary-100 mx-auto my-1 static"
       style={{
         maxWidth: 1024,
-      }}
-    >
+      }}>
       <RichTextEditor
         ref={editorRef}
         output="html"
-        content={"" as EditorContent}
+        content={'' as EditorContent}
         onChangeContent={onValueChange}
         extensions={extensions}
-        dark={theme === "dark"}
+        dark={theme === 'dark'}
+        // hideToolbar={true}
         disabled={false}
         resetCSS
       />

@@ -1,26 +1,24 @@
-import { Send } from "lucide-react";
-import { Comment } from "../../../models/datamodels";
-import { useUser } from "../../../hooks/useUser";
-import { useEffect, useRef, useState } from "react";
-import { useCreateComment } from "../hooks";
-import { Spinner } from "../../../components/atoms/Spinner";
-import {toast} from 'react-toastify'
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
+import { useUser } from '../../../hooks/useUser';
+import { Comment } from '../../../models/datamodels';
+import { useCreateComment } from '../hooks';
 
 interface CommentTabProps {
   article_id: string;
-  setIsCommentSectionOpen: (isOpen: boolean) => void; 
+  setIsCommentSectionOpen: (isOpen: boolean) => void;
 }
 
-const CommentTab: React.FC<CommentTabProps> = ({article_id,setIsCommentSectionOpen}) => {
+const CommentTab: React.FC<CommentTabProps> = ({ article_id, setIsCommentSectionOpen }) => {
   const { authUser } = useUser();
-  const [comment, setComment] = useState<string>("");
-  const CommentTabRef = useRef<HTMLInputElement | null>(null)
+  const [comment, setComment] = useState<string>('');
+  const CommentTabRef = useRef<HTMLInputElement | null>(null);
 
- const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === "Enter") {
-        handleCommentSubmit();
-      }
-    };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleCommentSubmit();
+    }
+  };
 
   const { mutate, isPending } = useCreateComment();
 
@@ -34,16 +32,15 @@ const CommentTab: React.FC<CommentTabProps> = ({article_id,setIsCommentSectionOp
 
     mutate(commentValues, {
       onSuccess: () => {
-        setIsCommentSectionOpen(true); 
-        toast.success("Comment posted successfully");
-        
+        setIsCommentSectionOpen(true);
+        toast.success('Comment posted successfully');
       },
-      onError: () => { 
-        toast.error("Failed to post comment");
+      onError: () => {
+        toast.error('Failed to post comment');
       },
     });
     console.log(commentValues);
-    setComment("");
+    setComment('');
   };
 
   useEffect(() => {
@@ -51,7 +48,7 @@ const CommentTab: React.FC<CommentTabProps> = ({article_id,setIsCommentSectionOp
       CommentTabRef.current.focus();
     }
   }, []);
-  
+
   return (
     <div className="px-4">
       <div className="flex items-center w-full p-2 border border-neutral-300 rounded-full bg-background transition-colors mb-5">
@@ -67,9 +64,8 @@ const CommentTab: React.FC<CommentTabProps> = ({article_id,setIsCommentSectionOp
         <button
           onClick={handleCommentSubmit}
           className="ml-2 p-1 text-neutral-100 hover:text-primary-400 transition-colors"
-          disabled={isPending}
-        >
-          {isPending ? <Spinner size={20} /> : <Send size={20} />}
+          disabled={isPending || comment.trim() === ''}>
+          {isPending ? <LuLoader className="animate-spin inline-block mx-1" /> : <LuSend size={20} />}
         </button>
       </div>
     </div>

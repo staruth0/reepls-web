@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { LuLoader } from 'react-icons/lu';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import { RootState } from '../../../../store';
 import { validatePassword } from '../../../../utils/validatePassword';
 import InputField from '../../components/InputField';
@@ -47,6 +49,12 @@ function RegisterWithEmail1() {
     mutate({ email, password, username });
   };
 
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message);
+    }
+  }, [error]);
+
   return (
     <div className="register__phone__container">
       <div className="insightful__texts">
@@ -66,8 +74,10 @@ function RegisterWithEmail1() {
             inputErrorMessage={t('PasswordErrorMessage')}
           />
         </div>
-        {error && <div className="text-red-500">{error.message}</div>}
-        <button type="submit">{isPending ? 'Loading.....' : t('ContinueButton')}</button>
+        <button type="submit">
+          {isPending && <LuLoader className="animate-spin inline-block mx-4" />}
+          {t('ContinueButton')}
+        </button>
       </form>
     </div>
   );
