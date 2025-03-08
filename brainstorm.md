@@ -1,6 +1,16 @@
+TODO: server connection, cloudinary,
+
 - Recommended user and other recomended items have duplicates
 - Comment with replies showing 0 reply count, comment with no replies showing >0 replies
 - Find way to extract the actual error message from the backend not the generic axios error in react-query
+- Inplace solution for empty id; just return an empty array but this whould be a temporary solution
+- Too many requests(eg AuthorSuggestions)
+
+- Popup when token expires
+
+useUser, subscribe + listen to authState,
+
+===============================================
 
 - Only see more if theere is more
 - You dont need a toast for every success or error; just a few strategically placed ones

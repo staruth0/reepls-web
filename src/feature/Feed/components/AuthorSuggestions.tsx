@@ -36,7 +36,7 @@ const AuthorSuggestions: React.FC = () => {
     <div className="w-full flex flex-col gap-6 mt-4 py-1">
       {recommendedUsers?.slice(0, 4)?.map((user: User, index: number) => (
         <AuthorSugestionComponent
-          key={(user.id as string) + index}
+          key={`${user.id}-${index}`}
           username={user.username!}
           title={user.title || 'Suggested Author'}
           id={user._id || ''}

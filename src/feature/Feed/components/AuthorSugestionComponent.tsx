@@ -12,22 +12,14 @@ interface AuthorSuggestionProps {
 }
 
 const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username, title, id }) => {
-  const { authUser, isLoading } = useUser();
+  const { authUser } = useUser();
   const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
+  const { data: followings } = useGetFollowing(authUser?.id || '');
   const [isFollowing, setIsFollowing] = useState(false);
 
-  const [followings, setFollowings] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (isLoading) return;
-    if (!authUser?.id) return;
-    const { data } = useGetFollowing(authUser?.id!);
-    setFollowings(data || []);
-  }, [authUser?.id]);
-
   const followedIds = useMemo(() => {
-    return followings?.map((following: Follow) => following.followed_id) || [];
+    return followings?.data?.map((following: Follow) => following.followed_id) || [];
   }, [followings]);
 
   useEffect(() => {

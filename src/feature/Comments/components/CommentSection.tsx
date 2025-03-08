@@ -38,7 +38,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id, setIsCommen
         return (
           <>
             <CommentMessage
-              key={(comment._id as string) + index}
+              key={`${comment._id}-${index}`}
               content={comment.content!}
               createdAt={comment.createdAt!}
               author_id={comment.author_id!}
