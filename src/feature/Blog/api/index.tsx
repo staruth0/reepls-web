@@ -23,9 +23,10 @@ const getArticleByAuthorId = async (authorId: string) => {
 };
 
 // Fetch all articles
-const getAllArticles = async () => {
-  console.log("Fetching all articles");
-  const { data } = await apiClient.get("/articles?page=1&limit=100");
+// Fetch articles for a specific page
+const getAllArticles = async ({ pageParam = 1 }) => {
+  console.log(`Fetching articles for page ${pageParam}`);
+  const { data } = await apiClient.get(`/articles?page=${pageParam}&limit=10`);
   return data;
 };
 

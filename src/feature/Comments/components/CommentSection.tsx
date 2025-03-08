@@ -2,17 +2,19 @@ import React, { useEffect } from "react";
 import CommentMessage from "./CommentMessage";
 import CommentTab from "./CommentTab";
 import { useGetCommentsByArticleId } from "../hooks";
-import { Comment } from "../../../models/datamodels";
+import { Comment, User } from "../../../models/datamodels";
 import { LuX } from "react-icons/lu";
 
 interface CommentSectionProps {
   article_id: string;
   setIsCommentSectionOpen: (isOpen: boolean) => void;
+  author_of_post: User;
 }
 
 const CommentSection: React.FC<CommentSectionProps> = ({
   article_id,
   setIsCommentSectionOpen,
+  author_of_post,
 }) => {
   const {
     data: articleComments,
@@ -57,6 +59,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
               comment_id={comment._id!}
               replies={comment.replies!}
               author={comment.author!}
+              author_of_post={author_of_post}
             />
           </>
         );

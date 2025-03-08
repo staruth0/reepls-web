@@ -43,9 +43,10 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      console.log("Displayed user:", user);
+      console.log("Displayed username:", user?.username);
       console.log("Username from params:", username);
-      console.log(username === authUser?.username);
+      console.log('authUser',authUser)
+      console.log(username?.trim() === authUser?.username?.trim());
     }
   }, [user, username]);
 

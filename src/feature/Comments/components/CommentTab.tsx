@@ -1,7 +1,7 @@
 import { Send } from "lucide-react";
 import { Comment } from "../../../models/datamodels";
 import { useUser } from "../../../hooks/useUser";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCreateComment } from "../hooks";
 import { Spinner } from "../../../components/atoms/Spinner";
 import {toast} from 'react-toastify'
@@ -14,6 +14,7 @@ interface CommentTabProps {
 const CommentTab: React.FC<CommentTabProps> = ({article_id,setIsCommentSectionOpen}) => {
   const { authUser } = useUser();
   const [comment, setComment] = useState<string>("");
+  const CommentTabRef = useRef<HTMLInputElement | null>(null)
 
  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === "Enter") {
@@ -45,6 +46,12 @@ const CommentTab: React.FC<CommentTabProps> = ({article_id,setIsCommentSectionOp
     setComment("");
   };
 
+  useEffect(() => {
+    if (CommentTabRef.current) {
+      CommentTabRef.current.focus();
+    }
+  }, []);
+  
   return (
     <div className="px-4">
       <div className="flex items-center w-full p-2 border border-neutral-300 rounded-full bg-background transition-colors mb-5">
@@ -55,6 +62,7 @@ const CommentTab: React.FC<CommentTabProps> = ({article_id,setIsCommentSectionOp
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           onKeyDown={handleKeyDown}
+          ref={CommentTabRef}
         />
         <button
           onClick={handleCommentSubmit}

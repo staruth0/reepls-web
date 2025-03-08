@@ -13,10 +13,11 @@ interface MessageComponentProps {
   article_id: string;
   comment_id: string;
   author: User;
-  replies:Comment[]
+  replies: Comment[];
+  author_of_post:User;
 }
 
-const CommentMessage: React.FC<MessageComponentProps> = ({content,createdAt,isSameAuthorAsPrevious,article_id,comment_id,replies,author}) => {
+const CommentMessage: React.FC<MessageComponentProps> = ({content,createdAt,isSameAuthorAsPrevious,article_id,comment_id,replies,author,author_of_post}) => {
   // const { user } = useGetUserById(author_id);
   const [isLevelTwoCommentOpen, setIsLevelTwoCommentOpen] = useState(false)
 
@@ -30,6 +31,8 @@ const CommentMessage: React.FC<MessageComponentProps> = ({content,createdAt,isSa
       console.error("Error formatting date:", error);
     }
   };
+
+  const isAuthor = author?._id === author_of_post?.id;
 
   return (
     <div
@@ -49,10 +52,17 @@ const CommentMessage: React.FC<MessageComponentProps> = ({content,createdAt,isSa
             <div className="font-semibold flex items-center justify-between text-neutral-50 text-[14px]">
               <div className="flex items-center gap-2">
                 {author?.username}
-                <LuBadgeCheck
-                  className="text-primary-500 size-4"
-                  strokeWidth={2.5}
-                />
+                {author?.is_verified_writer && (
+                  <LuBadgeCheck
+                    className="text-primary-500 size-4"
+                    strokeWidth={2.5}
+                  />
+                )}
+                {isAuthor && (
+                  <div className="px-2 bg-secondary-400 text-[12px] text-plain-b rounded">
+                    Author
+                  </div>
+                )}
               </div>
               <div className="absolute right-2 text-[12px] font-light">
                 {formatDate()}
@@ -85,6 +95,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({content,createdAt,isSa
           article_id={article_id}
           comment_id={comment_id!}
           comments={replies}
+          author_of_post={author_of_post}
         />
       )}
     </div>

@@ -10,16 +10,11 @@ interface MessageComponentProps {
   author_id: string;
   isSameAuthorAsPrevious: boolean;
   author: User;
+  author_of_post:User;
 }
 
-const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
-  content,
-  createdAt,
-  isSameAuthorAsPrevious,
-  author,
-}) => {
-
-
+const CommentMessageLevel2: React.FC<MessageComponentProps> = ({ content, createdAt, isSameAuthorAsPrevious, author, author_of_post }) => {
+ 
   const formatDate = () => {
     try {
       if (typeof createdAt === "string") {
@@ -30,6 +25,7 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
       console.error("Error formatting date:", error);
     }
   };
+  const isAuthor = author?._id === author_of_post?.id;
 
   return (
     <div
@@ -49,10 +45,17 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
             <div className="font-semibold flex items-center justify-between text-neutral-50 text-[14px]">
               <div className="flex items-center gap-2">
                 {author?.username}
-                <LuBadgeCheck
-                  className="text-primary-500 size-4"
-                  strokeWidth={2.5}
-                />
+                {author?.is_verified_writer && (
+                    <LuBadgeCheck
+                         className="text-primary-500 size-4"
+                         strokeWidth={2.5}
+                                 />
+                         )}
+                {isAuthor && (
+                   <div className="px-2 bg-secondary-400 text-[12px] text-plain-b rounded">
+                       Author
+                   </div>
+                               )}
               </div>
               <div className="absolute right-2 text-[12px] font-light">
                 {formatDate()}

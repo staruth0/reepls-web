@@ -29,7 +29,7 @@ const Message = (props: messageTypes) => {
         <div className="flex flex-col justify-center items-start gap-1">
           <div className="flex items-center gap-2">
             <h2 className="text-base font-semibold m-0 line-clamp-1 text-ellipsis">{props.author?.username || 'Default'}</h2>
-            <LuBadgeCheck className="text-primary-400 size-5" strokeWidth={2.5} />
+           {props.author?.is_verified_writer && <LuBadgeCheck className="text-primary-400 size-5" strokeWidth={2.5} />}
           </div>
 
           <p

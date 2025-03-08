@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient ,useInfiniteQuery} from "@tanstack/react-query";
 import {
   createArticle,
   getArticleById,
@@ -50,12 +50,26 @@ export const useGetArticlesByAuthorId = (authorId: string) => {
 };
 
 // Hook for fetching all articles
+
+
+// Hook for fetching all articles with infinite scrolling
+// Hook for fetching all articles with infinite scrolling
 export const useGetAllArticles = () => {
-  return useQuery({
-    queryKey: ["articles"],
-    queryFn: () => getAllArticles(),
+  return useInfiniteQuery({
+    queryKey: ['articles'],
+    queryFn: getAllArticles,
+    initialPageParam: 1, // Start fetching from page 1
+    getNextPageParam: (lastPage, allPages) => {
+      console.log('lastpage',lastPage)
+      console.log('allpage',allPages)
+      const articlesFetched = allPages.length * 10; // 10 articles per page
+      if (articlesFetched < lastPage.totalArticles) {
+        return allPages.length + 1; // Next page number
+      }
+      return undefined; // Stop when we’ve fetched all articles
+    },
   });
-};
+}
 
 // Hook for fetching followed articles
 export const useGetFollowedArticles = () => {

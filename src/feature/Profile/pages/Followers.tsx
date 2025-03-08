@@ -27,9 +27,9 @@ const Followers: React.FC = () => {
   const followings = followingsData?.data || [];
 
   useEffect(() => {
-    if (followers) console.log("followers", followers);
-    if (followings) console.log("followings", followings);
-  }, [followers, followings]);
+    if (followersData) console.log("followers", followersData);
+    if (followingsData) console.log("followings", followingsData);
+  }, [followersData, followingsData]);
 
   return (
     <div className={`grid grid-cols-[4fr_1.66fr] `}>
@@ -56,8 +56,8 @@ const Followers: React.FC = () => {
                 {followings.length > 0 ? (
                   followings.map((following: Follow) => (
                     <AuthorComponent
-                      key={following.followed_id}
-                      user_id={following.followed_id} 
+                      key={following?.followed_id?.id}
+                      user={following.followed_id} 
                     />
                   ))
                 ) : (
@@ -72,8 +72,8 @@ const Followers: React.FC = () => {
                 {followers.length > 0 ? (
                   followers.map((follower: Follow) => (
                     <AuthorComponent
-                      key={follower.follower_id}
-                      user_id={follower.follower_id} 
+                      key={follower?.follower_id?.id}
+                      user={follower.follower_id} 
                     />
                   ))
                 ) : (

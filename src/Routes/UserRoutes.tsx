@@ -4,6 +4,7 @@ import ArticleRead from "../feature/Feed/ArticleRead";
 import CommuniqueDetail from "../feature/Feed/CommuniqueDetail";
 import CommuniqueList from "../feature/Feed/CommuniqueList";
 import UserFeed from "../feature/Feed/Feed";
+import FeedFollowing from "../feature/Feed/FeedFollowings";
 import Notifications from "../feature/Notifications/pages";
 import Profile from "../feature/Profile/pages";
 import EditProfile from "../feature/Profile/pages/EditProfile";
@@ -22,6 +23,10 @@ const UserRoutes = {
     {
       path: "feed",
       element: <UserFeed />,
+    },
+    {
+      path: "feed/following",
+      element: <FeedFollowing />,
     },
     {
       path: "explore",

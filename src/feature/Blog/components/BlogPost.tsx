@@ -61,6 +61,7 @@ const BlogPost: React.FC<BlogPostProps> = ({
         message={content}
         article_id={article_id}
         setIsCommentSectionOpen={toggleCommentSection} 
+        author_of_post={user}
       />
     </div>
   );
