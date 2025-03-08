@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { LuLoader } from 'react-icons/lu';
 import { useLocation } from 'react-router-dom';
 import OTPInput from '../../components/OTPInput';
 import { useGetEmailCode, useVerifyEmailCode } from '../../hooks/AuthHooks';
 import '../../styles/authpages.scss';
-
 function Checkemail() {
   const { t } = useTranslation();
   const location = useLocation();
   const { email } = location.state || {};
-   const [isCodeResent, setIsCodeResent] = useState(false);
+  const [isCodeResent, setIsCodeResent] = useState(false);
 
   const [otp, setOtp] = useState<string>('');
 
@@ -38,7 +38,7 @@ function Checkemail() {
 
   // Function to handle resend link
   const handleResendCode = () => {
-      setIsCodeResent(true);
+    setIsCodeResent(true);
     handleCodeVerification();
   };
 
@@ -53,19 +53,16 @@ function Checkemail() {
   return (
     <div className="register__phone__container">
       <div className="insightful__texts">
-        <div>{t("CheckMailHeader")}</div>
-        <div className="code__message">{t("CheckMailMessage")}</div>
+        <div>{t('CheckMailHeader')}</div>
+        <div className="code__message">{t('CheckMailMessage')}</div>
       </div>
       <OTPInput length={6} onComplete={handleOtpComplete} />
       {CodeFetch.error && <div className="text-red-500">Fetching Code</div>}
-      {CodeVerify.error && (
-        <div className="text-red-500">
-          An Error Occured While Verifying the code
-        </div>
-      )}
+      {CodeVerify.error && <div className="text-red-500">An Error Occured While Verifying the code</div>}
       <form onSubmit={handleSubmit}>
         <button type="submit">
-          {CodeVerify.isPending ? "Verifying....." : t("VerifyButton")}
+          {CodeVerify.isPending && <LuLoader className="animate-spin text-primary-400 inline-block mx-4" />}
+          {CodeVerify.isPending ? 'Verifying....' : t('VerifyButton')}
         </button>
       </form>
       <div className="bottom__links">
@@ -73,12 +70,9 @@ function Checkemail() {
           <div> Code Resent: Check your email</div>
         ) : (
           <div className="resend__text">
-            {t("ResendPrompt")}
-            <div
-              className="bottom__link_resend cursor-pointer hover:underline"
-              onClick={handleResendCode}
-            >
-              {t("ResendButton")}
+            {t('ResendPrompt')}
+            <div className="bottom__link_resend cursor-pointer hover:underline" onClick={handleResendCode}>
+              {t('ResendButton')}
             </div>
           </div>
         )}

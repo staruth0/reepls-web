@@ -4,7 +4,6 @@ import { Comment, User } from '../../../models/datamodels';
 import { useGetCommentsByArticleId } from '../hooks';
 import CommentMessage from './CommentMessage';
 import CommentTab from './CommentTab';
-
 interface CommentSectionProps {
   article_id: string;
   setIsCommentSectionOpen: (isOpen: boolean) => void;
@@ -18,8 +17,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id, setIsCommen
     console.log(articleComments?.data);
   }, [article_id, articleComments?.data]);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error loading comments</div>;
+  if (isLoading) return <LuLoader className="animate-spin text-primary-400 text-xl m-4" />;
+  if (isError)
+    return (
+      <div>
+        <LuCircleAlert className="text-red-500 m-4" /> Error loading comments
+      </div>
+    );
 
   return (
     <div className="flex flex-col gap-2 ">

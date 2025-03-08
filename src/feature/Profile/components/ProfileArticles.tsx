@@ -1,21 +1,27 @@
-import React from "react";
-import { useGetArticlesByAuthorId } from "../../Blog/hooks/useArticleHook";
-import BlogPost from "../../Blog/components/BlogPost";
-import { Article } from "../../../models/datamodels";
+import React, { useEffect } from 'react';
+import { LuLoader } from 'react-icons/lu';
+import { toast } from 'react-toastify';
+import { Article } from '../../../models/datamodels';
+import BlogPost from '../../Blog/components/BlogPost';
+import { useGetArticlesByAuthorId } from '../../Blog/hooks/useArticleHook';
 
 interface ProfileArticlesProps {
   authorId: string;
 }
 
 const ProfileArticles: React.FC<ProfileArticlesProps> = ({ authorId }) => {
-  const { data, isLoading, error } = useGetArticlesByAuthorId(authorId || "");
-
+  const { data, isLoading, error } = useGetArticlesByAuthorId(authorId!);
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message);
+    }
+  }, [error]);
   return (
     <div>
       {isLoading ? (
-        <p>Loading...</p>
+        <LuLoader className="animate-spin text-primary-400 text-xl m-4" />
       ) : error ? (
-        <div>{error.message}</div>
+        <div className="text-red-500">{error.message}</div>
       ) : data && data.length > 0 ? (
         <div>
           {data.map((article: Article) => (

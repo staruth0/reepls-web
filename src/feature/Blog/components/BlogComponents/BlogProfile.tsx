@@ -1,32 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { LuBadgeCheck } from "react-icons/lu";
-import {
-  EllipsisVertical,
-  Bookmark,
-  EyeOff,
-  UserPlus,
-  Share2,
-  X,
-} from "lucide-react";
-import { profileAvatar } from "../../../../assets/icons";
-import { useRoute } from "../../../../hooks/useRoute";
-import { formatDateWithMonth } from "../../../../utils/dateFormater";
-import "./Blog.scss";
-import {
-  useFollowUser,
-  useGetFollowing,
-  useUnfollowUser,
-} from "../../../Follow/hooks";
-import {
-  useSaveArticle,
-  useRemoveSavedArticle,
-  useGetSavedArticles,
-} from "../../../Saved/hooks";
-import { useUser } from "../../../../hooks/useUser";
-import { Article, Follow, User } from "../../../../models/datamodels";
-import { toast } from "react-toastify";
-import SharePopup from "../../../../components/molecules/share/SharePopup";
-import { useLocation } from "react-router-dom";
+import { Bookmark, EllipsisVertical, EyeOff, Share2, UserPlus, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { LuBadgeCheck } from 'react-icons/lu';
+import { useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { profileAvatar } from '../../../../assets/icons';
+import SharePopup from '../../../../components/molecules/share/SharePopup';
+import { useRoute } from '../../../../hooks/useRoute';
+import { useUser } from '../../../../hooks/useUser';
+import { Article, Follow, User } from '../../../../models/datamodels';
+import { formatDateWithMonth } from '../../../../utils/dateFormater';
+import { useFollowUser, useGetFollowing, useUnfollowUser } from '../../../Follow/hooks';
+import { useGetSavedArticles, useRemoveSavedArticle, useSaveArticle } from '../../../Saved/hooks';
+import './Blog.scss';
 
 interface BlogProfileProps {
   date: string;
@@ -36,7 +21,7 @@ interface BlogProfileProps {
   title: string;
 }
 
-const BlogProfile: React.FC<BlogProfileProps> = ({user,date,article_id,title,content}) => {
+const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title, content }) => {
   const { authUser } = useUser();
   const { goToProfile } = useRoute();
   const [showMenu, setShowMenu] = useState(false);
@@ -44,8 +29,8 @@ const BlogProfile: React.FC<BlogProfileProps> = ({user,date,article_id,title,con
   const location = useLocation();
 
   const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
-  const { mutate: unfollowUser, isPending: isUnfollowPending } =useUnfollowUser();
-  const { data: followings } = useGetFollowing(authUser?.id || "");
+  const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
+  const { data: followings } = useGetFollowing(authUser?.id || '');
   const { mutate: saveArticle, isPending: isSavePending } = useSaveArticle();
   const { mutate: removeSavedArticle, isPending: isRemovePending } = useRemoveSavedArticle();
   const { data: savedArticles } = useGetSavedArticles();
@@ -65,18 +50,18 @@ const BlogProfile: React.FC<BlogProfileProps> = ({user,date,article_id,title,con
     if (saved) {
       removeSavedArticle(article_id, {
         onSuccess: () => {
-          toast.success("Article removed from saved");
+          toast.success('Article removed from saved');
           setSaved(false);
         },
-        onError: () => toast.error("Failed to remove article"),
+        onError: () => toast.error('Failed to remove article'),
       });
     } else {
       saveArticle(article_id, {
         onSuccess: () => {
-          toast.success("Article saved successfully");
+          toast.success('Article saved successfully');
           setSaved(true);
         },
-        onError: () => toast.error("Failed to save article"),
+        onError: () => toast.error('Failed to save article'),
       });
     }
   };
@@ -85,19 +70,18 @@ const BlogProfile: React.FC<BlogProfileProps> = ({user,date,article_id,title,con
     if (isFollowPending || isUnfollowPending) return;
 
     if (isFollowing) {
-      unfollowUser(user?.id || "", {
+      unfollowUser(user?.id || '', {
         onSuccess: () => {
-          toast.success("User unfollowed successfully");
-        
+          toast.success('User unfollowed successfully');
         },
-        onError: () => toast.error("Failed to unfollow user"),
+        onError: () => toast.error('Failed to unfollow user'),
       });
     } else {
-      followUser(user?.id || "", {
+      followUser(user?.id || '', {
         onSuccess: () => {
-          toast.success("User followed successfully");
+          toast.success('User followed successfully');
         },
-        onError: () => toast.error("Failed to follow user"),
+        onError: () => toast.error('Failed to follow user'),
       });
     }
   };
@@ -109,29 +93,25 @@ const BlogProfile: React.FC<BlogProfileProps> = ({user,date,article_id,title,con
 
   useEffect(() => {
     console.log('followings', followings);
-    const isSaved = savedArticles?.some(
-      (article: Article) => article._id === article_id
-    );
+    const isSaved = savedArticles?.some((article: Article) => article._id === article_id);
     setSaved(isSaved || false);
-  }, [savedArticles, article_id,followings]);
+  }, [savedArticles, article_id, followings]);
 
   const getFollowStatusText = (isMenu = false) => {
-    if (isFollowPending) return "Following...";
-    if (isUnfollowPending) return "Unfollowing...";
-    return isFollowing ? "Following" : isMenu ? "Follow author" : "Follow";
+    if (isFollowPending) return 'Following...';
+    if (isUnfollowPending) return 'Unfollowing...';
+    return isFollowing ? 'Following' : isMenu ? 'Follow author' : 'Follow';
   };
 
   const getSaveStatusText = () => {
-    if (isSavePending) return "Saving...";
-    if (isRemovePending) return "Removing...";
-    return saved ? "Unsave Post" : "Add To Saved";
+    if (isSavePending) return 'Saving...';
+    if (isRemovePending) return 'Removing...';
+    return saved ? 'Unsave Post' : 'Add To Saved';
   };
 
   const articleUrl = `https://reepls.netlify.app/posts/article/${article_id}`;
-  const articleTitle = `${
-    title ? title : content.split(" ").slice(0, 10).join(" ") + "..."
-    }`;
-  
+  const articleTitle = `${title ? title : content.split(' ').slice(0, 10).join(' ') + '...'}`;
+
   const isCurrentAuthorArticle = user?.id === authUser?.id;
 
   return (
@@ -139,28 +119,22 @@ const BlogProfile: React.FC<BlogProfileProps> = ({user,date,article_id,title,con
       <img
         src={profileAvatar}
         alt="avatar"
-        onClick={() => handleProfileClick(user?.username || "")}
+        onClick={() => handleProfileClick(user?.username || '')}
         className="cursor-pointer"
       />
       <div className="profile-info">
         <div className="profile-name">
-          <p
-            className="hover:underline cursor-pointer"
-            onClick={() => handleProfileClick(user?.username || "")}
-          >
-            {user?.username || "Default User"}
+          <p className="hover:underline cursor-pointer" onClick={() => handleProfileClick(user?.username || '')}>
+            {user?.username || 'Default User'}
           </p>
-          {user?.is_verified_writer && (
-            <LuBadgeCheck className="size-4 text-primary-400 ml-1" />
-          )}
-          {!location.pathname.includes("/feed/following") && (
+          {user?.is_verified_writer && <LuBadgeCheck className="size-4 text-primary-400 ml-1" />}
+          {!location.pathname.includes('/feed/following') && (
             <div>
-             {!isCurrentAuthorArticle && <span
-                className="cursor-pointer text-primary-400 hover:underline ml-1"
-                onClick={handleFollowClick}
-              >
-                {getFollowStatusText()}
-              </span>}
+              {!isCurrentAuthorArticle && (
+                <span className="cursor-pointer text-primary-400 hover:underline ml-1" onClick={handleFollowClick}>
+                  {getFollowStatusText()}
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -169,27 +143,17 @@ const BlogProfile: React.FC<BlogProfileProps> = ({user,date,article_id,title,con
       </div>
       <div className="relative">
         {showMenu ? (
-          <X
-            className="size-4 cursor-pointer"
-            onClick={() => setShowMenu(!showMenu)}
-          />
+          <X className="size-4 cursor-pointer" onClick={() => setShowMenu(!showMenu)} />
         ) : (
-          <EllipsisVertical
-            className="size-4 cursor-pointer"
-            onClick={() => setShowMenu(!showMenu)}
-          />
+          <EllipsisVertical className="size-4 cursor-pointer" onClick={() => setShowMenu(!showMenu)} />
         )}
         {showMenu && (
           <>
-            <div
-              className="fixed inset-0 bg-black opacity-0 z-40"
-              onClick={() => setShowMenu(false)}
-            ></div>
+            <div className="fixed inset-0 bg-black opacity-0 z-40" onClick={() => setShowMenu(false)}></div>
             <div className="absolute right-0 top-6 bg-neutral-800 shadow-md rounded-md p-2 w-52 text-neutral-50 z-50">
               <div
                 className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-                onClick={handleSavedArticle}
-              >
+                onClick={handleSavedArticle}>
                 <Bookmark size={18} className="text-neutral-500" />
                 <div>{getSaveStatusText()}</div>
               </div>
@@ -198,28 +162,20 @@ const BlogProfile: React.FC<BlogProfileProps> = ({user,date,article_id,title,con
               </div>
               <div
                 className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-                onClick={handleFollowClick}
-              >
+                onClick={handleFollowClick}>
                 <UserPlus size={18} className="text-neutral-500" />
                 {getFollowStatusText(true)}
               </div>
               <div
                 className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-                onClick={handleShareClick}
-              >
+                onClick={handleShareClick}>
                 <Share2 size={18} className="text-neutral-500" /> Share
               </div>
             </div>
           </>
         )}
       </div>
-      {showSharePopup && (
-        <SharePopup
-          url={articleUrl}
-          title={articleTitle}
-          onClose={() => setShowSharePopup(false)}
-        />
-      )}
+      {showSharePopup && <SharePopup url={articleUrl} title={articleTitle} onClose={() => setShowSharePopup(false)} />}
     </div>
   );
 };

@@ -1,30 +1,28 @@
-import React, { useState } from "react";
-import InputField from "../components/InputField";
-import "../styles/authpages.scss";
+import React, { useState } from 'react';
+import InputField from '../components/InputField';
+import '../styles/authpages.scss';
 // import {useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next"; 
-import { validatePassword } from "../../../utils/validatePassword";
-import { useStoreCredential } from "../hooks/useStoreCredential";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store";
-import { google } from "../../../assets/icons";
-import { useLoginUser } from "../hooks/AuthHooks";
+import { useTranslation } from 'react-i18next';
+import { LuLoader } from 'react-icons/lu';
+import { useSelector } from 'react-redux';
+import { google } from '../../../assets/icons';
+import { RootState } from '../../../store';
+import { validatePassword } from '../../../utils/validatePassword';
+import { useLoginUser } from '../hooks/AuthHooks';
+import { useStoreCredential } from '../hooks/useStoreCredential';
 
 function Loginwithemail() {
   const { t } = useTranslation();
   const { storeEmail, storePassword } = useStoreCredential();
-  const { email: enteredEmail, password: enteredPassword } = useSelector(
-    (state: RootState) => state.user
-  );
+  const { email: enteredEmail, password: enteredPassword } = useSelector((state: RootState) => state.user);
 
   //custom'hooks
   const Login = useLoginUser();
   // const { storeAccessToken,storeRefreshToken } = useTokenStorage();
 
-
   //states
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [passwordInputError, setPasswordInputError] = useState<boolean>(false);
 
   //navigate
@@ -36,7 +34,7 @@ function Loginwithemail() {
     setPassword(passwordValue);
     storePassword(passwordValue);
 
-    if (validatePassword(passwordValue) || passwordValue === "") {
+    if (validatePassword(passwordValue) || passwordValue === '') {
       setPasswordInputError(false);
     } else {
       setPasswordInputError(true);
@@ -64,39 +62,38 @@ function Loginwithemail() {
   return (
     <div className="register__phone__container">
       <div className="insightful__texts">
-        <div>{t("GetInformed")}</div>
-        <p>{t("Enter your email and password to sign in")}</p>
+        <div>{t('GetInformed')}</div>
+        <p>{t('Enter your email and password to sign in')}</p>
       </div>
       <form onSubmit={handleSubmit}>
         <InputField
           textValue={email}
-          label={t("EmailLabel")}
+          label={t('EmailLabel')}
           type="email"
-          placeholder={t("EmailPlaceholder")}
+          placeholder={t('EmailPlaceholder')}
           handleInputChange={handleEmailChange}
         />
         <InputField
           textValue={password}
-          label={t("PasswordLabel")}
+          label={t('PasswordLabel')}
           type="password"
-          placeholder={t("PasswordPlaceholder")}
+          placeholder={t('PasswordPlaceholder')}
           handleInputChange={handlePasswordChange}
           isInputError={passwordInputError}
-          inputErrorMessage={t("IncorrectPasswordMessage")}
+          inputErrorMessage={t('IncorrectPasswordMessage')}
         />
-        {Login.error && <div >{Login.error.message}</div>}
+        {Login.error && <div>{Login.error.message}</div>}
         <button type="submit" className=" hover:text-white">
-          {Login.isPending ? "Loging in......" : t("ContinueButton")}
+          {Login.isPending && <LuLoader className="animate-spin text-primary-400 inline-block mx-4" />}
+          {Login.isPending ? 'Loging in......' : t('ContinueButton')}
         </button>
         <div className="divider">
-          <p>{t("OrDivider")}</p>
+          <p>{t('OrDivider')}</p>
         </div>
-        <div
-          className="flex items-center justify-center gap-2 bg-background rounded-full px-2 py-3 text-neutral-50 shadow-md hover:shadow-none cursor-pointer"
-        >
-         <img src={google} alt="google_image" className="size-6" />
-                   <span>{t("Create account with google")}</span>
-        </div>
+        <button type="button" className="create__account__btn hover:bg-primary-500 hover:text-white">
+          <img src={google} alt="google_image" />
+          <span className="text-neutral-100 ">{t('Create account with google')}</span>
+        </button>
       </form>
       <div className="bottom__links">
         {/* <div className="alternate__email" onClick={navigateToSignInWithPhone}>

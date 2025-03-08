@@ -1,70 +1,65 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { LuBadgeCheck } from "react-icons/lu";
-import { useUser } from "../../../hooks/useUser";
-import {
-  useFollowUser,
-  useGetFollowing,
-  useUnfollowUser,
-} from "../../Follow/hooks";
-import { Follow } from "../../../models/datamodels";
-import { toast } from "react-toastify";
+import React, { useEffect, useMemo, useState } from 'react';
+import { LuBadgeCheck } from 'react-icons/lu';
+import { toast } from 'react-toastify';
+import { useUser } from '../../../hooks/useUser';
+import { Follow } from '../../../models/datamodels';
+import { useFollowUser, useGetFollowing, useUnfollowUser } from '../../Follow/hooks';
 
 interface AuthorSuggestionProps {
   username: string;
-  title: string; 
-  id: string; 
+  title: string;
+  id: string;
 }
 
-const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({
-  username,
-  title,
-  id, 
-}) => {
-  const { authUser } = useUser();
+const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username, title, id }) => {
+  const { authUser, isLoading } = useUser();
   const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
-  const { data: followings } = useGetFollowing(authUser?.id || "");
   const [isFollowing, setIsFollowing] = useState(false);
 
-  
-  const followedIds = useMemo(() => {
-    return (
-      followings?.data?.map((following: Follow) => following.followed_id) || []
-    );
-  }, [followings]); 
+  const [followings, setFollowings] = useState<any[]>([]);
 
   useEffect(() => {
-    setIsFollowing(followedIds.includes(id)); 
-  }, [followedIds, id]); 
+    if (isLoading) return;
+    if (!authUser?.id) return;
+    const { data } = useGetFollowing(authUser?.id!);
+    setFollowings(data || []);
+  }, [authUser?.id]);
+
+  const followedIds = useMemo(() => {
+    return followings?.map((following: Follow) => following.followed_id) || [];
+  }, [followings]);
+
+  useEffect(() => {
+    setIsFollowing(followedIds.includes(id));
+  }, [followedIds, id]);
 
   const handleFollowClick = () => {
     if (isFollowPending || isUnfollowPending) return;
 
     if (isFollowing) {
       unfollowUser(id, {
-      
         onSuccess: () => {
-          toast.success("User unfollowed successfully");
-          setIsFollowing(false); 
+          toast.success('User unfollowed successfully');
+          setIsFollowing(false);
         },
-        onError: () => toast.error("Failed to unfollow user"),
+        onError: () => toast.error('Failed to unfollow user'),
       });
     } else {
       followUser(id, {
-      
         onSuccess: () => {
-          toast.success("User followed successfully");
-          setIsFollowing(true); 
+          toast.success('User followed successfully');
+          setIsFollowing(true);
         },
-        onError: () => toast.error("Failed to follow user"),
+        onError: () => toast.error('Failed to follow user'),
       });
     }
   };
 
   const getFollowStatusText = () => {
-    if (isFollowPending) return "Following...";
-    if (isUnfollowPending) return "Unfollowing...";
-    return isFollowing ? "Following" : "Follow";
+    if (isFollowPending) return 'Following...';
+    if (isUnfollowPending) return 'Unfollowing...';
+    return isFollowing ? 'Following' : 'Follow';
   };
 
   const initial = username.charAt(0).toUpperCase();
@@ -78,17 +73,9 @@ const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({
 
         <div className="flex flex-col justify-center items-start gap-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold m-0 line-clamp-1 text-[15px]">
-              {username}
-            </h2>
-            <LuBadgeCheck
-              className="text-primary-400 size-5"
-              strokeWidth={2.5}
-            />
-            <div
-              className="text-primary-400 text-[13px]  cursor-pointer hover:underline"
-              onClick={handleFollowClick}
-            >
+            <h2 className="text-base font-semibold m-0 line-clamp-1 text-[15px]">{username}</h2>
+            <LuBadgeCheck className="text-primary-400 size-5" strokeWidth={2.5} />
+            <div className="text-primary-400 text-[13px]  cursor-pointer hover:underline" onClick={handleFollowClick}>
               {getFollowStatusText()}
             </div>
           </div>

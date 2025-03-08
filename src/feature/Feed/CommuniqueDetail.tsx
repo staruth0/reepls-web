@@ -1,12 +1,13 @@
-import React from "react";
-import Topbar from "../../components/atoms/Topbar/Topbar";
-import Communique from "./components/Communique/Communique";
+import React from 'react';
+import Topbar from '../../components/atoms/Topbar/Topbar';
+import Communique from './components/Communique/Communique';
 
-import BlogProfile from "../Blog/components/BlogComponents/BlogProfile";
-import PostDetail from "../../components/molecules/sidebar/PostDetail";
-import "./feed.scss";
-import { useParams } from "react-router-dom";
-import { useGetArticleById } from "../Blog/hooks/useArticleHook";
+import { LuLoader } from 'react-icons/lu';
+import { useParams } from 'react-router-dom';
+import PostDetail from '../../components/molecules/sidebar/PostDetail';
+import BlogProfile from '../Blog/components/BlogComponents/BlogProfile';
+import { useGetArticleById } from '../Blog/hooks/useArticleHook';
+import './feed.scss';
 
 const CommuniqueDetail: React.FC = () => {
   const { id } = useParams();
@@ -18,7 +19,7 @@ const CommuniqueDetail: React.FC = () => {
       <div className="Feed__Posts border-r-[1px] border-neutral-500 pb-10">
         <Topbar>Communique</Topbar>
         {isLoading ? (
-          <div> loading.....</div>
+          <LuLoader className="animate-spin text-primary-400 text-4xl mt-4" />
         ) : (
           <div className="px-20 mt-10">
             <BlogProfile
