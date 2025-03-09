@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import InputField from "../components/InputField";
 import "../styles/authpages.scss";
-// import {useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next"; 
 import { validatePassword } from "../../../utils/validatePassword";
 import { useStoreCredential } from "../hooks/useStoreCredential";
@@ -17,30 +16,18 @@ function Loginwithemail() {
     (state: RootState) => state.user
   );
 
-  //custom'hooks
   const Login = useLoginUser();
-  // const { storeAccessToken,storeRefreshToken } = useTokenStorage();
 
-
-  //states
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordInputError, setPasswordInputError] = useState<boolean>(false);
 
-  //navigate
-  // const navigate = useNavigate();
-
-  //functions to handle DOM events
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const passwordValue = e.target.value;
     setPassword(passwordValue);
     storePassword(passwordValue);
 
-    if (validatePassword(passwordValue) || passwordValue === "") {
-      setPasswordInputError(false);
-    } else {
-      setPasswordInputError(true);
-    }
+    setPasswordInputError(!validatePassword(passwordValue) && passwordValue !== "");
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,15 +37,10 @@ function Loginwithemail() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({
-      enteredEmail,
-      enteredPassword,
-    });
 
-    Login.mutate({
-      password: enteredPassword,
-      email: enteredEmail,
-    });
+    Login.mutate(
+      { password: enteredPassword, email: enteredEmail },
+    );
   };
 
   return (
@@ -84,9 +66,8 @@ function Loginwithemail() {
           isInputError={passwordInputError}
           inputErrorMessage={t("IncorrectPasswordMessage")}
         />
-        {Login.error && <div>{Login.error.message}</div>}
         <button type="submit">
-          {Login.isPending ? "Loging in......" : t("ContinueButton")}
+          {Login.isPending ? "Logging in..." : t("ContinueButton")}
         </button>
         <div className="divider">
           <p>{t("OrDivider")}</p>
@@ -96,11 +77,6 @@ function Loginwithemail() {
           <span>{t("Create account with google")}</span>
         </button>
       </form>
-      <div className="bottom__links">
-        {/* <div className="alternate__email" onClick={navigateToSignInWithPhone}>
-          {t("AlternateSignInWithPhone")}
-        </div> */}
-      </div>
     </div>
   );
 }

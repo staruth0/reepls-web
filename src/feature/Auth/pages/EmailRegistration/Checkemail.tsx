@@ -17,7 +17,6 @@ function Checkemail() {
 
   // Handle OTP completion
   const handleOtpComplete = async (otp: string) => {
-    console.log('Complete OTP:', otp);
     setOtp(otp);
   };
 
@@ -40,10 +39,8 @@ function Checkemail() {
     handleCodeVerification();
   };
 
-  // useEffect to fetch initial code
   useEffect(() => {
     if (email) {
-      console.log(email);
       handleCodeVerification();
     }
   }, [email]);

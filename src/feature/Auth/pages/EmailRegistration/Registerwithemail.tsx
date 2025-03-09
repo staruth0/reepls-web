@@ -12,7 +12,6 @@ function Registerwithemail() {
 
   const {storeEmail,storeName}= useStoreCredential()
 
-  //states
   const [email, setEmail] = useState<string>("");
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
