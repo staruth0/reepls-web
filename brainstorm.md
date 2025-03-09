@@ -3,6 +3,9 @@
 -server connection,
 -cloudinary,
 
+- Auth[AuthProvider.tsx, apiClient.tsx, useUser.tsx, userLayout/index.tsx, src/main.tsx]
+  intercept reponse
+
 # Errors Found:
 
 - Recommended user and other recomended items have duplicates

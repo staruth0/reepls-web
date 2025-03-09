@@ -187,6 +187,7 @@ function TipTapRichTextEditor({
   const onValueChange = useCallback(
     debounce((value: EditorContent) => {
       handleContentChange(value);
+      console.log('Saved' + Date.now() / 1000);
     }, 2_000),
     []
   );
