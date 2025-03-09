@@ -9,22 +9,24 @@ import { store } from './store/index.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AuthProvider from './context/AuthContext/AuthProvider.tsx';
 import CognitiveModeProvider from './context/CognitiveMode/CognitiveModeProvider.tsx';
-import { ThemeProvider } from './context/Theme/themeProvider.tsx';
-import SideBarProvider from './context/SidebarContext/SideBarProvider.tsx';
-import VoiceLanguageProvider from './context/VoiceLanguageContext/VoiceLanguageProvider.tsx';
 import FeedFollowingProvider from './context/Feedcontext/IsFeedFollowingProvider.tsx';
+import SideBarProvider from './context/SidebarContext/SideBarProvider.tsx';
+import { ThemeProvider } from './context/Theme/themeProvider.tsx';
+import VoiceLanguageProvider from './context/VoiceLanguageContext/VoiceLanguageProvider.tsx';
 
-const queryClient = new QueryClient({ defaultOptions: {
+const queryClient = new QueryClient({
+  defaultOptions: {
     queries: {
-      staleTime: 10 * 60 * 1000, 
-      refetchOnWindowFocus: false, 
-      refetchOnReconnect: true, 
-      refetchOnMount: false, 
+      staleTime: 10 * 60 * 1000,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
+      refetchOnMount: false,
+      retry: 3,
     },
   },
 });
 
-createRoot(document.getElementById("root")!).render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
       <ThemeProvider>
