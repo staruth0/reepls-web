@@ -172,18 +172,22 @@ const extensions = [
 ];
 
 function TipTapRichTextEditor({
+  initialContent = '',
   handleContentChange,
   editorRef,
+  disabled = false,
 }: {
+  initialContent: EditorContent;
   handleContentChange: (content: EditorContent) => void;
   editorRef: React.RefObject<{ editor: Editor | null }>; // Update to match the correct type
+  disabled?: boolean;
 }) {
   const { theme } = useTheme();
 
   const onValueChange = useCallback(
     debounce((value: EditorContent) => {
       handleContentChange(value);
-    }, 1000),
+    }, 2_000),
     []
   );
 
@@ -198,12 +202,12 @@ function TipTapRichTextEditor({
       <RichTextEditor
         ref={editorRef}
         output="html"
-        content={'' as EditorContent}
+        content={initialContent}
         onChangeContent={onValueChange}
         extensions={extensions}
         dark={theme === 'dark'}
         // hideToolbar={true}
-        disabled={false}
+        disabled={disabled}
         resetCSS
       />
     </div>

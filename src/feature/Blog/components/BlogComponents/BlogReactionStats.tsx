@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { hand5, heart, thumb } from "../../../../assets/icons";
-import { timeAgo } from "../../../../utils/dateFormater";
-import ReactionsPopup from "../../../Interactions/components/ReactionsPopup";
-import { useGetCommentsByArticleId } from "../../../Comments/hooks";
-import { useGetArticleReactions } from "../../../Interactions/hooks";
+import React, { useState } from 'react';
+import { hand5, heart, thumb } from '../../../../assets/icons';
+import { timeAgo } from '../../../../utils/dateFormater';
+import { useGetCommentsByArticleId } from '../../../Comments/hooks';
+import ReactionsPopup from '../../../Interactions/components/ReactionsPopup';
+import { useGetArticleReactions } from '../../../Interactions/hooks';
 
 interface BlogReactionStatsProps {
   date: string;
@@ -11,15 +11,15 @@ interface BlogReactionStatsProps {
   article_id: string;
 }
 
-const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date, toggleCommentSection,article_id }) => {
+const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date, toggleCommentSection, article_id }) => {
   const [showReactions, setShowReactions] = useState(false);
 
-  const { data: articleComments } = useGetCommentsByArticleId(article_id)
-    const {data: allReactions} = useGetArticleReactions(article_id);
+  const { data: articleComments } = useGetCommentsByArticleId(article_id);
+  const { data: allReactions } = useGetArticleReactions(article_id);
 
-  const handlecloseReactionPopup = () => { 
-    setShowReactions(false); 
-  }
+  const handlecloseReactionPopup = () => {
+    setShowReactions(false);
+  };
 
   return (
     <div className="flex justify-between items-center p-4 text-neutral-50 text-sm font-roboto">
@@ -45,19 +45,25 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date, toggleComme
             />
           </div>
           {/* Reaction Count */}
-          <div className="ml-1 hover:underline underline-offset-1 " onClick={() => setShowReactions(true)}>{ allReactions?.length}</div>
+          <div className="ml-1 hover:underline underline-offset-1 " onClick={() => setShowReactions(true)}>
+            {allReactions?.length}
+          </div>
         </div>
 
         {/* Comments Count */}
-        <div className="ml-4 text-neutral-50 hover:text-primary-500 hover:underline underline-offset-1" onClick={toggleCommentSection}>
+        <div
+          className="ml-4 text-neutral-50 hover:text-primary-500 hover:underline underline-offset-1"
+          onClick={toggleCommentSection}>
           {articleComments?.data?.length} Comments
         </div>
       </div>
 
-      {showReactions && (<ReactionsPopup isOpen={ showReactions} onClose={handlecloseReactionPopup} article_id={article_id} /> )}
+      {showReactions && (
+        <ReactionsPopup isOpen={showReactions} onClose={handlecloseReactionPopup} article_id={article_id} />
+      )}
 
       {/* Time Posted */}
-      <div className="text-neutral-70 text-xs">{timeAgo(date)}</div>
+      <div className="text-neutral-70 text-xs mx-1"> • {timeAgo(date)}</div>
     </div>
   );
 };

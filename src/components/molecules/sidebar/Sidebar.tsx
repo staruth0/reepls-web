@@ -159,14 +159,18 @@ const Sidebar: React.FC = () => {
       <div className="create__post__btn">
         <Popover className="relative">
           <PopoverButton
-            className={cn('create__post__button', 'disabled:text-neutral-400 disabled:cursor-not-allowed')}
+            className={cn(
+              'create__post__button py-4',
+              'disabled:text-neutral-400 disabled:cursor-not-allowed',
+              isOpen ? 'px-6' : 'px-4'
+            )}
             disabled={isCreatingPost}>
-            <LuCirclePlus className="create__post__icon" style={{ width: '20px', height: '20px' }} />
+            <LuCirclePlus className="create__post__icon" />
             {isOpen && t('Create Post')}
           </PopoverButton>
           <PopoverPanel
             anchor="bottom"
-            className={cn('PopoverContent flex flex-col bg-red-500 z-50 mt-2', !isOpen ? 'w-32' : 'w-40')}>
+            className={cn('PopoverContent flex flex-col z-50 mt-2', isOpen ? 'w-40' : 'w-28')}>
             <div className="block text-center z-[999]">
               <button
                 className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4 hover:text-primary-400"

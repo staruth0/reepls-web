@@ -7,18 +7,21 @@
   outline: none;
   background-color: var(--background-color) !important;
   box-shadow: none;
+
   div {
     border: 0;
     outline: none;
     box-shadow: none !important;
-    background-color: var(--background-color) !important;
-    position: static !important;
+    // background-color: var(--background-color) !important;
+    // position: static !important;
   }
 
   .tiptap {
     box-shadow: none !important;
     background-color: transparent !important;
     background-color: var(--background-color) !important;
+    border: 0;
+    outline: none;
   }
 
   .ProseMirror {

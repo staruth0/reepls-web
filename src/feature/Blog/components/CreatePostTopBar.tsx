@@ -36,7 +36,7 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({ title, mainAction, acti
           <LuInfo className="w-6 h-6" />
         </button>
         <button
-          className="py-3 px-10 rounded-full border border-primary-300 cursor-pointer"
+          className="py-3 px-10 rounded-full border border-primary-300 cursor-pointer relative"
           onClick={mainAction.onClick}>
           {mainAction.label}
         </button>
@@ -44,7 +44,7 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({ title, mainAction, acti
           <Menu>
             <MenuButton
               className={cn(
-                'inline-flex items-center gap-2 rounded-md  py-1.5 px-3 text-sm  shadow-inner ',
+                'inline-flex items-center gap-2 rounded-md  py-1.5 px-3 text-sm  shadow-inner  ',
                 'hover:text-primary-400 focus:text-primary-400',
                 'cursor-pointer transition-all duration-300 ease-in-out'
               )}>
@@ -54,7 +54,10 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({ title, mainAction, acti
             <MenuItems
               transition
               anchor="bottom"
-              className="w-36 mt-2 origin-top-right rounded-xl border border-neutral-300 bg-background p-1 text-sm transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0">
+              className={cn(
+                'w-36 mt-2 origin-top-right rounded-xl border border-neutral-300 bg-background p-1 text-sm transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0',
+                'z-10000 sticky top-0 z-[1200px]'
+              )}>
               {actions.map(({ label, ActionIcon, onClick, disabled }) => (
                 <MenuItem key={label} disabled={disabled}>
                   <button

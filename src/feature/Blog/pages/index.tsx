@@ -2,13 +2,13 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuCalendar, LuEye, LuSave, LuShare, LuTag } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
+import { type Editor } from 'reactjs-tiptap-editor';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import { AuthContext } from '../../../context/AuthContext/authContext';
 import CreatePostTopBar from '../components/CreatePostTopBar';
 import ImageSection from '../components/ImageSection';
 import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
 import useDraft from '../hooks/useDraft';
-import { type Editor } from "reactjs-tiptap-editor";
 
 const CreatePost: React.FC = () => {
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
@@ -17,6 +17,18 @@ const CreatePost: React.FC = () => {
   const [subtitle, setSubtitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const { saveDraftArticle, loadDraftArticle } = useDraft();
+
+  const [initialEditorContent, setInitialEditorContent] = useState<{
+    title: string;
+    subtitle: string;
+    content: string;
+  }>({
+    title: '',
+    subtitle: '',
+    content: '',
+  });
+
+  const [hasLoadedDraft, setHasLoadedDraft] = useState(false);
 
   // const editorRef = useRef<any>(null);
   const editorRef = useRef<{ editor: Editor | null }>(null);
@@ -80,12 +92,23 @@ const CreatePost: React.FC = () => {
   };
 
   useEffect(() => {
-    loadDraftArticle();
-    const interval = setInterval(() => {
-      saveDraftArticle({ title, subtitle, content });
-    }, 10_000);
-    return () => clearInterval(interval);
+    if (hasLoadedDraft) return;
+    const draftArticle = loadDraftArticle();
+    if (draftArticle) {
+      setInitialEditorContent(draftArticle);
+    }
+    console.log({ initialEditorContent });
+    setTitle(initialEditorContent.title);
+    setSubtitle(initialEditorContent.subtitle);
+    setContent(initialEditorContent.content);
+    setHasLoadedDraft(true);
   }, []);
+
+  useEffect(() => {
+    if (!hasLoadedDraft) return;
+    saveDraftArticle({ title, subtitle, content });
+    console.log('Saving draft...: ' + content.length);
+  }, [content, hasLoadedDraft]);
 
   const isLoggedOut = checkTokenExpiration();
 
@@ -111,7 +134,7 @@ const CreatePost: React.FC = () => {
 
       <div className="mt-10">
         <div className="md:px-4">
-         <ImageSection onImageChange={setThumbnailUrl} />
+          <ImageSection onImageChange={setThumbnailUrl} />
           <div className="mx-auto mt-3 pl-20 max-w-5xl">
             <div className="">
               <textarea
@@ -121,6 +144,7 @@ const CreatePost: React.FC = () => {
                 rows={2}
                 onChange={(e) => setTitle(e.target.value)}
                 onKeyDown={(e) => handleKeyDown(e, () => document.getElementById('subtitle')?.focus())}
+                disabled={!hasLoadedDraft}
               />
               <textarea
                 id="subtitle"
@@ -130,11 +154,17 @@ const CreatePost: React.FC = () => {
                 rows={2}
                 onChange={(e) => setSubtitle(e.target.value)}
                 onKeyDown={(e) => handleKeyDown(e, () => editorRef?.current?.editor?.commands?.focus())}
+                disabled={!hasLoadedDraft}
               />
             </div>
           </div>
           <div id="editor relative" className="mb-20">
-            <TipTapRichTextEditor handleContentChange={setContent} editorRef={editorRef} />
+            <TipTapRichTextEditor
+              initialContent={initialEditorContent.content}
+              handleContentChange={(content) => setContent((prev) => (prev === content ? prev : content))}
+              editorRef={editorRef}
+              disabled={!hasLoadedDraft}
+            />
           </div>
         </div>
       </div>

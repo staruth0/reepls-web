@@ -6,7 +6,7 @@ TODO: server connection, cloudinary,
 - Inplace solution for empty id; just return an empty array but this whould be a temporary solution
 - Too many requests(eg AuthorSuggestions)
 
-- Popup when token expires
+- Popup when token expires (This should not happen regurlaly - current keeps trying to refresh token and is stuck and freezes the app)
 
 useUser, subscribe + listen to authState,
 
