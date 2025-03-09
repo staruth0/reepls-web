@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { LuX } from 'react-icons/lu';
+import { LuX, LuLoader, LuCircleAlert } from "react-icons/lu";
 import { Comment, User } from '../../../models/datamodels';
 import { useGetCommentsByArticleId } from '../hooks';
 import CommentMessage from './CommentMessage';
