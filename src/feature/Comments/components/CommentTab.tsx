@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { useUser } from '../../../hooks/useUser';
 import { Comment } from '../../../models/datamodels';
 import { useCreateComment } from '../hooks';
+import { LuSend, LuLoader } from "react-icons/lu";
 
 interface CommentTabProps {
   article_id: string;

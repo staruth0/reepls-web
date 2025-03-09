@@ -75,6 +75,7 @@ const checkTokenExpiration = useCallback(() => {
 
   useEffect(() => {
    
+    console.log('authstate is this', authState);
 
     const interval = setInterval(() => {
       validateSession();
@@ -82,8 +83,6 @@ const checkTokenExpiration = useCallback(() => {
 
     return () => clearInterval(interval);
   }, []);
-
-  
 
 
   return (
