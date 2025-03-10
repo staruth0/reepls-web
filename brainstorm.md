@@ -11,6 +11,10 @@
 
   - How to draw attention to articles over posts?
 
+-uploading media
+
+- limit comment chars
+
 # Errors Found:
 
 - Recommended user and other recomended items have duplicates

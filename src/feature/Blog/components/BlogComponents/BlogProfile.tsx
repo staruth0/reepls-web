@@ -19,9 +19,10 @@ interface BlogProfileProps {
   user: User | null; // Allow user to be null
   content: string;
   title: string;
+  isArticle: boolean;
 }
 
-const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title, content }) => {
+const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title, content, isArticle }) => {
   const { authUser } = useUser();
   const { goToProfile } = useRoute();
   const [showMenu, setShowMenu] = useState(false);
@@ -36,9 +37,17 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
   const { data: savedArticles } = useGetSavedArticles();
   const [saved, setSaved] = useState(false);
 
-  // Safely extract followed IDs from User objects
-  const followedIds = followings?.data?.map((following: Follow) => following.followed_id?.id) || [];
-  const isFollowing = user?.id ? followedIds.includes(user.id) : false;
+  // const [articleTitle, setArticleTitle] = useState('');
+  // const [articleUrl, setArticleUrl] = useState('');
+
+  // const articleUrl = `https://reepls.netlify.app/posts/article/${article_id}`;
+  // const articleTitle = `${title ? title : content.split(' ').slice(0, 10).join(' ') + '...'}`;
+
+  // const isCurrentAuthorArticle = user?.id === authUser?.id;
+
+  // Extract followed IDs from User objects
+  const followedIds = followings?.data?.map((following: Follow) => following.followed_id.id) || [];
+  const isFollowing = followedIds.includes(user?.id);
 
   const handleProfileClick = (username: string) => {
     if (username) {
@@ -111,7 +120,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
     return saved ? 'Unsave Post' : 'Add To Saved';
   };
 
-  const articleUrl = `https://reepls.netlify.app/posts/article/${article_id}`;
+  const articleUrl = `${window.location.origin}/posts/${isArticle ? 'article' : 'post'}/${article_id}`;
   const articleTitle = `${title ? title : content.split(' ').slice(0, 10).join(' ') + '...'}`;
 
   const isCurrentAuthorArticle = user?.id === authUser?.id;

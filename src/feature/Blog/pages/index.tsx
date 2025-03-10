@@ -17,7 +17,7 @@ const CreatePost: React.FC = () => {
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
   const { checkTokenExpiration } = useContext(AuthContext);
   const [title, setTitle] = useState<string>('');
-  const [subtitle, setSubtitle] = useState<string>('');
+  const [subTitle, setSubTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const { saveDraftArticle, loadDraftArticle, clearDraftArticle } = useDraft();
 
@@ -48,8 +48,8 @@ const CreatePost: React.FC = () => {
       disabled: false,
       ActionIcon: LuEye,
       onClick: () => {
-        saveDraftArticle({ title, subtitle, content });
-        navigate('/posts/article/preview/view');
+        saveDraftArticle({ title, subTitle, content });
+        navigate('/posts/article/preview');
       },
     },
     {
@@ -87,7 +87,7 @@ const CreatePost: React.FC = () => {
   ];
 
   const onPublish = () => {
-    if (!title || !subtitle || !content) {
+    if (!title || !subTitle || !content) {
       toast.error('Please provide a title, subtitle and content.', {
         autoClose: 1500,
       });
@@ -96,7 +96,7 @@ const CreatePost: React.FC = () => {
     const media = thumbnailUrl ? [thumbnailUrl] : [];
     const article: Article = {
       title,
-      subTitle: subtitle,
+      subTitle,
       content,
       media,
       status: 'Published',
@@ -143,7 +143,7 @@ const CreatePost: React.FC = () => {
       setInitialEditorContent(draftArticle);
       console.log({ initialEditorContent });
       setTitle(draftArticle.title);
-      setSubtitle(draftArticle.subtitle);
+      setSubTitle(draftArticle.subTitle);
       setContent(draftArticle.content);
       // editorRef.current?.editor?.commands?.setContent(draftArticle.content);
     }
@@ -160,15 +160,15 @@ const CreatePost: React.FC = () => {
 
   useEffect(() => {
     if (!hasLoadedDraft) return;
-    saveDraftArticle({ title, subtitle, content });
-  }, [title, subtitle, content]);
+    saveDraftArticle({ title, subTitle, content });
+  }, [title, subTitle, content]);
 
   const isLoggedOut = checkTokenExpiration();
 
   useEffect(() => {
     console.log(content);
     console.log(title);
-    console.log(subtitle);
+    console.log(subTitle);
     console.log(thumbnailUrl);
     if (isLoggedOut) {
       navigate('/auth');
@@ -203,9 +203,9 @@ const CreatePost: React.FC = () => {
                 id="subtitle"
                 placeholder={t(`Enter your subtitle here...`)}
                 className="resize-none w-full h-auto mb-0 text-lg font-medium font-inter border-none outline-none bg-transparent placeholder-gray-400"
-                value={subtitle}
+                value={subTitle}
                 rows={2}
-                onChange={(e) => setSubtitle(e.target.value)}
+                onChange={(e) => setSubTitle(e.target.value)}
                 onKeyDown={(e) => handleKeyDown(e, () => editorRef?.current?.editor?.commands?.focus())}
                 disabled={!hasLoadedDraft}
               />

@@ -53,14 +53,11 @@ apiClient.interceptors.response.use(
           });
           localStorage.removeItem(ACCESS_TOKEN_KEY);
           localStorage.removeItem(REFRESH_TOKEN_KEY);
-          // localStorage.clear();
           window.location.href = '/auth/login/phone';
           return Promise.reject(e);
         }
       }
     }
-    // localStorage.clear();
-    // window.location.href = '/auth/login/phone';
     return Promise.reject(error);
   }
 );
