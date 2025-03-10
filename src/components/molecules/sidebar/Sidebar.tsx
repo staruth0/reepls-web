@@ -21,9 +21,8 @@ import { useCreateArticle } from '../../../feature/Blog/hooks/useArticleHook';
 import { useUser } from '../../../hooks/useUser';
 import { Article } from '../../../models/datamodels';
 import { cn } from '../../../utils';
-import { uploadPostImage } from '../../../utils/media';
+import { uploadPostImage, uploadPostVideo } from '../../../utils/media';
 import SidebarItem from '../../atoms/SidebarItem';
-import { Spinner } from '../../atoms/Spinner';
 import './sidebar.scss';
 
 const Sidebar: React.FC = () => {
@@ -31,7 +30,7 @@ const Sidebar: React.FC = () => {
   const { authUser } = useUser();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
   const { t } = useTranslation();
-  const { mutate, isPending } = useCreateArticle();
+  const { mutate: createPost, isPending } = useCreateArticle();
   const { isOpen, toggleSidebar } = useContext(SidebarContext);
 
   const handleToggleSidebar = () => {
@@ -71,44 +70,29 @@ const Sidebar: React.FC = () => {
   const handlePost = async (postContent: string, postImages: File[], postVideos: File[]) => {
     const images: string[] = [];
     const videos: string[] = [];
-    toast.promise(
-      async () => {
-        const images = [];
-        for (const image of postImages) {
-          const imageUrl = await uploadPostImage(image);
-          images.push(imageUrl);
-        }
-        console.log('images', images);
-      },
-      {
-        pending: 'Uploading images...',
-        success: 'Images uploaded successfully',
-        error: 'Error uploading images',
-      }
-    );
+    for (const image of postImages) {
+      const result = await uploadPostImage(authUser?.id!, image);
+      images.push(result?.secure_url);
+    }
+    for (const video of postVideos) {
+      const result = await uploadPostVideo(authUser?.id!, video);
+      videos.push(result?.secure_url);
+    }
 
     const post: Article = {
       content: postContent,
       media: images.concat(videos),
     };
 
-    mutate(post, {
+    createPost(post, {
       onSuccess: () => {
         setIsCreatingPost(false);
-        console.log('Article created successfully');
-        toast.success('Article created successfully');
         navigate('/feed');
       },
-      onError: (error) => {
-        console.error('Error creating article', error);
-        toast.error('Error creating article: ' + error);
+      onError: (error: any) => {
+        toast.error('Error creating post: ' + error?.response?.data?.message || error?.message);
       },
     });
-
-    console.log('post', post);
-    console.log('postContent', postContent);
-    console.log('postImages', postImages);
-    console.log('postVideos', postVideos);
   };
 
   return (
@@ -146,18 +130,12 @@ const Sidebar: React.FC = () => {
       </div>
 
       {isCreatingPost && (
-        <>
-          {isPending ? (
-            <Spinner />
-          ) : (
-            <PostModal
-              isModalOpen={isCreatingPost}
-              setIsModalOpen={setIsCreatingPost}
-              handlePost={handlePost}
-              isPending={isPending}
-            />
-          )}
-        </>
+        <PostModal
+          isModalOpen={isCreatingPost}
+          setIsModalOpen={setIsCreatingPost}
+          handlePost={handlePost}
+          isPending={isPending}
+        />
       )}
 
       <div className="create__post__btn">

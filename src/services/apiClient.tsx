@@ -49,7 +49,7 @@ apiClient.interceptors.response.use(
           return apiClient(originalRequest);
         } catch (e) {
           console.log('Token refresh failed:', e);
-          toast.error('Please login again', {
+          toast.info('Please login again', {
             autoClose: 3000,
           });
           localStorage.removeItem(ACCESS_TOKEN_KEY);

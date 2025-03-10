@@ -2,8 +2,10 @@
 
 VITE_GIPHY_API_KEY
 
-post: images, videos
-articles: thumbnails, images, documents,
+profiles: images (images/:userid/uuidfilename.ext)
+banners: images (images/:userid/uuidfilename.ext)
+post: images, videos (images/:userid/uuidfilename.ext, videos/:userid/uuidfilename.ext)
+articles: thumbnails, images, documents (images/:userid/uuidfilename.ext, documents/:userid/uuidfilename.ext)
 
 -server connection,
 -cloudinary,
