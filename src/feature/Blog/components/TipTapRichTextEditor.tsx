@@ -58,7 +58,6 @@ import '../styles/editor.scss';
 // Type for editor content (assuming HTML string output)
 type EditorContent = string;
 
-// Extensions configuration
 const extensions = [
   BaseKit.configure({
     placeholder: {

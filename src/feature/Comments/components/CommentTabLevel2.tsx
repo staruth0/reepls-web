@@ -65,7 +65,7 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({ article_id, parent_commen
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           onKeyDown={handleKeyDown}
-          ref={CommentTabLevel2ref} // Ref is used here
+          ref={CommentTabLevel2ref}
         />
         <button
           onClick={handleCommentSubmit}
