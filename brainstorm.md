@@ -3,6 +3,9 @@
 -server connection,
 -cloudinary,
 
+- useUser manage everything including invalidating the session and requesting login (should also happend when a critical action needs to be taken)
+- invalidate session: delete token from local storage, clear the auth state, redirect to login
+- ath of auth object is lastime the access token was refreshed so can redirect if expired
 - Auth[AuthProvider.tsx, apiClient.tsx, useUser.tsx, userLayout/index.tsx, src/main.tsx]
   intercept reponse
 

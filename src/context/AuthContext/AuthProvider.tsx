@@ -1,5 +1,5 @@
 import { jwtDecode } from 'jwt-decode';
-import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import React, { ReactNode, useCallback, useState } from 'react';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '../../constants';
 import { refreshAuthTokens } from '../../feature/Auth/api/index';
 import { AuthContext, AuthContextProps } from './authContext';
@@ -71,16 +71,16 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
     setLoading(false);
   };
+  // TODO: remove this
+  // useEffect(() => {
+  //   console.log('authstate is this', authState);
 
-  useEffect(() => {
-    console.log('authstate is this', authState);
+  //   const interval = setInterval(() => {
+  //     validateSession();
+  //   }, 5 * 60 * 1000); // Run every 5 minutes
 
-    const interval = setInterval(() => {
-      validateSession();
-    }, 5 * 60 * 1000); // Run every 5 minutes
-
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   return (
     <AuthContext.Provider value={{ authState, login, logout, checkTokenExpiration, loading }}>

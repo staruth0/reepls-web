@@ -13,7 +13,7 @@ const ArticleView: React.FC = () => {
   const [title, setTitle] = useState<string>('Sample Article Headig lorem ipsum dolor sit amet');
   const [description, setDescription] = useState<string>('');
   const [htmlArticleContent, setHtmlArticleContent] = useState<string>('');
-  const [isDraft, setIsDraft] = useState<boolean>(false);
+  const [isDraft, setIsDraft] = useState<boolean>(true);
   const { loadDraftArticle } = useDraft();
   useEffect(() => {
     if (articleUid == PREVIEW_SLUG) {
@@ -21,11 +21,13 @@ const ArticleView: React.FC = () => {
       if (!article) {
         toast.error('No draft article found.');
         navigate('/posts/create');
+        return;
       }
-      setIsDraft(true);
       setTitle(article.title);
       setDescription(article.subtitle);
       setHtmlArticleContent(article.content);
+    } else {
+      setIsDraft(false);
     }
   }, [articleUid]);
   return (
@@ -49,7 +51,7 @@ const ArticleView: React.FC = () => {
             </div>
           </div>
         </div>
-        {isDraft && (
+        {!isDraft && (
           <div className="stats mx-auto">
             <div className="flex justify-center">
               <BlogReactionStats article_id={articleUid!} date={new Date().toISOString()} />

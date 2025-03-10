@@ -88,18 +88,18 @@ const Sidebar: React.FC = () => {
       }
     );
 
-    // mutate(post, {
-    //   onSuccess: () => {
-    //     setIsCreatingPost(false);
-    //     console.log("Article created successfully");
-    //     toast.success("Article created successfully");
-    //     navigate("/feed");
-    //   },
-    //   onError: (error) => {
-    //     console.error("Error creating article", error);
-    //     toast.error("Error creating article: " + error);
-    //   },
-    // });
+    mutate(post, {
+      onSuccess: () => {
+        setIsCreatingPost(false);
+        console.log('Article created successfully');
+        toast.success('Article created successfully');
+        navigate('/feed');
+      },
+      onError: (error) => {
+        console.error('Error creating article', error);
+        toast.error('Error creating article: ' + error);
+      },
+    });
 
     console.log('post', post);
     console.log('postContent', postContent);

@@ -36,9 +36,10 @@ apiClient.interceptors.response.use(
       const refreshToken = getRefreshToken();
       if (refreshToken) {
         try {
+          console.log('Refreshing token');
           const data = await refreshAuthTokens(refreshToken);
           if (!data.accessToken) throw new Error('No access token received');
-
+          console.log('Token refreshed:', data);
           localStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken);
           localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
 
@@ -46,17 +47,20 @@ apiClient.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
           return apiClient(originalRequest);
         } catch (e) {
-         localStorage.removeItem(ACCESS_TOKEN_KEY);
-         localStorage.removeItem(REFRESH_TOKEN_KEY);
- 
-         return Promise.reject(e);
+          console.log('Token refresh failed:', e);
+
+          localStorage.removeItem(ACCESS_TOKEN_KEY);
+          localStorage.removeItem(REFRESH_TOKEN_KEY);
+          localStorage.clear();
+          window.location.href = '/auth/login/phone';
+          return Promise.reject(e);
         }
       }
     }
+    // localStorage.clear();
+    // window.location.href = '/auth/login/phone';
     return Promise.reject(error);
   }
 );
 
 export { apiClient };
-
-

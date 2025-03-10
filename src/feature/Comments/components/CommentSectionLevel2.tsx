@@ -1,18 +1,18 @@
-import React, { useEffect } from "react";
-import {  useGetRepliesForComment } from "../hooks";
-import { Comment, User } from "../../../models/datamodels";
-import CommentTabLevel2 from "./CommentTabLevel2";
-import CommentMessageLevel2 from "./CommentMessageLevel2";
+import React, { useEffect } from 'react';
+import { Comment, User } from '../../../models/datamodels';
+import { useGetRepliesForComment } from '../hooks';
+import CommentMessageLevel2 from './CommentMessageLevel2';
+import CommentTabLevel2 from './CommentTabLevel2';
 
 interface CommentSectionProps {
   article_id: string;
   comment_id: string;
   comments: Comment[];
-  author_of_post:User;
+  author_of_post: User;
 }
 
-const CommentSectionLevel2: React.FC<CommentSectionProps> = ({article_id,comment_id,comments,author_of_post}) => {
-  const {data: articleComments,isLoading} = useGetRepliesForComment(comment_id);
+const CommentSectionLevel2: React.FC<CommentSectionProps> = ({ article_id, comment_id, comments, author_of_post }) => {
+  const { data: articleComments, isLoading } = useGetRepliesForComment(comment_id);
 
   useEffect(() => {
     console.log(articleComments?.data);
@@ -27,13 +27,12 @@ const CommentSectionLevel2: React.FC<CommentSectionProps> = ({article_id,comment
           <>
             {comments?.map((comment: Comment, index: number) => {
               const isSameAuthorAsPrevious =
-                index > 0 &&
-                comment.author_id === articleComments.data[index - 1].author_id;
+                index > 0 && comment.author_id === articleComments.data[index - 1].author_id;
 
               return (
                 <>
                   <CommentMessageLevel2
-                    key={comment._id}
+                    key={`${comment._id}-${index}`}
                     content={comment.content!}
                     createdAt={comment.createdAt!}
                     author_id={comment.author_id!}
@@ -48,10 +47,7 @@ const CommentSectionLevel2: React.FC<CommentSectionProps> = ({article_id,comment
         )}
       </>
 
-      <CommentTabLevel2
-        article_id={article_id}
-        parent_comment_id={comment_id}
-      />
+      <CommentTabLevel2 article_id={article_id} parent_comment_id={comment_id} />
     </div>
   );
 };
