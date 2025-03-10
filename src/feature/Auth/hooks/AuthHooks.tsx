@@ -104,7 +104,9 @@ export const useLoginUser = () => {
       console.log('User logged in:', data);
       storeAccessToken(data.tokens.access.token);
       storeRefreshToken(data.tokens.refresh.token);
+      console.log("expired date", data.tokens.access.expires);
       login(data.tokens.access.token);
+      
 
       navigateToFeed();
     },
@@ -128,7 +130,9 @@ export const useLoginUserWithPhone = () => {
       console.log('User logged in:', data);
       storeAccessToken(data.tokens.access.token);
       storeRefreshToken(data.tokens.refresh.token);
+       console.log("expired date", data.tokens.access.expires);
       login(data.tokens.access.token);
+     
 
       navigateToFeed();
     },

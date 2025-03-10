@@ -1,20 +1,36 @@
-import { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '../context/AuthContext/authContext';
-import { getUserById } from '../feature/Profile/api';
-import { User } from '../models/datamodels';
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../context/AuthContext/authContext";
+import { getUserById } from "../feature/Profile/api";
+import { User } from "../models/datamodels";
 
 export const useUser = () => {
-  const { authState, loading } = useContext(AuthContext);
+  const { authState } = useContext(AuthContext);
   const [authUser, setAuthUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(loading);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (authState && authState.userId) {
-      getUserById(authState.userId)
-        .then(setAuthUser)
-        .finally(() => setIsLoading(false));
-    }
+    const fetchUser = async () => {
+      if (!authState?.userId) {
+        setAuthUser(null); 
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const user = await getUserById(authState.userId);
+        setAuthUser(user);
+        setError(null);
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+        setError("Failed to load user data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
   }, [authState]);
 
-  return { authUser, isLoading };
+  return { authUser, loading, error };
 };

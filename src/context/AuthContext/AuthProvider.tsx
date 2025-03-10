@@ -1,7 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
-import React, { ReactNode, useCallback, useEffect, useState } from 'react';
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '../../constants';
-import { refreshAuthTokens } from '../../feature/Auth/api/index';
+import React, { ReactNode, useEffect, useState } from 'react';
+import { ACCESS_TOKEN_KEY} from '../../constants';
 import { AuthContext, AuthContextProps } from './authContext';
 
 interface AuthProviderProps {
@@ -24,11 +23,11 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return null;
   });
 
-  const [loading, setLoading] = useState<boolean>(true);
 
   const login = (token: string) => {
     try {
       const decoded = jwtDecode(token);
+      console.log("decodedToken", decoded);
       setAuthState({ userId: decoded.sub!, token });
       console.log({ userId: decoded.sub!, token });
       localStorage.setItem(ACCESS_TOKEN_KEY, token);
@@ -42,48 +41,13 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.clear();
   };
 
-  const checkTokenExpiration = useCallback(() => {
-    const token = getStoredToken();
-    if (token) {
-      const decoded = jwtDecode(token);
-      const currentTime = Date.now() / 1000;
-
-      if (decoded.exp! < currentTime + 300) {
-        return true; // Indicates token is about to expire
-      }
-    }
-    return false;
-  }, []);
-
-  const validateSession = async () => {
-    if (checkTokenExpiration()) {
-      try {
-        const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
-        if (refreshToken) {
-          const data = await refreshAuthTokens(refreshToken);
-          login(data.accessToken);
-        } else {
-          logout();
-        }
-      } catch {
-        logout();
-      }
-    }
-    setLoading(false);
-  };
-
   useEffect(() => {
     console.log('authstate is this', authState);
+  }, [authState]);
 
-    const interval = setInterval(() => {
-      validateSession();
-    }, 5 * 60 * 1000); // Run every 5 minutes
-
-    return () => clearInterval(interval);
-  }, []);
 
   return (
-    <AuthContext.Provider value={{ authState, login, logout, checkTokenExpiration, loading }}>
+    <AuthContext.Provider value={{ authState, login, logout}}>
       {children}
     </AuthContext.Provider>
   );
