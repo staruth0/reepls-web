@@ -1,35 +1,36 @@
-import React, { useEffect } from "react";
-import Topbar from "../../../components/atoms/Topbar/Topbar";
-import Communique from "../../Feed/components/Communique/Communique";
-import SearchTopBar from "../components/SearchTopBar";
-import { useParams } from "react-router-dom";
-import { useGetSearchResults, useStoreSearchSuggestion } from "../hooks";
-import BlogSkeletonComponent from "../../Blog/components/BlogSkeleton";
-import BlogPost from "../../Blog/components/BlogPost";
-import { Article } from "../../../models/datamodels";
-import { useUser } from "../../../hooks/useUser";
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import Topbar from '../../../components/atoms/Topbar/Topbar';
+import { useUser } from '../../../hooks/useUser';
+import { Article } from '../../../models/datamodels';
+import BlogPost from '../../Blog/components/BlogPost';
+import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
+import Communique from '../../Feed/components/Communique/Communique';
+import SearchTopBar from '../components/SearchTopBar';
+import { useGetSearchResults, useStoreSearchSuggestion } from '../hooks';
 
 const ResultsPage: React.FC = () => {
   const { query } = useParams<{ query: string }>();
-  const { data: results, isPending, error } = useGetSearchResults(query || ""); 
-    const { authUser } = useUser();
-    const { mutate } = useStoreSearchSuggestion();
-  
+  const { data: results, isPending, error } = useGetSearchResults(query || '');
+  const { authUser } = useUser();
+  const { mutate } = useStoreSearchSuggestion();
 
-
-  useEffect(() => { 
-   mutate({
-        userid: authUser?.id || "",
-        searchSuggestions: query || "",
-      }, {
-        onSuccess: () => { 
-          console.log("Search suggestion saved successfully");
+  useEffect(() => {
+    mutate(
+      {
+        userid: authUser?.id || '',
+        searchSuggestions: query || '',
+      },
+      {
+        onSuccess: () => {
+          console.log('Search suggestion saved successfully');
         },
-   })
-    
+      }
+    );
+
     if (results) console.log(results);
-  }, [query, authUser, mutate,results]);
-  
+  }, [query, authUser, mutate, results]);
+
   // Render loading state
   if (isPending) {
     return (
@@ -85,7 +86,7 @@ const ResultsPage: React.FC = () => {
                 <BlogPost
                   key={article._id}
                   isArticle={article.isArticle!}
-                  images={article.media!}
+                  media={article.media!}
                   title={article.title!}
                   content={article.content!}
                   user={article.author_id!}

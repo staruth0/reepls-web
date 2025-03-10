@@ -1,5 +1,10 @@
 # TODOS: ignore this
 
+VITE_GIPHY_API_KEY
+
+post: images, videos
+articles: thumbnails, images, documents,
+
 -server connection,
 -cloudinary,
 

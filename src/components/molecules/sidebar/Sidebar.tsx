@@ -69,9 +69,8 @@ const Sidebar: React.FC = () => {
   ];
 
   const handlePost = async (postContent: string, postImages: File[], postVideos: File[]) => {
-    const post: Article = {
-      content: postContent,
-    };
+    const images: string[] = [];
+    const videos: string[] = [];
     toast.promise(
       async () => {
         const images = [];
@@ -87,6 +86,11 @@ const Sidebar: React.FC = () => {
         error: 'Error uploading images',
       }
     );
+
+    const post: Article = {
+      content: postContent,
+      media: images.concat(videos),
+    };
 
     mutate(post, {
       onSuccess: () => {

@@ -6,6 +6,8 @@ const uploadPreset = config.cloudinary.uploadPreset;
 const cloudinaryResourceTypes = {
   image: 'image',
   video: 'video',
+  document: 'document',
+  gif: 'gif',
 };
 const baseUrl = `https://api.cloudinary.com/v1_1/${cloudName}/`;
 
@@ -21,7 +23,7 @@ const uploadUserProfile = async (userId: string, file: File) => {
   formData.append('cloud_name', cloudName as string);
   formData.append('asset_folder', 'profile');
   formData.append('overwrite', 'true');
-  formData.append('folder', 'profile');
+  formData.append('folder', `profiles/${userId}`);
   formData.append('filename_override', userId);
   const response = await axios.post('/api/media/upload', formData);
   return response.data;
@@ -65,4 +67,68 @@ const uploadPostVideo = async (file: File) => {
   return response.data;
 };
 
-export { uploadPostImage, uploadPostVideo, uploadUserBanner, uploadUserProfile };
+const uploadArticleThumbnail = async (userId: string, file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', uploadPreset as string);
+  formData.append('cloud_name', cloudName as string);
+  formData.append('folder', `articles/${userId}`);
+  formData.append('filename_override', userId);
+  const response = await axios.post(`/${cloudinaryResourceTypes.image}/upload`, formData);
+  return response.data;
+};
+
+const uploadArticleImage = async (userId: string, file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', uploadPreset as string);
+  formData.append('cloud_name', cloudName as string);
+  formData.append('folder', `articles/${userId}`);
+  formData.append('filename_override', userId);
+  const response = await axios.post(`/${cloudinaryResourceTypes.image}/upload`, formData);
+  return response.data;
+};
+
+const uploadArticleVideo = async (userId: string, file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', uploadPreset as string);
+  formData.append('cloud_name', cloudName as string);
+  formData.append('folder', `articles/${userId}`);
+  formData.append('filename_override', userId);
+  const response = await axios.post(`/${cloudinaryResourceTypes.video}/upload`, formData);
+  return response.data;
+};
+
+const uploadArticleGif = async (userId: string, file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', uploadPreset as string);
+  formData.append('cloud_name', cloudName as string);
+  formData.append('folder', `articles/${userId}`);
+  formData.append('filename_override', userId);
+  const response = await axios.post(`/${cloudinaryResourceTypes.gif}/upload`, formData);
+  return response.data;
+};
+
+const uploadArticleDocument = async (userId: string, file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', uploadPreset as string);
+  formData.append('cloud_name', cloudName as string);
+  formData.append('folder', `articles/${userId}`);
+  formData.append('filename_override', userId);
+  const response = await axios.post(`/${cloudinaryResourceTypes.document}/upload`, formData);
+  return response.data;
+};
+export {
+  uploadArticleDocument,
+  uploadArticleGif,
+  uploadArticleImage,
+  uploadArticleThumbnail,
+  uploadArticleVideo,
+  uploadPostImage,
+  uploadPostVideo,
+  uploadUserBanner,
+  uploadUserProfile,
+};

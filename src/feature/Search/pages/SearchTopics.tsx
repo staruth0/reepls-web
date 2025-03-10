@@ -1,45 +1,29 @@
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import {
-  useGetArticlesByCategory,
-  useGetRecommendedArticles,
-} from "../../Blog/hooks/useArticleHook";
-import BlogPost from "../../Blog/components/BlogPost";
-import { Article } from "../../../models/datamodels";
-import BlogSkeletonComponent from "../../Blog/components/BlogSkeleton";
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Article } from '../../../models/datamodels';
+import BlogPost from '../../Blog/components/BlogPost';
+import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
+import { useGetArticlesByCategory, useGetRecommendedArticles } from '../../Blog/hooks/useArticleHook';
 
-const topics = [
-  "Politics",
-  "Journalism",
-  "Tech",
-  "Art",
-  "History",
-  "Culture",
-  "Film",
-  "Crime",
-];
+const topics = ['Politics', 'Journalism', 'Tech', 'Art', 'History', 'Culture', 'Film', 'Crime'];
 
 const SearchTopics: React.FC = () => {
   const { t } = useTranslation();
-  const [category, setCategory] = useState<string>("");
+  const [category, setCategory] = useState<string>('');
 
   const {
     data: recommendedData,
     isLoading: isRecommendedLoading,
     error: recommendedError,
   } = useGetRecommendedArticles();
-  const {
-    data: categoryData,
-    isLoading: isCategoryLoading,
-    error: categoryError,
-  } = useGetArticlesByCategory(category);
+  const { data: categoryData, isLoading: isCategoryLoading, error: categoryError } = useGetArticlesByCategory(category);
 
   useEffect(() => {
-    console.log("recommended", recommendedData);
+    console.log('recommended', recommendedData);
   }, [recommendedData]);
 
   useEffect(() => {
-    console.log("category data", categoryData);
+    console.log('category data', categoryData);
   }, [categoryData]);
 
   const handleTopicClick = (topic: string) => {
@@ -57,16 +41,13 @@ const SearchTopics: React.FC = () => {
           <span
             key={topic}
             onClick={() => handleTopicClick(topic)}
-            className="py-2 px-6 text-neutral-100 rounded-full border-[1px] border-neutral-500 hover:border-none hover:bg-primary-400 hover:text-white transition-all transition-300 cursor-pointer "
-          >
+            className="py-2 px-6 text-neutral-100 rounded-full border-[1px] border-neutral-500 hover:border-none hover:bg-primary-400 hover:text-white transition-all transition-300 cursor-pointer ">
             {t(`${topic}`)}
           </span>
         ))}
       </div>
       <div className="w-full px-4 sm:px-8 flex flex-col gap-7 mt-2">
-        <div className="px-4">
-          {category ? `${category} Articles` : "Recommended Articles"}
-        </div>
+        <div className="px-4">{category ? `${category} Articles` : 'Recommended Articles'}</div>
 
         <div className="mt-2">
           {isLoading ? (
@@ -80,7 +61,7 @@ const SearchTopics: React.FC = () => {
                 <BlogPost
                   key={article._id}
                   isArticle={article.isArticle!}
-                  images={article.media!}
+                  media={article.media!}
                   title={article.title!}
                   content={article.content!}
                   user={article.author_id!}
@@ -90,9 +71,7 @@ const SearchTopics: React.FC = () => {
               ))}
             </div>
           ) : (
-            <p className="text-neutral-500 text-center">
-              No recommended articles
-            </p>
+            <p className="text-neutral-500 text-center">No recommended articles</p>
           )}
           {error && <div>Error: {error.message}</div>}
         </div>

@@ -19,6 +19,7 @@ apiClient.interceptors.request.use(
     if (token && !config.url?.includes('/login') && !config.url?.includes('/register')) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    // config.withCredentials = true;
     return config;
   },
   (error) => Promise.reject(error)
