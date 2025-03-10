@@ -9,6 +9,8 @@
 - Auth[AuthProvider.tsx, apiClient.tsx, useUser.tsx, userLayout/index.tsx, src/main.tsx]
   intercept reponse
 
+  - How to draw attention to articles over posts?
+
 # Errors Found:
 
 - Recommended user and other recomended items have duplicates

@@ -1,16 +1,17 @@
-import React, { useContext, useState } from "react";
-import { CognitiveModeContext } from "../../../context/CognitiveMode/CognitiveModeContext";
-import BlogImagery from "./BlogComponents/BlogImagery";
-import BlogMessage from "./BlogComponents/BlogMessage";
-import BlogProfile from "./BlogComponents/BlogProfile";
-import BlogReactionSession from "./BlogComponents/BlogReactionSession";
-import BlogReactionStats from "./BlogComponents/BlogReactionStats";
-import BlogArticleHeader from "./BlogArticleHeader";
-import { User } from "../../../models/datamodels";
+import React, { useContext, useState } from 'react';
+import { CognitiveModeContext } from '../../../context/CognitiveMode/CognitiveModeContext';
+import { User } from '../../../models/datamodels';
+import BlogArticleHeader from './BlogArticleHeader';
+import BlogImagery from './BlogComponents/BlogImagery';
+import BlogMessage from './BlogComponents/BlogMessage';
+import BlogProfile from './BlogComponents/BlogProfile';
+import BlogReactionSession from './BlogComponents/BlogReactionSession';
+import BlogReactionStats from './BlogComponents/BlogReactionStats';
 
 interface BlogPostProps {
   images: string[];
   title: string;
+  subTitle?: string;
   content: string;
   date: string;
   isArticle: boolean;
@@ -27,11 +28,13 @@ interface BlogPostProps {
 const BlogPost: React.FC<BlogPostProps> = ({
   images,
   title,
+  subTitle,
   content,
+
   date,
   isArticle,
   article_id,
-  user
+  user,
 }) => {
   const { isCognitiveMode } = useContext(CognitiveModeContext);
   const [isCommentSectionOpen, setIsCommentSectionOpen] = useState<boolean>(false);
@@ -43,24 +46,20 @@ const BlogPost: React.FC<BlogPostProps> = ({
   return (
     <div className="each_blog_post mt-5 shadow-md p-2 max-w-[680px] self-center w-full bg-background">
       {isArticle && <BlogArticleHeader />}
-      <BlogProfile title={title} user={user} content={content}  date={date} article_id={article_id} />
+      <BlogProfile title={title} user={user} content={content} date={date} article_id={article_id} />
       <BlogMessage
         title={title}
-        content={content}
+        content={isArticle ? (subTitle as string) : content}
         article_id={article_id}
         isArticle={isArticle}
       />
       {!isCognitiveMode && <BlogImagery PostImages={images} />}
-      <BlogReactionStats
-        toggleCommentSection={toggleCommentSection}
-        date={date}
-        article_id={article_id}
-      />
+      <BlogReactionStats toggleCommentSection={toggleCommentSection} date={date} article_id={article_id} />
       <BlogReactionSession
         isCommentSectionOpen={isCommentSectionOpen}
         message={content}
         article_id={article_id}
-        setIsCommentSectionOpen={toggleCommentSection} 
+        setIsCommentSectionOpen={toggleCommentSection}
         author_of_post={user}
       />
     </div>

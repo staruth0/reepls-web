@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { LuFile } from 'react-icons/lu';
+import { LuFilePen } from 'react-icons/lu';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Editor } from 'reactjs-tiptap-editor';
@@ -48,21 +48,26 @@ const ArticleView: React.FC = () => {
       <Topbar>
         <CreatePostTopBar title={title} mainAction={{ label: 'Publish', onClick: () => {} }} actions={[]} />
       </Topbar>
-      <div className="w-full h-full mb-10">
-        <div className="mt-10 flex flex-col justify-center items-center">
-          <div className="w-2/3 px-8 flex gap-4 mb-4">
+      <div className="max-w-full h-full mb-10 inline-block overflow-clip">
+        <div className="max-w-full md:mx-20 mt-10 flex flex-col justify-center items-left">
+          <div className="mx-20 flex gap-4 mb-4">
             {isDraft && (
               <span className="text-sm font-semibold mr-4 px-4 py-1 bg-foreground text-primary-500 rounded-full flex gap-2 items-center">
-                <LuFile className="size-4" />
+                <LuFilePen className="size-4" />
                 Draft
               </span>
             )}
           </div>
-          <div className="flex flex-col gap-4 items-left">
-            <h1 className="text-4xl ml-20 font-semibold leading-tight mb-4">{title}</h1>
-            <div className="text-xl ml-20 mb-2">{description}</div>
+          <div className="max-w-full flex flex-col gap-4 items-left">
+            <h1 className="text-4xl mx-20 font-semibold leading-tight mb-4">{title}</h1>
+            <h3 className="text-xl mx-20 mb-2 overflow-auto">{description}</h3>
+            {/** What goes here?
+             * 1.Author's profile(name, avatar, bio, handle)
+             * 2.Article's tags, published date, reading time, etc.
+             * 3.Share button, save button, edit button, delete button,
+             */}
             {/* {!isDraft && <BlogProfile user={user} date={new Date().toISOString()} article_id={articleUid!} title={title} content={htmlArticleContent} />} */}
-            <div id=" " className="mb-20 ">
+            <div id="article-content" className="w-full mb-20 ">
               <TipTapRichTextEditor
                 initialContent={htmlArticleContent}
                 handleContentChange={setHtmlArticleContent}
@@ -70,6 +75,7 @@ const ArticleView: React.FC = () => {
                 disabled={true}
                 hideToolbar={true}
                 hideBubble={true}
+                className="w-full block"
               />
             </div>
           </div>
@@ -81,6 +87,9 @@ const ArticleView: React.FC = () => {
             </div>
           </div>
         )}
+        {/**
+         * comments section
+         */}
       </div>
     </div>
   );
