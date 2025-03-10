@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { toast } from 'react-toastify';
 import { useUser } from '../../../hooks/useUser';
 import { Comment } from '../../../models/datamodels';
 import { useCreateComment } from '../hooks';
 import { LuSend, LuLoader } from "react-icons/lu";
+import { toast } from 'react-toastify';
 
 interface CommentTabProps {
   article_id: string;
@@ -23,6 +23,23 @@ const CommentTab: React.FC<CommentTabProps> = ({ article_id, setIsCommentSection
 
   const { mutate, isPending } = useCreateComment();
 
+  // Function to validate all required fields
+  const validateCommentData = (commentData: Comment): boolean => {
+    if (!commentData.article_id) {
+      console.error('Article ID is required');
+      return false;
+    }
+    if (!commentData.author_id) {
+      console.error('Author ID is required');
+      return false;
+    }
+    if (!commentData.content?.trim()) {
+      console.error('Comment cannot be empty');
+      return false;
+    }
+    return true;
+  };
+
   const handleCommentSubmit = () => {
     const commentValues: Comment = {
       article_id,
@@ -31,13 +48,20 @@ const CommentTab: React.FC<CommentTabProps> = ({ article_id, setIsCommentSection
       is_audio_comment: false,
     };
 
+    // Validate the comment data before mutating
+    if (!validateCommentData(commentValues)) {
+      return; 
+    }
+
+    // If validation passes, call mutate
     mutate(commentValues, {
       onSuccess: () => {
         setIsCommentSectionOpen(true);
-        toast.success('Comment posted successfully');
+        toast.success('You added 1 comment.');
       },
       onError: () => {
-        toast.error('Failed to post comment');
+        console.error('Failed to post comment');
+        toast.error('Failed to post comment. Please try again later.');
       },
     });
     console.log(commentValues);

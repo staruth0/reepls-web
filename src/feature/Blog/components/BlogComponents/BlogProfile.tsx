@@ -16,7 +16,7 @@ import './Blog.scss';
 interface BlogProfileProps {
   date: string;
   article_id: string;
-  user: User;
+  user: User | null; // Allow user to be null
   content: string;
   title: string;
 }
@@ -36,12 +36,14 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
   const { data: savedArticles } = useGetSavedArticles();
   const [saved, setSaved] = useState(false);
 
-  // Extract followed IDs from User objects
-  const followedIds = followings?.data?.map((following: Follow) => following.followed_id.id) || [];
-  const isFollowing = followedIds.includes(user?.id);
+  // Safely extract followed IDs from User objects
+  const followedIds = followings?.data?.map((following: Follow) => following.followed_id?.id) || [];
+  const isFollowing = user?.id ? followedIds.includes(user.id) : false;
 
   const handleProfileClick = (username: string) => {
-    goToProfile(username);
+    if (username) {
+      goToProfile(username);
+    }
   };
 
   const handleSavedArticle = () => {
@@ -67,17 +69,17 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
   };
 
   const handleFollowClick = () => {
-    if (isFollowPending || isUnfollowPending) return;
+    if (isFollowPending || isUnfollowPending || !user?.id) return;
 
     if (isFollowing) {
-      unfollowUser(user?.id || '', {
+      unfollowUser(user.id, {
         onSuccess: () => {
           toast.success('User unfollowed successfully');
         },
         onError: () => toast.error('Failed to unfollow user'),
       });
     } else {
-      followUser(user?.id || '', {
+      followUser(user.id, {
         onSuccess: () => {
           toast.success('User followed successfully');
         },
@@ -113,6 +115,11 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
   const articleTitle = `${title ? title : content.split(' ').slice(0, 10).join(' ') + '...'}`;
 
   const isCurrentAuthorArticle = user?.id === authUser?.id;
+
+  // If user is null, return null or a fallback UI
+  if (!user) {
+    return null; // or return a loading spinner or placeholder
+  }
 
   return (
     <div className="blog-profile relative">
