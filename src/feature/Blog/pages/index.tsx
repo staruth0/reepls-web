@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuCalendar, LuEye, LuSave, LuShare, LuTag } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { type Editor } from 'reactjs-tiptap-editor';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
-import { AuthContext } from '../../../context/AuthContext/authContext';
 import { Article } from '../../../models/datamodels';
 import CreatePostTopBar from '../components/CreatePostTopBar';
 import ImageSection from '../components/ImageSection';
@@ -15,13 +14,13 @@ import useDraft from '../hooks/useDraft';
 
 const CreatePost: React.FC = () => {
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
-  const { checkTokenExpiration } = useContext(AuthContext);
+  // const { checkTokenExpiration } = useContext(AuthContext);
   const [title, setTitle] = useState<string>('');
   const [subTitle, setSubTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const { saveDraftArticle, loadDraftArticle, clearDraftArticle } = useDraft();
 
-  const { mutate: createArticle, isPending } = useCreateArticle();
+  const { mutate: createArticle, isPending: _ } = useCreateArticle();
 
   // const [isSaving, setIsSaving] = useState(false);
   const [initialEditorContent, setInitialEditorContent] = useState<{
@@ -163,17 +162,17 @@ const CreatePost: React.FC = () => {
     saveDraftArticle({ title, subTitle, content });
   }, [title, subTitle, content]);
 
-  const isLoggedOut = checkTokenExpiration();
+  // const isLoggedOut = checkTokenExpiration();
 
-  useEffect(() => {
-    console.log(content);
-    console.log(title);
-    console.log(subTitle);
-    console.log(thumbnailUrl);
-    if (isLoggedOut) {
-      navigate('/auth');
-    }
-  }, [isLoggedOut]);
+  // useEffect(() => {
+  //   console.log(content);
+  //   console.log(title);
+  //   console.log(subTitle);
+  //   console.log(thumbnailUrl);
+  //   if (isLoggedOut) {
+  //     navigate('/auth');
+  //   }
+  // }, [isLoggedOut]);
 
   return (
     <div className="">

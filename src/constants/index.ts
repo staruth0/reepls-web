@@ -40,8 +40,9 @@ const allowedVideoTypes = [
 ];
 
 // All about the api
-const API_BASE_URL = 'http://localhost:5001'; //'https://saah-server.vercel.app';
-const API_VERSION = '/api-v1';
+const API_BASE_URL =
+  import.meta.env.VITE_ENV === 'development' ? 'http://localhost:5001' : 'https://saah-server.vercel.app';
+const API_VERSION = import.meta.env.VITE_API_VERSION || '/api-v1';
 const API_URL = `${API_BASE_URL}${API_VERSION}`;
 
 const AUTH_TOKEN_KEY = 'AuthToken';
