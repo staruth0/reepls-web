@@ -1,5 +1,8 @@
 # TODOS: ignore this
 
+fabricekongnyuy2@gmail.com
+Ilovemydreams1#
+
 VITE_GIPHY_API_KEY
 
 profiles: images (images/:userid/uuidfilename.ext)
@@ -189,9 +192,6 @@ Small
 - See more, see less ---colored? bolded?
 - Replace icons images with icon pack icons
 - auth and other layoust moved accordinaly
-
-fabricekongnyuy2@gmail.com
-
 
 ===== Notes while working ==========
 
