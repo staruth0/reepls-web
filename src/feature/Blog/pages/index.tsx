@@ -217,6 +217,7 @@ const CreatePost: React.FC = () => {
               handleContentChange={setContent}
               editorRef={editorRef}
               disabled={!hasLoadedDraft}
+              className="block max-w-full bg-primary-100 static mx-auto my-1"
             />
           </div>
         </div>
