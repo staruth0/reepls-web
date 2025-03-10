@@ -2,12 +2,15 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuCalendar, LuEye, LuSave, LuShare, LuTag } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { type Editor } from 'reactjs-tiptap-editor';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import { AuthContext } from '../../../context/AuthContext/authContext';
+import { Article } from '../../../models/datamodels';
 import CreatePostTopBar from '../components/CreatePostTopBar';
 import ImageSection from '../components/ImageSection';
 import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
+import { useCreateArticle } from '../hooks/useArticleHook';
 import useDraft from '../hooks/useDraft';
 
 const CreatePost: React.FC = () => {
@@ -16,8 +19,11 @@ const CreatePost: React.FC = () => {
   const [title, setTitle] = useState<string>('');
   const [subtitle, setSubtitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
-  const { saveDraftArticle, loadDraftArticle } = useDraft();
+  const { saveDraftArticle, loadDraftArticle, clearDraftArticle } = useDraft();
 
+  const { mutate: createArticle, isPending } = useCreateArticle();
+
+  // const [isSaving, setIsSaving] = useState(false);
   const [initialEditorContent, setInitialEditorContent] = useState<{
     title: string;
     subtitle: string;
@@ -81,7 +87,46 @@ const CreatePost: React.FC = () => {
   ];
 
   const onPublish = () => {
-    console.log('Publishing the post...');
+    if (!title || !subtitle || !content) {
+      toast.error('Please provide a title, subtitle and content.', {
+        autoClose: 1500,
+      });
+      return;
+    }
+    const media = thumbnailUrl ? [thumbnailUrl] : [];
+    const article: Article = {
+      title,
+      subTitle: subtitle,
+      content,
+      media,
+      status: 'Published',
+      type: 'LongForm',
+      isArticle: true,
+    };
+    const toastId = toast.info('Publishing the article...', {
+      isLoading: true,
+      autoClose: false,
+    });
+    createArticle(article, {
+      onSuccess: () => {
+        toast.update(toastId, {
+          render: 'Article created successfully',
+          type: 'success',
+          isLoading: false,
+          autoClose: 1500,
+        });
+        navigate('/feed');
+        clearDraftArticle();
+      },
+      onError: (error) => {
+        toast.update(toastId, {
+          render: 'Error creating article: ' + error,
+          type: 'error',
+          isLoading: false,
+          autoClose: 1500,
+        });
+      },
+    });
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>, nextFocus: () => void) => {
@@ -96,19 +141,27 @@ const CreatePost: React.FC = () => {
     const draftArticle = loadDraftArticle();
     if (draftArticle) {
       setInitialEditorContent(draftArticle);
+      console.log({ initialEditorContent });
+      setTitle(draftArticle.title);
+      setSubtitle(draftArticle.subtitle);
+      setContent(draftArticle.content);
+      // editorRef.current?.editor?.commands?.setContent(draftArticle.content);
     }
-    console.log({ initialEditorContent });
-    setTitle(initialEditorContent.title);
-    setSubtitle(initialEditorContent.subtitle);
-    setContent(initialEditorContent.content);
+
     setHasLoadedDraft(true);
   }, []);
 
   useEffect(() => {
+    if (hasLoadedDraft && editorRef.current?.editor) {
+      setContent(initialEditorContent.content);
+      editorRef.current?.editor?.commands?.setContent(initialEditorContent.content);
+    }
+  }, [hasLoadedDraft, initialEditorContent]);
+
+  useEffect(() => {
     if (!hasLoadedDraft) return;
     saveDraftArticle({ title, subtitle, content });
-    console.log('Saving draft...: ' + content.length);
-  }, [content, hasLoadedDraft]);
+  }, [title, subtitle, content]);
 
   const isLoggedOut = checkTokenExpiration();
 
@@ -160,8 +213,8 @@ const CreatePost: React.FC = () => {
           </div>
           <div id="editor relative" className="mb-20">
             <TipTapRichTextEditor
-              initialContent={initialEditorContent.content}
-              handleContentChange={(content) => setContent((prev) => (prev === content ? prev : content))}
+              initialContent={content}
+              handleContentChange={setContent}
               editorRef={editorRef}
               disabled={!hasLoadedDraft}
             />

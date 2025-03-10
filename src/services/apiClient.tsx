@@ -40,6 +40,7 @@ apiClient.interceptors.response.use(
       const refreshToken = getRefreshToken();
       if (refreshToken) {
         try {
+          console.log('Refreshing token');
           const data = await refreshAuthTokens(refreshToken);
           if (!data.accessToken) throw new Error("No access token received");
 
@@ -57,6 +58,8 @@ apiClient.interceptors.response.use(
         }
       }
     }
+    // localStorage.clear();
+    // window.location.href = '/auth/login/phone';
     return Promise.reject(error);
   }
 );

@@ -185,9 +185,11 @@ function TipTapRichTextEditor({
   const { theme } = useTheme();
 
   const onValueChange = useCallback(
+    // @ts-ignore
     debounce((value: EditorContent) => {
-      handleContentChange(value);
-    }, 2_000),
+      // handleContentChange(value);
+      handleContentChange(editorRef.current?.editor?.getHTML() ?? '');
+    }, 1000),
     []
   );
 
@@ -204,6 +206,7 @@ function TipTapRichTextEditor({
         output="html"
         content={initialContent}
         onChangeContent={onValueChange}
+        // onChangeContent={handleContentChange}
         extensions={extensions}
         dark={theme === 'dark'}
         // hideToolbar={true}
