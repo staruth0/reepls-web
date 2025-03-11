@@ -9,9 +9,9 @@ import { useGetArticleById } from '../Blog/hooks/useArticleHook';
 import { useGetUserById } from '../Profile/hooks';
 import Communique from './components/Communique/Communique';
 
-const ArticleRead: React.FC = () => {
+const PostView: React.FC = () => {
   const { id } = useParams();
-  const { data: article, isLoading } = useGetArticleById(id!); //todo: add error checking
+  const { data: article, isPending } = useGetArticleById(id!); //todo: add error checking
   const { user } = useGetUserById(article?.author_id);
 
   return (
@@ -21,7 +21,7 @@ const ArticleRead: React.FC = () => {
         <Topbar>
           Post by {user?.username || 'Unknown'} {moment(article?.createdAt ?? Date.now()).fromNow()}
         </Topbar>
-        {isLoading ? (
+        {isPending ? (
           <LuLoader className="animate-spin text-primary-400 text-2xl m-4" />
         ) : (
           <div className="px-20 mt-10">
@@ -48,4 +48,4 @@ const ArticleRead: React.FC = () => {
   );
 };
 
-export default ArticleRead;
+export default PostView;

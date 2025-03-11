@@ -1,10 +1,10 @@
 import CreatePost from '../feature/Blog/pages';
 import ArticleView from '../feature/Blog/pages/ArticleView';
-import ArticleRead from '../feature/Feed/ArticleRead';
 import CommuniqueDetail from '../feature/Feed/CommuniqueDetail';
 import CommuniqueList from '../feature/Feed/CommuniqueList';
 import UserFeed from '../feature/Feed/Feed';
 import FeedFollowing from '../feature/Feed/FeedFollowings';
+import PostView from '../feature/Feed/PostView';
 import Notifications from '../feature/Notifications/pages';
 import Profile from '../feature/Profile/pages';
 import EditProfile from '../feature/Profile/pages/EditProfile';
@@ -78,7 +78,7 @@ const UserRoutes = {
     },
     {
       path: '/posts/post/:id',
-      element: <ArticleRead />,
+      element: <PostView />,
     },
     {
       path: 'posts/communiques',
