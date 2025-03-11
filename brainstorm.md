@@ -25,6 +25,11 @@ articles: thumbnails, images, documents (images/:userid/uuidfilename.ext, docume
 
 - limit comment chars
 
+cloudinary resources:
+https://cloudinary.com/documentation/image_upload_api_reference
+https://cloudinary.com/documentation/upload_images
+https://cloudinary.com/documentation/authentication_signatures
+
 # Errors Found:
 
 - Recommended user and other recomended items have duplicates
@@ -58,6 +63,8 @@ Some Resources:
 - https://elazizi.com/posts/react-query-auth-token-refresh/
 - https://akhilaariyachandra.com/blog/refreshing-an-authentication-in-token-in-tanstack-query
 - https://dev.to/miracool/how-to-manage-user-authentication-with-react-js-3ic5
+- Search: How to correctly handle authentication in react when it comes to jwts, access tokens and refresh tokens using tanstack query, axios, and local storage github
+-
 
 ==========================================================================================================================
 
