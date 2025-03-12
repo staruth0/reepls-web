@@ -63,10 +63,21 @@ const ArticleView: React.FC = () => {
     }
   }, [htmlArticleContent]);
 
+  const mainAction = {
+    label: isPreview ? 'Publish' : 'Save',
+    onClick: () => {
+      if (isPreview) {
+        console.log('publish');
+      } else {
+        console.log('save');
+      }
+    },
+  };
+
   return (
     <div className="">
       <Topbar>
-        <CreatePostTopBar title={title} mainAction={{ label: 'Publish', onClick: () => {} }} actions={[]} />
+        <CreatePostTopBar title={title} mainAction={mainAction} actions={[]} />
       </Topbar>
       <div className="max-w-full h-full mb-10 inline-block overflow-clip">
         <div className="max-w-full md:mx-20 mt-10 flex flex-col justify-center items-left">

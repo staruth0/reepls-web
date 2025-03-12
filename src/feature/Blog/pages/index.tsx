@@ -56,6 +56,7 @@ const CreatePost: React.FC = () => {
       disabled: false,
       ActionIcon: LuCalendar,
       onClick: () => {
+        console.log(editorRef.current?.editor?.getText());
         console.log('Scheduling the post...');
       },
     },

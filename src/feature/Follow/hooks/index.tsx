@@ -1,5 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { followUser, unfollowUser, getFollowers, getFollowing } from "../api";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { followUser, getFollowers, getFollowing, unfollowUser } from '../api';
 
 export const useFollowUser = () => {
   const queryClient = useQueryClient();
@@ -7,15 +7,15 @@ export const useFollowUser = () => {
   return useMutation({
     mutationFn: (followedId: string) => followUser(followedId),
     onSuccess: (data) => {
-      console.log("User followed:", data);
+      console.log('User followed:', data);
       // Invalidate queries to refetch data in the background
-      queryClient.invalidateQueries({ queryKey: ["followers"] });
+      queryClient.invalidateQueries({ queryKey: ['followers'] });
       queryClient.invalidateQueries({
-        queryKey: ["following"],
+        queryKey: ['following'],
       });
     },
     onError: (error) => {
-      console.error("Error following user:", error);
+      console.error('Error following user:', error);
     },
   });
 };
@@ -26,29 +26,31 @@ export const useUnfollowUser = () => {
   return useMutation({
     mutationFn: (followedId: string) => unfollowUser(followedId),
     onSuccess: (data) => {
-      console.log("User unfollowed:", data);
+      console.log('User unfollowed:', data);
       // Invalidate queries to refetch data in the background
-      queryClient.invalidateQueries({ queryKey: ["followers"] });
+      queryClient.invalidateQueries({ queryKey: ['followers'] });
       queryClient.invalidateQueries({
-        queryKey: ["following"],
+        queryKey: ['following'],
       });
     },
     onError: (error) => {
-      console.error("Error unfollowing user:", error);
+      console.error('Error unfollowing user:', error);
     },
   });
 };
 
 export const useGetFollowers = (userId: string) => {
   return useQuery({
-    queryKey: ["followers", userId],
+    queryKey: ['followers', userId],
     queryFn: () => getFollowers(userId),
+    enabled: !!userId,
   });
 };
 
 export const useGetFollowing = (userId: string) => {
   return useQuery({
-    queryKey: ["following", userId],
+    queryKey: ['following', userId],
     queryFn: () => getFollowing(userId),
+    enabled: !!userId,
   });
 };
