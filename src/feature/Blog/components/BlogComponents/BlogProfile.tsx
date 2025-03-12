@@ -72,14 +72,14 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
     if (isFollowPending || isUnfollowPending || !user?.id) return;
 
     if (isFollowing) {
-      unfollowUser(user.id, {
+      unfollowUser(user?.id, {
         onSuccess: () => {
           toast.success('User unfollowed successfully');
         },
         onError: () => toast.error('Failed to unfollow user'),
       });
     } else {
-      followUser(user.id, {
+      followUser(user?.id, {
         onSuccess: () => {
           toast.success('User followed successfully');
         },
