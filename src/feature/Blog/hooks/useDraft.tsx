@@ -1,6 +1,6 @@
 type DraftArticle = {
   title: string;
-  subtitle: string;
+  subTitle: string;
   content: string;
 };
 
@@ -12,10 +12,10 @@ type DraftPost = {
 
 const useDraft = () => {
   return {
-    saveDraftArticle: ({ title, subtitle, content }: DraftArticle) => {
+    saveDraftArticle: ({ title, subTitle, content }: DraftArticle) => {
       const article: DraftArticle = {
         title,
-        subtitle,
+        subTitle,
         content,
       };
       localStorage.setItem('LocalDraftArticle', JSON.stringify(article));

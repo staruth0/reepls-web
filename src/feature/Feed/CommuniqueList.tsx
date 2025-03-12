@@ -1,13 +1,12 @@
-import React from 'react'
+import React from 'react';
 import Topbar from '../../components/atoms/Topbar/Topbar';
-import { useGetCommuniquerArticles } from '../Blog/hooks/useArticleHook';
-import BlogPost from '../Blog/components/BlogPost';
-import Communique from './components/Communique/Communique';
 import { Article } from '../../models/datamodels';
+import BlogPost from '../Blog/components/BlogPost';
+import { useGetCommuniquerArticles } from '../Blog/hooks/useArticleHook';
+import Communique from './components/Communique/Communique';
 
 const CommuniqueList: React.FC = () => {
-    
-    const { data, error, isLoading } = useGetCommuniquerArticles();
+  const { data, error, isLoading } = useGetCommuniquerArticles();
 
   return (
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
@@ -24,11 +23,11 @@ const CommuniqueList: React.FC = () => {
           <div className="skeleton-loader">Loading</div>
         ) : (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse gap-7 pb-10">
-            {data?.map((article:Article) => (
+            {data?.map((article: Article) => (
               <BlogPost
                 key={article._id}
                 isArticle={article.isArticle!}
-                images={article.media!}
+                media={article.media!}
                 title={article.title!}
                 content={article.content!}
                 user={article.author_id!}
@@ -47,6 +46,6 @@ const CommuniqueList: React.FC = () => {
       </div>
     </div>
   );
-}
+};
 
-export default CommuniqueList
+export default CommuniqueList;

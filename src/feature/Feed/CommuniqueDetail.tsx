@@ -11,7 +11,7 @@ import './feed.scss';
 
 const CommuniqueDetail: React.FC = () => {
   const { id } = useParams();
-  const { data, isLoading } = useGetArticleById(id!); //todo: add error checking
+  const { data: article, isLoading } = useGetArticleById(id!); //todo: add error checking
 
   return (
     <div className={`grid grid-cols-[4fr_1.75fr] `}>
@@ -23,14 +23,15 @@ const CommuniqueDetail: React.FC = () => {
         ) : (
           <div className="px-20 mt-10">
             <BlogProfile
-              user={data?.author_id}
-              content={data?.content}
-              title={data?.title}
-              date={data?.createdAt}
+              user={article?.author_id}
+              content={article?.content}
+              title={article?.title}
+              date={article?.createdAt}
               article_id={id!}
+              isArticle={article?.isArticle ?? false}
             />
             <div className="mt-4">
-              <PostDetail content={data?.content} title={data?.title} />
+              <PostDetail content={article?.content} title={article?.title} />
             </div>
           </div>
         )}

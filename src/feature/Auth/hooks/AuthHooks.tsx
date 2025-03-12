@@ -14,7 +14,8 @@ import {
   updateUser,
   verifyEmailCode,
   verifyPhoneCode,
-} from '../api';
+  logoutUser,
+} from "../api";
 import { useTokenStorage } from './useTokenStorage';
 
 // Hook for registering a user
@@ -243,3 +244,47 @@ export const useRefreshToken = () => {
     },
   });
 };
+
+
+// Hook for logging out a user
+export const useLogoutUser = (token: string) => {
+  return useMutation({
+    mutationFn: () => logoutUser(token), 
+    onError: (error) => {
+      console.error("Error logging out:", error); 
+    },
+  });
+};
+
+// // Hook for sending a forgot password email
+// export const useForgotPassword = () => {
+
+//   return useMutation({
+//     mutationFn: (email: string) => forgotPassword(email),
+//   });
+// };
+
+// // Hook for verifying reset password code
+// export const useVerifyResetPasswordCode = () => {
+//   const navigate = useNavigate();
+
+//   const navigateToResetPassword = (email: string) => {
+//     navigate('/auth/reset-password/new', { state: { email } }); 
+//   };
+
+//   return useMutation({
+//     mutationFn: ({ code, email }: { code: string; email: string }) => 
+//       verifyResetPasswordCode(code, email),
+  
+//   });
+// };
+
+// // Hook for resetting the password
+// export const useResetPassword = () => {
+
+//   return useMutation({
+//     mutationFn: ({ token, email, password }: { token: string; email: string; password: string }) => 
+//       resetPassword(token, email, password),
+
+//   });
+// };

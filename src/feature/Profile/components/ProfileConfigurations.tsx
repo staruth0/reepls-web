@@ -3,15 +3,27 @@ import ConfigurationWrapper from "./ConfigurationWrapper";
 import { useTranslation } from "react-i18next";
 import useTheme from "../../../hooks/useTheme";
 import { VoiceLanguageContext } from "../../../context/VoiceLanguageContext/VoiceLanguageContext";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../../../hooks/useUser";
+import { useLogoutUser } from "../../Auth/hooks/AuthHooks";
+import { useTokenStorage } from "../../Auth/hooks/useTokenStorage"; 
+import { LuLoader } from 'react-icons/lu';
 
 const ProfileConfigurations: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const [isVideoAutoPlay, setIsVideoAutoPlay] = useState<boolean>(false);
   const [isExplicitContent, setIsExplicitContent] = useState<boolean>(false);
   const [showLanguageMenu, setShowLanguageMenu] = useState<boolean>(false);
+  const [showLogoutPopup, setShowLogoutPopup] = useState<boolean>(false);
   const { t, i18n } = useTranslation();
-  const [voiceLanguages, setVoiceLanguages] = useState<SpeechSynthesisVoice[]>([]);
+  const [voiceLanguages, setVoiceLanguages] = useState<SpeechSynthesisVoice[]>(
+    []
+  );
   const { setVoiceLanguage } = useContext(VoiceLanguageContext);
+  const navigate = useNavigate();
+  const { authUser } = useUser();
+  const { getRefreshToken } = useTokenStorage(); 
+  const { mutate: logout, isPending: isLoggingOut } = useLogoutUser(getRefreshToken() || ""); 
 
   const languages = [
     { code: "en", label: "English" },
@@ -35,37 +47,116 @@ const ProfileConfigurations: React.FC = () => {
     setShowLanguageMenu(false);
   };
 
-  const handleLanguageChangeVoice = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedVoice = voiceLanguages.find((voice) => voice.name === event.target.value);
+  const handleLanguageChangeVoice = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedVoice = voiceLanguages.find(
+      (voice) => voice.name === event.target.value
+    );
     if (selectedVoice) {
-      console.log(selectedVoice)
+      console.log(selectedVoice);
       setVoiceLanguage(selectedVoice);
     }
   };
 
-useEffect(() => {
-  const loadVoices = () => {
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length > 0) {
-      setVoiceLanguages(voices);
+  const handleLogoutClick = () => {
+    setShowLogoutPopup(true);
+  };
+
+  const handleConfirmLogout = () => {
+    console.log("Initiating logout...");
+    logout(undefined, {
+      onSuccess: () => {
+        console.log("Logout successful");
+        // Clear local storage
+        localStorage.clear()
+      
+        setShowLogoutPopup(false);
+        navigate("/auth"); 
+      },
+      onError: (error) => {
+        console.error("Logout failed:", error);
+        setShowLogoutPopup(false); 
+        navigate("/auth");
+      },
+    });
+  };
+
+  const handleCancelLogout = () => {
+    console.log("Cancelled logout.");
+    setShowLogoutPopup(false);
+  };
+
+  // Navigation handlers
+  const handleProfileSettingsClick = () => {
+    if (authUser?.id) {
+      navigate(`/profile/settings/${authUser.username}`);
+    } else {
+      console.log("User ID not found, cannot navigate.");
     }
   };
 
-  loadVoices();
-  window.speechSynthesis.onvoiceschanged = loadVoices; 
-
-  return () => {
-    window.speechSynthesis.onvoiceschanged = null; 
+  const handleViewAnalyticsClick = () => {
+    if (authUser?.id) {
+      navigate(`/profile/analytics/${authUser.id}`);
+    } else {
+      console.log("User ID not found, cannot navigate.");
+    }
   };
-}, []);
+
+  const handleDraftsClick = () => {
+    if (authUser?.id) {
+      navigate(`/drafts/${authUser.id}`);
+    } else {
+      console.log("User ID not found, cannot navigate.");
+    }
+  };
+
+  const handleTermsClick = () => {
+    navigate(`/Terms&Policies`);
+  };
+
+  useEffect(() => {
+    const loadVoices = () => {
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        setVoiceLanguages(voices);
+      }
+    };
+
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, []);
 
   return (
     <div className="profile__configurations px-6 py-2 sticky top-0">
       <div className="text-[16px] text-neutral-50">{t(`Settings`)}</div>
       <div className="actual__settings mt-8 flex flex-col gap-5">
-        <ConfigurationWrapper>{t(`Phone Settings`)}</ConfigurationWrapper>
-        <ConfigurationWrapper>{t(`View Analytics`)}</ConfigurationWrapper>
-        <ConfigurationWrapper>{t(`Drafts`)}</ConfigurationWrapper>
+        <ConfigurationWrapper>
+          <div
+            className="cursor-pointer w-full"
+            onClick={handleProfileSettingsClick}
+          >
+            {t(`Profile Settings`)}
+          </div>
+        </ConfigurationWrapper>
+        <ConfigurationWrapper>
+          <div
+            className="cursor-pointer w-full"
+            onClick={handleViewAnalyticsClick}
+          >
+            {t(`View Analytics`)}
+          </div>
+        </ConfigurationWrapper>
+        <ConfigurationWrapper>
+          <div className="cursor-pointer w-full" onClick={handleDraftsClick}>
+            {t(`Drafts`)}
+          </div>
+        </ConfigurationWrapper>
 
         <ConfigurationWrapper>
           <div>{t(`Default Language`)}</div>
@@ -181,9 +272,49 @@ useEffect(() => {
           </div>
         </ConfigurationWrapper>
 
-        <ConfigurationWrapper>{t(`Terms and Policies`)}</ConfigurationWrapper>
-        <ConfigurationWrapper>{t(`Logout`)}</ConfigurationWrapper>
+        <ConfigurationWrapper>
+          <div className="cursor-pointer w-full" onClick={handleTermsClick}>
+            {t(`Terms and Policies`)}
+          </div>
+        </ConfigurationWrapper>
+
+        <ConfigurationWrapper>
+          <div className="cursor-pointer w-full" onClick={handleLogoutClick}>
+            {t(`Logout`)}
+          </div>
+        </ConfigurationWrapper>
       </div>
+
+      {/* Logout Confirmation Popup */}
+      {showLogoutPopup && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={handleCancelLogout}
+          ></div>
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-800 rounded-md shadow-lg p-6 z-50 w-[40%] flex flex-col items-center">
+            <h2 className="text-neutral-50 text-lg font-semibold mb-4">
+              {t("Are you sure you want to log out?")}
+            </h2>
+            <div className="flex justify-end gap-4">
+              <button
+                className="px-8 py-2 bg-neutral-700 text-neutral-50 rounded-md hover:bg-neutral-600"
+                onClick={handleCancelLogout}
+                disabled={isLoggingOut} // Disable while logging out
+              >
+                {t("No")}
+              </button>
+              <button
+                className="px-8 py-2 bg-secondary-600 text-neutral-50 rounded-md hover:bg-secondary-700"
+                onClick={handleConfirmLogout}
+                disabled={isLoggingOut} // Disable while logging out
+              >
+                {isLoggingOut ? <LuLoader className="animate-spin inline-block mx-4" /> : t("Yes")}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

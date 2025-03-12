@@ -1,9 +1,9 @@
-import React from "react";
-import BlogPost from "../../Blog/components/BlogPost";
-import { Article } from "../../../models/datamodels";
+import React from 'react';
+import { Article } from '../../../models/datamodels';
+import BlogPost from '../../Blog/components/BlogPost';
 
 interface SavedContainerProps {
-  posts: Article[]; 
+  posts: Article[];
 }
 
 const SavedPostsContainer: React.FC<SavedContainerProps> = ({ posts }) => {
@@ -15,7 +15,7 @@ const SavedPostsContainer: React.FC<SavedContainerProps> = ({ posts }) => {
           <BlogPost
             key={article._id}
             isArticle={article.isArticle!}
-            images={article.media!}
+            media={article.media!}
             title={article.title!}
             content={article.content!}
             user={article.author_id!}

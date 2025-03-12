@@ -8,41 +8,41 @@ const SHORT_POST_LENGTH = 1500;
 
 const PREVIEW_SLUG = 'preview';
 
-const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+const allowedImageTypes = ['jpeg', 'png', 'jpg', 'webp'];
 const allowedVideoTypes = [
-  'video/quicktime',
-  'video/mp4',
-  'video/avi',
-  'video/mov',
-  'video/wmv',
-  'video/flv',
-  'video/webm',
-  'video/mkv',
-  'video/mpg',
-  'video/mpeg',
-  'video/m4v',
-  'video/3gp',
-  'video/3g2',
-  'video/m3u8',
-  'video/ts',
-  'video/mxf',
-  'video/roq',
-  'video/webm',
-  'video/ogv',
-  'video/ogg',
-  'video/mts',
-  'video/m2ts',
-  'video/m3u8',
-  'video/ismv',
-  'video/f4v',
-  'video/f4p',
-  'video/f4a',
-  'video/f4b',
+  'quicktime',
+  'mp4',
+  'avi',
+  'mov',
+  'wmv',
+  'flv',
+  'webm',
+  'mkv',
+  'mpg',
+  'mpeg',
+  'm4v',
+  '3gp',
+  '3g2',
+  'm3u8',
+  'ts',
+  'mxf',
+  'roq',
+  'webm',
+  'ogv',
+  'ogg',
+  'mts',
+  'm2ts',
+  'ismv',
+  'f4v',
+  'f4p',
+  'f4a',
+  'f4b',
 ];
 
 // All about the api
-const API_BASE_URL = 'http://localhost:5001'; //'https://saah-server.vercel.app';
-const API_VERSION = '/api-v1';
+const API_BASE_URL ='http://localhost:5000'
+  // import.meta.env.VITE_ENV === 'development' ? 'http://localhost:5000' : 'https://saah-server.vercel.app';
+const API_VERSION = import.meta.env.VITE_API_VERSION || '/api-v1';
 const API_URL = `${API_BASE_URL}${API_VERSION}`;
 
 const AUTH_TOKEN_KEY = 'AuthToken';

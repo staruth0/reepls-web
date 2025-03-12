@@ -27,7 +27,7 @@ const ProfileArticles: React.FC<ProfileArticlesProps> = ({ authorId }) => {
           {data.map((article: Article) => (
             <BlogPost
               key={article._id}
-              images={article.media!}
+              media={article.media!}
               title={article.title!}
               content={article.content!}
               user={article.author_id!}

@@ -90,7 +90,7 @@ const UserFeed: React.FC = () => {
                       <BlogPost
                         key={article._id}
                         isArticle={article.isArticle!}
-                        images={article.media!}
+                        media={article.media!}
                         title={article.title!}
                         content={article.content!}
                         date={article.createdAt!}

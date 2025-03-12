@@ -1,14 +1,13 @@
 import React, { useContext } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import Sidebar from '../../components/molecules/sidebar/Sidebar';
-import { AuthContext } from '../../context/AuthContext/authContext';
 import { SidebarContext } from '../../context/SidebarContext/SidebarContext';
 import './index.scss';
 
 const UserLayout: React.FC = () => {
-  const { checkTokenExpiration, login } = useContext(AuthContext);
+  // const { checkTokenExpiration, login } = useContext(AuthContext);
   const { isOpen } = useContext(SidebarContext);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   // TODO: remove this
   // useEffect(() => {
   //   const checkAndRefresh = async () => {

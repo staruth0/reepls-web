@@ -1,5 +1,15 @@
 # TODOS: ignore this
 
+fabricekongnyuy2@gmail.com
+Ilovemydreams1#
+
+VITE_GIPHY_API_KEY
+
+profiles: images (images/:userid/uuidfilename.ext)
+banners: images (images/:userid/uuidfilename.ext)
+post: images, videos (images/:userid/uuidfilename.ext, videos/:userid/uuidfilename.ext)
+articles: thumbnails, images, documents (images/:userid/uuidfilename.ext, documents/:userid/uuidfilename.ext)
+
 -server connection,
 -cloudinary,
 
@@ -8,6 +18,17 @@
 - ath of auth object is lastime the access token was refreshed so can redirect if expired
 - Auth[AuthProvider.tsx, apiClient.tsx, useUser.tsx, userLayout/index.tsx, src/main.tsx]
   intercept reponse
+
+  - How to draw attention to articles over posts?
+
+-uploading media
+
+- limit comment chars
+
+cloudinary resources:
+https://cloudinary.com/documentation/image_upload_api_reference
+https://cloudinary.com/documentation/upload_images
+https://cloudinary.com/documentation/authentication_signatures
 
 # Errors Found:
 
@@ -42,6 +63,8 @@ Some Resources:
 - https://elazizi.com/posts/react-query-auth-token-refresh/
 - https://akhilaariyachandra.com/blog/refreshing-an-authentication-in-token-in-tanstack-query
 - https://dev.to/miracool/how-to-manage-user-authentication-with-react-js-3ic5
+- Search: How to correctly handle authentication in react when it comes to jwts, access tokens and refresh tokens using tanstack query, axios, and local storage github
+-
 
 ==========================================================================================================================
 
@@ -176,9 +199,6 @@ Small
 - See more, see less ---colored? bolded?
 - Replace icons images with icon pack icons
 - auth and other layoust moved accordinaly
-
-fabricekongnyuy2@gmail.com
-
 
 ===== Notes while working ==========
 

@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
+import { toast } from "react-toastify";
 import { ACCESS_TOKEN_KEY, API_URL, REFRESH_TOKEN_KEY } from "../constants";
 import { refreshAuthTokens } from "../feature/Auth/api/index";
-
 const getToken = () => localStorage.getItem(ACCESS_TOKEN_KEY);
 const getRefreshToken = () => localStorage.getItem(REFRESH_TOKEN_KEY);
 
@@ -16,6 +16,7 @@ const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     const token = getToken();
+    console.log('testing token availability',token)
     if (
       token &&
       !config.url?.includes("/login") &&
@@ -23,6 +24,7 @@ apiClient.interceptors.request.use(
     ) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    // config.withCredentials = true;
     return config;
   },
   (error) => Promise.reject(error)
@@ -33,6 +35,7 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    console.log("Error details:", error.response, error.message);
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
@@ -40,7 +43,7 @@ apiClient.interceptors.response.use(
       const refreshToken = getRefreshToken();
       if (refreshToken) {
         try {
-          console.log('Refreshing token');
+          console.log("Refreshing token");
           const data = await refreshAuthTokens(refreshToken);
           if (!data.accessToken) throw new Error("No access token received");
 
@@ -51,15 +54,17 @@ apiClient.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
           return apiClient(originalRequest);
         } catch (e) {
+          console.log("Token refresh failed:", e);
+          toast.info("Please login again", {
+            autoClose: 3000,
+          });
           localStorage.removeItem(ACCESS_TOKEN_KEY);
           localStorage.removeItem(REFRESH_TOKEN_KEY);
-          window.location.href = "/auth"; 
+          window.location.href = "/auth/login/phone";
           return Promise.reject(e);
         }
       }
     }
-    // localStorage.clear();
-    // window.location.href = '/auth/login/phone';
     return Promise.reject(error);
   }
 );

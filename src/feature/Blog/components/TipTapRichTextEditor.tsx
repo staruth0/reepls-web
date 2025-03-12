@@ -175,11 +175,17 @@ function TipTapRichTextEditor({
   handleContentChange,
   editorRef,
   disabled = false,
+  hideToolbar = false,
+  hideBubble = false,
+  className = '',
 }: {
   initialContent: EditorContent;
   handleContentChange: (content: EditorContent) => void;
   editorRef: React.RefObject<{ editor: Editor | null }>; // Update to match the correct type
   disabled?: boolean;
+  hideToolbar?: boolean;
+  hideBubble?: boolean;
+  className?: string;
 }) {
   const { theme } = useTheme();
 
@@ -196,7 +202,7 @@ function TipTapRichTextEditor({
 
   return (
     <div
-      className="block max-w-full bg-primary-100 mx-auto my-1 static"
+      className={`${className}`}
       style={{
         maxWidth: 1024,
       }}>
@@ -208,7 +214,8 @@ function TipTapRichTextEditor({
         // onChangeContent={handleContentChange}
         extensions={extensions}
         dark={theme === 'dark'}
-        // hideToolbar={true}
+        hideToolbar={hideToolbar}
+        hideBubble={hideBubble}
         disabled={disabled}
         resetCSS
       />
