@@ -47,7 +47,7 @@ const Sidebar: React.FC = () => {
     {
       icon: LuSearch,
       name: 'Search',
-      link: '/explore',
+      link: '/search',
     },
     {
       icon: LuBookmark,

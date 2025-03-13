@@ -112,7 +112,7 @@ function Login() {
         />
         {Login.error && <div className="text-red-500">{Login.error.message}</div>}
         <button type="submit">
-          {Login.isPending && <LuLoader className="animate-spin text-primary-400 inline-block mx-4" />}
+          {Login.isPending && <LuLoader className="animate-spin text-foreground inline-block mx-4" />}
           {t('ContinueButton')}
         </button>
       </form>

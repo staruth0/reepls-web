@@ -30,11 +30,11 @@ const UserRoutes = {
       element: <FeedFollowing />,
     },
     {
-      path: 'explore',
+      path: 'search',
       element: <Search />,
     },
     {
-      path: 'search/results/:query',
+      path: 'search/results/',
       element: <ResultsPage />,
     },
     {
@@ -46,12 +46,10 @@ const UserRoutes = {
       element: <EditProfile />,
     },
     {
-
       path: 'profile/settings/:username',
       element: <EditProfile />,
     },
     {
-
       path: '/profile/:username',
       element: <Profile />,
     },
@@ -64,12 +62,10 @@ const UserRoutes = {
       element: <ProfileAnalytics />,
     },
     {
-
       path: '/Terms&Policies',
-      element: <TermsPolicies/> ,
+      element: <TermsPolicies />,
     },
     {
-
       path: 'notifications',
       element: <Notifications />,
     },

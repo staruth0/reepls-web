@@ -84,7 +84,7 @@ function Loginwithemail() {
         />
         {Login.error && <div>{Login.error.message}</div>}
         <button type="submit" className=" hover:text-white">
-          {Login.isPending && <LuLoader className="animate-spin text-primary-400 inline-block mx-4" />}
+          {Login.isPending && <LuLoader className="animate-spin text-foreground inline-block mx-4" />}
           {Login.isPending ? 'Loging in......' : t('ContinueButton')}
         </button>
         <div className="divider">
