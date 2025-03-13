@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {  useState } from 'react';
 import { hand5, heart, thumb } from '../../../../assets/icons';
 import { timeAgo } from '../../../../utils/dateFormater';
 import { useGetCommentsByArticleId } from '../../../Comments/hooks';
@@ -21,6 +21,7 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date, toggleComme
     setShowReactions(false);
   };
 
+ 
   return (
     <div className="flex justify-between items-center p-4 text-neutral-50 text-sm font-roboto">
       {/* Reaction Section */}
@@ -45,21 +46,29 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date, toggleComme
             />
           </div>
           {/* Reaction Count */}
-          <div className="ml-1 hover:underline underline-offset-1 " onClick={() => setShowReactions(true)}>
-            {allReactions?.length}
+          <div
+            className="ml-1 hover:underline underline-offset-1 "
+            onClick={() => setShowReactions(true)}
+          >
+            {allReactions?.reactions?.length}
           </div>
         </div>
 
         {/* Comments Count */}
         <div
           className="ml-4 text-neutral-50 hover:text-primary-500 hover:underline underline-offset-1"
-          onClick={toggleCommentSection}>
-          {articleComments?.data?.length} Comments
+          onClick={toggleCommentSection}
+        >
+          {articleComments?.data?.commentsTree?.length} Comments
         </div>
       </div>
 
       {showReactions && (
-        <ReactionsPopup isOpen={showReactions} onClose={handlecloseReactionPopup} article_id={article_id} />
+        <ReactionsPopup
+          isOpen={showReactions}
+          onClose={handlecloseReactionPopup}
+          article_id={article_id}
+        />
       )}
 
       {/* Time Posted */}

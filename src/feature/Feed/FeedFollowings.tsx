@@ -52,7 +52,7 @@ const FeedFollowing: React.FC = () => {
           </div>
         ) : (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse gap-7">
-            {followedData?.map((article: Article) => (
+            {followedData?.articles?.map((article: Article) => (
               <BlogPost
                 key={article._id}
                 isArticle={article.isArticle!}
