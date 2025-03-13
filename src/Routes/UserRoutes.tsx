@@ -46,10 +46,12 @@ const UserRoutes = {
       element: <EditProfile />,
     },
     {
+
       path: 'profile/settings/:username',
       element: <EditProfile />,
     },
     {
+
       path: '/profile/:username',
       element: <Profile />,
     },
@@ -62,10 +64,12 @@ const UserRoutes = {
       element: <ProfileAnalytics />,
     },
     {
+
       path: '/Terms&Policies',
       element: <TermsPolicies/> ,
     },
     {
+
       path: 'notifications',
       element: <Notifications />,
     },
