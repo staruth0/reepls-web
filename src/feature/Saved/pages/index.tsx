@@ -91,8 +91,8 @@ const Bookmarks: React.FC = () => {
         <p className="">Your top saved Authors</p>
         <div className="mt-10 flex flex-col gap-6">
           {followings.length > 0 ? (
-            followings.map((following: Follow) => (
-              <AuthorComponent key={following?.followed_id?.id} user={following.followed_id} />
+            followings.map((following: Follow, index: number) => (
+              <AuthorComponent key={`${following?.followed_id?.id}-${index}`} user={following.followed_id} />
             ))
           ) : (
             <p className="text-neutral-500 text-center">No followings yet</p>

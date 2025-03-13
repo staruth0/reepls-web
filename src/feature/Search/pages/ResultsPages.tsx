@@ -17,6 +17,7 @@ const ResultsPage: React.FC = () => {
   const { mutate } = useStoreSearchSuggestion();
 
   useEffect(() => {
+    if (!authUser || !query || !authUser?.id) return;
     mutate(
       {
         userid: authUser?.id || '',

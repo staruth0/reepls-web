@@ -25,6 +25,9 @@ export const useStoreSearchSuggestion = () => {
         queryKey: ['searchSuggestions'],
       });
     },
+    onError: (error) => {
+      console.error('Error storing search suggestion:', error);
+    },
   });
 };
 
