@@ -16,7 +16,7 @@ const ArticleView: React.FC = () => {
   const navigate = useNavigate();
   const { articleUid } = useParams(); // use to fetch article from db
   const [title, setTitle] = useState<string>('*This article does not have a title*');
-  const [subtitle, setSubtitle] = useState<string>('');
+  const [subTitle, setSubTitle] = useState<string>('');
   const [htmlArticleContent, setHtmlArticleContent] = useState<string>('*This article does not have any content*');
   const [isPreview, _] = useState<boolean>(articleUid === PREVIEW_SLUG);
   const { loadDraftArticle } = useDraft();
@@ -24,15 +24,16 @@ const ArticleView: React.FC = () => {
   const { data: article, isError, isPending } = useGetArticleById(articleUid!);
   useEffect(() => {
     if (articleUid == PREVIEW_SLUG) {
-      const article = loadDraftArticle();
-      if (!article) {
+      const draftArticle = loadDraftArticle();
+      if (!draftArticle) {
         toast.error('No draft article found.');
         navigate('/posts/create');
         return;
       }
-      setTitle(article.title);
-      setSubtitle(article.subtitle);
-      setHtmlArticleContent(article.content);
+      setTitle(draftArticle.title);
+      setSubTitle(draftArticle.subTitle);
+      setHtmlArticleContent(draftArticle.content);
+      console.log('draftArticle', draftArticle);
     }
   }, [articleUid]);
 
@@ -42,7 +43,7 @@ const ArticleView: React.FC = () => {
         setTitle(article.title);
       }
       if (article.subTitle) {
-        setSubtitle(article.subTitle);
+        setSubTitle(article.subTitle);
       }
       if (article.content) {
         setHtmlArticleContent(article.content);
@@ -59,10 +60,11 @@ const ArticleView: React.FC = () => {
 
   useEffect(() => {
     if (editorRef.current?.editor) {
-      editorRef.current.editor.commands.setContent(htmlArticleContent);
+      setTimeout(() => {
+        editorRef?.current?.editor?.commands.setContent(htmlArticleContent);
+      }, 0);
     }
   }, [htmlArticleContent]);
-
 
   const mainAction = {
     label: isPreview ? 'Publish' : 'Save',
@@ -96,18 +98,19 @@ const ArticleView: React.FC = () => {
           </div>
           <div className="max-w-full flex flex-col gap-4 items-left">
             {isPreview ? (
-              <h1 className="text-4xl mx-20 font-semibold leading-tight mb-4">{title}</h1>
+              <h1 className="text-5xl mx-20 font-semibold leading-tight mb-2">{title}</h1>
             ) : isPending ? (
-              <h1 className="text-4xl mx-20 font-semibold leading-tight mb-4">Loading...</h1>
+              <h1 className="text-5xl mx-20 font-semibold leading-tight mb-2">Loading...</h1>
             ) : (
-              <h1 className="text-4xl mx-20 font-semibold leading-tight mb-4">{title}</h1>
+              <h1 className="text-5xl mx-20 font-semibold leading-tight mb-2">{title}</h1>
             )}
+
             {isPreview ? (
-              <h3 className="text-xl mx-20 mb-2">{subtitle}</h3>
+              <h3 className="text-3xl mx-20 mb-2">{subTitle}</h3>
             ) : isPending ? (
-              <h3 className="text-xl mx-20 mb-2">Loading...</h3>
+              <h3 className="text-3xl mx-20 mb-2">Loading...</h3>
             ) : (
-              subtitle && <h3 className="text-xl mx-20 mb-2">{subtitle}</h3>
+              subTitle && <h3 className="text-xl mx-20 mb-2">{subTitle}</h3>
             )}
 
             {/** What goes here?
@@ -116,6 +119,20 @@ const ArticleView: React.FC = () => {
              * 3.Share, Save, Edit? buttons
              */}
             {/* {!isDraft && <BlogProfile user={user} date={new Date().toISOString()} article_id={articleUid!} title={title} content={htmlArticleContent} />} */}
+
+            {/* <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <img src={article?.author.avatar} alt="avatar" className="w-10 h-10 rounded-full" />
+                <p className="text-sm font-semibold">{article?.author.name}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold">Published on {new Date().toISOString()}</p>
+                <p className="text-sm font-semibold">Reading time {article?.readingTime}</p>
+              </div>
+            </div> */}
 
             <div id="article-content" className="w-full mb-20 ">
               <TipTapRichTextEditor
