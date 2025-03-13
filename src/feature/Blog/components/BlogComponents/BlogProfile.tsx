@@ -45,7 +45,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
 
   // Extract followed IDs from User objects
   useEffect(() => {
-    const followedIds = followings?.data?.map((following: Follow) => following.followed_id.id) || [];
+    const followedIds = followings?.data?.map((following: Follow) => following.followed_id?.id) || [];
     setIsFollowing(followedIds.includes(user?.id));
   }, [followings, user?.id]);
 
@@ -81,14 +81,14 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
     if (isFollowPending || isUnfollowPending || !user?.id) return;
 
     if (isFollowing) {
-      unfollowUser(user.id, {
+      unfollowUser(user?.id, {
         onSuccess: () => {
           toast.success('User unfollowed successfully');
         },
         onError: () => toast.error('Failed to unfollow user'),
       });
     } else {
-      followUser(user.id, {
+      followUser(user?.id, {
         onSuccess: () => {
           toast.success('User followed successfully');
         },
@@ -119,6 +119,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
     if (isRemovePending) return 'Removing...';
     return saved ? 'Unsave Post' : 'Add To Saved';
   };
+
 
   // If user is null, return null or a fallback UI
   if (!user) {

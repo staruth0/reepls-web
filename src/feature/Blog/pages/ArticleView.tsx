@@ -63,6 +63,7 @@ const ArticleView: React.FC = () => {
     }
   }, [htmlArticleContent]);
 
+
   const mainAction = {
     label: isPreview ? 'Publish' : 'Save',
     onClick: () => {
