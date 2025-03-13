@@ -104,7 +104,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
 
   useEffect(() => {
     console.log('followings', followings);
-    const isSaved = savedArticles?.some((article: Article) => article._id === article_id);
+    const isSaved = savedArticles?.articles?.some((article: Article) => article._id === article_id);
     setSaved(isSaved || false);
   }, [savedArticles, article_id, followings]);
 

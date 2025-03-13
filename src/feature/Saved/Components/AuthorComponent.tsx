@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { LuBadgeCheck, LuEllipsisVertical } from 'react-icons/lu';
-import { UserPlus, EyeOff, User, Flag, X } from 'lucide-react'; 
+import { UserPlus, EyeOff,  Flag, X } from 'lucide-react'; 
 import { profileAvatar } from '../../../assets/icons';
+import { User } from '../../../models/datamodels';
 
-
+interface AuthorComponentProps {
+  user: User;
+}
 
 const AuthorComponent: React.FC<AuthorComponentProps> = ({ user }) => {
   const [showMenu, setShowMenu] = useState(false); 
@@ -80,7 +83,7 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ user }) => {
               className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
               onClick={handleViewProfile}
             >
-              <User size={18} className="text-neutral-500" />
+              <UserPlus size={18} className="text-neutral-500" />
               <div>View Profile</div>
             </div>
             <div

@@ -174,7 +174,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
         </div>
         <div className="p-4 space-y-3 min-h-[30vh] max-h-[63vh] overflow-y-auto">
           {activeTab === "All" &&
-            allReactions?.map((reaction: ReactionReceived) => (
+            allReactions?.reactions?.map((reaction: ReactionReceived) => (
               <UserReactionContainer
                 key={reaction.type}
                 type={reaction.type}
@@ -182,8 +182,10 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
               />
             ))}
           {activeTab === "smile" &&
-            allReactions
-              ?.filter((reaction: ReactionReceived) => reaction.type === "smile")
+            allReactions?.reactions
+              ?.filter(
+                (reaction: ReactionReceived) => reaction.type === "smile"
+              )
               .map((reaction: ReactionReceived) => (
                 <UserReactionContainer
                   key={reaction.type}
@@ -192,7 +194,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
                 />
               ))}
           {activeTab === "cry" &&
-            allReactions
+            allReactions?.reactions
               ?.filter((reaction: ReactionReceived) => reaction.type === "cry")
               .map((reaction: ReactionReceived) => (
                 <UserReactionContainer
@@ -202,7 +204,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
                 />
               ))}
           {activeTab === "love" &&
-            allReactions
+            allReactions?.reactions
               ?.filter((reaction: ReactionReceived) => reaction.type === "love")
               .map((reaction: ReactionReceived) => (
                 <UserReactionContainer
@@ -212,7 +214,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
                 />
               ))}
           {activeTab === "clap" &&
-            allReactions
+            allReactions?.reactions
               ?.filter((reaction: ReactionReceived) => reaction.type === "clap")
               .map((reaction: ReactionReceived) => (
                 <UserReactionContainer
@@ -222,7 +224,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
                 />
               ))}
           {activeTab === "like" &&
-            allReactions
+            allReactions?.reactions
               ?.filter((reaction: ReactionReceived) => reaction.type === "like")
               .map((reaction: ReactionReceived) => (
                 <UserReactionContainer
