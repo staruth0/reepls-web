@@ -33,8 +33,8 @@ const Bookmarks: React.FC = () => {
     }
 
     // Separate into posts and articles based on isArticle property
-    const savedPosts = savedArticlesData.filter((item: Article) => !item.isArticle);
-    const savedArticles = savedArticlesData.filter((item: Article) => item.isArticle);
+    const savedPosts = savedArticlesData?.articles.filter((item: Article) => !item.isArticle);
+    const savedArticles = savedArticlesData?.articles.filter((item: Article) => item.isArticle);
 
     return { savedPosts, savedArticles };
   }, [savedArticlesData]);
@@ -53,8 +53,11 @@ const Bookmarks: React.FC = () => {
         </Topbar>
 
         {/* Saved content */}
-        <div className="notification__content px-20 mt-5 min-h-screen">
+        <div className="notification__content px-20 mt-5 min-h-screen flex flex-col items-center">
+          <div className='w-[75%]'>
           <Tabs activeTab={activeTab} setActiveTab={setActiveTab} scale={false} tabs={tabs} borderBottom={true} />
+          </div>
+          
           <div className="px-2 mt-6">
             {activeTab === 'posts' && (
               <>

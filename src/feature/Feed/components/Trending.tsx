@@ -2,22 +2,13 @@ import React, { useState } from "react";
 import { ArrowRight, TrendingUp } from "lucide-react";
 import TrendingLink from "./TrendingLink";
 import AuthorSuggestions from "./AuthorSuggestions";
+import { useGetTrendingTopics } from "../hooks";
+import { LuLoader } from "react-icons/lu";
 
-const TrendingTopics = [
-  "Politics",
-  "Anglophone Crisis",
-  "Economic Crisis",
-  "Election 2025",
-  "Technology",
-  "Health",
-  "Education",
-  "Environment",
-  "Sports",
-  "Entertainment",
-];
 
 const Trending: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const {data, isLoading} = useGetTrendingTopics()
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -30,13 +21,13 @@ const Trending: React.FC = () => {
         <span>Trending</span>
       </div>
 
-      <div
+   { isLoading ?<LuLoader className="animate-spin text-foreground inline-block mx-4" /> : <>   <div
         className={`flex flex-wrap gap-2 overflow-hidden transition-all duration-300 ${
           isExpanded ? "max-h-[500px]" : "max-h-[100px]"
         }`}
       >
-        {TrendingTopics.map((topic, index) => (
-          <TrendingLink key={index} title={topic} />
+        {data?.data?.map((topic:string) => (
+          <TrendingLink key={topic} title={topic} />
         ))}
       </div>
 
@@ -51,7 +42,7 @@ const Trending: React.FC = () => {
             isExpanded ? "rotate-90" : ""
           }`}
         />
-      </div>
+      </div></>}
 
       <div>
         <div className="text-neutral-50 mt-1 font-semibold text-[15px]">

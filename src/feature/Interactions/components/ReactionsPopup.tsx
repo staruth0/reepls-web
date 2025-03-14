@@ -98,7 +98,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
   // Handle loading and error states
   if (isLoadingAllReactions || isLoadingReactionsPerType) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-[910]">
         <div className="bg-[var(--plain-b)] rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh] p-4">
           <div className="">
             <div className="flex items-center justify-between p-4">
@@ -131,7 +131,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
 
   if (isErrorAllReactions || isErrorReactionsPerType) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-[910]">
         <div className="bg-[var(--plain-b)] rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh] p-4 flex items-center justify-center">
           <p className="text-[var(--text-color)]">
             Error loading reactions. Please try again later.
@@ -148,7 +148,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-[910]">
       <div className="bg-[var(--plain-b)] rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh]">
         <div className="border-b border-[var(--neutral-400-main)]">
           <div className="flex items-center justify-between p-4">
