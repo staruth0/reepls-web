@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { LuBox, LuLoader } from 'react-icons/lu';
+import {  LuLoader, LuFile } from 'react-icons/lu';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Article } from '../../../models/datamodels';
@@ -19,7 +19,10 @@ const ProfilePosts: React.FC<ProfileArticlesProps> = ({ authorId }) => {
   return (
     <div>
       {isLoading ? (
-        <LuLoader className="animate-spin text-primary-400 text-xl m-4" />
+         <div className="flex justify-center mt-4">
+         <LuLoader className="animate-spin text-primary-400 text-xl m-4" />
+       </div>
+        
       ) : error ? (
         <div className="text-red-500">{error.message}</div>
       ) : data && data.length > 0 ? (
@@ -39,11 +42,11 @@ const ProfilePosts: React.FC<ProfileArticlesProps> = ({ authorId }) => {
         </div>
       ) : (
         <div className="text-center text-gray-500 flex flex-col items-center gap-4">
-          <LuBox className="text-primary-400 text-4xl animate-pulse" />
-          <p>
-            We couldn't find any articles.
+          <LuFile className=" text-4xl" />
+          <p className='flex gap-2'>
+            We couldn't find any Post.
             <Link to="/posts/create" className="text-primary-400">
-              Write an article
+              create a post
             </Link>
           </p>
         </div>

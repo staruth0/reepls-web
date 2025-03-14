@@ -22,6 +22,10 @@ const Bookmarks: React.FC = () => {
   const { data: savedArticlesData, isLoading: isLoadingSavedArticles, error } = useGetSavedArticles();
   const { data: followingsData } = useGetFollowing(authUser?.id || '');
 
+  useEffect(() =>{
+    console.log('saved articles 1', savedArticlesData);
+  }, [savedArticlesData]);
+    
   // Filter and separate saved articles into posts and articles
   const { savedPosts, savedArticles } = useMemo(() => {
     if (!savedArticlesData) {

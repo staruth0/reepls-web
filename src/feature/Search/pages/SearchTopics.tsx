@@ -41,13 +41,13 @@ const SearchTopics: React.FC = () => {
           <span
             key={topic}
             onClick={() => handleTopicClick(topic)}
-            className="py-2 px-6 text-neutral-100 rounded-full border-[1px] border-neutral-500 hover:border-none hover:bg-primary-400 hover:text-white transition-all transition-300 cursor-pointer ">
+            className="py-2 px-6 text-neutral-100 rounded-full border-[1px] border-neutral-500 hover:border-transparent hover:bg-primary-400 hover:text-white transition-all transition-300 cursor-pointer ">
             {t(`${topic}`)}
           </span>
         ))}
       </div>
       <div className="w-full px-4 sm:px-8 flex flex-col gap-7 mt-2">
-        <div className="px-4">{category ? `${category} Articles` : 'Recommended Articles'}</div>
+      <div className="px-4 text-center mt-6">{category ? `${category} Articles` : 'Recommended Articles'}</div>
 
         <div className="mt-2">
           {isLoading ? (

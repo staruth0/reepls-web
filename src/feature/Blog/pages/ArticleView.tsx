@@ -10,6 +10,7 @@ import CreatePostTopBar from '../components/CreatePostTopBar';
 import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
 import { useGetArticleById } from '../hooks/useArticleHook';
 import useDraft from '../hooks/useDraft';
+import ArticleViewSkeleton from './ArticleViewSkeleton'; 
 import '../styles/view.scss';
 
 const ArticleView: React.FC = () => {
@@ -22,6 +23,7 @@ const ArticleView: React.FC = () => {
   const { loadDraftArticle } = useDraft();
   const editorRef = useRef<{ editor: Editor | null }>(null);
   const { data: article, isError, isPending } = useGetArticleById(articleUid!);
+
   useEffect(() => {
     if (articleUid == PREVIEW_SLUG) {
       const draftArticle = loadDraftArticle();
@@ -83,71 +85,43 @@ const ArticleView: React.FC = () => {
         <CreatePostTopBar title={title} mainAction={mainAction} actions={[]} />
       </Topbar>
       <div className="max-w-full h-full mb-10 inline-block overflow-clip">
-        <div className="max-w-full md:mx-20 mt-10 flex flex-col justify-center items-left">
-          <div className="mx-20 flex gap-4 mb-4">
-            {/**
-             * Info section
-             * - Draft tag, in future stuff like (sponsored, featured, writer's pick, written by notable like govenment official, etc.)
-             */}
-            {isPreview && (
-              <span className="text-sm font-semibold mr-4 px-4 py-1 bg-foreground text-primary-500 rounded-full flex gap-2 items-center">
-                <LuFilePen className="size-4" />
-                Draft
-              </span>
-            )}
+        {isPending ? (
+          <div className="max-w-full md:mx-20 mt-10 flex flex-col justify-center items-right">
+            <ArticleViewSkeleton />
           </div>
-          <div className="max-w-full flex flex-col gap-4 items-left">
-            {isPreview ? (
+        ) : (
+          <div className="max-w-full md:mx-20 mt-10 flex flex-col justify-center items-left">
+            <div className="mx-20 flex gap-4 mb-4">
+              {/**
+               * Info section
+               * - Draft tag, in future stuff like (sponsored, featured, writer's pick, written by notable like govenment official, etc.)
+               */}
+              {isPreview && (
+                <span className="text-sm font-semibold mr-4 px-4 py-1 bg-foreground text-primary-500 rounded-full flex gap-2 items-center">
+                  <LuFilePen className="size-4" />
+                  Draft
+                </span>
+              )}
+            </div>
+            <div className="max-w-full flex flex-col gap-4 items-left">
               <h1 className="text-5xl mx-20 font-semibold leading-tight mb-2">{title}</h1>
-            ) : isPending ? (
-              <h1 className="text-5xl mx-20 font-semibold leading-tight mb-2">Loading...</h1>
-            ) : (
-              <h1 className="text-5xl mx-20 font-semibold leading-tight mb-2">{title}</h1>
-            )}
+              {subTitle && <h3 className="text-xl mx-20 mb-2">{subTitle}</h3>}
 
-            {isPreview ? (
-              <h3 className="text-3xl mx-20 mb-2">{subTitle}</h3>
-            ) : isPending ? (
-              <h3 className="text-3xl mx-20 mb-2">Loading...</h3>
-            ) : (
-              subTitle && <h3 className="text-xl mx-20 mb-2">{subTitle}</h3>
-            )}
-
-            {/** What goes here?
-             * 1.Author's profile(name, avatar, bio, handle)
-             * 2.Article's tags, published date, reading time, etc.
-             * 3.Share, Save, Edit? buttons
-             */}
-            {/* {!isDraft && <BlogProfile user={user} date={new Date().toISOString()} article_id={articleUid!} title={title} content={htmlArticleContent} />} */}
-
-            {/* <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <img src={article?.author.avatar} alt="avatar" className="w-10 h-10 rounded-full" />
-                <p className="text-sm font-semibold">{article?.author.name}</p>
+              <div id="article-content" className="w-full mb-20">
+                <TipTapRichTextEditor
+                  initialContent={htmlArticleContent}
+                  handleContentChange={setHtmlArticleContent}
+                  editorRef={editorRef}
+                  disabled={true}
+                  hideToolbar={true}
+                  hideBubble={true}
+                  className="w-full block"
+                />
               </div>
             </div>
-
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold">Published on {new Date().toISOString()}</p>
-                <p className="text-sm font-semibold">Reading time {article?.readingTime}</p>
-              </div>
-            </div> */}
-
-            <div id="article-content" className="w-full mb-20 ">
-              <TipTapRichTextEditor
-                initialContent={htmlArticleContent}
-                handleContentChange={setHtmlArticleContent}
-                editorRef={editorRef}
-                disabled={true}
-                hideToolbar={true}
-                hideBubble={true}
-                className="w-full block"
-              />
-            </div>
           </div>
-        </div>
-        {!isPreview && (
+        )}
+        {!isPreview && !isPending && (
           <div className="stats mx-auto">
             <div className="flex justify-center">
               <BlogReactionStats article_id={articleUid!} date={new Date().toISOString()} />
