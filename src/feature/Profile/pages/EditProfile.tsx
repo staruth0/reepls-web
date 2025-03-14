@@ -6,6 +6,7 @@ import ProfileInput from "../components/ProfileInput";
 import { useGetUserByUsername, useUpdateUser } from "../hooks";
 import { toast } from "react-toastify"; // Import toast
 import ProfileEditBody from "../components/ProfileEditBody";
+import { LuLoader } from 'react-icons/lu';
 
 // Define action types
 type Action =
@@ -142,7 +143,9 @@ const EditProfile: React.FC = () => {
                 onClick={handleUpdateProfile}
                 disabled={isPending}
               >
+                {isPending && <LuLoader className="animate-spin text-foreground inline-block mx-4" /> }
                 {isPending ? "Saving.." : "Save"}
+
               </button>
             </div>
           </ProfileEditBody>
