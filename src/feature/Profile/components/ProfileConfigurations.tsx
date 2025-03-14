@@ -303,10 +303,10 @@ const ProfileConfigurations: React.FC = () => {
       {showLogoutPopup && (
         <>
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            className="fixed inset-0 bg-black bg-opacity-50 z-[910]"
             onClick={handleCancelLogout}
           ></div>
-          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-800 rounded-md shadow-lg p-6 z-50 w-[40%] flex flex-col items-center">
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-800 rounded-md shadow-lg p-6 z-[910] w-[40%] flex flex-col items-center">
             <h2 className="text-neutral-50 text-lg font-semibold mb-4">
               {t("Are you sure you want to log out?")}
             </h2>
@@ -314,14 +314,14 @@ const ProfileConfigurations: React.FC = () => {
               <button
                 className="px-8 py-2 bg-neutral-700 text-neutral-50 rounded-md hover:bg-neutral-600"
                 onClick={handleCancelLogout}
-                disabled={isLoggingOut} // Disable while logging out
+                disabled={isLoggingOut}
               >
                 {t("No")}
               </button>
               <button
                 className="px-8 py-2 bg-secondary-600 text-neutral-50 rounded-md hover:bg-secondary-700"
                 onClick={handleConfirmLogout}
-                disabled={isLoggingOut} // Disable while logging out
+                disabled={isLoggingOut}
               >
                 {isLoggingOut ? (
                   <LuLoader className="animate-spin inline-block mx-4" />

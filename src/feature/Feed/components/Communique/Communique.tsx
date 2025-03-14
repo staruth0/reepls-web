@@ -24,7 +24,7 @@ const Communique: React.FC = () => {
           <CommuniqueSkeleton />
         </div>
       ) : (
-        <RightRecentComponent communiqueList={data.articles} />
+        <RightRecentComponent communiqueList={data?.pages[0].articles} />
       )}
       <Trending />
     </>

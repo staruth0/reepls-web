@@ -1,4 +1,4 @@
-import React, {  useState } from 'react';
+import React, { useState } from 'react';
 import { hand5, heart, thumb } from '../../../../assets/icons';
 import { timeAgo } from '../../../../utils/dateFormater';
 import { useGetCommentsByArticleId } from '../../../Comments/hooks';
@@ -11,6 +11,8 @@ interface BlogReactionStatsProps {
   article_id: string;
 }
 
+
+
 const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date, toggleCommentSection, article_id }) => {
   const [showReactions, setShowReactions] = useState(false);
 
@@ -21,7 +23,15 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date, toggleComme
     setShowReactions(false);
   };
 
- 
+  // Utility function to calculate total comments
+  const  totalComments = () => {
+    if (!articleComments || !articleComments.pages) return 0;
+  
+    return articleComments.pages.reduce((total, page) => {
+      return total + (page.data?.commentsTree?.length || 0);
+    }, 0);
+  };
+
   return (
     <div className="flex justify-between items-center p-4 text-neutral-50 text-sm font-roboto">
       {/* Reaction Section */}
@@ -59,7 +69,7 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date, toggleComme
           className="ml-4 text-neutral-50 hover:text-primary-500 hover:underline underline-offset-1"
           onClick={toggleCommentSection}
         >
-          {articleComments?.data?.commentsTree?.length} Comments
+          {totalComments()} Comments
         </div>
       </div>
 

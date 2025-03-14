@@ -8,7 +8,7 @@ interface MessageComponentProps {
   content: string;
   createdAt: Date | string;
   author_id: string;
-  isSameAuthorAsPrevious: boolean;
+  isSameAuthorAsPrevious?: boolean;
   author: User;
   author_of_post:User;
 }

@@ -30,7 +30,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, setActiveTab, borderBottom
 
   return (
     <div className="flex flex-col items-center backdrop-blur-sm">
-      <div ref={tabRef} className={`relative flex w-full ${borderBottom ? 'border-b border-neutral-200' : ''}`}>
+      <div ref={tabRef} className={`relative flex w-full ${borderBottom ? 'border-b border-neutral-300' : ''}`}>
         {tabs.map((tab) => (
           <span
             key={tab.id}
