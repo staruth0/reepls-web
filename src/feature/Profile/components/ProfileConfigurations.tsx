@@ -6,8 +6,8 @@ import { VoiceLanguageContext } from "../../../context/VoiceLanguageContext/Voic
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../hooks/useUser";
 import { useLogoutUser } from "../../Auth/hooks/AuthHooks";
-import { useTokenStorage } from "../../Auth/hooks/useTokenStorage"; 
-import { LuLoader } from 'react-icons/lu';
+import { useTokenStorage } from "../../Auth/hooks/useTokenStorage";
+import { LuLoader } from "react-icons/lu";
 
 const ProfileConfigurations: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -22,8 +22,10 @@ const ProfileConfigurations: React.FC = () => {
   const { setVoiceLanguage } = useContext(VoiceLanguageContext);
   const navigate = useNavigate();
   const { authUser } = useUser();
-  const { getRefreshToken } = useTokenStorage(); 
-  const { mutate: logout, isPending: isLoggingOut } = useLogoutUser(getRefreshToken() || ""); 
+  const { getRefreshToken } = useTokenStorage();
+  const { mutate: logout, isPending: isLoggingOut } = useLogoutUser(
+    getRefreshToken() || ""
+  );
 
   const languages = [
     { code: "en", label: "English" },
@@ -69,14 +71,14 @@ const ProfileConfigurations: React.FC = () => {
       onSuccess: () => {
         console.log("Logout successful");
         // Clear local storage
-        localStorage.clear()
-      
+        localStorage.clear();
+
         setShowLogoutPopup(false);
-        navigate("/auth"); 
+        navigate("/auth");
       },
       onError: (error) => {
         console.error("Logout failed:", error);
-        setShowLogoutPopup(false); 
+        setShowLogoutPopup(false);
         navigate("/auth");
       },
     });
@@ -232,12 +234,16 @@ const ProfileConfigurations: React.FC = () => {
           <div className="flex gap-2 items-center">
             {t(isExplicitContent ? "On" : "Off")}
             <div
-              className={`w-[40px] h-[20px] bg-primary-200 rounded-[2rem] flex items-center px-[2px] cursor-pointer ${
-                isExplicitContent ? "justify-end" : "justify-start"
+              className={`w-[40px] h-[20px] rounded-[2rem] flex items-center px-[2px] cursor-pointer transition-colors duration-300 ${
+                isExplicitContent ? "bg-primary-400" : "bg-gray-400"
               }`}
               onClick={handleToggleExplicitContent}
             >
-              <div className="w-[18px] h-[18px] rounded-full bg-primary-600"></div>
+              <div
+                className={`w-[18px] h-[18px] rounded-full bg-white shadow-md transform transition-transform duration-300 ${
+                  isExplicitContent ? "translate-x-[20px]" : "translate-x-0"
+                }`}
+              ></div>
             </div>
           </div>
         </ConfigurationWrapper>
@@ -247,12 +253,16 @@ const ProfileConfigurations: React.FC = () => {
           <div className="flex gap-2 items-center">
             {t(isVideoAutoPlay ? "On" : "Off")}
             <div
-              className={`w-[40px] h-[20px] bg-primary-200 rounded-[2rem] flex items-center px-[2px] cursor-pointer ${
-                isVideoAutoPlay ? "justify-end" : "justify-start"
+              className={`w-[40px] h-[20px] rounded-[2rem] flex items-center px-[2px] cursor-pointer transition-colors duration-300 ${
+                isVideoAutoPlay ? "bg-primary-400" : "bg-gray-400"
               }`}
               onClick={handleToggleAutoPlay}
             >
-              <div className="w-[18px] h-[18px] rounded-full bg-primary-600"></div>
+              <div
+                className={`w-[18px] h-[18px] rounded-full bg-white shadow-md transform transition-transform duration-300 ${
+                  isVideoAutoPlay ? "translate-x-[20px]" : "translate-x-0"
+                }`}
+              ></div>
             </div>
           </div>
         </ConfigurationWrapper>
@@ -262,12 +272,16 @@ const ProfileConfigurations: React.FC = () => {
           <div className="flex gap-2 items-center">
             {t(theme === "light" ? "Light" : "Dark")}
             <div
-              className={`w-[40px] h-[20px] bg-primary-200 rounded-[2rem] flex items-center px-[2px] cursor-pointer ${
-                theme === "light" ? "justify-start" : "justify-end"
+              className={`w-[40px] h-[20px] rounded-[2rem] flex items-center px-[2px] cursor-pointer transition-colors duration-300 ${
+                theme === "light" ? "bg-gray-400" : "bg-primary-400"
               }`}
               onClick={handleToggleTheme}
             >
-              <div className="w-[18px] h-[18px] rounded-full bg-primary-600"></div>
+              <div
+                className={`w-[18px] h-[18px] rounded-full bg-white shadow-md transform transition-transform duration-300 ${
+                  theme === "light" ? "translate-x-0" : "translate-x-[20px]"
+                }`}
+              ></div>
             </div>
           </div>
         </ConfigurationWrapper>
@@ -309,7 +323,11 @@ const ProfileConfigurations: React.FC = () => {
                 onClick={handleConfirmLogout}
                 disabled={isLoggingOut} // Disable while logging out
               >
-                {isLoggingOut ? <LuLoader className="animate-spin inline-block mx-4" /> : t("Yes")}
+                {isLoggingOut ? (
+                  <LuLoader className="animate-spin inline-block mx-4" />
+                ) : (
+                  t("Yes")
+                )}
               </button>
             </div>
           </div>

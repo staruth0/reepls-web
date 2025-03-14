@@ -11,7 +11,7 @@ const SearchRecent: React.FC<SearchRecentProps> = ({ history }) => {
       {history.map((article,index) => (
         <SuggestionContainer key={index} text={ article} />
       ))}
-      {history.length === 0 && <p>No recent searches</p>}
+      {history.length === 0 && <p className="flex justify-center">No recent searches</p>}
     </div>
   );
 };
