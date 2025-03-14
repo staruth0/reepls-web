@@ -20,7 +20,7 @@ const CreatePost: React.FC = () => {
   const [content, setContent] = useState<string>('');
   const { saveDraftArticle, loadDraftArticle, clearDraftArticle } = useDraft();
 
-  const { mutate: createArticle, isPending: _ } = useCreateArticle();
+  const { mutate: createArticle, isPending } = useCreateArticle();
 
   // const [isSaving, setIsSaving] = useState(false);
   const [initialEditorContent, setInitialEditorContent] = useState<{
