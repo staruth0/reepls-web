@@ -10,14 +10,15 @@ import CreatePostTopBar from '../components/CreatePostTopBar';
 import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
 import { useGetArticleById } from '../hooks/useArticleHook';
 import useDraft from '../hooks/useDraft';
-import ArticleViewSkeleton from './ArticleViewSkeleton'; 
 import '../styles/view.scss';
+import ArticleViewSkeleton from './ArticleViewSkeleton';
 
 const ArticleView: React.FC = () => {
   const navigate = useNavigate();
   const { articleUid } = useParams(); // use to fetch article from db
   const [title, setTitle] = useState<string>('*This article does not have a title*');
   const [subTitle, setSubTitle] = useState<string>('');
+  const [content, setContent] = useState<string>('');
   const [htmlArticleContent, setHtmlArticleContent] = useState<string>('*This article does not have any content*');
   const [isPreview, _] = useState<boolean>(articleUid === PREVIEW_SLUG);
   const { loadDraftArticle } = useDraft();
@@ -34,7 +35,8 @@ const ArticleView: React.FC = () => {
       }
       setTitle(draftArticle.title);
       setSubTitle(draftArticle.subTitle);
-      setHtmlArticleContent(draftArticle.content);
+      setContent(draftArticle.content);
+      setHtmlArticleContent(draftArticle.htmlContent);
       console.log('draftArticle', draftArticle);
     }
   }, [articleUid]);
@@ -49,6 +51,9 @@ const ArticleView: React.FC = () => {
       }
       if (article.content) {
         setHtmlArticleContent(article.content);
+      }
+      if (article.htmlContent) {
+        setContent(article.htmlContent);
       }
     }
   }, [article, isPending]);
@@ -85,7 +90,7 @@ const ArticleView: React.FC = () => {
         <CreatePostTopBar title={title} mainAction={mainAction} actions={[]} />
       </Topbar>
       <div className="max-w-full h-full mb-10 inline-block overflow-clip">
-        {isPending ? (
+        {!isPreview && isPending ? (
           <div className="max-w-full md:mx-20 mt-10 flex flex-col justify-center items-right">
             <ArticleViewSkeleton />
           </div>
@@ -110,7 +115,8 @@ const ArticleView: React.FC = () => {
               <div id="article-content" className="w-full mb-20">
                 <TipTapRichTextEditor
                   initialContent={htmlArticleContent}
-                  handleContentChange={setHtmlArticleContent}
+                  handleContentChange={setContent}
+                  handleHtmlContentChange={setHtmlArticleContent}
                   editorRef={editorRef}
                   disabled={true}
                   hideToolbar={true}

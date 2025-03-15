@@ -71,22 +71,24 @@ const Sidebar: React.FC = () => {
     const images: string[] = [];
     const videos: string[] = [];
     for (const image of postImages) {
-      if(authUser.id){
+      if (authUser.id) {
         const result = await uploadPostImage(authUser?.id, image);
         images.push(result?.secure_url);
-      } 
+      }
     }
     for (const video of postVideos) {
-      if(authUser.id){
+      if (authUser.id) {
         const result = await uploadPostVideo(authUser?.id, video);
         videos.push(result?.secure_url);
       }
-     
     }
 
     const post: Article = {
       content: postContent,
-      media: images.concat(videos),
+      media: [...images, ...videos],
+      type: 'ShortForm',
+      status: 'Published',
+      isArticle: false,
     };
 
     createPost(post, {

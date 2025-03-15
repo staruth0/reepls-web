@@ -229,7 +229,8 @@ To do
 - Add Error boundary to app
 -
 
-Look for article
+Demarkating what a logged in vs anonymous user can do
+How should articles be demacarted for maximum engagement?
 Making communique
 Congitive mode
 Notifications
@@ -241,3 +242,5 @@ Posting works[Limit on length of subtitle]
 Reading History()
 
 Should always redirect to sign in
+
+Logout

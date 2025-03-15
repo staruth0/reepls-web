@@ -1,5 +1,5 @@
-const MAX_IMAGE_COUNT = 4;
-const MAX_VIDEO_COUNT = 1;
+const MAX_IMAGE_COUNT = 10;
+const MAX_VIDEO_COUNT = 4;
 
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB

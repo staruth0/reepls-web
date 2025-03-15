@@ -4,7 +4,7 @@ import { LuImagePlus } from 'react-icons/lu';
 import { cn } from '../../../utils';
 import '../styles/ImageSection.scss';
 
-const ImageSection: React.FC<{ onImageChange: (imageUrl: string) => void }> = ({ onImageChange }) => {
+const ImageSection: React.FC<{ onImageChange: (image: string | File) => void }> = ({ onImageChange }) => {
   const [imageUrl, setImageUrl] = React.useState<string | null>(null);
   const { t } = useTranslation();
 
@@ -13,7 +13,7 @@ const ImageSection: React.FC<{ onImageChange: (imageUrl: string) => void }> = ({
     if (file) {
       const url = URL.createObjectURL(file);
       setImageUrl(url);
-      onImageChange(url);
+      onImageChange(file);
     }
   };
 
