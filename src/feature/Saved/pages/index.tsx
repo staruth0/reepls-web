@@ -10,15 +10,10 @@ import { useGetSavedArticles } from '../../Saved/hooks'; // Updated import
 import AuthorComponent from '../Components/AuthorComponent';
 import SavedArticlesContainer from '../Components/SavedArticleContainer';
 import SavedPostsContainer from '../Components/SavedPostsContaniner';
-const tabs = [
-  { id: 'posts', title: 'Posts' },
-  { id: 'articles', title: 'Articles' },
-  { id: 'history', title: 'Reading History', icon: <LuHistory className="mx-2" /> },
-];
 
 const Bookmarks: React.FC = () => {
   const { authUser } = useUser();
-  const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
+
   const { data: savedArticlesData, isLoading: isLoadingSavedArticles, error } = useGetSavedArticles();
   const { data: followingsData } = useGetFollowing(authUser?.id || '');
   const [savedPosts, setSavedPosts] = useState<Article[]>([]);
@@ -38,6 +33,14 @@ const Bookmarks: React.FC = () => {
     setFollowings(followingsData?.data || []);
   }, [followingsData]);
 
+  const tabs = [
+    { id: 'posts', title: `Posts (${savedPosts.length})` },
+    { id: 'articles', title: `Articles (${savedArticles.length})` },
+    { id: 'history', title: 'Reading History', icon: <LuHistory className="mx-2" /> },
+  ];
+  
+  const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
+
   return (
     <div className={`grid grid-cols-[4fr_1.65fr] `}>
       <div className="saved border-r-[1px] border-neutral-500 ">
@@ -47,16 +50,16 @@ const Bookmarks: React.FC = () => {
 
         {/* Saved content */}
         <div className="notification__content px-20 mt-5 min-h-screen flex flex-col items-center">
-          <div className="w-[75%]">
+          <div className="w-[82%]">
             <Tabs activeTab={activeTab} setActiveTab={setActiveTab} scale={false} tabs={tabs} borderBottom={true} />
           </div>
 
-          <div className="px-2 mt-6">
+          <div className="px-2 mt-6 w-full" >
             {activeTab === 'posts' && (
               <>
                 <div className="pb-10">
                   {isLoadingSavedArticles ? (
-                    <div>
+                    <div className='p-2'>
                       <BlogSkeletonComponent />
                       <BlogSkeletonComponent />
                     </div>
@@ -69,9 +72,9 @@ const Bookmarks: React.FC = () => {
             )}
             {activeTab === 'articles' && (
               <>
-                <div>
+                <div className="pb-10">
                   {isLoadingSavedArticles ? (
-                    <div>
+                    <div className='p-2'>
                       <BlogSkeletonComponent />
                       <BlogSkeletonComponent />
                     </div>

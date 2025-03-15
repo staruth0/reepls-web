@@ -44,9 +44,9 @@ function RegisterWithEmail1() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('password stored', { email, password, username });
+    console.log('password stored', { email, password, name:username });
 
-    mutate({ email, password, username });
+    mutate({ email, password, name:username });
   };
 
   useEffect(() => {
