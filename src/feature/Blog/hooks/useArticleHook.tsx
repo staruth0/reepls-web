@@ -119,6 +119,7 @@ export const useGetArticlesByCategory = (category: string) => {
   return useQuery({
     queryKey: ['articles-by-category', category],
     queryFn: () => getArticlesByCategory(category),
+    enabled: !!category,
   });
 };
 

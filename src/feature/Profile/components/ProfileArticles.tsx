@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
-import { LuLoader,  LuNewspaper } from "react-icons/lu";
-import { toast } from "react-toastify";
-import { Article } from "../../../models/datamodels";
-import BlogPost from "../../Blog/components/BlogPost";
-import { useGetArticlesByAuthorId } from "../../Blog/hooks/useArticleHook";
-import { Link } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { LuLoader, LuNewspaper } from 'react-icons/lu';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { Article } from '../../../models/datamodels';
+import BlogPost from '../../Blog/components/BlogPost';
+import { useGetArticlesByAuthorId } from '../../Blog/hooks/useArticleHook';
 
 interface ProfileArticlesProps {
   authorId: string;
@@ -42,10 +42,10 @@ const ProfileArticles: React.FC<ProfileArticlesProps> = ({ authorId }) => {
         <div className="flex flex-col items-center justify-center space-y-2">
           <LuNewspaper className="text-4xl text-gray-500" />
           <p className="text-gray-500 flex gap-2">
-          No Articles available.
-          <Link to={`/posts/create`} className="text-primary-400">
-          Create an Article
-          </Link>
+            No Articles available.
+            <Link to={`/posts/create`} className="text-primary-400">
+              Create an Article
+            </Link>
           </p>
         </div>
       )}

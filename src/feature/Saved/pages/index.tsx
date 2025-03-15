@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LuHistory } from 'react-icons/lu';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import Tabs from '../../../components/molecules/Tabs/Tabs';
@@ -21,29 +21,22 @@ const Bookmarks: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
   const { data: savedArticlesData, isLoading: isLoadingSavedArticles, error } = useGetSavedArticles();
   const { data: followingsData } = useGetFollowing(authUser?.id || '');
+  const [savedPosts, setSavedPosts] = useState<Article[]>([]);
+  const [savedArticles, setSavedArticles] = useState<Article[]>([]);
+  const [followings, setFollowings] = useState<Follow[]>([]);
 
-  useEffect(() =>{
-    console.log('saved articles 1', savedArticlesData);
-  }, [savedArticlesData]);
-    
   // Filter and separate saved articles into posts and articles
-  const { savedPosts, savedArticles } = useMemo(() => {
-    if (!savedArticlesData) {
-      return { savedPosts: [], savedArticles: [] };
-    }
 
-    // Separate into posts and articles based on isArticle property
-    const savedPosts = savedArticlesData?.articles.filter((item: Article) => !item.isArticle);
-    const savedArticles = savedArticlesData?.articles.filter((item: Article) => item.isArticle);
-
-    return { savedPosts, savedArticles };
+  useEffect(() => {
+    if (!savedArticlesData) return;
+    console.log('saved articles', savedArticlesData);
+    setSavedPosts(savedArticlesData?.articles.filter((item: Article) => !item.isArticle) || []);
+    setSavedArticles(savedArticlesData?.articles.filter((item: Article) => item.isArticle) || []);
   }, [savedArticlesData]);
 
   useEffect(() => {
-    console.log('saved articles', savedArticlesData);
-  }, [savedArticlesData]);
-
-  const followings = followingsData?.data || [];
+    setFollowings(followingsData?.data || []);
+  }, [followingsData]);
 
   return (
     <div className={`grid grid-cols-[4fr_1.65fr] `}>
@@ -54,10 +47,10 @@ const Bookmarks: React.FC = () => {
 
         {/* Saved content */}
         <div className="notification__content px-20 mt-5 min-h-screen flex flex-col items-center">
-          <div className='w-[75%]'>
-          <Tabs activeTab={activeTab} setActiveTab={setActiveTab} scale={false} tabs={tabs} borderBottom={true} />
+          <div className="w-[75%]">
+            <Tabs activeTab={activeTab} setActiveTab={setActiveTab} scale={false} tabs={tabs} borderBottom={true} />
           </div>
-          
+
           <div className="px-2 mt-6">
             {activeTab === 'posts' && (
               <>
