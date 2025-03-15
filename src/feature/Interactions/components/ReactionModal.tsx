@@ -8,7 +8,7 @@ import {
 import { useUser } from "../../../hooks/useUser";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify"; // Import toast (adjust if using a different library)
-import { Reaction } from "../../../models/datamodels";
+import {ReactionReceived } from "../../../models/datamodels";
 
 interface ReactionModalProps {
   isOpen: boolean;
@@ -39,8 +39,9 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
     console.log("allReactions", allReactions);
 
     // Extract user_ids from allReactions and store in userIds array
-    if (allReactions && Array.isArray(allReactions)) {
-      const extractedUserIds = allReactions.map((reaction) => reaction.user_id);
+    if (allReactions?.reactions && Array.isArray(allReactions?.reactions)) {
+      const extractedUserIds = allReactions?.reactions.map((reaction:ReactionReceived
+      ) => reaction.user_id.id);
       setUserIds(extractedUserIds);
     }
 
@@ -61,12 +62,16 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
   const handleReaction = (reaction: string) => {
     // Check if authUser.id exists in userIds
     const userHasReacted = authUser?.id && userIds.includes(authUser.id);
+    console.log('userhasreacted',userHasReacted)
 
     if (userHasReacted) {
       // Find the existing reaction for this user
-      const existingReaction = allReactions.find(
-        (r:Reaction) => r.user_id === authUser?.id
+      console.log('reactions',allReactions?.reactions)
+      console.log('id',authUser?.id)
+      const existingReaction = allReactions?.reactions.find(
+        (r:ReactionReceived) => r?.user_id?.id === authUser?.id
       );
+      console.log('existing reaction',existingReaction);
 
       if (existingReaction) {
         // Check if the new reaction is different from the existing one
@@ -75,7 +80,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
           console.log("Same reaction selected, no update needed");
           return;
         }
-
+        console.log('reaching here')
         // If the reaction is different, proceed with update
         setIsPending(true);
         setPendingReaction(reaction);

@@ -11,8 +11,8 @@ import ToggleFeed from './components/ToogleFeed';
 import './feed.scss';
 
 const UserFeed: React.FC = () => {
-  const [isBrainActive, setIsBrainActive] = useState<boolean>(false);
-  const { toggleCognitiveMode } = useContext(CognitiveModeContext);
+  const { toggleCognitiveMode,isCognitiveMode } = useContext(CognitiveModeContext);
+  const [isBrainActive, setIsBrainActive] = useState<boolean>(isCognitiveMode);
   const bottomRef = useRef<HTMLDivElement>(null); // Ref for the bottom
 
   // Fetch data

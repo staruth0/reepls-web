@@ -157,7 +157,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
         {showMenu ? (
           <X className="size-4 cursor-pointer" onClick={() => setShowMenu(!showMenu)} />
         ) : (
-          <EllipsisVertical className="size-4 cursor-pointer" onClick={() => setShowMenu(!showMenu)} />
+          <EllipsisVertical className="size-3 cursor-pointer" onClick={() => setShowMenu(!showMenu)} />
         )}
         {showMenu && (
           <>

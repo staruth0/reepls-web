@@ -1,8 +1,8 @@
 import axios, { AxiosInstance } from 'axios';
 import { toast } from 'react-toastify';
-import { API_URL } from '../constants'; 
-import { refreshAuthTokens } from '../feature/Auth/api/index'; 
-import { getDecryptedAccessToken, getDecryptedRefreshToken } from '../feature/Auth/api/Encryption';
+import { API_URL, STORAGE_KEY } from '../constants';
+import { refreshAuthTokens } from '../feature/Auth/api/index';
+import { decryptLoginData, encryptAndStoreLoginData, getDecryptedAccessToken, getDecryptedRefreshToken } from '../feature/Auth/api/Encryption';
 
 
 const apiClient: AxiosInstance = axios.create({
@@ -12,10 +12,10 @@ const apiClient: AxiosInstance = axios.create({
   },
 });
 
-// Request interceptor to add Authorization header with decrypted access token
+// Request interceptor to add Authorization header
 apiClient.interceptors.request.use(
   (config) => {
-    const token = getDecryptedAccessToken(); 
+    const token = getDecryptedAccessToken(); // Use the decrypted access token
 
     console.log('Testing token availability:', token);
     if (
@@ -25,7 +25,6 @@ apiClient.interceptors.request.use(
     ) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    // config.withCredentials = true;
     return config;
   },
   (error) => Promise.reject(error)
@@ -41,24 +40,23 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      const refreshToken = getDecryptedRefreshToken(); 
+      const refreshToken = getDecryptedRefreshToken(); // Use the decrypted refresh token
       if (refreshToken) {
         try {
           console.log('Refreshing token');
           const data = await refreshAuthTokens(refreshToken);
           if (!data.accessToken) throw new Error('No access token received');
 
-          // Since we're using encrypted storage, we need to update the full LoginResponse
-        
-          const updatedLoginData = {
-            user: null, 
-            tokens: {
-              access: { token: data.accessToken },
-              refresh: { token: data.refreshToken}, 
-            },
-          };
-          
-          console.log('Updated tokens:', updatedLoginData);
+          // Decrypt the existing login data to update it
+          const decryptedData = decryptLoginData();
+          if (!decryptedData) throw new Error('No login data found');
+
+          // Update the tokens in the decrypted data
+          decryptedData.tokens.access.token = data.accessToken;
+          decryptedData.tokens.refresh.token = data.refreshToken;
+
+          // Re-encrypt and store the updated login data
+          encryptAndStoreLoginData(decryptedData);
 
           // Update headers before retrying the request
           originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
@@ -68,11 +66,14 @@ apiClient.interceptors.response.use(
           toast.info('Please login again', {
             autoClose: 3000,
           });
-          localStorage.removeItem('encryptedLoginData');
+
+          // Clear the encrypted login data on token refresh failure
+          localStorage.removeItem(STORAGE_KEY);
+
           window.location.href = '/auth/login/phone';
           return Promise.reject(e);
         }
-      } 
+      }
     }
     return Promise.reject(error);
   }

@@ -1,11 +1,11 @@
 import CryptoJS from 'crypto-js';
 import { User,LoginResponse } from '../../../models/datamodels';
+import { STORAGE_KEY } from '../../../constants';
 
 
 const SECRET_KEY = 'Thiago+123456789-987654321';
 
-// Key for storing in localStorage
-const STORAGE_KEY = 'encryptedLoginData';
+
 
 // 1. Encrypt and store the entire login response
 export const encryptAndStoreLoginData = (data: LoginResponse): void => {

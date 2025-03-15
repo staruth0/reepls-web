@@ -34,7 +34,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="font-semibold text-[16px] space-x-1">
           <span>All</span>
-          <span>{allReactions?.length || 0}</span>
+          <span>{allReactions?.reactions.totalUsers || 0}</span>
         </div>
       ),
     },
@@ -43,7 +43,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="flex items-center gap-1 font-semibold text-[16px]">
           <img src={heart} alt="Heart" className="w-5 h-5" />
-          <span>{reactionsPerType?.love?.length || 0}</span>
+          <span>{reactionsPerType?.love?.totalUsers || 0}</span>
         </div>
       ),
     },
@@ -52,7 +52,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="flex items-center gap-1 font-semibold text-[16px]">
           <img src={sadface} alt="Sad Face" className="w-5 h-5" />
-          <span>{reactionsPerType?.cry?.length || 0}</span>
+          <span>{reactionsPerType?.cry?.totalUsers || 0}</span>
         </div>
       ),
     },
@@ -61,7 +61,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="flex items-center gap-1 font-semibold text-[16px]">
           <img src={smile} alt="Smile" className="w-5 h-5" />
-          <span>{reactionsPerType?.smile?.length || 0}</span>
+          <span>{reactionsPerType?.smile?.totalUsers || 0}</span>
         </div>
       ),
     },
@@ -70,7 +70,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="flex items-center gap-1 font-semibold text-[16px]">
           <img src={thumb} alt="Thumb" className="w-5 h-5" />
-          <span>{reactionsPerType?.like?.length || 0}</span>
+          <span>{reactionsPerType?.like?.totalUsers || 0}</span>
         </div>
       ),
     },
@@ -79,7 +79,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="flex items-center gap-1 font-semibold text-[16px]">
           <img src={clap} alt="Clap" className="w-5 h-5" />
-          <span>{reactionsPerType?.clap?.length || 0}</span>
+          <span>{reactionsPerType?.clap?.totalUsers || 0}</span>
         </div>
       ),
     },
@@ -91,7 +91,8 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
 
   useEffect(() => {
     console.log("allReactions", allReactions);
-  }, [allReactions]);
+    console.log('reactionspertype', reactionsPerType)
+  }, [allReactions,reactionsPerType]);
 
   if (!isOpen) return null;
 

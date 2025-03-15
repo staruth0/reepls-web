@@ -49,6 +49,9 @@ const AUTH_TOKEN_KEY = 'AuthToken';
 const ACCESS_TOKEN_KEY = 'AccessToken';
 const REFRESH_TOKEN_KEY = 'RefreshToken';
 
+// Key for storing in localStorage
+const STORAGE_KEY = 'encryptedLoginData';
+
 export {
   ACCESS_TOKEN_KEY,
   allowedImageTypes,
@@ -63,4 +66,5 @@ export {
   PREVIEW_SLUG,
   REFRESH_TOKEN_KEY,
   SHORT_POST_LENGTH,
+  STORAGE_KEY
 };
