@@ -71,7 +71,7 @@ const CreatePost: React.FC = () => {
     },
     {
       label: 'Share',
-      disabled: false,
+      disabled: true,
       ActionIcon: LuShare,
       onClick: () => {
         console.log('Sharing the post...');
@@ -88,7 +88,7 @@ const CreatePost: React.FC = () => {
     {
       label: 'Add Tags',
       ActionIcon: LuTag,
-      disabled: false,
+      disabled: true,
       onClick: () => {
         console.log('Adding tags...');
       },
@@ -171,7 +171,9 @@ const CreatePost: React.FC = () => {
     if (hasLoadedDraft && editorRef.current?.editor) {
       setContent(initialEditorContent.content);
       setHtmlContent(initialEditorContent.htmlContent);
-      editorRef.current?.editor?.commands?.setContent(initialEditorContent.htmlContent);
+      setTimeout(() => {
+        editorRef.current?.editor?.commands?.setContent(initialEditorContent.htmlContent);
+      }, 0);
     }
   }, [hasLoadedDraft, initialEditorContent]);
 
@@ -235,7 +237,7 @@ const CreatePost: React.FC = () => {
               editorRef={editorRef}
               handleHtmlContentChange={setHtmlContent}
               disabled={!hasLoadedDraft}
-              className="block max-w-full bg-primary-100 static mx-auto my-1"
+              className="block max-w-full bg-primary-100 static mx-auto my-1 "
             />
           </div>
         </div>
