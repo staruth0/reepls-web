@@ -20,6 +20,7 @@ export interface User {
   _id?: string;
   user_id?: string;
   googleId?: string;
+  name?:string;
   username?: string;
   email?: string;
   phone?: string;
@@ -138,3 +139,19 @@ export interface PhoneVerify {
   code: string;
   phone: string;
 }
+
+
+  export interface Token {
+    token: string;
+    expires: string;
+  }
+  
+  export interface Tokens {
+    access: Token;
+    refresh: Token;
+  }
+  
+  export interface LoginResponse {
+    user: User;
+    tokens: Tokens;
+  }

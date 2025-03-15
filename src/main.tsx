@@ -17,7 +17,7 @@ import VoiceLanguageProvider from './context/VoiceLanguageContext/VoiceLanguageP
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 10 * 60 * 1000,
+      staleTime: 30 * 60 * 1000,
       refetchOnWindowFocus: false,
       refetchOnReconnect: true,
       refetchOnMount: false,

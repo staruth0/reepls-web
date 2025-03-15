@@ -1,22 +1,20 @@
-import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ACCESS_TOKEN_KEY } from '../../../constants';
-import { AuthContext } from '../../../context/AuthContext/authContext';
 import useTheme from '../../../hooks/useTheme';
 import '../styles/home.scss';
+import { useUser } from '../../../hooks/useUser';
 
 function Home() {
   const { t, i18n } = useTranslation();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  const {  authState } = useContext(AuthContext);
+  const { authUser} = useUser();
 
   const handleClick = () => {
-    console.log('Current authState:', authState);
-    console.log('Stored token:', localStorage.getItem(ACCESS_TOKEN_KEY));
+    console.log('Current authState:', authUser);
 
-    if (authState?.userId) {
+
+    if (authUser?.id) {
       console.log('Navigating to feed');
       navigate('/feed');
     } else {
