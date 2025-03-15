@@ -227,20 +227,18 @@ Editor command addtions
 To do
 
 - Add Error boundary to app
--
+- -Demarkating what a logged in vs anonymous user can do
+  -How should articles be demacarted for maximum engagement?
+  -What makes a post a communique
+  -Should always redirect to sign in on token fail
 
-Demarkating what a logged in vs anonymous user can do
-How should articles be demacarted for maximum engagement?
-Making communique
 Congitive mode
 Notifications
 Search is not working properpy()
 Share user profile
 
-Posting works[Limit on length of subtitle]
+Posting works[Limit on length of subtitle, title, comments]
 
 Reading History()
 
-Should always redirect to sign in
-
-Logout
+=
