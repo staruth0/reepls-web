@@ -228,3 +228,16 @@ To do
 
 - Add Error boundary to app
 -
+
+Look for article
+Making communique
+Congitive mode
+Notifications
+Search is not working properpy()
+Share user profile
+
+Posting works[Limit on length of subtitle]
+
+Reading History()
+
+Should always redirect to sign in
