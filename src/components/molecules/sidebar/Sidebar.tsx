@@ -71,12 +71,17 @@ const Sidebar: React.FC = () => {
     const images: string[] = [];
     const videos: string[] = [];
     for (const image of postImages) {
-      const result = await uploadPostImage(authUser?.id!, image);
-      images.push(result?.secure_url);
+      if(authUser.id){
+        const result = await uploadPostImage(authUser?.id, image);
+        images.push(result?.secure_url);
+      } 
     }
     for (const video of postVideos) {
-      const result = await uploadPostVideo(authUser?.id!, video);
-      videos.push(result?.secure_url);
+      if(authUser.id){
+        const result = await uploadPostVideo(authUser?.id, video);
+        videos.push(result?.secure_url);
+      }
+     
     }
 
     const post: Article = {

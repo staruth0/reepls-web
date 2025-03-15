@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext/authContext';
-import { CodeVerify, EmailCode, PhoneCode, PhoneVerify, User } from '../../../models/datamodels';
+import { CodeVerify, EmailCode, LoginResponse, PhoneCode, PhoneVerify, User } from '../../../models/datamodels';
 import {
   getEmailVerificationCode,
   getPhoneVerificationCode,
@@ -18,9 +18,9 @@ import {
 } from "../api";
 import { useTokenStorage } from './useTokenStorage';
 
-// Hook for registering a user
+
+// Hook for registering a user with email
 export const useRegisterUser = () => {
-  const { storeAccessToken, storeRefreshToken } = useTokenStorage();
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
@@ -30,13 +30,10 @@ export const useRegisterUser = () => {
 
   return useMutation({
     mutationFn: (user: User) => registerUser(user),
-    onSuccess: (data) => {
+    onSuccess: (data: LoginResponse) => {
       console.log('User registered:', data);
-      storeAccessToken(data.tokens.access.token);
-      storeRefreshToken(data.tokens.refresh.token);
-      login(data.tokens.access.token);
-
-      navigateToCheckMail({ email: data.user.email });
+      login(data); // Pass the full LoginResponse to encrypt and store
+      navigateToCheckMail({ email: data.user.email! });
     },
     onError: (error) => {
       console.error('Error registering user:', error);
@@ -44,29 +41,19 @@ export const useRegisterUser = () => {
     },
   });
 };
-// Hook for registering a user with google
+
+// Hook for registering a user with Google
 export const useRegisterUserWithGoogle = () => {
-  // const { storeAccessToken, storeRefreshToken } = useTokenStorage();
-  // // const navigate = useNavigate();
-  // const { login } = useContext(AuthContext);
+
   return useQuery({
     queryKey: ['registerWithGoogle'],
     queryFn: () => registerWithGoogle(),
-    // onSuccess: (data) => {
-    //   console.log("User registered:", data);
-    //   storeAccessToken(data.tokens.access.token);
-    //   storeRefreshToken(data.tokens.refresh.token);
-    //   login(data.tokens.access.token);
-    // },
-    // onError: (error) => {
-    //   console.error("Error registering user with google:", error);
-    // },
+  
   });
 };
 
 // Hook for registering a user with phone number
 export const usePhoneRegisterUser = () => {
-  const { storeAccessToken, storeRefreshToken } = useTokenStorage();
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
@@ -76,13 +63,10 @@ export const usePhoneRegisterUser = () => {
 
   return useMutation({
     mutationFn: (user: User) => registerUser(user),
-    onSuccess: (data) => {
+    onSuccess: (data: LoginResponse) => {
       console.log('User registered:', data);
-      storeAccessToken(data.tokens.access.token);
-      storeRefreshToken(data.tokens.refresh.token);
-      login(data.tokens.access.token);
-
-      navigateToCheckPhone({ phone: data.user.phone });
+      login(data); // Pass the full LoginResponse to encrypt and store
+      navigateToCheckPhone({ phone: data.user.phone! });
     },
     onError: (error) => {
       console.error('Error registering user:', error);
@@ -90,25 +74,21 @@ export const usePhoneRegisterUser = () => {
   });
 };
 
-// Hook for logging in a user
+// Hook for logging in a user with email
 export const useLoginUser = () => {
   const navigate = useNavigate();
-  const { storeAccessToken, storeRefreshToken } = useTokenStorage();
   const { login } = useContext(AuthContext);
 
   const navigateToFeed = () => {
     navigate('/feed');
   };
+
   return useMutation({
     mutationFn: (user: User) => loginUser(user),
-    onSuccess: (data) => {
+    onSuccess: (data: LoginResponse) => {
       console.log('User logged in:', data);
-      storeAccessToken(data.tokens.access.token);
-      storeRefreshToken(data.tokens.refresh.token);
-      console.log("expired date", data.tokens.access.expires);
-      login(data.tokens.access.token);
-      
-
+      console.log('Expired date:', data.tokens.access.expires);
+      login(data); // Pass the full LoginResponse to encrypt and store
       navigateToFeed();
     },
     onError: (error) => {
@@ -116,25 +96,22 @@ export const useLoginUser = () => {
     },
   });
 };
-// Hook for logging in a user
+
+// Hook for logging in a user with phone
 export const useLoginUserWithPhone = () => {
   const navigate = useNavigate();
-  const { storeAccessToken, storeRefreshToken } = useTokenStorage();
   const { login } = useContext(AuthContext);
 
   const navigateToFeed = () => {
     navigate('/feed');
   };
+
   return useMutation({
     mutationFn: (user: User) => loginUserWithPhone(user),
-    onSuccess: (data) => {
+    onSuccess: (data: LoginResponse) => {
       console.log('User logged in:', data);
-      storeAccessToken(data.tokens.access.token);
-      storeRefreshToken(data.tokens.refresh.token);
-       console.log("expired date", data.tokens.access.expires);
-      login(data.tokens.access.token);
-     
-
+      console.log('Expired date:', data.tokens.access.expires);
+      login(data); // Pass the full LoginResponse to encrypt and store
       navigateToFeed();
     },
     onError: (error) => {

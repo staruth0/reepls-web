@@ -21,7 +21,7 @@ const ProfileConfigurations: React.FC = () => {
   );
   const { setVoiceLanguage } = useContext(VoiceLanguageContext);
   const navigate = useNavigate();
-  const { authUser } = useUser();
+  const { authUser,logout:manualLogout } = useUser();
   const { getRefreshToken } = useTokenStorage();
   const { mutate: logout, isPending: isLoggingOut } = useLogoutUser(
     getRefreshToken() || ""
@@ -69,10 +69,7 @@ const ProfileConfigurations: React.FC = () => {
     console.log("Initiating logout...");
     logout(undefined, {
       onSuccess: () => {
-        console.log("Logout successful");
-        // Clear local storage
-        localStorage.clear();
-
+        manualLogout();
         setShowLogoutPopup(false);
         navigate("/auth");
       },

@@ -1,56 +1,60 @@
-import { jwtDecode } from 'jwt-decode';
-import React, { ReactNode, useEffect, useState } from 'react';
-import { ACCESS_TOKEN_KEY} from '../../constants';
+import React, { ReactNode, useEffect } from 'react';
 import { AuthContext, AuthContextProps } from './authContext';
+import { LoginResponse, User } from '../../models/datamodels';
+import { useEncryptedAuth } from '../../feature/Auth/hooks/useEncryptedAuth';
+
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-const getStoredToken = () => localStorage.getItem(ACCESS_TOKEN_KEY);
-
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [authState, setAuthState] = useState<AuthContextProps | null>(() => {
-    const token = getStoredToken();
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        return { userId: decoded.sub!, token };
-      } catch {
-        localStorage.removeItem(ACCESS_TOKEN_KEY);
-      }
-    }
-    return null;
+  const { storeLoginData, fetchUser, clearAuthData } = useEncryptedAuth();
+
+  // Initialize user state
+  const [user, setUser] = React.useState<User | null>(() => {
+    return fetchUser(); 
   });
 
+  
+  const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(() => {
+    const decryptedUser = fetchUser();
+    return !!decryptedUser; 
+  });
 
-  const login = (token: string) => {
+  // Login function: Encrypts login data and updates state
+  const login = (loginData: LoginResponse) => {
     try {
-      const decoded = jwtDecode(token);
-      console.log("decodedToken", decoded);
-      setAuthState({ userId: decoded.sub!, token });
-      console.log({ userId: decoded.sub!, token });
-      localStorage.setItem(ACCESS_TOKEN_KEY, token);
-    } catch {
-      console.error('Invalid token');
+      storeLoginData(loginData); 
+      setUser(loginData.user);
+      setIsLoggedIn(true);
+      console.log('Logged in user:', loginData.user);
+    } catch (error) {
+      console.error('Login error:', error);
     }
   };
 
+  // Logout function: Clears encrypted data and resets state
   const logout = () => {
-    setAuthState(null);
-    localStorage.clear();
+    clearAuthData();
+    setUser(null);
+    setIsLoggedIn(false);
+    console.log('Logged out');
   };
 
+  // Log state changes for debugging
   useEffect(() => {
-    console.log('authstate is this', authState);
-  }, [authState]);
+    console.log('Auth state:', { user, isLoggedIn });
+  }, [user, isLoggedIn]);
 
+  const value: AuthContextProps = {
+    user,
+    isLoggedIn,
+    login,
+    logout,
+  };
 
-  return (
-    <AuthContext.Provider value={{ authState, login, logout}}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export default AuthProvider;
