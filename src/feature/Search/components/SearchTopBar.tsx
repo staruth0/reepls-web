@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuSearch, LuX } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
@@ -6,9 +6,9 @@ import { useUser } from '../../../hooks/useUser';
 import { useGetSearchSuggestions } from '../hooks';
 import SearchContainer from './SearchContainer';
 
-const SearchTopBar: React.FC = () => {
+const SearchTopBar: React.FC<{ initialSearchTerm?: string }> = ({ initialSearchTerm }) => {
   const { t } = useTranslation();
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>(initialSearchTerm ?? '');
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { authUser } = useUser();
@@ -26,7 +26,8 @@ const SearchTopBar: React.FC = () => {
   const handleSearch = () => {
     const trimmedSearchTerm = searchTerm.trim();
     if (trimmedSearchTerm) {
-      navigate(`/search/results/${trimmedSearchTerm.replace(' ', '+')}`);
+      const query = encodeURIComponent(trimmedSearchTerm);
+      navigate(`/search/results?query=${query}`);
     }
     setIsOpen(false);
   };
@@ -42,14 +43,12 @@ const SearchTopBar: React.FC = () => {
     if (!data?.searchHistory || !searchTerm) return data?.searchHistory || [];
 
     const regex = new RegExp(searchTerm, 'i'); // Case-insensitive search
-    return data.searchHistory.filter((historyItem: string) =>
-      regex.test(historyItem)
-    );
+    return data.searchHistory.filter((historyItem: string) => regex.test(historyItem));
   }, [data?.searchHistory, searchTerm]);
 
   useEffect(() => {
     if (data) {
-      console.log("Search History:", data.searchHistory);
+      console.log('Search History:', data.searchHistory);
     }
   }, [data]);
 
@@ -81,9 +80,7 @@ const SearchTopBar: React.FC = () => {
           {filteredSearchHistory.length > 0 ? (
             <SearchContainer searches={filteredSearchHistory} />
           ) : (
-            <div className="p-4 text-neutral-300 text-center">
-              No matching search history
-            </div>
+            <div className="p-4 text-neutral-300 text-center">No matching search history</div>
           )}
         </div>
       )}

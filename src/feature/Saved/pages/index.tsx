@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LuHistory } from 'react-icons/lu';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import Tabs from '../../../components/molecules/Tabs/Tabs';
@@ -10,36 +10,36 @@ import { useGetSavedArticles } from '../../Saved/hooks'; // Updated import
 import AuthorComponent from '../Components/AuthorComponent';
 import SavedArticlesContainer from '../Components/SavedArticleContainer';
 import SavedPostsContainer from '../Components/SavedPostsContaniner';
-const tabs = [
-  { id: 'posts', title: 'Posts' },
-  { id: 'articles', title: 'Articles' },
-  { id: 'history', title: 'Reading History', icon: <LuHistory className="mx-2" /> },
-];
 
 const Bookmarks: React.FC = () => {
   const { authUser } = useUser();
-  const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
+
   const { data: savedArticlesData, isLoading: isLoadingSavedArticles, error } = useGetSavedArticles();
   const { data: followingsData } = useGetFollowing(authUser?.id || '');
+  const [savedPosts, setSavedPosts] = useState<Article[]>([]);
+  const [savedArticles, setSavedArticles] = useState<Article[]>([]);
+  const [followings, setFollowings] = useState<Follow[]>([]);
 
   // Filter and separate saved articles into posts and articles
-  const { savedPosts, savedArticles } = useMemo(() => {
-    if (!savedArticlesData) {
-      return { savedPosts: [], savedArticles: [] };
-    }
 
-    // Separate into posts and articles based on isArticle property
-    const savedPosts = savedArticlesData.filter((item: Article) => !item.isArticle);
-    const savedArticles = savedArticlesData.filter((item: Article) => item.isArticle);
-
-    return { savedPosts, savedArticles };
+  useEffect(() => {
+    if (!savedArticlesData) return;
+    console.log('saved articles', savedArticlesData);
+    setSavedPosts(savedArticlesData?.articles.filter((item: Article) => !item.isArticle) || []);
+    setSavedArticles(savedArticlesData?.articles.filter((item: Article) => item.isArticle) || []);
   }, [savedArticlesData]);
 
   useEffect(() => {
-    console.log('saved articles', savedArticlesData);
-  }, [savedArticlesData]);
+    setFollowings(followingsData?.data || []);
+  }, [followingsData]);
 
-  const followings = followingsData?.data || [];
+  const tabs = [
+    { id: 'posts', title: `Posts (${savedPosts.length})` },
+    { id: 'articles', title: `Articles (${savedArticles.length})` },
+    { id: 'history', title: 'Reading History', icon: <LuHistory className="mx-2" /> },
+  ];
+  
+  const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
 
   return (
     <div className={`grid grid-cols-[4fr_1.65fr] `}>
@@ -49,14 +49,17 @@ const Bookmarks: React.FC = () => {
         </Topbar>
 
         {/* Saved content */}
-        <div className="notification__content px-20 mt-5 min-h-screen">
-          <Tabs activeTab={activeTab} setActiveTab={setActiveTab} scale={false} tabs={tabs} borderBottom={true} />
-          <div className="px-2 mt-6">
+        <div className="notification__content px-20 mt-5 min-h-screen flex flex-col items-center">
+          <div className="w-[82%]">
+            <Tabs activeTab={activeTab} setActiveTab={setActiveTab} scale={false} tabs={tabs} borderBottom={true} />
+          </div>
+
+          <div className="px-2 mt-6 w-full" >
             {activeTab === 'posts' && (
               <>
                 <div className="pb-10">
                   {isLoadingSavedArticles ? (
-                    <div>
+                    <div className='p-2'>
                       <BlogSkeletonComponent />
                       <BlogSkeletonComponent />
                     </div>
@@ -69,9 +72,9 @@ const Bookmarks: React.FC = () => {
             )}
             {activeTab === 'articles' && (
               <>
-                <div>
+                <div className="pb-10">
                   {isLoadingSavedArticles ? (
-                    <div>
+                    <div className='p-2'>
                       <BlogSkeletonComponent />
                       <BlogSkeletonComponent />
                     </div>
@@ -91,8 +94,8 @@ const Bookmarks: React.FC = () => {
         <p className="">Your top saved Authors</p>
         <div className="mt-10 flex flex-col gap-6">
           {followings.length > 0 ? (
-            followings.map((following: Follow) => (
-              <AuthorComponent key={following?.followed_id?.id} user={following.followed_id} />
+            followings.map((following: Follow, index: number) => (
+              <AuthorComponent key={`${following?.followed_id?.id}-${index}`} user={following.followed_id} />
             ))
           ) : (
             <p className="text-neutral-500 text-center">No followings yet</p>

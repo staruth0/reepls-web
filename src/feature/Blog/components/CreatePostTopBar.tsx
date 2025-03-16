@@ -44,7 +44,7 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({ title, mainAction, acti
           <Menu>
             <MenuButton
               className={cn(
-                'inline-flex items-center gap-2 rounded-md  py-1.5 px-3 text-sm  shadow-inner  ',
+                'inline-flex items-center gap-2 rounded-md  py-1.5 px-3 text-sm  shadow-sm  ',
                 'hover:text-primary-400 focus:text-primary-400',
                 'cursor-pointer transition-all duration-300 ease-in-out'
               )}>
@@ -55,13 +55,14 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({ title, mainAction, acti
               transition
               anchor="bottom"
               className={cn(
-                'w-36 mt-2 origin-top-right rounded-xl border border-neutral-300 bg-background p-1 text-sm transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0',
-                'z-10000 sticky top-0 z-[1200px]'
+                'w-40 mt-6 origin-top-right rounded-lg border border-neutral-300 bg-background py-1 px-2',
+                'shadow-lg relative',
+                ' text-sm transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0'
               )}>
               {actions.map(({ label, ActionIcon, onClick, disabled }) => (
                 <MenuItem key={label} disabled={disabled}>
                   <button
-                    className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 hover:text-primary-400"
+                    className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 hover:text-primary-400 text-base"
                     onClick={onClick}>
                     <ActionIcon className="size-4" />
                     {label}

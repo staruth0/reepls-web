@@ -61,7 +61,7 @@ function Checkemail() {
       {CodeVerify.error && <div className="text-red-500">An Error Occured While Verifying the code</div>}
       <form onSubmit={handleSubmit}>
         <button type="submit">
-          {CodeVerify.isPending && <LuLoader className="animate-spin text-primary-400 inline-block mx-4" />}
+          {CodeVerify.isPending && <LuLoader className="animate-spin text-foreground inline-block mx-4" />}
           {CodeVerify.isPending ? 'Verifying....' : t('VerifyButton')}
         </button>
       </form>

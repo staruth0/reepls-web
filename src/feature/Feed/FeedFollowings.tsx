@@ -1,5 +1,5 @@
 import { Brain } from 'lucide-react';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import Topbar from '../../components/atoms/Topbar/Topbar';
 import { CognitiveModeContext } from '../../context/CognitiveMode/CognitiveModeContext';
 import { Article } from '../../models/datamodels';
@@ -13,8 +13,17 @@ import './feed.scss';
 const FeedFollowing: React.FC = () => {
   const [isBrainActive, setIsBrainActive] = useState<boolean>(false);
   const { toggleCognitiveMode } = useContext(CognitiveModeContext);
+  const bottomRef = useRef<HTMLDivElement>(null); // Ref for the bottom
 
-  const { data: followedData, error: followedError, isLoading: followedIsLoading } = useGetFollowedArticles();
+  // Fetch followed articles with infinite scrolling
+  const { 
+    data, 
+    error, 
+    isLoading, 
+    fetchNextPage, 
+    hasNextPage, 
+    isFetchingNextPage 
+  } = useGetFollowedArticles();
 
   // Handle cognitive mode toggle
   const handleBrainClick = () => {
@@ -22,9 +31,36 @@ const FeedFollowing: React.FC = () => {
     toggleCognitiveMode();
   };
 
+  // Infinite scrolling logic
   useEffect(() => {
-    if (followedData) console.log('followeddata', followedData);
-  }, [followedData]);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          console.log('Bottom reached, fetching next page!');
+          fetchNextPage();
+        }
+      },
+      {
+        root: null, // Use viewport
+        rootMargin: '100px', // Trigger 100px before bottom
+        threshold: 0.5, // Trigger when 50% of bottomRef is visible
+      }
+    );
+
+    if (bottomRef.current) {
+      observer.observe(bottomRef.current);
+    }
+
+    return () => {
+      if (bottomRef.current) {
+        observer.unobserve(bottomRef.current);
+      }
+    };
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  useEffect(() => {
+    if (data) console.log('followed data', data);
+  }, [data]);
 
   return (
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
@@ -45,28 +81,44 @@ const FeedFollowing: React.FC = () => {
         </Topbar>
 
         {/* Display Skeleton or Articles */}
-        {followedIsLoading ? (
+        {isLoading ? (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse">
             <BlogSkeletonComponent />
             <BlogSkeletonComponent />
           </div>
         ) : (
-          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse gap-7">
-            {followedData?.map((article: Article) => (
-              <BlogPost
-                key={article._id}
-                isArticle={article.isArticle!}
-                media={article.media!}
-                title={article.title!}
-                content={article.content!}
-                date={article.createdAt!}
-                article_id={article._id!}
-                user={article.author_id!}
-              />
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col gap-7">
+            {data?.pages.map((page, i) => (
+              <div className="flex flex-col" key={i}>
+                {page.articles.map((article: Article) => (
+                  <BlogPost
+                    key={article._id}
+                    isArticle={article.isArticle!}
+                    media={article.media!}
+                    title={article.title!}
+                    content={article.content!}
+                    date={article.createdAt!}
+                    article_id={article._id!}
+                    user={article.author_id!}
+                  />
+                ))}
+              </div>
             ))}
           </div>
         )}
-        {followedError && <div>{followedError.message}</div>}
+
+        {/* Show loading skeletons while fetching next page */}
+        {isFetchingNextPage && (
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse mt-4">
+            <BlogSkeletonComponent />
+            <BlogSkeletonComponent />
+          </div>
+        )}
+
+        {/* Bottom trigger for infinite scroll */}
+        <div ref={bottomRef} style={{ height: '100px' }} />
+
+        {error && <div>Error: {error.message}</div>}
       </div>
 
       <div className="communique hidden lg:block">

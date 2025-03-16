@@ -4,6 +4,7 @@ import { Comment, User } from '../../../models/datamodels';
 import { useGetCommentsByArticleId } from '../hooks';
 import CommentMessage from './CommentMessage';
 import CommentTab from './CommentTab';
+
 interface CommentSectionProps {
   article_id: string;
   setIsCommentSectionOpen: (isOpen: boolean) => void;
@@ -11,11 +12,18 @@ interface CommentSectionProps {
 }
 
 const CommentSection: React.FC<CommentSectionProps> = ({ article_id, setIsCommentSectionOpen, author_of_post }) => {
-  const { data: articleComments, isLoading, isError } = useGetCommentsByArticleId(article_id);
+  const {
+    data: articleComments,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetCommentsByArticleId(article_id);
 
   useEffect(() => {
-    console.log(articleComments?.data);
-  }, [article_id, articleComments?.data]);
+    console.log('comments', articleComments);
+  }, [article_id, articleComments]);
 
   if (isLoading) return <LuLoader className="animate-spin text-primary-400 text-xl m-4" />;
   if (isError)
@@ -26,19 +34,29 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id, setIsCommen
     );
 
   return (
-    <div className="flex flex-col gap-2 ">
-      <div className="self-end mr-4 cursor-pointer my-3" onClick={() => setIsCommentSectionOpen(false)}>
+    <div className="flex flex-col gap-2">
+      <div
+        className="self-end mr-4 cursor-pointer my-3"
+        onClick={() => setIsCommentSectionOpen(false)}
+      >
         <LuX />
       </div>
 
-      <CommentTab article_id={article_id} setIsCommentSectionOpen={setIsCommentSectionOpen} />
-      {articleComments?.data.map((comment: Comment, index: number) => {
-        const isSameAuthorAsPrevious = index > 0 && comment.author_id === articleComments.data[index - 1].author_id;
+      <CommentTab
+        article_id={article_id}
+        setIsCommentSectionOpen={setIsCommentSectionOpen}
+      />
 
-        return (
-          <>
+      {/* Render comments */}
+      {articleComments?.pages.map((page, pageIndex) =>
+        page.data.commentsTree.map((comment: Comment, index: number) => {
+          const isSameAuthorAsPrevious =
+            index > 0 &&
+            comment.author_id === page.data.commentsTree[index - 1].author_id;
+
+          return (
             <CommentMessage
-              key={`${comment._id}-${index}`}
+              key={`${comment._id}-${pageIndex}-${index}`}
               content={comment.content!}
               createdAt={comment.createdAt!}
               author_id={comment.author_id!}
@@ -49,9 +67,20 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id, setIsCommen
               author={comment.author!}
               author_of_post={author_of_post}
             />
-          </>
-        );
-      })}
+          );
+        })
+      )}
+
+      {/* Show More Button */}
+      {hasNextPage && (
+        <button
+          onClick={() => fetchNextPage()}
+          disabled={isFetchingNextPage}
+          className="text-primary-400 text-[15px] mt-4 self-center"
+        >
+          {isFetchingNextPage ?<LuLoader className="animate-spin text-foreground inline-block mx-4" />: "Show More"}
+        </button>
+      )}
     </div>
   );
 };

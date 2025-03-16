@@ -1,7 +1,7 @@
 export enum UserRole {
-  Admin = "Admin",
-  Reader = "Reader",
-  Writer = "Writer",
+  Admin = 'Admin',
+  Reader = 'Reader',
+  Writer = 'Writer',
 }
 
 export interface AuthTokens {
@@ -20,18 +20,19 @@ export interface User {
   _id?: string;
   user_id?: string;
   googleId?: string;
+  name?: string;
   username?: string;
   email?: string;
   phone?: string;
   password?: string;
-  role?: UserRole; 
+  role?: UserRole;
   profile_picture?: string;
   saved_articles?: string[];
   banner_image?: string;
   bio?: string;
   about?: string;
   address?: string;
-  title?: string; 
+  title?: string;
   interests?: string[];
   is_verified_writer?: boolean;
   is_email_verified?: boolean;
@@ -50,22 +51,23 @@ export interface User {
 export interface Article {
   article_id?: string;
   title?: string;
-  type?: "ShortForm" | "LongForm";
+  type?: 'ShortForm' | 'LongForm';
   is_communiquer?: boolean;
   subTitle?: string;
   content?: string;
-  category?: string[] ; 
+  htmlContent?: string;
+  category?: string[];
   keywords?: string[];
   media?: string[];
   text_to_speech?: string;
   flagged?: boolean;
-  author_id?: User ; 
-  status?: "Draft" | "Published" | "Archived";
+  author_id?: User;
+  status?: 'Draft' | 'Published' | 'Archived';
   createdAt?: string;
   updatedAt?: string;
   views_count?: number;
   reports_count?: number;
-  _id?: string; 
+  _id?: string;
   shares_count?: number;
   isArticle?: boolean;
 }
@@ -106,7 +108,7 @@ export interface ReactionReceived {
 export interface Notification {
   notification_id: string;
   user_id: string;
-  type: "New Comment" | "Reaction" | "New Follower";
+  type: 'New Comment' | 'Reaction' | 'New Follower';
   content: string;
   is_read: boolean;
   created_at: string;
@@ -117,7 +119,7 @@ export interface Report {
   article_id: string;
   reporter_id: string;
   reason: string;
-  status: "Pending" | "Resolved";
+  status: 'Pending' | 'Resolved';
   created_at: string;
 }
 
@@ -137,4 +139,19 @@ export interface PhoneCode {
 export interface PhoneVerify {
   code: string;
   phone: string;
+}
+
+export interface Token {
+  token: string;
+  expires: string;
+}
+
+export interface Tokens {
+  access: Token;
+  refresh: Token;
+}
+
+export interface LoginResponse {
+  user: User;
+  tokens: Tokens;
 }

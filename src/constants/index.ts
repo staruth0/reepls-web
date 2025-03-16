@@ -1,5 +1,5 @@
-const MAX_IMAGE_COUNT = 4;
-const MAX_VIDEO_COUNT = 1;
+const MAX_IMAGE_COUNT = 10;
+const MAX_VIDEO_COUNT = 4;
 
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
@@ -44,22 +44,26 @@ const API_BASE_URL = "http://localhost:5000";
 const API_VERSION = import.meta.env.VITE_API_VERSION || "/api-v1";
 const API_URL = `${API_BASE_URL}${API_VERSION}`;
 
-const AUTH_TOKEN_KEY = "AuthToken";
-const ACCESS_TOKEN_KEY = "AccessToken";
-const REFRESH_TOKEN_KEY = "RefreshToken";
+const AUTH_TOKEN_KEY = 'AuthToken';
+const ACCESS_TOKEN_KEY = 'AccessToken';
+const REFRESH_TOKEN_KEY = 'RefreshToken';
+
+// Key for storing in localStorage
+const STORAGE_KEY = 'encryptedLoginData';
 
 export {
-	ACCESS_TOKEN_KEY,
-	allowedImageTypes,
-	allowedVideoTypes,
-	API_BASE_URL,
-	API_URL,
-	AUTH_TOKEN_KEY,
-	MAX_IMAGE_COUNT,
-	MAX_IMAGE_SIZE,
-	MAX_VIDEO_COUNT,
-	MAX_VIDEO_SIZE,
-	PREVIEW_SLUG,
-	REFRESH_TOKEN_KEY,
-	SHORT_POST_LENGTH,
+  ACCESS_TOKEN_KEY,
+  allowedImageTypes,
+  allowedVideoTypes,
+  API_BASE_URL,
+  API_URL,
+  AUTH_TOKEN_KEY,
+  MAX_IMAGE_COUNT,
+  MAX_IMAGE_SIZE,
+  MAX_VIDEO_COUNT,
+  MAX_VIDEO_SIZE,
+  PREVIEW_SLUG,
+  REFRESH_TOKEN_KEY,
+  SHORT_POST_LENGTH,
+  STORAGE_KEY
 };

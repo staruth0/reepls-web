@@ -16,8 +16,10 @@ const MessageList: React.FC<MessageListProps> = ({
 }) => {
   const { t } = useTranslation();
 
+
+
   return (
-    <div className={`right__recent `}>
+    <div className={`right__recent`}>
       <p className="recent">{t("recent")}</p>
       <div className="message-list">
         {communiques?.slice(0, 2).map(

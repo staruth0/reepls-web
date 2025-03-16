@@ -11,22 +11,18 @@ interface ProfileHeroButtonsProps {
   isAuthUser: boolean;
 }
 
-const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({ userId,isAuthUser }) => {
+const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
+  userId,
+  isAuthUser,
+}) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { authUser } = useUser();
   const { isFollowing: isUserFollowing } = useKnowUserFollowings();
 
-  const {
-    mutate: follow,
-    isPending: isFollowPending,
-  } = useFollowUser();
+  const { mutate: follow, isPending: isFollowPending } = useFollowUser();
 
-  const {
-    mutate: unFollow,
-    isPending: isUnfollowPending,
-
-  } = useUnfollowUser();
+  const { mutate: unFollow, isPending: isUnfollowPending } = useUnfollowUser();
 
   const handleEditProfile = (username: string) => {
     navigate(`/profile/edit/${username}`);
@@ -63,13 +59,13 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({ userId,isAuthUs
       {isAuthUser ? (
         <>
           <button
-            className="px-8 py-3 border text-neutral-50 border-neutral-100 text-[14px] rounded-full text-sm hover:bg-neutral-600 hover:border-none transition-all duration-300 ease-in-out"
+            className="px-8 py-3 border text-neutral-50 border-neutral-100 text-[14px] rounded-full text-sm hover:bg-neutral-600 hover:border-transparent transition-all duration-300 ease-in-out hover:transform-none"
             onClick={() => handleEditProfile(authUser?.username || "")}
           >
             {t("Edit Profile")}
           </button>
           <button
-            className="px-8 py-3 text-neutral-50 bg-neutral-600 rounded-full text-[14px] hover:bg-transparent hover:border hover:border-neutral-100 transition-all duration-300 ease-in-out"
+            className="px-8 py-3 text-neutral-50 bg-neutral-600 border border-neutral-600 rounded-full text-[14px] hover:bg-transparent hover:border-neutral-50 transition-all duration-300 ease-in-out hover:transform-none"
             onClick={() => handleViewAnalytics(authUser?.username || "")}
           >
             {t("View Analytics")}

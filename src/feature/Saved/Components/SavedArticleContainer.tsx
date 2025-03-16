@@ -9,7 +9,6 @@ interface SavedContainerProps {
 const SavedArticlesContainer: React.FC<SavedContainerProps> = ({ articles }) => {
   return (
     <>
-      <div className="px-2 mt-4">{`${articles.length} saved articles`}</div>
       <div className="transition-all duration-300 ease-linear flex flex-col-reverse gap-7">
         {articles.map((article) => (
           <BlogPost

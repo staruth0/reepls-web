@@ -11,6 +11,8 @@ interface BlogReactionStatsProps {
   article_id: string;
 }
 
+
+
 const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date, toggleCommentSection, article_id }) => {
   const [showReactions, setShowReactions] = useState(false);
 
@@ -19,6 +21,15 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date, toggleComme
 
   const handlecloseReactionPopup = () => {
     setShowReactions(false);
+  };
+
+  // Utility function to calculate total comments
+  const  totalComments = () => {
+    if (!articleComments || !articleComments.pages) return 0;
+  
+    return articleComments.pages.reduce((total, page) => {
+      return total + (page.data?.commentsTree?.length || 0);
+    }, 0);
   };
 
   return (
@@ -45,21 +56,29 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date, toggleComme
             />
           </div>
           {/* Reaction Count */}
-          <div className="ml-1 hover:underline underline-offset-1 " onClick={() => setShowReactions(true)}>
-            {allReactions?.length}
+          <div
+            className="ml-1 hover:underline underline-offset-1 "
+            onClick={() => setShowReactions(true)}
+          >
+            {allReactions?.reactions?.length}
           </div>
         </div>
 
         {/* Comments Count */}
         <div
           className="ml-4 text-neutral-50 hover:text-primary-500 hover:underline underline-offset-1"
-          onClick={toggleCommentSection}>
-          {articleComments?.data?.length} Comments
+          onClick={toggleCommentSection}
+        >
+          {totalComments()} Comments
         </div>
       </div>
 
       {showReactions && (
-        <ReactionsPopup isOpen={showReactions} onClose={handlecloseReactionPopup} article_id={article_id} />
+        <ReactionsPopup
+          isOpen={showReactions}
+          onClose={handlecloseReactionPopup}
+          article_id={article_id}
+        />
       )}
 
       {/* Time Posted */}

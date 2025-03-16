@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient,useInfiniteQuery } from "@tanstack/react-query";
 import {
   createComment,
   getCommentsByArticleId,
@@ -29,9 +29,17 @@ export const useCreateComment = () => {
 
 // Hook to fetch comments by article ID
 export const useGetCommentsByArticleId = (articleId: string) => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ["comments", articleId],
-    queryFn: () => getCommentsByArticleId(articleId),
+    queryFn: ({ pageParam = 1 }) => getCommentsByArticleId(articleId, pageParam, 8), 
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const totalPages = lastPage.data.totalPages;
+      if (allPages.length < totalPages) {
+        return allPages.length + 1; 
+      }
+      return undefined; // No more pages to fetch
+    },
   });
 };
 

@@ -5,7 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { type Editor } from 'reactjs-tiptap-editor';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
+import { useUser } from '../../../hooks/useUser';
 import { Article } from '../../../models/datamodels';
+import { uploadArticleThumbnail } from '../../../utils/media';
 import CreatePostTopBar from '../components/CreatePostTopBar';
 import ImageSection from '../components/ImageSection';
 import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
@@ -13,24 +15,31 @@ import { useCreateArticle } from '../hooks/useArticleHook';
 import useDraft from '../hooks/useDraft';
 
 const CreatePost: React.FC = () => {
-  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
+  const { authUser } = useUser();
+
+  const [thumbnail, setThumbnail] = useState<File | null>(null);
   // const { checkTokenExpiration } = useContext(AuthContext);
   const [title, setTitle] = useState<string>('');
   const [subTitle, setSubTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
+  const [htmlContent, setHtmlContent] = useState<string>('');
+  const [media, setMedia] = useState<string[]>([]);
+  // const [tags, setTags] = useState<string[]>([]);
   const { saveDraftArticle, loadDraftArticle, clearDraftArticle } = useDraft();
 
-  const { mutate: createArticle, isPending: _ } = useCreateArticle();
+  const { mutate: createArticle } = useCreateArticle();
 
   // const [isSaving, setIsSaving] = useState(false);
   const [initialEditorContent, setInitialEditorContent] = useState<{
     title: string;
     subtitle: string;
     content: string;
+    htmlContent: string;
   }>({
     title: '',
     subtitle: '',
     content: '',
+    htmlContent: '',
   });
 
   const [hasLoadedDraft, setHasLoadedDraft] = useState(false);
@@ -47,7 +56,7 @@ const CreatePost: React.FC = () => {
       disabled: false,
       ActionIcon: LuEye,
       onClick: () => {
-        saveDraftArticle({ title, subTitle, content });
+        saveDraftArticle({ title, subTitle, content, htmlContent, media });
         navigate('/posts/article/preview');
       },
     },
@@ -56,12 +65,13 @@ const CreatePost: React.FC = () => {
       disabled: false,
       ActionIcon: LuCalendar,
       onClick: () => {
+        console.log(editorRef.current?.editor?.getText());
         console.log('Scheduling the post...');
       },
     },
     {
       label: 'Share',
-      disabled: false,
+      disabled: true,
       ActionIcon: LuShare,
       onClick: () => {
         console.log('Sharing the post...');
@@ -78,21 +88,26 @@ const CreatePost: React.FC = () => {
     {
       label: 'Add Tags',
       ActionIcon: LuTag,
-      disabled: false,
+      disabled: true,
       onClick: () => {
         console.log('Adding tags...');
       },
     },
   ];
 
-  const onPublish = () => {
+  const onPublish = async () => {
     if (!title || !subTitle || !content) {
       toast.error('Please provide a title, subtitle and content.', {
         autoClose: 1500,
       });
       return;
     }
-    const media = thumbnailUrl ? [thumbnailUrl] : [];
+
+    if (thumbnail && authUser?.id) {
+      const result = await uploadArticleThumbnail(authUser?.id, thumbnail);
+      setMedia([result.secure_url, ...media]);
+    }
+
     const article: Article = {
       title,
       subTitle,
@@ -144,6 +159,8 @@ const CreatePost: React.FC = () => {
       setTitle(draftArticle.title);
       setSubTitle(draftArticle.subTitle);
       setContent(draftArticle.content);
+      setHtmlContent(draftArticle.htmlContent);
+      setMedia(draftArticle.media);
       // editorRef.current?.editor?.commands?.setContent(draftArticle.content);
     }
 
@@ -153,14 +170,17 @@ const CreatePost: React.FC = () => {
   useEffect(() => {
     if (hasLoadedDraft && editorRef.current?.editor) {
       setContent(initialEditorContent.content);
-      editorRef.current?.editor?.commands?.setContent(initialEditorContent.content);
+      setHtmlContent(initialEditorContent.htmlContent);
+      setTimeout(() => {
+        editorRef.current?.editor?.commands?.setContent(initialEditorContent.htmlContent);
+      }, 0);
     }
   }, [hasLoadedDraft, initialEditorContent]);
 
   useEffect(() => {
     if (!hasLoadedDraft) return;
-    saveDraftArticle({ title, subTitle, content });
-  }, [title, subTitle, content]);
+    saveDraftArticle({ title, subTitle, content, htmlContent, media });
+  }, [title, subTitle, content, htmlContent, media]);
 
   // const isLoggedOut = checkTokenExpiration();
 
@@ -186,7 +206,7 @@ const CreatePost: React.FC = () => {
 
       <div className="mt-10">
         <div className="md:px-4">
-          <ImageSection onImageChange={setThumbnailUrl} />
+          <ImageSection onImageChange={(image) => setThumbnail(image as File)} />
           <div className="mx-auto mt-3 pl-20 max-w-5xl">
             <div className="">
               <textarea
@@ -215,8 +235,9 @@ const CreatePost: React.FC = () => {
               initialContent={content}
               handleContentChange={setContent}
               editorRef={editorRef}
+              handleHtmlContentChange={setHtmlContent}
               disabled={!hasLoadedDraft}
-              className="block max-w-full bg-primary-100 static mx-auto my-1"
+              className="block max-w-full bg-primary-100 static mx-auto my-1 "
             />
           </div>
         </div>

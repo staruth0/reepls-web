@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import { useUser } from '../../../hooks/useUser';
 import { Article } from '../../../models/datamodels';
@@ -10,12 +10,14 @@ import SearchTopBar from '../components/SearchTopBar';
 import { useGetSearchResults, useStoreSearchSuggestion } from '../hooks';
 
 const ResultsPage: React.FC = () => {
-  const { query } = useParams<{ query: string }>();
+  const location = useLocation();
+  const query = new URLSearchParams(location.search).get('query');
   const { data: results, isPending, error } = useGetSearchResults(query || '');
   const { authUser } = useUser();
   const { mutate } = useStoreSearchSuggestion();
 
   useEffect(() => {
+    if (!authUser || !query || !authUser?.id) return;
     mutate(
       {
         userid: authUser?.id || '',
@@ -37,7 +39,7 @@ const ResultsPage: React.FC = () => {
       <div className="grid font-roboto grid-cols-[4fr_1.65fr]">
         <div className="search border-r-[1px] border-neutral-500">
           <Topbar>
-            <SearchTopBar />
+            <SearchTopBar initialSearchTerm={query || ''} />
           </Topbar>
           <div className="flex flex-col items-center pb-8">
             <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col ">

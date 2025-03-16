@@ -2,29 +2,31 @@ type DraftArticle = {
   title: string;
   subTitle: string;
   content: string;
+  htmlContent: string;
+  media: string[];
 };
 
 type DraftPost = {
   content: string;
-  imageUrls: string[];
-  videoUrls: string[];
+  media: string[];
 };
 
 const useDraft = () => {
   return {
-    saveDraftArticle: ({ title, subTitle, content }: DraftArticle) => {
+    saveDraftArticle: ({ title, subTitle, content, htmlContent, media }: DraftArticle) => {
       const article: DraftArticle = {
         title,
         subTitle,
         content,
+        htmlContent,
+        media,
       };
       localStorage.setItem('LocalDraftArticle', JSON.stringify(article));
     },
-    saveDraftPost: ({ content, imageUrls, videoUrls }: DraftPost) => {
+    saveDraftPost: ({ content, media }: DraftPost) => {
       const post: DraftPost = {
         content,
-        imageUrls,
-        videoUrls,
+        media,
       };
       localStorage.setItem('LocalDraftPost', JSON.stringify(post));
     },

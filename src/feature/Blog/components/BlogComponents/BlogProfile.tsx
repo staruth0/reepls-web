@@ -1,6 +1,6 @@
 import { Bookmark, EllipsisVertical, EyeOff, Share2, UserPlus, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { LuBadgeCheck } from 'react-icons/lu';
+import { LuBadgeCheck, LuLoader } from 'react-icons/lu';
 import { useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { profileAvatar } from '../../../../assets/icons';
@@ -36,18 +36,18 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
   const { mutate: removeSavedArticle, isPending: isRemovePending } = useRemoveSavedArticle();
   const { data: savedArticles } = useGetSavedArticles();
   const [saved, setSaved] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
 
-  // const [articleTitle, setArticleTitle] = useState('');
-  // const [articleUrl, setArticleUrl] = useState('');
+  const articleUrl = `${window.location.origin}/posts/${isArticle ? 'article' : 'post'}/${article_id}`;
+  const articleTitle = `${title ? title : content.split(' ').slice(0, 10).join(' ') + '...'}`;
 
-  // const articleUrl = `https://reepls.netlify.app/posts/article/${article_id}`;
-  // const articleTitle = `${title ? title : content.split(' ').slice(0, 10).join(' ') + '...'}`;
-
-  // const isCurrentAuthorArticle = user?.id === authUser?.id;
+  const isCurrentAuthorArticle = user?.id === authUser?.id;
 
   // Extract followed IDs from User objects
-  const followedIds = followings?.data?.map((following: Follow) => following.followed_id.id) || [];
-  const isFollowing = followedIds.includes(user?.id);
+  useEffect(() => {
+    const followedIds = followings?.data?.map((following: Follow) => following.followed_id?.id) || [];
+    setIsFollowing(followedIds.includes(user?.id));
+  }, [followings, user?.id]);
 
   const handleProfileClick = (username: string) => {
     if (username) {
@@ -81,14 +81,14 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
     if (isFollowPending || isUnfollowPending || !user?.id) return;
 
     if (isFollowing) {
-      unfollowUser(user.id, {
+      unfollowUser(user?.id, {
         onSuccess: () => {
           toast.success('User unfollowed successfully');
         },
         onError: () => toast.error('Failed to unfollow user'),
       });
     } else {
-      followUser(user.id, {
+      followUser(user?.id, {
         onSuccess: () => {
           toast.success('User followed successfully');
         },
@@ -104,7 +104,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
 
   useEffect(() => {
     console.log('followings', followings);
-    const isSaved = savedArticles?.some((article: Article) => article._id === article_id);
+    const isSaved = savedArticles?.articles?.some((article: Article) => article._id === article_id);
     setSaved(isSaved || false);
   }, [savedArticles, article_id, followings]);
 
@@ -120,14 +120,10 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
     return saved ? 'Unsave Post' : 'Add To Saved';
   };
 
-  const articleUrl = `${window.location.origin}/posts/${isArticle ? 'article' : 'post'}/${article_id}`;
-  const articleTitle = `${title ? title : content.split(' ').slice(0, 10).join(' ') + '...'}`;
-
-  const isCurrentAuthorArticle = user?.id === authUser?.id;
 
   // If user is null, return null or a fallback UI
   if (!user) {
-    return null; // or return a loading spinner or placeholder
+    return <LuLoader className="size-4 animate-spin my-auto" />; // or return a loading spinner or placeholder
   }
 
   return (
@@ -161,7 +157,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
         {showMenu ? (
           <X className="size-4 cursor-pointer" onClick={() => setShowMenu(!showMenu)} />
         ) : (
-          <EllipsisVertical className="size-4 cursor-pointer" onClick={() => setShowMenu(!showMenu)} />
+          <EllipsisVertical className="size-3 cursor-pointer" onClick={() => setShowMenu(!showMenu)} />
         )}
         {showMenu && (
           <>

@@ -11,8 +11,8 @@ import ToggleFeed from './components/ToogleFeed';
 import './feed.scss';
 
 const UserFeed: React.FC = () => {
-  const [isBrainActive, setIsBrainActive] = useState<boolean>(false);
-  const { toggleCognitiveMode } = useContext(CognitiveModeContext);
+  const { toggleCognitiveMode,isCognitiveMode } = useContext(CognitiveModeContext);
+  const [isBrainActive, setIsBrainActive] = useState<boolean>(isCognitiveMode);
   const bottomRef = useRef<HTMLDivElement>(null); // Ref for the bottom
 
   // Fetch data
@@ -80,12 +80,12 @@ const UserFeed: React.FC = () => {
             <BlogSkeletonComponent />
           </div>
         ) : (
-          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse gap-7">
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col gap-7">
             {
               <>
                 {/* Render all pages of articles */}
                 {data?.pages.map((page, i) => (
-                  <div className="flex flex-col-reverse" key={i}>
+                  <div className="flex flex-col" key={i}>
                     {page.articles.map((article: Article) => (
                       <BlogPost
                         key={article._id}

@@ -34,7 +34,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="font-semibold text-[16px] space-x-1">
           <span>All</span>
-          <span>{allReactions?.length || 0}</span>
+          <span>{allReactions?.reactions.totalUsers || 0}</span>
         </div>
       ),
     },
@@ -43,7 +43,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="flex items-center gap-1 font-semibold text-[16px]">
           <img src={heart} alt="Heart" className="w-5 h-5" />
-          <span>{reactionsPerType?.love?.length || 0}</span>
+          <span>{reactionsPerType?.love?.totalUsers || 0}</span>
         </div>
       ),
     },
@@ -52,7 +52,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="flex items-center gap-1 font-semibold text-[16px]">
           <img src={sadface} alt="Sad Face" className="w-5 h-5" />
-          <span>{reactionsPerType?.cry?.length || 0}</span>
+          <span>{reactionsPerType?.cry?.totalUsers || 0}</span>
         </div>
       ),
     },
@@ -61,7 +61,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="flex items-center gap-1 font-semibold text-[16px]">
           <img src={smile} alt="Smile" className="w-5 h-5" />
-          <span>{reactionsPerType?.smile?.length || 0}</span>
+          <span>{reactionsPerType?.smile?.totalUsers || 0}</span>
         </div>
       ),
     },
@@ -70,7 +70,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="flex items-center gap-1 font-semibold text-[16px]">
           <img src={thumb} alt="Thumb" className="w-5 h-5" />
-          <span>{reactionsPerType?.like?.length || 0}</span>
+          <span>{reactionsPerType?.like?.totalUsers || 0}</span>
         </div>
       ),
     },
@@ -79,7 +79,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="flex items-center gap-1 font-semibold text-[16px]">
           <img src={clap} alt="Clap" className="w-5 h-5" />
-          <span>{reactionsPerType?.clap?.length || 0}</span>
+          <span>{reactionsPerType?.clap?.totalUsers || 0}</span>
         </div>
       ),
     },
@@ -91,14 +91,15 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
 
   useEffect(() => {
     console.log("allReactions", allReactions);
-  }, [allReactions]);
+    console.log('reactionspertype', reactionsPerType)
+  }, [allReactions,reactionsPerType]);
 
   if (!isOpen) return null;
 
   // Handle loading and error states
   if (isLoadingAllReactions || isLoadingReactionsPerType) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-[910]">
         <div className="bg-[var(--plain-b)] rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh] p-4">
           <div className="">
             <div className="flex items-center justify-between p-4">
@@ -131,7 +132,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
 
   if (isErrorAllReactions || isErrorReactionsPerType) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-[910]">
         <div className="bg-[var(--plain-b)] rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh] p-4 flex items-center justify-center">
           <p className="text-[var(--text-color)]">
             Error loading reactions. Please try again later.
@@ -148,7 +149,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-[910]">
       <div className="bg-[var(--plain-b)] rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh]">
         <div className="border-b border-[var(--neutral-400-main)]">
           <div className="flex items-center justify-between p-4">
@@ -174,7 +175,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
         </div>
         <div className="p-4 space-y-3 min-h-[30vh] max-h-[63vh] overflow-y-auto">
           {activeTab === "All" &&
-            allReactions?.map((reaction: ReactionReceived) => (
+            allReactions?.reactions?.map((reaction: ReactionReceived) => (
               <UserReactionContainer
                 key={reaction.type}
                 type={reaction.type}
@@ -182,8 +183,10 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
               />
             ))}
           {activeTab === "smile" &&
-            allReactions
-              ?.filter((reaction: ReactionReceived) => reaction.type === "smile")
+            allReactions?.reactions
+              ?.filter(
+                (reaction: ReactionReceived) => reaction.type === "smile"
+              )
               .map((reaction: ReactionReceived) => (
                 <UserReactionContainer
                   key={reaction.type}
@@ -192,7 +195,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
                 />
               ))}
           {activeTab === "cry" &&
-            allReactions
+            allReactions?.reactions
               ?.filter((reaction: ReactionReceived) => reaction.type === "cry")
               .map((reaction: ReactionReceived) => (
                 <UserReactionContainer
@@ -202,7 +205,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
                 />
               ))}
           {activeTab === "love" &&
-            allReactions
+            allReactions?.reactions
               ?.filter((reaction: ReactionReceived) => reaction.type === "love")
               .map((reaction: ReactionReceived) => (
                 <UserReactionContainer
@@ -212,7 +215,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
                 />
               ))}
           {activeTab === "clap" &&
-            allReactions
+            allReactions?.reactions
               ?.filter((reaction: ReactionReceived) => reaction.type === "clap")
               .map((reaction: ReactionReceived) => (
                 <UserReactionContainer
@@ -222,7 +225,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
                 />
               ))}
           {activeTab === "like" &&
-            allReactions
+            allReactions?.reactions
               ?.filter((reaction: ReactionReceived) => reaction.type === "like")
               .map((reaction: ReactionReceived) => (
                 <UserReactionContainer

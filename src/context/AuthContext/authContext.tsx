@@ -1,22 +1,19 @@
-import { createContext } from "react";
+import { createContext } from 'react';
+import { LoginResponse, User } from '../../models/datamodels';
+
 
 export interface AuthContextProps {
-  userId: string;
-  token: string;
-}
-
-export interface AuthProviderProps {
-  authState: AuthContextProps | null;
-  login: (token: string) => void;
+  user: User | null;
+  isLoggedIn: boolean;
+  login: (loginData: LoginResponse) => void; 
   logout: () => void;
 }
 
-const initialState: AuthProviderProps = {
-  authState: null,
+const initialState: AuthContextProps = {
+  user: null,
+  isLoggedIn: false,
   login: () => {},
   logout: () => {},
 };
 
-export const AuthContext = createContext<AuthProviderProps>(initialState);
-
-
+export const AuthContext = createContext<AuthContextProps>(initialState);

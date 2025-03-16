@@ -1,3 +1,4 @@
+import TermsPolicies from '../components/molecules/TermsPolicies';
 import CreatePost from '../feature/Blog/pages';
 import ArticleView from '../feature/Blog/pages/ArticleView';
 import CommuniqueDetail from '../feature/Feed/CommuniqueDetail';
@@ -29,11 +30,11 @@ const UserRoutes = {
       element: <FeedFollowing />,
     },
     {
-      path: 'explore',
+      path: 'search',
       element: <Search />,
     },
     {
-      path: 'search/results/:query',
+      path: 'search/results/',
       element: <ResultsPage />,
     },
     {
@@ -42,6 +43,10 @@ const UserRoutes = {
     },
     {
       path: 'profile/edit/:username',
+      element: <EditProfile />,
+    },
+    {
+      path: 'profile/settings/:username',
       element: <EditProfile />,
     },
     {
@@ -55,6 +60,10 @@ const UserRoutes = {
     {
       path: '/profile/analytics/:username',
       element: <ProfileAnalytics />,
+    },
+    {
+      path: '/Terms&Policies',
+      element: <TermsPolicies />,
     },
     {
       path: 'notifications',

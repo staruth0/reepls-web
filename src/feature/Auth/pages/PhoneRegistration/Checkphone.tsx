@@ -57,7 +57,7 @@ function Checkphone() {
         {codeGet.error && <div>Fetching Code</div>}
         {codeVerify.error && <div>An Error Occured While Verifying the code</div>}
         <button type="submit">
-          {codeVerify.isPending && <LuLoader className="animate-spin text-primary-400 inline-block mx-4" />}
+          {codeVerify.isPending && <LuLoader className="animate-spin text-foreground inline-block mx-4" />}
           {codeVerify.isPending ? 'Verifying.....' : t('VerifyButton')}
         </button>
       </form>

@@ -31,16 +31,16 @@ const getAllArticles = async ({ pageParam = 1 }) => {
 };
 
 // Fetch all articles of an author a user is following
-const getFollowedArticles = async () => {
-  console.log("Fetching followed articles");
-  const { data } = await apiClient.get("/articles/followed-articles");
+const getFollowedArticles = async ({ pageParam = 1 }) => {
+  console.log(`Fetching followed articles for page ${pageParam}`);
+  const { data } = await apiClient.get(`/articles/followed-articles?page=${pageParam}&limit=10`);
   return data;
 };
 
 // Fetch all articles where is_communiquer is true
-const getCommuniquerArticles = async () => {
-  console.log("Fetching communique articles");
-  const { data } = await apiClient.get("/articles/communiquer-articles");
+const getCommuniquerArticles = async ({ pageParam = 1 }) => {
+  console.log(`Fetching communiqué articles for page ${pageParam}`);
+  const { data } = await apiClient.get(`/articles/communiquer-articles?page=${pageParam}&limit=10`);
   return data;
 };
 

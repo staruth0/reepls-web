@@ -50,9 +50,7 @@ export const useGetArticlesByAuthorId = (authorId: string) => {
   });
 };
 
-// Hook for fetching all articles
 
-// Hook for fetching all articles with infinite scrolling
 // Hook for fetching all articles with infinite scrolling
 export const useGetAllArticles = () => {
   return useInfiniteQuery({
@@ -71,19 +69,40 @@ export const useGetAllArticles = () => {
   });
 };
 
-// Hook for fetching followed articles
+// Hook for fetching followed articles with infinite scrolling
+
 export const useGetFollowedArticles = () => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['followed-articles'],
-    queryFn: () => getFollowedArticles(),
+    queryFn: getFollowedArticles,
+    initialPageParam: 1, 
+    getNextPageParam: (lastPage, allPages) => {
+      console.log('lastPage', lastPage);
+      console.log('allPages', allPages);
+      const articlesFetched = allPages.length * 10; 
+      if (articlesFetched < lastPage.totalArticles) {
+        return allPages.length + 1; // Next page number
+      }
+      return undefined; 
+    },
   });
 };
 
 // Hook for fetching communique articles
 export const useGetCommuniquerArticles = () => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['communiquer-articles'],
-    queryFn: () => getCommuniquerArticles(),
+    queryFn: getCommuniquerArticles,
+    initialPageParam: 1, // Start with page 1
+    getNextPageParam: (lastPage, allPages) => {
+      console.log('lastPage', lastPage);
+      console.log('allPages', allPages);
+      const articlesFetched = allPages.length * 10; 
+      if (articlesFetched < lastPage.totalArticles) {
+        return allPages.length + 1; 
+      }
+      return undefined; // No more pages
+    },
   });
 };
 
@@ -100,6 +119,7 @@ export const useGetArticlesByCategory = (category: string) => {
   return useQuery({
     queryKey: ['articles-by-category', category],
     queryFn: () => getArticlesByCategory(category),
+    enabled: !!category,
   });
 };
 

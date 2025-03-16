@@ -9,9 +9,9 @@ const createComment = async (comment: Comment) => {
 };
 
 // Get comments for an article
-const getCommentsByArticleId = async (articleId: string) => {
-  console.log("Fetching comments for article with ID:", articleId);
-  const { data } = await apiClient.get(`/comment/article/${articleId}`);
+const getCommentsByArticleId = async (articleId: string, page: number, limit: number) => {
+  console.log(`Fetching comments for article ${articleId}, page ${page}`);
+  const { data } = await apiClient.get(`/comment/article/${articleId}?page=${page}&limit=${limit}`);
   return data;
 };
 
