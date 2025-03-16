@@ -6,61 +6,60 @@ const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
 
 const SHORT_POST_LENGTH = 1500;
 
-const PREVIEW_SLUG = 'preview';
+const PREVIEW_SLUG = "preview";
 
-const allowedImageTypes = ['jpeg', 'png', 'jpg', 'webp'];
+const allowedImageTypes = ["jpeg", "png", "jpg", "webp"];
 const allowedVideoTypes = [
-  'quicktime',
-  'mp4',
-  'avi',
-  'mov',
-  'wmv',
-  'flv',
-  'webm',
-  'mkv',
-  'mpg',
-  'mpeg',
-  'm4v',
-  '3gp',
-  '3g2',
-  'm3u8',
-  'ts',
-  'mxf',
-  'roq',
-  'webm',
-  'ogv',
-  'ogg',
-  'mts',
-  'm2ts',
-  'ismv',
-  'f4v',
-  'f4p',
-  'f4a',
-  'f4b',
+	"quicktime",
+	"mp4",
+	"avi",
+	"mov",
+	"wmv",
+	"flv",
+	"webm",
+	"mkv",
+	"mpg",
+	"mpeg",
+	"m4v",
+	"3gp",
+	"3g2",
+	"m3u8",
+	"ts",
+	"mxf",
+	"roq",
+	"webm",
+	"ogv",
+	"ogg",
+	"mts",
+	"m2ts",
+	"ismv",
+	"f4v",
+	"f4p",
+	"f4a",
+	"f4b",
 ];
 
 // All about the api
-const API_BASE_URL =
-  import.meta.env.VITE_ENV === 'development' ? 'http://localhost:5001' : 'https://saah-server.vercel.app';
-const API_VERSION = import.meta.env.VITE_API_VERSION || '/api-v1';
+const API_BASE_URL = "http://localhost:5000";
+const API_VERSION = import.meta.env.VITE_API_VERSION || "/api-v1";
 const API_URL = `${API_BASE_URL}${API_VERSION}`;
 
-const AUTH_TOKEN_KEY = 'AuthToken';
-const ACCESS_TOKEN_KEY = 'AccessToken';
-const REFRESH_TOKEN_KEY = 'RefreshToken';
+const AUTH_TOKEN_KEY = "AuthToken";
+const ACCESS_TOKEN_KEY = "AccessToken";
+const REFRESH_TOKEN_KEY = "RefreshToken";
 
 export {
-  ACCESS_TOKEN_KEY,
-  allowedImageTypes,
-  allowedVideoTypes,
-  API_BASE_URL,
-  API_URL,
-  AUTH_TOKEN_KEY,
-  MAX_IMAGE_COUNT,
-  MAX_IMAGE_SIZE,
-  MAX_VIDEO_COUNT,
-  MAX_VIDEO_SIZE,
-  PREVIEW_SLUG,
-  REFRESH_TOKEN_KEY,
-  SHORT_POST_LENGTH,
+	ACCESS_TOKEN_KEY,
+	allowedImageTypes,
+	allowedVideoTypes,
+	API_BASE_URL,
+	API_URL,
+	AUTH_TOKEN_KEY,
+	MAX_IMAGE_COUNT,
+	MAX_IMAGE_SIZE,
+	MAX_VIDEO_COUNT,
+	MAX_VIDEO_SIZE,
+	PREVIEW_SLUG,
+	REFRESH_TOKEN_KEY,
+	SHORT_POST_LENGTH,
 };
