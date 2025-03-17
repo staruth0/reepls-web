@@ -118,5 +118,43 @@
   "Publish": "Publish",
   "Add thumbnail image": "Add thumbnail image",
   "Press '/' for commands": "Press '/' for commands",
-  "New Article": "New Article"
+  "New Article": "New Article",
+  "Drop your thoughts and let them": "Drop your thoughts and let them",
+  "header": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up"
+  },
+  "Explore, write, and share insightful stories and heartfelt reflections. Stay informed, engaged, and part of a thoughtful community.": "Explore, write, and share insightful stories and heartfelt reflections. Stay informed, engaged, and part of a thoughtful community.",
+  "Start a Reepl": "Start a Reepl",
+  "Explore Stories": "Explore Stories",
+  "sections": {
+    "section1": {
+      "title": "Read what matters to you from diverse cultural work, inspire with yours",
+      "description": "Engage with writings from diverse experiences, stay informed with the latest happenings, and share your own thoughts.",
+      "linkText": "Start reading articles"
+    },
+    "section2": {
+      "title": "Find your favorite topics and explore stories that resonate with your interests",
+      "description": "Follow topics that matter to you, customize your feed, and dive into stories that align with your passions and curiosities.",
+      "linkText": "Start reading your topics"
+    },
+    "section3": {
+      "title": "Stay ahead with real-time updates and alerts from top organizations",
+      "description": "Care about national alerts? Be the first to get them. Stay informed with real-time notices and updates from trusted sources.",
+      "linkText": "Find recent communiques"
+    }
+  },
+  
+    "footer": {
+      "top": {
+        "title": "Become part of a network of the informed—have your voice heard on Reepls",
+        "button": "Start a Reepl"
+      },
+      "bottom": {
+        "help": "Help",
+        "terms": "Terms of Service",
+        "policy": "Privacy Policy"
+      }
+    }
+  
 }

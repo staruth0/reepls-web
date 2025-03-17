@@ -118,5 +118,42 @@
   "Publish": "Publier",
   "Add thumbnail image": "Ajouter une image miniature",
   "Press '/' for commands": "Appuyez sur '/' pour les commandes",
-  "New Article": "Nouvel Article"
+  "New Article": "Nouvel Article",
+  "Drop your thoughts and let them": "Exprimez vos pensées et laissez-les",
+  "header": {
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire"
+  },
+  "Explore, write, and share insightful stories and heartfelt reflections. Stay informed, engaged, and part of a thoughtful community.": "Explorez, écrivez et partagez des histoires perspicaces et des réflexions sincères. Restez informé, engagé et faites partie d'une communauté réfléchie.",
+  "Start a Reepl": "Commencer un Reepl",
+  "Explore Stories": "Explorer les histoires",
+  "sections": {
+    "section1": {
+      "title": "Lisez ce qui compte pour vous parmi des travaux culturels divers, inspirez avec les vôtres",
+      "description": "Participez à des écrits issus d'expériences variées, restez informé des derniers événements et partagez vos propres réflexions.",
+      "linkText": "Commencer à lire des articles"
+    },
+    "section2": {
+      "title": "Trouvez vos sujets préférés et explorez des histoires qui résonnent avec vos intérêts",
+      "description": "Suivez les sujets qui vous importent, personnalisez votre flux et plongez dans des histoires qui correspondent à vos passions et curiosités.",
+      "linkText": "Commencer à lire vos sujets"
+    },
+    "section3": {
+      "title": "Restez en avance avec des mises à jour en temps réel et des alertes des meilleures organisations",
+      "description": "Vous vous souciez des alertes nationales ? Soyez le premier à les recevoir. Restez informé avec des notifications et des mises à jour en temps réel de sources fiables.",
+      "linkText": "Trouver les communiqués récents"
+    }
+  },
+ "footer": {
+      "top": {
+        "title": "Faites partie d'un réseau d'informés—faites entendre votre voix sur Reepls",
+        "button": "Commencer un Reepl"
+      },
+      "bottom": {
+        "help": "Aide",
+        "terms": "Conditions d'utilisation",
+        "policy": "Politique de confidentialité"
+      }
+    }
+ 
 }
