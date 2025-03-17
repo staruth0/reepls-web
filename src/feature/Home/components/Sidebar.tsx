@@ -1,20 +1,23 @@
 import React from "react";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useTranslation } from "react-i18next";
+import { useUser } from "../../../hooks/useUser";
 
 
 interface SidebarProps {
   isOpen: boolean;
+  toggleSidebar: () => void
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen , toggleSidebar}) => {
 
     const { t } = useTranslation();
+    const authState = useUser()
   
 
   return (
     <div
-      className={`fixed z-40 inset-y-0 left-0 w-3/4 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
+      className={`fixed z-40 inset-y-0 left-0 w-3/4 bg-background shadow-lg transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
     >
       {/* <button
         onClick={onClose}
@@ -24,7 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       </button> */}
 
       <div className="">
-        <div className="flex items-center gap-2 mb-8 border-b pb-3 p-6">
+        <div className="flex items-center gap-2 mb-8 border-b border-b-neutral-700 pb-3 p-6">
           <img
             src="/Logo.svg"
             alt="Reepl Logo"
@@ -36,13 +39,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
         </div>
 
         <ul className="space-y-4 px-6">
-          <li>
-            <a href="#" className="text-gray-700 hover:text-primary-400">
+          <li onClick={toggleSidebar}>
+            <a href={`${authState ? 'feed' : 'auth/login/phone'}`} className="text-plain-a hover:text-primary-400">
             {t("header.signIn")}
             </a>
           </li>
-          <li>
-            <a href="#" className="text-gray-700 hover:text-primary-400">
+          <li onClick={toggleSidebar}>
+            <a href="/auth/register/phone" className="text-plain-a hover:text-primary-400">
             {t("header.signUp")}
             </a>
           </li>

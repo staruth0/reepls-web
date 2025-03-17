@@ -14,9 +14,8 @@ const LanguageSwitcher = () => {
   return (
     <div className="relative">
       <button
-        onMouseEnter={() => setIsOpen(true)}
-        onMouseLeave={() => setIsOpen(false)}
-        className="flex items-center gap-2 rounded-lg hover:bg-neutral-700 transition-colors"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 rounded-lg  transition-colors"
       >
         <LuGlobe className="text-plain-a" />
         <span className="text-sm font-medium text-plain-a">
@@ -28,7 +27,7 @@ const LanguageSwitcher = () => {
         <div
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
-          className="absolute z-100 top-4 left-0 bg-background border border-neutral-700 p-2 rounded-lg shadow-lg w-40"
+          className="absolute z-100 top-4 right-0 bg-background border border-neutral-700 p-2 rounded-lg shadow-lg w-40"
         >
           <div
             onClick={() => handleLanguageChange("en")}

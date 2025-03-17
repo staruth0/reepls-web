@@ -1,46 +1,64 @@
-import  { useState } from "react";
+import { useEffect, useState } from "react";
 import { LuMenu } from "react-icons/lu";
 import LeftHeader from "./LeftHeader";
 import Sidebar from "../Sidebar";
+import LanguageSwitcher from "../LanguageSwitcher";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [navState, setNavstate] = useState(false);
+  const navigate = useNavigate()
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setNavstate(window.scrollY > 100);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <>
-      <Sidebar isOpen={isSidebarOpen}/>
-      {
-        isSidebarOpen && <div className="fixed z-30 inset-0 w-full h-full bg-black/70" onClick={toggleSidebar}></div>
-      }
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar}/>
 
-      <div className="flex items-center justify-between px-4 md:px-20 py-4 w-full mx-auto sticky top-0 bg-background">
-        <div className="flex items-center gap-2">
-          
+      {isSidebarOpen && (
+        <div
+          className="fixed z-30 inset-0 w-full h-full bg-black/80"
+          onClick={toggleSidebar}
+        ></div>
+      )}
 
-          <img
-            src="/Logo.svg"
-            alt="Reepl Logo"
-            className="h-8 w-8"
-          />
-          <span className="text-xl font-semibold text-plain-a">
-            Reepls
-          </span>
+      <div
+        className={`${navState ? "fixed top-0 left-0 right-0 shadow-lg" : "sticky top-0"
+          } navbar flex items-center justify-between px-4 md:px-20 py-4 w-full mx-auto bg-background z-20 max-w-7xl`}
+      >
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <img src="/Logo.svg" alt="Reepl Logo" className="h-8 w-8" />
+          <span className="text-xl font-semibold text-plain-a">Reepls</span>
         </div>
 
         <div className="hidden md:block">
           <LeftHeader />
         </div>
 
-        <button
+        <div className="flex gap-2 items-center md:hidden">
+          <LanguageSwitcher />
+          <button
             onClick={toggleSidebar}
-            className="md:hidden p-2 text-plain-a hover:text-gray-900 focus:outline-none "
+            className="p-2 text-plain-a hover:text-gray-900 focus:outline-none"
           >
-            <LuMenu className="h-6 w-6 p-1 border border-primary-400" />
+            <LuMenu className="h-6 w-6 border border-primary-400" />
           </button>
+        </div>
       </div>
     </>
   );

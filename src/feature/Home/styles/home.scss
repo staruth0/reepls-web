@@ -3,7 +3,6 @@
 @use '../../../styles/variable.scss';
 
 .home__container {
-  // @include mixin.flex-center;
   flex-direction: column;
   min-height: 100vh;
   background-color: var(--background);
@@ -11,7 +10,7 @@
   font-family: var(--roboto-font);
   transition: background-color 0.3s ease, color 0.3s ease;
   gap: 1rem;
-
+  overflow-x: hidden;
 
   .language__translators {
     display: flex;
@@ -34,51 +33,47 @@
       }
     }
   }
- 
-  .header {
-    padding: 1rem;
-    margin: 0 auto;
-  
-    .container {
-      max-width: 80rem;
-      margin: 0 auto;
-    }
-  
-    
-    .flex {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-  
-    .md\:hidden {
-      @media (min-width: 768px) {
-        display: none;
-      }
-    }
+}
 
-    .leftheader{
-     display: none; 
-    }
-  
-    .h-8 {
-      height: 2rem;
-    }
-  
-    .w-8 {
-      width: 2rem;
-    }
-  
-    .text-xl {
-      font-size: 1.25rem;
-      line-height: 1.75rem;
-    }
-  
-    .font-semibold {
-      font-weight: 600;
+.header {
+  padding: 1rem;
+  margin: 0 auto;
+
+  .container {
+    max-width: 80rem;
+    margin: 0 auto;
+  }
+
+  .flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .md\:hidden {
+    @media (min-width: 768px) {
+      display: none;
     }
   }
 
+  .leftheader {
+    display: none;
+  }
+
+  .h-8 {
+    height: 2rem;
+  }
+
+  .w-8 {
+    width: 2rem;
+  }
+
+  .text-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+
+  .font-semibold {
+    font-weight: 600;
+  }
 }
-
-
