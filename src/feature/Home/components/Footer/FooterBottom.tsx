@@ -1,17 +1,28 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useUser } from "../../../../hooks/useUser";
+import ThemeSwitcher from "../ThemeSwitcher";
 
 const FooterBottom = () => {
   const { t } = useTranslation();
-  const authState = useUser() 
+  const authState = useUser();
 
   return (
     <div className="bg-background py-8 px-5 md:px-20">
       <div className=" flex flex-col-reverse gap-4 md:flex-row items-center justify-between">
-        <div className="flex items-center gap-2">
-          <img src="/public/LogoDark.svg" alt="Reepls Logo" className="w-8 h-8" />
+        <div className="flex justify-between w-full md:w-auto">
+         <div className="flex items-center gap-2 cursor-pointer">
+         <img
+            src="/public/LogoDark.svg"
+            alt="Reepls Logo"
+            className="w-8 h-8"
+          />
           <span className="text-xl font-bold text-plain-a">Reepls</span>
+         </div>
+
+          <li className="block md:hidden">
+            <ThemeSwitcher />
+          </li>
         </div>
 
         <ul className="flex items-center gap-6 mt-4 md:mt-0">
@@ -25,7 +36,7 @@ const FooterBottom = () => {
           </li>
           <li>
             <Link
-              to={`${authState.isLoggedIn ? 'Terms&Policies' : 'auth'}`}
+              to={`${authState.isLoggedIn ? "Terms&Policies" : "auth"}`}
               className="text-plain-a hover:text-primary-400 transition-colors"
             >
               {t("footer.bottom.terms")}
@@ -33,11 +44,15 @@ const FooterBottom = () => {
           </li>
           <li>
             <Link
-              to={`${authState.isLoggedIn ? 'Terms&Policies' : 'auth'}`}
+              to={`${authState.isLoggedIn ? "Terms&Policies" : "auth"}`}
               className="text-plain-a hover:text-primary-400 transition-colors"
             >
               {t("footer.bottom.policy")}
             </Link>
+          </li>
+
+          <li className="hidden md:block">
+            <ThemeSwitcher />
           </li>
         </ul>
       </div>

@@ -11,6 +11,8 @@ const LanguageSwitcher = () => {
     setIsOpen(false);
   };
 
+  const {t} = useTranslation()
+
   return (
     <div className="relative">
       <button
@@ -19,7 +21,7 @@ const LanguageSwitcher = () => {
       >
         <LuGlobe className="text-plain-a" />
         <span className="text-sm font-medium text-plain-a">
-          {i18n.language === "en" ? "English" : "French"}
+          {i18n.language === "en" ? t('English') : t('French')}
         </span>
       </button>
 
@@ -27,19 +29,19 @@ const LanguageSwitcher = () => {
         <div
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
-          className="absolute z-100 top-4 right-0 bg-background border border-neutral-700 p-2 rounded-lg shadow-lg w-40"
+          className="absolute z-100 top-4 right-0 bg-background border border-neutral-500 p-2 rounded-lg shadow-lg w-40"
         >
           <div
             onClick={() => handleLanguageChange("en")}
             className="p-2 text-sm text-plain-a hover:bg-neutral-700 cursor-pointer transition-colors"
           >
-            English
+            {t('English')}
           </div>
           <div
             onClick={() => handleLanguageChange("fr")}
             className="p-2 text-sm text-plain-a hover:bg-neutral-700 cursor-pointer transition-colors"
           >
-            French
+            {t('French')}
           </div>
         </div>
       )}

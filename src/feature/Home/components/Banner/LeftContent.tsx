@@ -27,7 +27,7 @@ const LeftContent = () => {
         transition={{ delay: 0.2 }}
       >
         {t("Drop your thoughts and let them")}{" "}
-        <span className="text-primary-400 font-light">reepl</span>
+        <span className=" font-light italic">reepl</span>
       </motion.h1>
 
       {/* Description */}

@@ -35,6 +35,8 @@
   }
 }
 
+
+
 .header {
   padding: 1rem;
   margin: 0 auto;
@@ -75,5 +77,39 @@
 
   .font-semibold {
     font-weight: 600;
+  }
+
+  
+  
+}
+
+.hover-underlined {
+  position: relative;
+  text-decoration: none;
+  color: var(--primary-400);
+  font-weight: bold;
+  transition: color 0.3s ease;
+
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-400);
+    bottom: 0;
+    left: 0;
+    transition: width 0.4s ease-in-out;
+  }
+
+  &:hover {
+
+    &::before {
+      opacity: 0;
+    }
+
+    &::after {
+      width: 92%;
+    }
   }
 }

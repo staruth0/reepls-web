@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { LuArrowRight } from "react-icons/lu";
 import { useUser } from "../../../../hooks/useUser";
 import AOS from "aos";
-import "aos/dist/aos.css"; // Import AOS styles
+import "aos/dist/aos.css";
 
 interface SectionProps {
   title: string;
@@ -23,11 +23,10 @@ const Default: React.FC<SectionProps> = ({
 }) => {
   const { authUser } = useUser();
 
-  // Initialize AOS
   useEffect(() => {
     AOS.init({
-      duration: 800, // Animation duration
-      easing: "ease-out", // Smooth easing
+      duration: 800,
+      easing: "ease-out",
     });
   }, []);
 
@@ -56,7 +55,7 @@ const Default: React.FC<SectionProps> = ({
         <p className="text-base md:text-lg text-neutral-100">{description}</p>
         <a
           href={`${authUser?.id ? "feed" : linkUrl}`}
-          className="flex items-center justify-center md:justify-start w-fit mx-auto md:mx-0 text-lg md:text-xl font-bold text-primary-400 hover:underline transition-colors gap-1"
+          className="hover-underlined flex items-center justify-center md:justify-start w-fit mx-auto md:mx-0 text-lg md:text-xl font-bold text-primary-400  transition-colors gap-1"
         >
           {linkText} <LuArrowRight />
         </a>

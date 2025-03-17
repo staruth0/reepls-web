@@ -38,7 +38,7 @@ const Header = () => {
       )}
 
       <div
-        className={`${navState ? "fixed top-0 left-0 right-0 shadow-lg" : "sticky top-0"
+        className={`${navState ? "fixed top-0 left-0 right-0 shadow-sm" : "sticky top-0"
           } navbar flex items-center justify-between px-4 md:px-20 py-4 w-full mx-auto bg-background z-20 max-w-7xl`}
       >
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>

@@ -18,9 +18,9 @@ const FooterTop = () => {
 
         <div className="text-center py-10">
           <h2 className="text-2xl md:text-4xl font-bold text-neutral-900 mb-4 md:mb-6">
-            {t("footer.top.title")} <span className="text-primary-300 font-normal">Reepl</span>
+            {t("footer.top.title")} <span className=" font-normal italic">Reepl</span>
           </h2>
-          <button className="px-6 py-3 md:px-10 md:py-4 rounded-full bg-white text-black font-bold hover:bg-secondary-200 hover:text-white transition-colors text-base md:text-lg"
+          <button className="px-6 py-3 md:px-10 md:py-4 rounded-full bg-background text-plain-a font-bold hover:bg-secondary-200 hover:text-white transition-colors text-base md:text-lg"
           onClick={() => navigate(`${authUser?.id ? "/posts/create" : "auth"}`)}
           >
             {t("footer.top.button")}
