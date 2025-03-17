@@ -1,27 +1,26 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import LanguageSwitcher from "../LanguageSwitcher";
+// import { useUser } from "../../../../hooks/useUser";
 
 const LeftHeader = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  
 
   return (
     <div className="flex items-center gap-4">
       <LanguageSwitcher />
 
-      {/* Sign In Button */}
       <button
-        onClick={() => navigate("/signin")}
+        onClick={() => navigate('/auth/login/phone')}
         className="px-6 py-2 rounded-full border border-plain-a text-plain-a bg-transparent hover:border-primary-400 hover:text-primary-400 transition-colors"
       >
         {t("header.signIn")}
       </button>
 
-      {/* Sign Up Button */}
       <button
-        onClick={() => navigate("/signup")}
+        onClick={() => navigate('/auth/register/phone')}
         className="px-4 py-2 rounded-full bg-primary-400 text-white hover:bg-primary-300 transition-colors"
       >
         {t("header.signUp")}

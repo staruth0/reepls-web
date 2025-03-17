@@ -103,6 +103,8 @@
   "Close Account": "Close Account",
   "Light": "Light",
   "Dark": "Dark",
+  "English": "English",
+  "French": "French",
   "On": "On",
   "Off": "Off",
   "Theme": "Theme",
@@ -147,7 +149,7 @@
   
     "footer": {
       "top": {
-        "title": "Become part of a network of the informed—have your voice heard on Reepls",
+        "title": "Become part of a network of the informed—have your voice heard on ",
         "button": "Start a Reepl"
       },
       "bottom": {
