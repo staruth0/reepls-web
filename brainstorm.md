@@ -242,3 +242,20 @@ Posting works[Limit on length of subtitle, title, comments]
 Reading History()
 
 =
+
+Clean up work
+
+1. The language picker in /auth to be like the one on the home page
+2. On email login /auth/login/email, Button should be login with google since its a login page
+3. The slidesow on /auth does not still have any images. the transition of the text under the slide show should
+   also be improved if possible
+4. It seems create account with google and login with google have not actually been implemented
+5. Reduce/remove unnecessary console logs in the code base
+6. See more/see less should only be visble when the actual content is too long
+7.
+
+For me
+
+- Fetching users media
+- uploading media from posting
+-

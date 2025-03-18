@@ -146,16 +146,15 @@
       "linkText": "Trouver les communiqués récents"
     }
   },
- "footer": {
-      "top": {
-        "title": "Faites partie d'un réseau d'informés—faites entendre votre voix sur Reepls",
-        "button": "Commencer un Reepl"
-      },
-      "bottom": {
-        "help": "Aide",
-        "terms": "Conditions d'utilisation",
-        "policy": "Politique de confidentialité"
-      }
+  "footer": {
+    "top": {
+      "title": "Faites partie d'un réseau d'informés—faites entendre votre voix sur Reepls",
+      "button": "Commencer un Reepl"
+    },
+    "bottom": {
+      "help": "Aide",
+      "terms": "Conditions d'utilisation",
+      "policy": "Politique de confidentialité"
     }
- 
+  }
 }

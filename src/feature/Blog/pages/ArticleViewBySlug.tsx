@@ -17,9 +17,9 @@ import ArticleViewSkeleton from './ArticleViewSkeleton';
 
 const ArticleViewBySlug: React.FC = () => {
   const navigate = useNavigate();
-  const { articleUid,slug } = useParams(); // use to fetch article from db
+  const { articleUid, slug } = useParams(); // use to fetch article from db
   const [title, setTitle] = useState<string>('*This article does not have a title*');
-  const [subTitle, setSubTitle] = useState<string>('');
+  const [subtitle, setsubtitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [htmlArticleContent, setHtmlArticleContent] = useState<string>('*This article does not have any content*');
   const [media, setMedia] = useState<string[]>([]);
@@ -29,10 +29,10 @@ const ArticleViewBySlug: React.FC = () => {
   const { mutate: createArticle } = useCreateArticle();
   const { mutate: saveArticle } = useSaveArticle();
   const { clearDraftArticle } = useDraft();
-  const { data: article, isError, isPending } = useGetArticleBySlug(slug! );
+  const { data: article, isError, isPending } = useGetArticleBySlug(slug!);
 
   const onPublish = async () => {
-    if (!title || !subTitle || !content) {
+    if (!title || !subtitle || !content) {
       toast.error('Please provide a title, subtitle and content.', {
         autoClose: 1500,
       });
@@ -41,7 +41,7 @@ const ArticleViewBySlug: React.FC = () => {
 
     const article: Article = {
       title,
-      subTitle,
+      subtitle,
       content,
       htmlContent: htmlArticleContent,
       media,
@@ -94,7 +94,7 @@ const ArticleViewBySlug: React.FC = () => {
         return;
       }
       setTitle(draftArticle.title);
-      setSubTitle(draftArticle.subTitle);
+      setsubtitle(draftArticle.subtitle);
       setContent(draftArticle.content);
       setHtmlArticleContent(draftArticle.htmlContent);
       setMedia(draftArticle.media);
@@ -107,8 +107,8 @@ const ArticleViewBySlug: React.FC = () => {
       if (article.title) {
         setTitle(article.title);
       }
-      if (article.subTitle) {
-        setSubTitle(article.subTitle);
+      if (article.subtitle) {
+        setsubtitle(article.subtitle);
       }
       if (article.content) {
         setHtmlArticleContent(article.content);
@@ -171,7 +171,7 @@ const ArticleViewBySlug: React.FC = () => {
             </div>
             <div className="max-w-full flex flex-col gap-4 items-left">
               <h1 className="text-5xl mx-20 font-semibold leading-tight mb-2">{title}</h1>
-              {subTitle && <h3 className="text-xl mx-20 mb-2">{subTitle}</h3>}
+              {subtitle && <h3 className="text-xl mx-20 mb-2">{subtitle}</h3>}
 
               <div id="article-content" className="w-full mb-20">
                 <TipTapRichTextEditor

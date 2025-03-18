@@ -53,7 +53,7 @@ export interface Article {
   title?: string;
   type?: 'ShortForm' | 'LongForm';
   is_communiquer?: boolean;
-  subTitle?: string;
+  subtitle?: string;
   content?: string;
   htmlContent?: string;
   category?: string[];
@@ -67,7 +67,7 @@ export interface Article {
   updatedAt?: string;
   views_count?: number;
   reports_count?: number;
-  slug?:string;
+  slug?: string;
   _id?: string;
   shares_count?: number;
   isArticle?: boolean;
