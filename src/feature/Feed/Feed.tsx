@@ -10,10 +10,12 @@ import Communique from './components/Communique/Communique';
 import ToggleFeed from './components/ToogleFeed';
 import './feed.scss';
 
+
 const UserFeed: React.FC = () => {
   const { toggleCognitiveMode,isCognitiveMode } = useContext(CognitiveModeContext);
   const [isBrainActive, setIsBrainActive] = useState<boolean>(isCognitiveMode);
   const bottomRef = useRef<HTMLDivElement>(null); // Ref for the bottom
+   
 
   // Fetch data
   const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetAllArticles();
@@ -59,8 +61,9 @@ const UserFeed: React.FC = () => {
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
       <div className="Feed__Posts min-h-screen lg:border-r-[1px] border-neutral-500">
         <Topbar>
-          <div className="px-3 flex justify-between items-center">
+          <div className="px-3 flex justify-between items-center w-full">
             <ToggleFeed />
+            <div className="flex items-center gap-2" >
             <Brain
               size={isBrainActive ? 35 : 30}
               onClick={handleBrainClick}
@@ -69,7 +72,11 @@ const UserFeed: React.FC = () => {
                   ? 'text-green-600 bg-green-100 rounded-full p-1'
                   : 'text-neutral-50 hover:text-green-600 hover:bg-green-100 hover:rounded-full hover:p-1 transition-all'
               }`}
+             
             />
+           
+            </div>
+           
           </div>
         </Topbar>
 
@@ -96,6 +103,7 @@ const UserFeed: React.FC = () => {
                         date={article.createdAt!}
                         article_id={article._id!}
                         user={article.author_id!}
+                        slug={article.slug || ''}
                       />
                     ))}
                   </div>

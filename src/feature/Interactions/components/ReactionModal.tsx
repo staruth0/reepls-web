@@ -41,7 +41,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
     // Extract user_ids from allReactions and store in userIds array
     if (allReactions?.reactions && Array.isArray(allReactions?.reactions)) {
       const extractedUserIds = allReactions?.reactions.map((reaction:ReactionReceived
-      ) => reaction.user_id.id);
+      ) => reaction.user_id?.id);
       setUserIds(extractedUserIds);
     }
 
@@ -61,7 +61,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
 
   const handleReaction = (reaction: string) => {
     // Check if authUser.id exists in userIds
-    const userHasReacted = authUser?.id && userIds.includes(authUser.id);
+    const userHasReacted = authUser?.id && userIds.includes(authUser?.id);
     console.log('userhasreacted',userHasReacted)
 
     if (userHasReacted) {

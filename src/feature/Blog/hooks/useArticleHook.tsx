@@ -8,10 +8,15 @@ import {
   getAllArticles,
   getArticleByAuthorId,
   getArticleById,
+  getArticleBySlug,
   getArticlesByCategory,
+  getAuthorArticles,
+  getAuthorPosts,
   getCommuniquerArticles,
   getFollowedArticles,
   getRecommendedArticles,
+  getSavedArticles,
+  getSavedPosts,
   updateArticle,
 } from '../api';
 // Hook for creating an article
@@ -39,6 +44,14 @@ export const useGetArticleById = (articleId: string) => {
     queryKey: ['article', articleId],
     queryFn: () => getArticleById(articleId),
     enabled: articleId !== PREVIEW_SLUG,
+  });
+};
+// Hook for fetching a single article by ID
+export const useGetArticleBySlug = (slug: string) => {
+  return useQuery({
+    queryKey: ['article', slug],
+    queryFn: () => getArticleBySlug(slug),
+    enabled:slug !== PREVIEW_SLUG,
   });
 };
 
@@ -105,6 +118,74 @@ export const useGetCommuniquerArticles = () => {
     },
   });
 };
+
+
+export const useGetSavedPosts = () => {
+  return useInfiniteQuery({
+    queryKey: ["savedPosts"],
+    queryFn: getSavedPosts,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      
+      if (!lastPage || typeof lastPage.totalPosts === "undefined") {
+        return undefined; 
+      }
+      const postsFetched = allPages.length * 10; // 10 posts per page
+      return postsFetched < lastPage.totalPosts ? allPages.length + 1 : undefined;
+    },
+    enabled: true, 
+  });
+};
+
+export const useGetSavedArticles = () => {
+  return useInfiniteQuery({
+    queryKey: ["savedArticles"],
+    queryFn: getSavedArticles,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+     
+      if (!lastPage || typeof lastPage.totalArticles === "undefined") {
+        return undefined; 
+      }
+      const articlesFetched = allPages.length * 10; // 10 articles per page
+      return articlesFetched < lastPage.totalArticles ? allPages.length + 1 : undefined;
+    },
+    enabled: true, 
+  });
+};
+
+export const useGetAuthorPosts = (authorId: string) => {
+  return useInfiniteQuery({
+    queryKey: ["authorPosts", authorId],
+    queryFn: ({ pageParam }) => getAuthorPosts({ pageParam, authorId }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const postsFetched = allPages.length * 10; // 10 posts per page
+      if (postsFetched < lastPage.totalPosts) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
+    enabled: !!authorId, 
+  });
+};
+
+export const useGetAuthorArticles = (authorId: string) => {
+  return useInfiniteQuery({
+    queryKey: ["authorArticles", authorId],
+    queryFn: ({ pageParam }) => getAuthorArticles({ pageParam, authorId }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const articlesFetched = allPages.length * 10; // 10 articles per page
+      if (articlesFetched < lastPage.totalArticles) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
+    enabled: !!authorId, 
+  });
+};
+
 
 // Hook for fetching recommended articles
 export const useGetRecommendedArticles = () => {

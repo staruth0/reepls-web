@@ -1,52 +1,43 @@
-import React, { useEffect } from 'react';
-import {  LuLoader, LuFile } from 'react-icons/lu';
+import React from 'react';
+import {  LuFile } from 'react-icons/lu';
 import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { Article } from '../../../models/datamodels';
 import BlogPost from '../../Blog/components/BlogPost';
-import { useGetArticlesByAuthorId } from '../../Blog/hooks/useArticleHook';
+
 interface ProfileArticlesProps {
-  authorId: string;
+  authorId?: string;
+  posts?: Article[]; // Optional prop for pre-fetched posts
 }
 
-const ProfilePosts: React.FC<ProfileArticlesProps> = ({ authorId }) => {
-  const { data, isLoading, error } = useGetArticlesByAuthorId(authorId!);
-  useEffect(() => {
-    if (error) {
-      toast.error(error.message);
-    }
-  }, [error]);
+const ProfilePosts: React.FC<ProfileArticlesProps> = ({  posts = [] }) => {
+  // If posts are not provided, this component assumes the parent handles loading/error states
+  const hasPosts = posts && posts.length > 0;
+
   return (
     <div>
-      {isLoading ? (
-         <div className="flex justify-center mt-4">
-         <LuLoader className="animate-spin text-primary-400 text-xl m-4" />
-       </div>
-        
-      ) : error ? (
-        <div className="text-red-500">{error.message}</div>
-      ) : data && data.length > 0 ? (
-        <div>
-          {data.map((article: Article) => (
+      {hasPosts ? (
+        <div className='w-full flex flex-col items-center'>
+          {posts.map((post: Article) => (
             <BlogPost
-              key={article._id}
-              media={article.media!}
-              title={article.title!}
-              content={article.content!}
-              user={article.author_id!}
-              date={article.createdAt!}
-              isArticle={article.isArticle!}
-              article_id={article._id!}
+              key={post._id}
+              media={post.media || []}
+              title={post.title || ''} 
+              content={post.content || ''}
+              user={post.author_id!}
+              date={post.createdAt || ''}
+              isArticle={post.isArticle || false}
+              article_id={post._id || ''}
+              slug={post.slug || ''}
             />
           ))}
         </div>
       ) : (
         <div className="text-center text-gray-500 flex flex-col items-center gap-4">
-          <LuFile className=" text-4xl" />
-          <p className='flex gap-2'>
-            We couldn't find any Post.
+          <LuFile className="text-4xl" />
+          <p className="flex gap-2">
+            We couldn't find any Posts.
             <Link to="/posts/create" className="text-primary-400">
-              create a post
+              Create a post
             </Link>
           </p>
         </div>
