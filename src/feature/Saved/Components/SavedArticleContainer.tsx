@@ -20,6 +20,7 @@ const SavedArticlesContainer: React.FC<SavedContainerProps> = ({ articles }) => 
             user={article.author_id!}
             date={article.createdAt!}
             article_id={article._id!}
+            slug={article.slug || ''}
           />
         ))}
       </div>

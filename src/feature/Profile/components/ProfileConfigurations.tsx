@@ -5,9 +5,7 @@ import useTheme from "../../../hooks/useTheme";
 import { VoiceLanguageContext } from "../../../context/VoiceLanguageContext/VoiceLanguageContext";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../hooks/useUser";
-import { useLogoutUser } from "../../Auth/hooks/AuthHooks";
-import { useTokenStorage } from "../../Auth/hooks/useTokenStorage";
-import { LuLoader } from "react-icons/lu";
+// import { LuLoader } from "react-icons/lu";
 
 const ProfileConfigurations: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -22,10 +20,6 @@ const ProfileConfigurations: React.FC = () => {
   const { setVoiceLanguage } = useContext(VoiceLanguageContext);
   const navigate = useNavigate();
   const { authUser,logout:manualLogout } = useUser();
-  const { getRefreshToken } = useTokenStorage();
-  const { mutate: logout, isPending: isLoggingOut } = useLogoutUser(
-    getRefreshToken() || ""
-  );
 
   const languages = [
     { code: "en", label: "English" },
@@ -66,19 +60,9 @@ const ProfileConfigurations: React.FC = () => {
   };
 
   const handleConfirmLogout = () => {
-    console.log("Initiating logout...");
-    logout(undefined, {
-      onSuccess: () => {
         manualLogout();
         setShowLogoutPopup(false);
-        navigate("/auth");
-      },
-      onError: (error) => {
-        console.error("Logout failed:", error);
-        setShowLogoutPopup(false);
-        navigate("/auth");
-      },
-    });
+        navigate('/auth');
   };
 
   const handleCancelLogout = () => {
@@ -300,7 +284,7 @@ const ProfileConfigurations: React.FC = () => {
       {showLogoutPopup && (
         <>
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-[910]"
+            className="fixed inset-0 bg-black bg-opacity-5 z-[910]"
             onClick={handleCancelLogout}
           ></div>
           <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-800 rounded-md shadow-lg p-6 z-[910] w-[40%] flex flex-col items-center">
@@ -311,20 +295,18 @@ const ProfileConfigurations: React.FC = () => {
               <button
                 className="px-8 py-2 bg-neutral-700 text-neutral-50 rounded-md hover:bg-neutral-600"
                 onClick={handleCancelLogout}
-                disabled={isLoggingOut}
+          
               >
                 {t("No")}
               </button>
               <button
-                className="px-8 py-2 bg-secondary-600 text-neutral-50 rounded-md hover:bg-secondary-700"
+                className="px-8 py-2 bg-red-500 text-neutral-50 rounded-md hover:bg-red-600"
                 onClick={handleConfirmLogout}
-                disabled={isLoggingOut}
+       
               >
-                {isLoggingOut ? (
-                  <LuLoader className="animate-spin inline-block mx-4" />
-                ) : (
+                {
                   t("Yes")
-                )}
+                }
               </button>
             </div>
           </div>

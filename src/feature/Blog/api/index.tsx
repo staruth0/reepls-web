@@ -14,6 +14,12 @@ const getArticleById = async (articleId: string) => {
   const { data } = await apiClient.get(`/articles/get-by-id/${articleId}`);
   return data;
 };
+// Fetch a single article by slug
+export const getArticleBySlug = async (slug: string) => {
+  console.log("Fetching article with ID:", slug);
+  const { data } = await apiClient.get(`/articles/slug/${slug}`);
+  return data;
+};
 
 // Fetch articles by author ID
 const getArticleByAuthorId = async (authorId: string) => {
@@ -41,6 +47,33 @@ const getFollowedArticles = async ({ pageParam = 1 }) => {
 const getCommuniquerArticles = async ({ pageParam = 1 }) => {
   console.log(`Fetching communiqué articles for page ${pageParam}`);
   const { data } = await apiClient.get(`/articles/communiquer-articles?page=${pageParam}&limit=10`);
+  return data;
+};
+
+
+export const getSavedPosts = async ({ pageParam = 1 }) => {
+  console.log(`Fetching saved posts for page ${pageParam}`);
+  const { data } = await apiClient.get(`/articles/saved-user-posts?page=${pageParam}&limit=10`);
+  return data;
+};
+
+export const getSavedArticles = async ({ pageParam = 1 }) => {
+  console.log(`Fetching saved articles for page ${pageParam}`);
+  const { data } = await apiClient.get(`/articles/saved-user-articles?page=${pageParam}&limit=10`);
+  return data;
+};
+
+export const getAuthorPosts = async ({ pageParam = 1, authorId }:{pageParam:number, authorId:string}) => {
+  console.log(`Fetching posts for author ${authorId}, page ${pageParam}`);
+  const { data } = await apiClient.get(`/articles/author/${authorId}/posts?page=${pageParam}&limit=10`);
+  console.log("Author posts response:", data);
+  return data;
+};
+
+export const getAuthorArticles = async ({ pageParam = 1, authorId }:{pageParam:number, authorId:string}) => {
+  console.log(`Fetching articles for author ${authorId}, page ${pageParam}`);
+  const { data } = await apiClient.get(`/articles/author/${authorId}/articles?page=${pageParam}&limit=10`);
+  console.log("Author articles response:", data);
   return data;
 };
 

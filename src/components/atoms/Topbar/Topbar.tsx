@@ -1,6 +1,9 @@
 import React, { ReactNode, useContext } from 'react';
-import { FaBars } from "react-icons/fa"; 
+import { FaBars, FaRegUserCircle } from "react-icons/fa"; 
 import { SidebarContext } from '../../../context/SidebarContext/SidebarContext';
+import { useUser } from '../../../hooks/useUser';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 interface TopbarProps {
   children: ReactNode;
@@ -8,6 +11,10 @@ interface TopbarProps {
 
 const Topbar: React.FC<TopbarProps> = ({ children }) => {
   const { isOpen, toggleSidebar } = useContext(SidebarContext);
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const {isLoggedIn} = useUser();
   const handleToggleSidebar = () => {
     console.log("Toggle sidebar", isOpen);
     toggleSidebar();
@@ -17,7 +24,14 @@ const Topbar: React.FC<TopbarProps> = ({ children }) => {
       <div className="hamburger-menu sticky top-0 p-4  sm:hidden ">
         <FaBars size={24} className="cursor-pointer" onClick={handleToggleSidebar}/>
       </div>
-      <div>{children}</div>
+      <div className='flex items-center gap-2'>{children} <div>   { !isLoggedIn &&   <button
+                            className="flex items-center w-40 justify-center gap-2 py-1 text-neutral-50 rounded-md shadow-sm hover:bg-primary-700 transition-colors"
+                            onClick={() => navigate('/auth')} 
+                          >
+                            <FaRegUserCircle size={16} className="text-main-green" />
+                            {t("Sign In")}
+                          </button> }</div> </div>
+    
     </div>
   );
 };

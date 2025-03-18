@@ -11,14 +11,15 @@ import {
 import { VoiceLanguageContext } from "../../../../context/VoiceLanguageContext/VoiceLanguageContext";
 import { cn } from "../../../../utils";
 import ReactionModal from "../../../Interactions/components/ReactionModal";
-// import CommentTab from "../../../Comments/components/CommentTab";
 import CommentSection from "../../../Comments/components/CommentSection";
 import { User } from "../../../../models/datamodels";
+import { useUser } from "../../../../hooks/useUser";
+import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
 
 interface BlogReactionSessionProps {
   message: string;
   isCommentSectionOpen: boolean;
-  setIsCommentSectionOpen: (isOpen: boolean) => void; 
+  setIsCommentSectionOpen: (isOpen: boolean) => void;
   article_id: string;
   author_of_post: User;
 }
@@ -31,15 +32,23 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   author_of_post,
 }) => {
   const { selectedVoice } = useContext(VoiceLanguageContext);
+  const { isLoggedIn } = useUser(); // Use isLoggedIn instead of authUser
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [commentTabState, setCommentTabState] = useState<boolean>(false);
+  const [showReactPopup, setShowReactPopup] = useState(false);
+  const [showCommentPopup, setShowCommentPopup] = useState(false);
+  const [showReadPopup, setShowReadPopup] = useState(false);
 
   const synth = window.speechSynthesis;
 
   const handleSpeak = () => {
+    if (!isLoggedIn) {
+      setShowReadPopup(true);
+      return;
+    }
     if (synth.speaking || isPending) return;
 
     setIsPending(true);
@@ -77,11 +86,23 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   };
 
   const toggleCommentTab = () => {
+    if (!isLoggedIn) {
+      setShowCommentPopup(true);
+      return;
+    }
     if (!isCommentSectionOpen) {
       setCommentTabState(!commentTabState);
     } else {
       console.log("Comment section is not opened");
     }
+  };
+
+  const handleReactClick = () => {
+    if (!isLoggedIn) {
+      setShowReactPopup(true);
+      return;
+    }
+    setModalOpen(true);
   };
 
   useEffect(() => {
@@ -91,37 +112,71 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   }, [isCommentSectionOpen]);
 
   return (
-    <div>
-      <div className="blog-reaction-session border-t border-neutral-500 flex gap-4 ">
-        <button
-          onMouseEnter={() => setModalOpen(true)}
-          onClick={() => setModalOpen(true)}
-          className="flex items-center gap-2 hover:text-primary-400 cursor-pointer"
-        >
-          <ThumbsUp className="size-5" /> React
-        </button>
-        <button
-          className="hover:text-primary-400 cursor-pointer flex items-center gap-2"
-          onClick={toggleCommentTab}
-        >
-          <MessageCircle className="size-5" /> Comment
-        </button>
-        <button
-          className={cn(
-            "hover:text-primary-400 cursor-pointer flex items-center gap-2",
-            isSpeaking && "animate-pulse"
+    <div className="relative">
+      <div className="blog-reaction-session border-t border-neutral-500 flex gap-4">
+        {/* React Button */}
+        <div className="relative">
+          <button
+            onMouseEnter={() => isLoggedIn && setModalOpen(true)}
+            onClick={handleReactClick}
+            className="flex items-center gap-2 hover:text-primary-400 cursor-pointer"
+          >
+            <ThumbsUp className="size-5" /> React
+          </button>
+          {showReactPopup && (
+            <SignInPopUp
+              text="React"
+              position="below"
+              onClose={() => setShowReactPopup(false)}
+            />
           )}
-          onClick={isSpeaking ? cancelSpeaking : handleSpeak}
-        >
-          {isPending ? (
-            <Loader2 className="size-5 animate-spin" />
-          ) : isSpeaking ? (
-            <Volume2 className="size-5" />
-          ) : (
-            <AudioLines className="size-5" />
+        </div>
+
+        {/* Comment Button */}
+        <div className="relative">
+          <button
+            className="hover:text-primary-400 cursor-pointer flex items-center gap-2"
+            onClick={toggleCommentTab}
+          >
+            <MessageCircle className="size-5" /> Comment
+          </button>
+          {showCommentPopup && (
+            <SignInPopUp
+              text="Comment"
+              position="below"
+              onClose={() => setShowCommentPopup(false)}
+            />
           )}
-          {isSpeaking ? "Stop" : "Read Aloud"}
-        </button>
+        </div>
+
+        {/* Read Aloud Button */}
+        <div className="relative">
+          <button
+            className={cn(
+              "hover:text-primary-400 cursor-pointer flex items-center gap-2",
+              isSpeaking && "animate-pulse"
+            )}
+            onClick={isSpeaking ? cancelSpeaking : handleSpeak}
+          >
+            {isPending ? (
+              <Loader2 className="size-5 animate-spin" />
+            ) : isSpeaking ? (
+              <Volume2 className="size-5" />
+            ) : (
+              <AudioLines className="size-5" />
+            )}
+            {isSpeaking ? "Stop" : "Read Aloud"}
+          </button>
+          {showReadPopup && (
+            <SignInPopUp
+              text="Read Aloud"
+              position="top-right"
+              onClose={() => setShowReadPopup(false)}
+            />
+          )}
+        </div>
+
+        {/* Pause/Resume Button */}
         {isSpeaking && (
           <button
             className="hover:text-primary-400 cursor-pointer flex items-center gap-2"
@@ -135,6 +190,8 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
             {isPaused ? "Resume" : "Pause"}
           </button>
         )}
+
+        {/* Reaction Modal */}
         <ReactionModal
           isOpen={isModalOpen}
           onClose={() => setModalOpen(false)}
@@ -143,6 +200,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
         />
       </div>
 
+      {/* Comment Section */}
       {commentTabState && (
         <CommentSection
           article_id={article_id}
@@ -150,7 +208,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
           author_of_post={author_of_post}
         />
       )}
-      {isCommentSectionOpen && (
+      {isCommentSectionOpen  && (
         <CommentSection
           article_id={article_id}
           setIsCommentSectionOpen={setIsCommentSectionOpen}

@@ -47,7 +47,7 @@ const SearchPeople: React.FC = () => {
         {followings.length > 0 ? (
           followings.map((following: Follow) => (
             <AuthorComponent
-              key={following.followed_id?.user_id}
+              key={following?.followed_id?.user_id}
               user={following?.followed_id}
             />
           ))
@@ -65,7 +65,7 @@ const SearchPeople: React.FC = () => {
         trendingAuthors?.map((category:TrendingAuthorCategory) => (
           <div key={category.leaderIn} className="space-y-4 mt-4">
             <p className="text-lg font-semibold">Leading in {category.leaderIn}</p>
-            {category.contributors.length > 0 ? (
+            {category?.contributors?.length > 0 ? (
               category.contributors.map((contributor) => (
                 <AuthorComponent
                   key={contributor.authorId}

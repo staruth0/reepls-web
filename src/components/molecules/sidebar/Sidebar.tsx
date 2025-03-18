@@ -14,7 +14,6 @@ import {
 } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { reeplsIcon } from '../../../assets/icons';
 import { SidebarContext } from '../../../context/SidebarContext/SidebarContext';
 import PostModal from '../../../feature/Blog/components/PostModal';
 import { useCreateArticle } from '../../../feature/Blog/hooks/useArticleHook';
@@ -27,7 +26,7 @@ import './sidebar.scss';
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
-  const { authUser } = useUser();
+  const { authUser,isLoggedIn } = useUser();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
   const { t } = useTranslation();
   const { mutate: createPost, isPending } = useCreateArticle();
@@ -52,18 +51,18 @@ const Sidebar: React.FC = () => {
     {
       icon: LuBookmark,
       name: 'Bookmarks',
-      link: '/bookmarks',
+      link: `${isLoggedIn ?'/bookmarks':'/bookmarks/anonymous' }`,
     },
     {
       icon: LuBell,
       name: 'Notifications',
-      link: '/notifications',
+      link:  `${isLoggedIn ?'/notifications':'/notifications/anonymous'}`,
       badgeContent: 14,
     },
     {
       icon: FaRegUserCircle,
       name: 'Profile',
-      link: `/profile/${authUser?.username}`,
+      link: `${isLoggedIn? `/profile/${authUser?.username}`:'/anonymous'} `,
     },
   ];
 
@@ -118,7 +117,7 @@ const Sidebar: React.FC = () => {
         <div
           className="text-roboto text-[24px] font-semibold flex gap-2 items-center cursor-pointer"
           onClick={() => navigate('/feed')}>
-          <img src={reeplsIcon} alt="reeplsicon" className={`${isOpen ? 'size-8' : 'size-9'}`} />
+          <img src={`/Logo.svg`} alt="reeplsicon" className={`${isOpen ? 'size-8' : 'size-9'}`} />
           {isOpen && 'REEPLS'}
         </div>
       </div>

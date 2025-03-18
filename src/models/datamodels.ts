@@ -67,6 +67,7 @@ export interface Article {
   updatedAt?: string;
   views_count?: number;
   reports_count?: number;
+  slug?:string;
   _id?: string;
   shares_count?: number;
   isArticle?: boolean;

@@ -6,15 +6,16 @@ interface BlogMessageProps {
   content: string;
   isArticle: boolean;
   article_id: string;
+  slug?:string;
 }
 
-const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, isArticle, article_id }) => {
+const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, isArticle, article_id,slug }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
 
   const handleToggle = () => {
     if (isArticle) {
-      navigate(`/posts/article/${article_id}`);
+      navigate(`${slug? `/posts/article/slug/${slug}`: `/posts/article/${article_id}`}`);
     } else {
       setIsExpanded((prev) => !prev);
     }
