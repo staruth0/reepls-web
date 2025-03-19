@@ -2,15 +2,27 @@ import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuCircleArrowLeft, LuCircleArrowRight } from 'react-icons/lu';
-import { slides } from '../../../data';
-import '../styles/swiper.scss';
+import { Pics } from '../../../assets/images';
+
+
+const slides = [
+  {
+    image: Pics.maleAuth,
+    text: 'Creating Waves of professional impact',
+    description: 'Lorem ipsum dolor sit amet consectetur. Adipiscing varius ridiculus orci vestibulum nec laoreet. Amet consectetur nullam in.',
+  },
+  {
+    image: Pics.femaleAuth, 
+    text: 'Building Bridges to Success',
+    description: 'Lorem ipsum dolor sit amet consectetur. Adipiscing varius ridiculus orci vestibulum nec laoreet. Amet consectetur nullam in.',
+  },
+];
 
 function Swiper() {
-  // states
   const [activeSlide, setActiveSlide] = useState<number>(0);
   const { t } = useTranslation();
 
-  // functions to handle DOM EVENTS
+  // Functions to handle DOM events
   const handlePrevSlide = () => {
     setActiveSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   };
@@ -23,12 +35,13 @@ function Swiper() {
     setActiveSlide(index);
   };
 
-  // useEffects
+  // Auto-slide effect
   useEffect(() => {
-    const interval = setInterval(handleNextSlide, 5000);
+    const interval = setInterval(handleNextSlide, 6000);
     return () => clearInterval(interval);
   }, []);
 
+  // Transition variants for both image and text
   const transitionVariants = {
     hidden: { opacity: 0, x: -20 },
     visible: { opacity: 1, x: 0 },
@@ -36,43 +49,74 @@ function Swiper() {
   };
 
   return (
-    <div className="swiper__welcome">
-      <div className="swiper__logo">REEPLS</div>
-      <div className='flex flex-col'>
-        <div className="swiper__image__container">
-          <div className="swiper__buttons">
-            <div className="swiper__button" onClick={handlePrevSlide}>
-              <LuCircleArrowLeft className="size-6 transition-all cursor-pointer duration-300 hover:text-primary-400" />
-            </div>
-            <div className="swiper__button" onClick={handleNextSlide}>
-              <LuCircleArrowRight className="size-6 transition-all cursor-pointer duration-300 hover:text-primary-400" />
-            </div>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background text-neutral-50 p-4 relative">
+      {/* Logo */}
+      <div className=" absolute top-5 left-5 self-start text-2xl flex gap-2 items-center font-semibold text-plain-a mb-4"> 
+        <img src={'/Logo.svg'} alt="" />
+        REEPLS</div>
+
+      {/* Main Content */}
+      <div className="flex flex-col items-center w-[80%]">
+        {/* Image Container */}
+        <div className="relative flex justify-center items-center w-full mb-5">
+          {/* Navigation Buttons */}
+          <div className="absolute flex justify-between w-full px-4 z-10">
+            <button onClick={handlePrevSlide} className="text-primary-200 transition-colors">
+              <LuCircleArrowLeft className="w-8 h-8" />
+            </button>
+            <button onClick={handleNextSlide} className="text-primary-200 transition-colors">
+              <LuCircleArrowRight className="w-8 h-8" />
+            </button>
           </div>
 
-          <div className="swiper__image__wrapper"></div>
+          {/* Image with Decorative Element */}
+          <motion.div
+            key={`image-${activeSlide}`} // Key ensures image transitions
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={transitionVariants}
+            transition={{ duration: 0.9 }}
+            className="relative w-[300px] h-[300px] flex justify-center items-center"
+          >
+            {/* Background Decorative Elements */}
+            <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-400 rounded-full -translate-y-8 translate-x-8"></div>
+            <div className="absolute bottom-0 right-0 w-32 h-32 border-8 border-yellow-400 rounded-full translate-y-8 -translate-x-10"></div>
+
+            {/* Image */}
+            <img
+              src={slides[activeSlide].image}
+              alt="slide"
+              className="w-[18rem] h-[18rem] object-cover rounded-lg"
+            />
+          </motion.div>
         </div>
 
+        {/* Text Content */}
         <motion.div
-          key={activeSlide}
+          key={`text-${activeSlide}`} // Key ensures text transitions
           initial="hidden"
           animate="visible"
           exit="exit"
           variants={transitionVariants}
           transition={{ duration: 0.9 }}
-          className="content"
+          className="text-center mt-6"
         >
-          <div className="swiper__text">
-            <h2>{t(slides[activeSlide].text)}</h2>
-            <p>{t(slides[activeSlide].description)}</p>
-          </div>
+          <h2 className="text-2xl md:text-3xl font-semibold text-plain-a mb-3">
+            {t(slides[activeSlide].text)}
+          </h2>
+          <p className="text-sm md:text-base text-plain-a max-w-md mx-auto">
+            {t(slides[activeSlide].description)}
+          </p>
         </motion.div>
 
-        <div className="swiper__indicators">
+        {/* Indicators */}
+        <div className="flex gap-2 mt-8">
           {slides.map((_, index) => (
             <motion.div
               key={index}
-              className={`swiper__indicator ${
-                index === activeSlide ? "active" : ""
+              className={`w-16 h-1 rounded-full cursor-pointer ${
+                index === activeSlide ? 'bg-primary-400' : 'bg-primary-600'
               }`}
               onClick={() => handleCurrentSlide(index)}
               animate={{
