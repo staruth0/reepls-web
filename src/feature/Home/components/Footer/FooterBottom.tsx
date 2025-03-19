@@ -17,7 +17,7 @@ const FooterBottom = () => {
             alt="Reepls Logo"
             className="w-8 h-8"
           />
-          <span className="text-xl font-bold text-plain-a">Reepls</span>
+          <span className="text-xl font-bold text-neutral-50">Reepls</span>
          </div>
 
           <li className="block md:hidden">
@@ -29,7 +29,7 @@ const FooterBottom = () => {
           <li>
             <Link
               to="/help"
-              className="text-plain-a hover:text-primary-400 transition-colors"
+              className="text-neutral-50 hover:text-primary-400 transition-colors"
             >
               {t("footer.bottom.help")}
             </Link>
@@ -37,7 +37,7 @@ const FooterBottom = () => {
           <li>
             <Link
               to={`${authState.isLoggedIn ? "Terms&Policies" : "auth"}`}
-              className="text-plain-a hover:text-primary-400 transition-colors"
+              className="text-neutral-50 hover:text-primary-400 transition-colors"
             >
               {t("footer.bottom.terms")}
             </Link>
@@ -45,7 +45,7 @@ const FooterBottom = () => {
           <li>
             <Link
               to={`${authState.isLoggedIn ? "Terms&Policies" : "auth"}`}
-              className="text-plain-a hover:text-primary-400 transition-colors"
+              className="text-neutral-50 hover:text-primary-400 transition-colors"
             >
               {t("footer.bottom.policy")}
             </Link>
