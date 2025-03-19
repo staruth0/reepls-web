@@ -7,9 +7,10 @@ import { profileAvatar } from "../../../../assets/icons";
 import SharePopup from "../../../../components/molecules/share/SharePopup";
 import { useRoute } from "../../../../hooks/useRoute";
 import { useUser } from "../../../../hooks/useUser";
-import { Article, Follow, User } from "../../../../models/datamodels";
+import { Article, User } from "../../../../models/datamodels";
 import { formatDateWithMonth } from "../../../../utils/dateFormater";
-import { useFollowUser, useGetFollowing, useUnfollowUser } from "../../../Follow/hooks";
+import { useFollowUser, useUnfollowUser } from "../../../Follow/hooks";
+import { useKnowUserFollowings } from "../../../Follow/hooks/useKnowUserFollowings"; // Import the hook
 import { useGetSavedArticles, useRemoveSavedArticle, useSaveArticle } from "../../../Saved/hooks";
 import "./Blog.scss";
 import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
@@ -17,7 +18,7 @@ import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
 interface BlogProfileProps {
   date: string;
   article_id: string;
-  user: User | null;
+  user: User;
   content: string;
   title: string;
   isArticle: boolean;
@@ -33,22 +34,16 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
 
   const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
-  const { data: followings } = useGetFollowing(authUser?.id || "");
+  const { isFollowing } = useKnowUserFollowings(); // Use the hook
   const { mutate: saveArticle, isPending: isSavePending } = useSaveArticle();
   const { mutate: removeSavedArticle, isPending: isRemovePending } = useRemoveSavedArticle();
   const { data: savedArticles } = useGetSavedArticles();
   const [saved, setSaved] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(false);
 
   const articleUrl = `${window.location.origin}/posts/${isArticle ? "article" : "post"}/${article_id}`;
   const articleTitle = `${title ? title : content.split(" ").slice(0, 10).join(" ") + "..."}`;
 
-  const isCurrentAuthorArticle = user?.id === authUser?.id;
-
-  useEffect(() => {
-    const followedIds = followings?.data?.map((following: Follow) => following.followed_id?.id) || [];
-    setIsFollowing(followedIds.includes(user?.id));
-  }, [followings, user?.id]);
+  const isCurrentAuthorArticle = user?._id === authUser?._id; // Use _id instead of id
 
   const handleProfileClick = (username: string) => {
     if (username) {
@@ -87,21 +82,21 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
       setShowSignInPopup(true); // Show popup if not logged in
       return;
     }
-    if (isFollowPending || isUnfollowPending || !user?.id) return;
+    console.log('reaching here', isFollowPending, '-', isUnfollowPending, '-', !user?._id);
+    if (!user?._id) return;
 
-    if (isFollowing) {
-      unfollowUser(user?.id, {
+    console.log('reaching here2');
+    if (isFollowing(user?._id)) { // Use _id instead of id
+      unfollowUser(user?._id, { // Use _id instead of id
         onSuccess: () => {
           toast.success("User unfollowed successfully");
-          setIsFollowing(false); // Update state
         },
         onError: () => toast.error("Failed to unfollow user"),
       });
     } else {
-      followUser(user?.id, {
+      followUser(user?._id, { // Use _id instead of id
         onSuccess: () => {
           toast.success("User followed successfully");
-          setIsFollowing(true); // Update state
         },
         onError: () => toast.error("Failed to follow user"),
       });
@@ -130,7 +125,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
     if (!isLoggedIn) return "Follow"; // Default text when not logged in
     if (isFollowPending) return "Following...";
     if (isUnfollowPending) return "Unfollowing...";
-    return isFollowing ? "Following" : isMenu ? "Follow author" : "Follow";
+    return isFollowing(user?._id || "") ? "Following" : isMenu ? "Follow author" : "Follow"; // Use _id instead of id
   };
 
   const getSaveStatusText = () => {

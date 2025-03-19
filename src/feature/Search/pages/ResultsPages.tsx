@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {  useContext, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import { useUser } from '../../../hooks/useUser';
@@ -8,11 +8,15 @@ import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
 import Communique from '../../Feed/components/Communique/Communique';
 import SearchTopBar from '../components/SearchTopBar';
 import { useGetSearchResults, useStoreSearchSuggestion } from '../hooks';
+import { SearchContainerContext } from '../../../context/suggestionContainer/isSearchcontainer';
+
 
 const ResultsPage: React.FC = () => {
   const location = useLocation();
   const query = new URLSearchParams(location.search).get('query');
   const { data: results, isPending, error } = useGetSearchResults(query || '');
+  const { setSearchContainerOpen } = useContext(SearchContainerContext);
+  
   const { authUser } = useUser();
   const { mutate } = useStoreSearchSuggestion();
 
@@ -30,8 +34,8 @@ const ResultsPage: React.FC = () => {
       }
     );
 
-    if (results) console.log(results);
-  }, [query, authUser, mutate, results]);
+    if (results) {setSearchContainerOpen(false)}
+  }, [query, authUser, mutate, setSearchContainerOpen,results]);
 
   // Render loading state
   if (isPending) {

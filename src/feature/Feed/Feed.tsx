@@ -54,7 +54,7 @@ const UserFeed: React.FC = () => {
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   useEffect(() => {
-    console.log('data', data);
+    console.log('dataArticles', data);
   }, [data]);
 
   return (

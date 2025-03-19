@@ -36,7 +36,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({content,createdAt,isSa
 
   return (
     <div
-      className={`min-w-[70%] p-4 relative self-start ${
+      className={`min-w-[70%] p-2 relative self-start ${
         isSameAuthorAsPrevious ? "self-end" : ""
       }`}
     >

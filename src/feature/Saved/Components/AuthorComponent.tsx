@@ -1,39 +1,75 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LuBadgeCheck, LuEllipsisVertical } from 'react-icons/lu';
-import { UserPlus, EyeOff,  Flag, X } from 'lucide-react'; 
+import { UserPlus, EyeOff, Flag, X } from 'lucide-react';
 import { profileAvatar } from '../../../assets/icons';
 import { User } from '../../../models/datamodels';
+
+import { useFollowUser, useUnfollowUser } from '../../Follow/hooks';
+import { useKnowUserFollowings } from '../../Follow/hooks/useKnowUserFollowings';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 interface AuthorComponentProps {
   user: User;
 }
 
 const AuthorComponent: React.FC<AuthorComponentProps> = ({ user }) => {
-  const [showMenu, setShowMenu] = useState(false); 
+  const [showMenu, setShowMenu] = useState(false);
+  const [showBlockConfirm, setShowBlockConfirm] = useState(false);
+  const { isFollowing: isUserFollowing } = useKnowUserFollowings();
+  const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
+  const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
+  const navigate = useNavigate();
 
+  useEffect(()=>{
+    console.log('userer',user);
+  },[])
 
-  const handleFollow = () => {
-    console.log(`Follow ${user.username}`);
-    setShowMenu(false); 
+  const handleFollowClick = () => {
+    if (isFollowPending || isUnfollowPending || !user?.id) return;
+
+    if (isUserFollowing(user.id)) {
+      unfollowUser(user.id, {
+        onSuccess: () => toast.success('User unfollowed successfully'),
+        onError: () => toast.error('Failed to unfollow user'),
+      });
+    } else {
+      followUser(user.id, {
+        onSuccess: () => toast.success('User followed successfully'),
+        onError: () => toast.error('Failed to follow user'),
+      });
+    }
+    setShowMenu(false);
   };
 
-  const handleBlock = () => {
-    console.log(`Block ${user.username}`);
+  const handleBlockConfirm = () => {
+ 
+
+    console.log(`Blocked ${user.username}`);
+    toast.success(`User ${user.username} blocked successfully`);
+    setShowBlockConfirm(false);
     setShowMenu(false);
   };
 
   const handleViewProfile = () => {
-    console.log(`View profile of ${user.username}`);
+    navigate(`/profile/${user.username}`);
     setShowMenu(false);
   };
 
   const handleReport = () => {
-    console.log(`Report ${user.username}`);
+    navigate(`/report/${user.id}`);
     setShowMenu(false);
   };
 
+  const getFollowStatusText = () => {
+    if(isFollowPending || isUnfollowPending || !user.id) return
+    if (isFollowPending) return 'Following...';
+    if (isUnfollowPending) return 'Unfollowing...';
+    return isUserFollowing(user.id) ? 'Following' : 'Follow';
+  };
+
   return (
-    <div className="flex items-center gap-2 relative"> 
+    <div className="flex items-center gap-2 relative">
       <div>
         <img src={profileAvatar} alt="profiles" />
       </div>
@@ -47,7 +83,7 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ user }) => {
           </div>
           <div className="text-[13px] line-clamp-1">{user?.bio}</div>
         </div>
-     
+
         {showMenu ? (
           <X className="size-4 cursor-pointer" onClick={() => setShowMenu(false)} />
         ) : (
@@ -58,23 +94,21 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ user }) => {
       {/* Dropdown Menu */}
       {showMenu && (
         <>
-          {/* Overlay to close menu when clicking outside */}
           <div
             className="fixed inset-0 bg-black opacity-0 z-40"
             onClick={() => setShowMenu(false)}
           ></div>
-          {/* Menu content */}
           <div className="absolute right-0 top-10 bg-neutral-800 shadow-md rounded-md p-2 w-52 text-neutral-50 z-50">
             <div
               className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-              onClick={handleFollow}
+              onClick={handleFollowClick}
             >
               <UserPlus size={18} className="text-neutral-500" />
-              <div>Follow</div>
+              <div>{getFollowStatusText()}</div>
             </div>
             <div
               className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-              onClick={handleBlock}
+              onClick={() => setShowBlockConfirm(true)}
             >
               <EyeOff size={18} className="text-neutral-500" />
               <div>Block</div>
@@ -92,6 +126,34 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ user }) => {
             >
               <Flag size={18} className="text-neutral-500" />
               <div>Report User</div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Block Confirmation Popup */}
+      {showBlockConfirm && (
+        <>
+          <div
+            className="fixed inset-0 bg-black opacity-50 z-[99999]"
+            onClick={() => setShowBlockConfirm(false)}
+          ></div>
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-800 rounded-md p-6 z-[99999] text-neutral-50">
+            <h3 className="text-lg font-semibold mb-4">Confirm Block</h3>
+            <p className="mb-6">Are you sure you want to block {user.username}?</p>
+            <div className="flex justify-end gap-4">
+              <button
+                className="px-4 py-2 bg-neutral-600 rounded-md hover:bg-neutral-700"
+                onClick={() => setShowBlockConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-red-600 rounded-md hover:bg-red-700"
+                onClick={handleBlockConfirm}
+              >
+                Block
+              </button>
             </div>
           </div>
         </>

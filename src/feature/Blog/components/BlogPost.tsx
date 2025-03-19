@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { CognitiveModeContext } from '../../../context/CognitiveMode/CognitiveModeContext';
 import { User } from '../../../models/datamodels';
 import BlogArticleHeader from './BlogArticleHeader';
@@ -43,6 +43,10 @@ const BlogPost: React.FC<BlogPostProps> = ({
   const toggleCommentSection = () => {
     setIsCommentSectionOpen(!isCommentSectionOpen);
   };
+
+  useEffect(()=>{
+    console.log('user',user)
+  },[user])
 
   return (
     <div className="each_blog_post mt-5 shadow-md p-2 max-w-[680px] self-center w-full bg-background">

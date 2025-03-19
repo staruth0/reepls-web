@@ -15,8 +15,7 @@ import {
   getCommuniquerArticles,
   getFollowedArticles,
   getRecommendedArticles,
-  getSavedArticles,
-  getSavedPosts,
+
   updateArticle,
 } from '../api';
 // Hook for creating an article
@@ -120,39 +119,7 @@ export const useGetCommuniquerArticles = () => {
 };
 
 
-export const useGetSavedPosts = () => {
-  return useInfiniteQuery({
-    queryKey: ["savedPosts"],
-    queryFn: getSavedPosts,
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages) => {
-      
-      if (!lastPage || typeof lastPage.totalPosts === "undefined") {
-        return undefined; 
-      }
-      const postsFetched = allPages.length * 10; // 10 posts per page
-      return postsFetched < lastPage.totalPosts ? allPages.length + 1 : undefined;
-    },
-    enabled: true, 
-  });
-};
 
-export const useGetSavedArticles = () => {
-  return useInfiniteQuery({
-    queryKey: ["savedArticles"],
-    queryFn: getSavedArticles,
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages) => {
-     
-      if (!lastPage || typeof lastPage.totalArticles === "undefined") {
-        return undefined; 
-      }
-      const articlesFetched = allPages.length * 10; // 10 articles per page
-      return articlesFetched < lastPage.totalArticles ? allPages.length + 1 : undefined;
-    },
-    enabled: true, 
-  });
-};
 
 export const useGetAuthorPosts = (authorId: string) => {
   return useInfiniteQuery({
