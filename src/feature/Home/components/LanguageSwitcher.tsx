@@ -19,8 +19,8 @@ const LanguageSwitcher = () => {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 rounded-lg  transition-colors"
       >
-        <LuGlobe className="text-plain-a" />
-        <span className="text-sm font-medium text-plain-a">
+        <LuGlobe className="text-neutral-50" />
+        <span className="text-sm font-medium text-neutral-50">
           {i18n.language === "en" ? t('English') : t('French')}
         </span>
       </button>
@@ -33,13 +33,13 @@ const LanguageSwitcher = () => {
         >
           <div
             onClick={() => handleLanguageChange("en")}
-            className="p-2 text-sm text-plain-a hover:bg-neutral-700 cursor-pointer transition-colors"
+            className="p-2 text-sm text-neutral-50 hover:bg-neutral-700 cursor-pointer transition-colors"
           >
             {t('English')}
           </div>
           <div
             onClick={() => handleLanguageChange("fr")}
-            className="p-2 text-sm text-plain-a hover:bg-neutral-700 cursor-pointer transition-colors"
+            className="p-2 text-sm text-neutral-50 hover:bg-neutral-700 cursor-pointer transition-colors"
           >
             {t('French')}
           </div>

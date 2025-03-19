@@ -9,7 +9,7 @@ import FooterBottom from '../components/Footer/FooterBottom';
 function Home() {
   
   return (
-    <div className="home__container max-w-7xl mx-auto">
+    <div className="home__container  mx-auto">
      <Header />
      <Banner />
      <Sections />
