@@ -27,11 +27,13 @@ import ReactionsPopup from '../../Interactions/components/ReactionsPopup';
 
 const ArticleViewBySlug: React.FC = () => {
   const navigate = useNavigate();
+
   const { articleUid, slug } = useParams();
   const { authUser, isLoggedIn } = useUser();
   const { selectedVoice } = useContext(VoiceLanguageContext);
+
   const [title, setTitle] = useState<string>('*This article does not have a title*');
-  const [subTitle, setSubTitle] = useState<string>('');
+  const [subtitle, setsubtitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [htmlArticleContent, setHtmlArticleContent] = useState<string>('*This article does not have any content*');
   const [media, setMedia] = useState<string[]>([]);
@@ -46,6 +48,7 @@ const ArticleViewBySlug: React.FC = () => {
   const { loadDraftArticle, clearDraftArticle } = useDraft();
   const editorRef = useRef<{ editor: Editor | null }>(null);
   const { mutate: createArticle } = useCreateArticle();
+
   const { mutate: saveArticle, isPending: isSavePending } = useSaveArticle();
   const { mutate: removeSavedArticle, isPending: isRemovePending } = useRemoveSavedArticle();
   const { data: savedArticles } = useGetSavedArticles();
@@ -173,12 +176,13 @@ const ArticleViewBySlug: React.FC = () => {
   const onPublish = async () => {
     if (!title || !subTitle || !content) {
       toast.error('Please provide a title, subtitle, and content.', { autoClose: 1500 });
+
       return;
     }
 
     const articleData: Article = {
       title,
-      subTitle,
+      subtitle,
       content,
       htmlContent: htmlArticleContent,
       media,
@@ -216,7 +220,7 @@ const ArticleViewBySlug: React.FC = () => {
         return;
       }
       setTitle(draftArticle.title);
-      setSubTitle(draftArticle.subTitle);
+      setsubtitle(draftArticle.subtitle);
       setContent(draftArticle.content);
       setHtmlArticleContent(draftArticle.htmlContent);
       setMedia(draftArticle.media);
@@ -225,10 +229,12 @@ const ArticleViewBySlug: React.FC = () => {
 
   useEffect(() => {
     if (article) {
+
       if (article.title) setTitle(article.title);
       if (article.subTitle) setSubTitle(article.subTitle);
       if (article.content) setHtmlArticleContent(article.content);
       if (article.htmlContent) setContent(article.htmlContent);
+
     }
   }, [article, isPending]);
 
@@ -310,6 +316,7 @@ const ArticleViewBySlug: React.FC = () => {
               )}
             </div>
 
+
             {/* Read Aloud Controls */}
             <div className="flex justify-end my-4 gap-2">
               <button
@@ -352,6 +359,7 @@ const ArticleViewBySlug: React.FC = () => {
                 hideBubble={true}
                 className="w-full block"
               />
+
             </div>
           </div>
         )}

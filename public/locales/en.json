@@ -146,17 +146,16 @@
       "linkText": "Find recent communiques"
     }
   },
-  
-    "footer": {
-      "top": {
-        "title": "Become part of a network of the informed—have your voice heard on ",
-        "button": "Start a Reepl"
-      },
-      "bottom": {
-        "help": "Help",
-        "terms": "Terms of Service",
-        "policy": "Privacy Policy"
-      }
+
+  "footer": {
+    "top": {
+      "title": "Become part of a network of the informed—have your voice heard on ",
+      "button": "Start a Reepl"
+    },
+    "bottom": {
+      "help": "Help",
+      "terms": "Terms of Service",
+      "policy": "Privacy Policy"
     }
-  
+  }
 }
