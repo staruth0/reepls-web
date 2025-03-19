@@ -1,9 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import { LuBadgeCheck } from 'react-icons/lu';
 import { toast } from 'react-toastify';
-import { useUser } from '../../../hooks/useUser';
-import { Follow } from '../../../models/datamodels';
-import { useFollowUser, useGetFollowing, useUnfollowUser } from '../../Follow/hooks';
+import { useFollowUser, useUnfollowUser } from '../../Follow/hooks';
+import { useKnowUserFollowings } from '../../Follow/hooks/useKnowUserFollowings';
 
 interface AuthorSuggestionProps {
   username: string;
@@ -12,37 +11,21 @@ interface AuthorSuggestionProps {
 }
 
 const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username, title, id }) => {
-  const { authUser } = useUser();
   const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
-  const { data: followings } = useGetFollowing(authUser?.id || '');
-  const [isFollowing, setIsFollowing] = useState(false);
-
-  const followedIds = useMemo(() => {
-    return followings?.data?.map((following: Follow) => following.followed_id) || [];
-  }, [followings]);
-
-  useEffect(() => {
-    setIsFollowing(followedIds.includes(id));
-  }, [followedIds, id]);
+  const { isFollowing: isUserFollowing } = useKnowUserFollowings();
 
   const handleFollowClick = () => {
     if (isFollowPending || isUnfollowPending) return;
 
-    if (isFollowing) {
+    if (isUserFollowing(id)) {
       unfollowUser(id, {
-        onSuccess: () => {
-          toast.success('User unfollowed successfully');
-          setIsFollowing(false);
-        },
+        onSuccess: () => toast.success('User unfollowed successfully'),
         onError: () => toast.error('Failed to unfollow user'),
       });
     } else {
       followUser(id, {
-        onSuccess: () => {
-          toast.success('User followed successfully');
-          setIsFollowing(true);
-        },
+        onSuccess: () => toast.success('User followed successfully'),
         onError: () => toast.error('Failed to follow user'),
       });
     }
@@ -51,7 +34,7 @@ const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username, 
   const getFollowStatusText = () => {
     if (isFollowPending) return 'Following...';
     if (isUnfollowPending) return 'Unfollowing...';
-    return isFollowing ? 'Following' : 'Follow';
+    return isUserFollowing(id) ? 'Following' : 'Follow';
   };
 
   const initial = username.charAt(0).toUpperCase();
@@ -67,7 +50,10 @@ const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username, 
           <div className="flex items-center gap-2">
             <h2 className="text-base font-semibold m-0 line-clamp-1 text-[15px]">{username}</h2>
             <LuBadgeCheck className="text-primary-400 size-5" strokeWidth={2.5} />
-            <div className="text-primary-400 text-[13px]  cursor-pointer hover:underline" onClick={handleFollowClick}>
+            <div
+              className="text-primary-400 text-[13px] cursor-pointer hover:underline"
+              onClick={handleFollowClick}
+            >
               {getFollowStatusText()}
             </div>
           </div>

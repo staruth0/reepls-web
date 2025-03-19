@@ -51,17 +51,6 @@ const getCommuniquerArticles = async ({ pageParam = 1 }) => {
 };
 
 
-export const getSavedPosts = async ({ pageParam = 1 }) => {
-  console.log(`Fetching saved posts for page ${pageParam}`);
-  const { data } = await apiClient.get(`/articles/saved-user-posts?page=${pageParam}&limit=10`);
-  return data;
-};
-
-export const getSavedArticles = async ({ pageParam = 1 }) => {
-  console.log(`Fetching saved articles for page ${pageParam}`);
-  const { data } = await apiClient.get(`/articles/saved-user-articles?page=${pageParam}&limit=10`);
-  return data;
-};
 
 export const getAuthorPosts = async ({ pageParam = 1, authorId }:{pageParam:number, authorId:string}) => {
   console.log(`Fetching posts for author ${authorId}, page ${pageParam}`);

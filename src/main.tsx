@@ -13,11 +13,12 @@ import FeedFollowingProvider from './context/Feedcontext/IsFeedFollowingProvider
 import SideBarProvider from './context/SidebarContext/SideBarProvider.tsx';
 import { ThemeProvider } from './context/Theme/themeProvider.tsx';
 import VoiceLanguageProvider from './context/VoiceLanguageContext/VoiceLanguageProvider.tsx';
+import SearchContainerProvider from './context/suggestionContainer/isSearchProvider.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 30 * 60 * 1000,
+      staleTime: 60 * 60 * 1000,
       refetchOnWindowFocus: false,
       refetchOnReconnect: true,
       refetchOnMount: false,
@@ -36,7 +37,10 @@ createRoot(document.getElementById('root')!).render(
               <SideBarProvider>
                 <VoiceLanguageProvider>
                   <FeedFollowingProvider>
+                    <SearchContainerProvider>
                     <App />
+                    </SearchContainerProvider>
+                    
                   </FeedFollowingProvider>
                 </VoiceLanguageProvider>
               </SideBarProvider>

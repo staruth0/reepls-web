@@ -1,16 +1,18 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuSearch, LuX } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../../hooks/useUser';
 import { useGetSearchSuggestions } from '../hooks';
 import SearchContainer from './SearchContainer';
+import { SearchContainerContext } from '../../../context/suggestionContainer/isSearchcontainer';
 
-const SearchTopBar: React.FC<{ initialSearchTerm?: string }> = ({ initialSearchTerm }) => {
+const SearchTopBar: React.FC<{ initialSearchTerm?: string}> = ({ initialSearchTerm }) => {
+  const { isSearchContainerOpen, setSearchContainerOpen } = useContext(SearchContainerContext);
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState<string>(initialSearchTerm ?? '');
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+
   const { authUser } = useUser();
   const { data } = useGetSearchSuggestions(authUser?.id || '');
 
@@ -20,7 +22,7 @@ const SearchTopBar: React.FC<{ initialSearchTerm?: string }> = ({ initialSearchT
 
   const handleClearSearch = () => {
     setSearchTerm('');
-    setIsOpen(false);
+    setSearchContainerOpen(false)
   };
 
   const handleSearch = () => {
@@ -29,7 +31,7 @@ const SearchTopBar: React.FC<{ initialSearchTerm?: string }> = ({ initialSearchT
       const query = encodeURIComponent(trimmedSearchTerm);
       navigate(`/search/results?query=${query}`);
     }
-    setIsOpen(false);
+    setSearchContainerOpen(false)
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -54,9 +56,9 @@ const SearchTopBar: React.FC<{ initialSearchTerm?: string }> = ({ initialSearchT
 
   useEffect(() => {
     if (searchTerm) {
-      setIsOpen(true);
+      setSearchContainerOpen(true)
     } else {
-      setIsOpen(false);
+      setSearchContainerOpen(false)
     }
   }, [searchTerm]);
 
@@ -75,7 +77,7 @@ const SearchTopBar: React.FC<{ initialSearchTerm?: string }> = ({ initialSearchT
         <LuSearch className="size-6" onClick={handleSearch} />
       </div>
 
-      {isOpen && (
+      {isSearchContainerOpen && (
         <div className="absolute top-14 left-0 w-full bg-neutral-600 rounded-lg shadow-lg z-50">
           {filteredSearchHistory.length > 0 ? (
             <SearchContainer searches={filteredSearchHistory} />
