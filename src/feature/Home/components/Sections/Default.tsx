@@ -49,9 +49,9 @@ const Default: React.FC<SectionProps> = ({
       <div
         className="flex-1 w-full space-y-3 md:space-y-6"
         data-aos={reverse ? "fade-right" : "fade-left"}
-        data-aos-delay="400" 
+        data-aos-delay="400"
       >
-        <h2 className="text-2xl md:text-4xl font-bold text-plain-a">{title}</h2>
+        <h2 className="text-2xl md:text-4xl font-bold text-neutral-50">{title}</h2>
         <p className="text-base md:text-lg text-neutral-100">{description}</p>
         <a
           href={`${authUser?.id ? "feed" : linkUrl}`}

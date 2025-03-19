@@ -21,7 +21,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen , toggleSidebar}) => {
     >
       {/* <button
         onClick={onClose}
-        className="absolute top-4 right-4 p-2 text-plain-a hover:text-gray-900 focus:outline-none"
+        className="absolute top-4 right-4 p-2 text-neutral-50 hover:text-gray-900 focus:outline-none"
       >
         <LuX className="h-6 w-6" />
       </button> */}
@@ -33,19 +33,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen , toggleSidebar}) => {
             alt="Reepl Logo"
             className="h-8 w-8"
           />
-          <span className="text-xl font-semibold text-plain-a">
+          <span className="text-xl font-semibold text-neutral-50">
             Reepls
           </span>
         </div>
 
         <ul className="space-y-4 px-6">
           <li onClick={toggleSidebar}>
-            <a href={`${authState ? 'feed' : 'auth/login/phone'}`} className="text-plain-a hover:text-primary-400">
+            <a href={`${authState ? 'feed' : 'auth/login/phone'}`} className="text-neutral-50 hover:text-primary-400">
             {t("header.signIn")}
             </a>
           </li>
           <li onClick={toggleSidebar}>
-            <a href="/auth/register/phone" className="text-plain-a hover:text-primary-400">
+            <a href="/auth/register/phone" className="text-neutral-50 hover:text-primary-400">
             {t("header.signUp")}
             </a>
           </li>

@@ -39,11 +39,11 @@ const Header = () => {
 
       <div
         className={`${navState ? "fixed top-0 left-0 right-0 shadow-sm" : "sticky top-0"
-          } navbar flex items-center justify-between px-4 md:px-20 py-4 w-full mx-auto bg-background z-20 max-w-7xl`}
+          } navbar flex border-b-neutral-600 border-b items-center justify-between px-4 md:px-20 md:mb-16 py-4 w-full mx-auto bg-background z-20 `}
       >
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
           <img src="/Logo.svg" alt="Reepl Logo" className="h-8 w-8" />
-          <span className="text-xl font-semibold text-plain-a">Reepls</span>
+          <span className="text-xl font-semibold text-neutral-50">Reepls</span>
         </div>
 
         <div className="hidden md:block">
@@ -54,7 +54,7 @@ const Header = () => {
           <LanguageSwitcher />
           <button
             onClick={toggleSidebar}
-            className="p-2 text-plain-a hover:text-gray-900 focus:outline-none"
+            className="p-2 text-neutral-50 hover:text-gray-900 focus:outline-none"
           >
             <LuMenu className="h-6 w-6 border border-primary-400" />
           </button>
