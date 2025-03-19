@@ -174,7 +174,7 @@ const ArticleViewBySlug: React.FC = () => {
   };
 
   const onPublish = async () => {
-    if (!title || !subTitle || !content) {
+    if (!title || !subtitle || !content) {
       toast.error('Please provide a title, subtitle, and content.', { autoClose: 1500 });
 
       return;
@@ -231,7 +231,7 @@ const ArticleViewBySlug: React.FC = () => {
     if (article) {
 
       if (article.title) setTitle(article.title);
-      if (article.subTitle) setSubTitle(article.subTitle);
+      if (article.subtitle) setsubtitle(article.subtitle);
       if (article.content) setHtmlArticleContent(article.content);
       if (article.htmlContent) setContent(article.htmlContent);
 
@@ -294,7 +294,7 @@ const ArticleViewBySlug: React.FC = () => {
             )}
 
             <h1 className="text-5xl font-semibold leading-tight mb-2 text-justify">{title}</h1>
-            {subTitle && <h3 className="text-xl mb-2">{subTitle}</h3>}
+            {subtitle && <h3 className="text-xl my-4">{subtitle}</h3>}
 
             {/* Author Profile Section */}
             <div className="flex items-center gap-4 mt-8 mb-4 relative">
