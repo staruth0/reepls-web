@@ -1,5 +1,5 @@
-import { Brain } from 'lucide-react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import CognitiveModeIndicator from '../../components/atoms/CognitiveModeIndicator';
 import Topbar from '../../components/atoms/Topbar/Topbar';
 import { CognitiveModeContext } from '../../context/CognitiveMode/CognitiveModeContext';
 import { Article } from '../../models/datamodels';
@@ -16,14 +16,7 @@ const FeedFollowing: React.FC = () => {
   const bottomRef = useRef<HTMLDivElement>(null); // Ref for the bottom
 
   // Fetch followed articles with infinite scrolling
-  const { 
-    data, 
-    error, 
-    isLoading, 
-    fetchNextPage, 
-    hasNextPage, 
-    isFetchingNextPage 
-  } = useGetFollowedArticles();
+  const { data, error, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetFollowedArticles();
 
   // Handle cognitive mode toggle
   const handleBrainClick = () => {
@@ -68,15 +61,7 @@ const FeedFollowing: React.FC = () => {
         <Topbar>
           <div className="px-3 flex justify-between items-center w-full">
             <ToggleFeed />
-            <Brain
-              size={isBrainActive ? 35 : 30}
-              onClick={handleBrainClick}
-              className={`cursor-pointer transition-all ${
-                isBrainActive
-                  ? 'text-green-600 bg-green-100 rounded-full p-1'
-                  : 'text-neutral-50 hover:text-green-600 hover:bg-green-100 hover:rounded-full hover:p-1 transition-all'
-              }`}
-            />
+            <CognitiveModeIndicator isActive={isBrainActive} onClick={handleBrainClick} />
           </div>
         </Topbar>
 

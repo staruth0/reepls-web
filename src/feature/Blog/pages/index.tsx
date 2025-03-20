@@ -57,9 +57,9 @@ const CreatePost: React.FC = () => {
       disabled: !isLoggedIn,
       ActionIcon: LuCalendar,
       onClick: () => {
-        if (!isLoggedIn) return;
-        console.log(editorRef.current?.editor?.getText());
-        console.log('Scheduling the post...');
+        toast.info('Scheduling is not available yet', {
+          autoClose: 1500,
+        });
       },
     },
     {
@@ -85,8 +85,9 @@ const CreatePost: React.FC = () => {
       ActionIcon: LuTag,
       disabled: true,
       onClick: () => {
-        if (!isLoggedIn) return;
-        console.log('Adding tags...');
+        toast.info('Adding tags is not available yet', {
+          autoClose: 1500,
+        });
       },
     },
   ];

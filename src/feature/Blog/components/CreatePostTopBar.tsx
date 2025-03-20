@@ -1,7 +1,8 @@
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
+import { Menu, MenuButton, MenuItem, MenuItems, Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { LuInfo, LuMenu } from 'react-icons/lu';
+import { LuDot, LuInfo, LuMenu } from 'react-icons/lu';
+
 import { cn } from '../../../utils';
 interface CreateTopBarProps {
   title: string;
@@ -20,23 +21,29 @@ interface CreateTopBarProps {
 const CreatePostTopBar: React.FC<CreateTopBarProps> = ({ title, mainAction, actions }: CreateTopBarProps) => {
   const { t } = useTranslation();
 
-  const handleInfo = () => {
-    console.log('Info');
-  };
-
   return (
     <div className="w-full flex items-center justify-between px-10 sticky top-0 backdrop-blur-md">
       <h2 className=" text-xl font-instrumentSerif overflow-hidden text-ellipsis whitespace-nowrap max-w-md">
         {t(title)}
       </h2>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-center gap-2">
+        <Popover className="relative flex items-center justify-center">
+          <PopoverButton>
+            <LuInfo className="w-6 h-6 hover:text-primary-400 focus:text-primary-400 cursor-pointer " />
+          </PopoverButton>
+          <PopoverPanel
+            anchor="bottom"
+            className="flex flex-col mt-8 bg-background rounded-lg p-2 border border-neutral-300">
+            <span className="text-sm flex items-center gap-0">
+              <LuDot className="size-8 text-primary-400 animate-pulse" />
+              <span className="text-sm">
+                Saved every <span className="font-bold text-primary-400">2s</span>
+              </span>
+            </span>
+          </PopoverPanel>
+        </Popover>
         <button
-          className={cn('p-2 cursor-pointer rounded-full', 'hover:text-primary-400 focus:text-primary-400')}
-          onClick={handleInfo}>
-          <LuInfo className="w-6 h-6" />
-        </button>
-        <button
-          className="py-3 px-10 rounded-full border border-primary-300 cursor-pointer relative"
+          className="py-3 px-10 rounded-full border border-primary-300 cursor-pointer relative hover:bg-primary-50 focus:bg-primary-50 transition-all duration-300 ease-in-out"
           onClick={mainAction.onClick}>
           {mainAction.label}
         </button>

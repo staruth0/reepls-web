@@ -1,5 +1,5 @@
-import { Brain } from 'lucide-react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import CognitiveModeIndicator from '../../components/atoms/CognitiveModeIndicator';
 import Topbar from '../../components/atoms/Topbar/Topbar';
 import { CognitiveModeContext } from '../../context/CognitiveMode/CognitiveModeContext';
 import { Article } from '../../models/datamodels';
@@ -10,12 +10,10 @@ import Communique from './components/Communique/Communique';
 import ToggleFeed from './components/ToogleFeed';
 import './feed.scss';
 
-
 const UserFeed: React.FC = () => {
-  const { toggleCognitiveMode,isCognitiveMode } = useContext(CognitiveModeContext);
+  const { toggleCognitiveMode, isCognitiveMode } = useContext(CognitiveModeContext);
   const [isBrainActive, setIsBrainActive] = useState<boolean>(isCognitiveMode);
   const bottomRef = useRef<HTMLDivElement>(null); // Ref for the bottom
-   
 
   // Fetch data
   const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetAllArticles();
@@ -57,7 +55,7 @@ const UserFeed: React.FC = () => {
     console.log('dataArticles', data);
   }, [data]);
 
-  const media = ['https://i.postimg.cc/c4YBg1rc/ui.jpg','https://i.postimg.cc/bYRzzkR0/ux.jpg']
+  const media = ['https://i.postimg.cc/c4YBg1rc/ui.jpg', 'https://i.postimg.cc/bYRzzkR0/ux.jpg'];
 
   return (
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
@@ -65,20 +63,9 @@ const UserFeed: React.FC = () => {
         <Topbar>
           <div className="px-3 flex justify-between items-center w-full">
             <ToggleFeed />
-            <div className="flex items-center gap-2" >
-            <Brain
-              size={isBrainActive ? 35 : 30}
-              onClick={handleBrainClick}
-              className={`cursor-pointer transition-all ${
-                isBrainActive
-                  ? 'text-green-600 bg-green-100 rounded-full p-1'
-                  : 'text-neutral-50 hover:text-green-600 hover:bg-green-100 hover:rounded-full hover:p-1 transition-all'
-              }`}
-             
-            />
-           
+            <div className="flex items-center gap-2">
+              <CognitiveModeIndicator isActive={isBrainActive} onClick={handleBrainClick} />
             </div>
-           
           </div>
         </Topbar>
 
