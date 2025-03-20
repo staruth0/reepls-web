@@ -21,7 +21,7 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media }) => {
         spaceBetween={20}
         slidesPerView={1}
         className="rounded-sm absolute w-full z-0">
-        {media.map((mediaItem, index) => (
+        {media?.map((mediaItem, index) => (
           <SwiperSlide key={index} className="flex justify-center">
             {allowedImageTypes.includes(mediaItem.split('.').pop()!) ? (
               <img

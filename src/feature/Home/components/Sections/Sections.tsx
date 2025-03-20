@@ -8,7 +8,7 @@ const Sections = () => {
 
 
   return (
-    <div className="w-full flex flex-col items-center justify-center py-10 md:py-20 px-4 md:px-24">
+    <div className="w-full flex flex-col items-center justify-center gap-8 md:gap-[48px] py-10 md:py-20 px-4 md:px-24">
       <Section
         title={t("sections.section1.title")}
         description={t("sections.section1.description")}

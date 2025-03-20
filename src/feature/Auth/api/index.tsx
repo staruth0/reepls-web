@@ -16,6 +16,12 @@ const registerWithGoogle = async () => {
   const { data } = await apiClient.get("/googleAuth/google");
   return data;
 };
+// Register user
+const logOutWithGoogle = async () => {
+  console.log("registering with google");
+  const { data } = await apiClient.get("/googleAuth/logout");
+  return data;
+};
 
 // Register user
 const updateUser = async (user: User) => {
@@ -138,5 +144,6 @@ export {
   verifyResetPasswordCode,
   resetPassword,
   updateUser,
-  loginUserWithPhone
+  loginUserWithPhone,
+  logOutWithGoogle
 };

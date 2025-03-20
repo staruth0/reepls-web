@@ -1,20 +1,19 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuCircleArrowLeft, LuCircleArrowRight } from 'react-icons/lu';
 import { Pics } from '../../../assets/images';
 
-
 const slides = [
   {
     image: Pics.maleAuth,
     text: 'Creating Waves of professional impact',
-    description: 'Lorem ipsum dolor sit amet consectetur. Adipiscing varius ridiculus orci vestibulum nec laoreet. Amet consectetur nullam in.',
+    description: 'Stay informed with credible sources. We bring you the latest, unbiased updates from trusted voices around the globe.',
   },
   {
-    image: Pics.femaleAuth, 
+    image: Pics.femaleAuth,
     text: 'Building Bridges to Success',
-    description: 'Lorem ipsum dolor sit amet consectetur. Adipiscing varius ridiculus orci vestibulum nec laoreet. Amet consectetur nullam in.',
+    description: 'Unlock new dimensions of imagination and skill. Dive into creative pursuits that challenge boundaries and inspire innovation',
   },
 ];
 
@@ -41,19 +40,22 @@ function Swiper() {
     return () => clearInterval(interval);
   }, []);
 
-  // Transition variants for both image and text
-  const transitionVariants = {
-    hidden: { opacity: 0, x: -20 },
+  // Transition variants for the swipe effect
+  const swipeVariants = {
+    hiddenLeft: { opacity: 0, x: -100 },
+    // hiddenRight: { opacity: 0, x: 100 },
     visible: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: 20 },
+    // exitLeft: { opacity: 0, x: -100 },
+    exitRight: { opacity: 0, x: 100 },
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background text-neutral-50 p-4 relative">
       {/* Logo */}
-      <div className=" absolute top-5 left-5 self-start text-2xl flex gap-2 items-center font-semibold text-plain-a mb-4"> 
+      <div className="absolute top-5 left-5 self-start text-2xl flex gap-2 items-center font-semibold text-plain-a mb-4">
         <img src={'/Logo.svg'} alt="" />
-        REEPLS</div>
+        REEPLS
+      </div>
 
       {/* Main Content */}
       <div className="flex flex-col items-center w-[80%]">
@@ -69,46 +71,50 @@ function Swiper() {
             </button>
           </div>
 
-          {/* Image with Decorative Element */}
-          <motion.div
-            key={`image-${activeSlide}`} // Key ensures image transitions
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            variants={transitionVariants}
-            transition={{ duration: 0.9 }}
-            className="relative w-[300px] h-[300px] flex justify-center items-center"
-          >
-            {/* Background Decorative Elements */}
-            <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-400 rounded-full -translate-y-8 translate-x-8"></div>
-            <div className="absolute bottom-0 right-0 w-32 h-32 border-8 border-yellow-400 rounded-full translate-y-8 -translate-x-10"></div>
+          {/* Image with Swipe Animation */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeSlide}
+              initial="hiddenLeft"
+              animate="visible"
+              exit="exitRight"
+              variants={swipeVariants}
+              transition={{ duration: 0.7 }}
+              className="relative w-[300px] h-[300px] flex justify-center items-center"
+            >
+              {/* Background Decorative Elements */}
+              <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-400 rounded-full -translate-y-8 translate-x-8"></div>
+              <div className="absolute bottom-0 left-0 w-32 h-32 border-8 border-yellow-400 rounded-full translate-y-8 -translate-x-10"></div>
 
-            {/* Image */}
-            <img
-              src={slides[activeSlide].image}
-              alt="slide"
-              className="w-[18rem] h-[18rem] object-cover rounded-lg"
-            />
-          </motion.div>
+              {/* Image */}
+              <img
+                src={slides[activeSlide].image}
+                alt="slide"
+                className="w-[18rem] h-[18rem] object-cover rounded-lg"
+              />
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Text Content */}
-        <motion.div
-          key={`text-${activeSlide}`} // Key ensures text transitions
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          variants={transitionVariants}
-          transition={{ duration: 0.9 }}
-          className="text-center mt-6"
-        >
-          <h2 className="text-2xl md:text-3xl font-semibold text-plain-a mb-3">
-            {t(slides[activeSlide].text)}
-          </h2>
-          <p className="text-sm md:text-base text-plain-a max-w-md mx-auto">
-            {t(slides[activeSlide].description)}
-          </p>
-        </motion.div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeSlide}
+            initial="hiddenLeft"
+            animate="visible"
+            exit="exitRight"
+            variants={swipeVariants}
+            transition={{ duration: 0.7 }}
+            className="text-center mt-6"
+          >
+            <h2 className="text-2xl md:text-3xl font-semibold text-plain-a mb-3">
+              {t(slides[activeSlide].text)}
+            </h2>
+            <p className="text-sm md:text-base text-plain-a max-w-md mx-auto">
+              {t(slides[activeSlide].description)}
+            </p>
+          </motion.div>
+        </AnimatePresence>
 
         {/* Indicators */}
         <div className="flex gap-2 mt-8">

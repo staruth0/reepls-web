@@ -57,6 +57,8 @@ const UserFeed: React.FC = () => {
     console.log('dataArticles', data);
   }, [data]);
 
+  const media = ['https://i.postimg.cc/c4YBg1rc/ui.jpg','https://i.postimg.cc/bYRzzkR0/ux.jpg']
+
   return (
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
       <div className="Feed__Posts min-h-screen lg:border-r-[1px] border-neutral-500">
@@ -92,12 +94,12 @@ const UserFeed: React.FC = () => {
               <>
                 {/* Render all pages of articles */}
                 {data?.pages.map((page, i) => (
-                  <div className="flex flex-col" key={i}>
+                  <div className="flex flex-col gap-7" key={i}>
                     {page.articles.map((article: Article) => (
                       <BlogPost
                         key={article._id}
                         isArticle={article.isArticle!}
-                        media={article.media!}
+                        media={media}
                         title={article.title!}
                         content={article.content!}
                         date={article.createdAt!}

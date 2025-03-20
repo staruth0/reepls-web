@@ -114,6 +114,7 @@ const UserRoutes = {
       path: '/posts/communiques',
       element: <CommuniqueList />,
     },
+
   ],
 };
 

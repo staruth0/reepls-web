@@ -15,6 +15,7 @@ import {
   verifyEmailCode,
   verifyPhoneCode,
   logoutUser,
+  logOutWithGoogle,
 } from "../api";
 import { useTokenStorage } from './useTokenStorage';
 
@@ -48,6 +49,15 @@ export const useRegisterUserWithGoogle = () => {
   return useQuery({
     queryKey: ['registerWithGoogle'],
     queryFn: () => registerWithGoogle(),
+  
+  });
+};
+// Hook for registering a user with Google
+export const useLogOutUserWithGoogle = () => {
+
+  return useQuery({
+    queryKey: ['registerWithGoogle'],
+    queryFn: () => logOutWithGoogle(),
   
   });
 };
