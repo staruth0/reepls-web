@@ -9,12 +9,12 @@ const LeftContent = () => {
 
   return (
     <div className="space-y-6 max-w-2xl">
-      <h1 className="text-3xl md:text-6xl font-bold text-neutral-50 text-center md:text-left">
+      <h1 className="text-3xl md:text-[64px] font-bold text-neutral-50 text-center md:text-left md:leading-[64px]">
         {t("Drop your thoughts and let them")}{" "}
         <span className=" font-light italic">reepl</span>
       </h1>
 
-      <p className="text-base md:text-lg text-neutral-100 text-center md:text-left">
+      <p className="text-base md:text-[16px] text-neutral-100 text-center md:text-left">
         {t(
           "Explore, write, and share insightful stories and heartfelt reflections. Stay informed, engaged, and part of a thoughtful community."
         )}

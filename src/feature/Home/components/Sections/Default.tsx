@@ -32,10 +32,10 @@ const Default: React.FC<SectionProps> = ({
 
   return (
     <div
-      className={`w-full ${reverse ? "md:flex-row-reverse" : "md:flex-row"} flex flex-col items-center justify-center text-center md:text-left gap-3 md:gap-10 py-10 md:py-20 px-4 md:px-0`}
+      className={`w-full ${reverse ? "md:flex-row-reverse" : "md:flex-row"} flex flex-col items-center justify-center text-center md:text-left gap-8 md:gap-[104px]  py-10  px-4 md:px-0`}
     >
       <div
-        className="flex-1 w-full"
+        className="flex-1 w-full md:max-w-[385px]"
         data-aos={reverse ? "fade-left" : "fade-right"} 
         data-aos-delay="200" 
       >
@@ -47,15 +47,15 @@ const Default: React.FC<SectionProps> = ({
       </div>
 
       <div
-        className="flex-1 w-full space-y-3 md:space-y-6"
+        className="flex-1 md:max-w-[455px] md:max-h-[175px] space-y-3 md:space-y-6"
         data-aos={reverse ? "fade-right" : "fade-left"}
         data-aos-delay="400"
       >
-        <h2 className="text-2xl md:text-4xl font-bold text-neutral-50">{title}</h2>
-        <p className="text-base md:text-lg text-neutral-100">{description}</p>
+        <h2 className="text-2xl md:text-[36px] font-bold text-neutral-50 md:leading-[44px]">{title}</h2>
+        <p className="text-base md:text-[16px] text-neutral-100 md:leading-[24px]">{description}</p>
         <a
           href={`${authUser?.id ? "feed" : linkUrl}`}
-          className="hover-underlined flex items-center justify-center md:justify-start w-fit mx-auto md:mx-0 text-lg md:text-xl font-bold text-primary-400  transition-colors gap-1"
+          className="hover-underlined flex items-center justify-center md:justify-start w-fit mx-auto md:mx-0 text-md md:text-[15px] font-bold text-primary-400  transition-colors gap-1"
         >
           {linkText} <LuArrowRight />
         </a>

@@ -9,7 +9,7 @@ const FooterBottom = () => {
 
   return (
     <div className="bg-background py-8 px-5 md:px-20">
-      <div className=" flex flex-col-reverse gap-4 md:flex-row items-center justify-between">
+      <div className=" flex flex-col gap-4 md:flex-row items-center justify-between">
         <div className="flex justify-between w-full md:w-auto">
          <div className="flex items-center gap-2 cursor-pointer">
          <img
