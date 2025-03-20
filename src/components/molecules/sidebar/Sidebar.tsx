@@ -14,6 +14,7 @@ import {
 } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { MAX_IMAGE_COUNT, MAX_VIDEO_COUNT } from '../../../constants';
 import { SidebarContext } from '../../../context/SidebarContext/SidebarContext';
 import PostModal from '../../../feature/Blog/components/PostModal';
 import { useCreateArticle } from '../../../feature/Blog/hooks/useArticleHook';
@@ -26,7 +27,7 @@ import './sidebar.scss';
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
-  const { authUser,isLoggedIn } = useUser();
+  const { authUser, isLoggedIn } = useUser();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
   const { t } = useTranslation();
   const { mutate: createPost, isPending } = useCreateArticle();
@@ -51,34 +52,47 @@ const Sidebar: React.FC = () => {
     {
       icon: LuBookmark,
       name: 'Bookmarks',
-      link: `${isLoggedIn ?'/bookmarks':'/bookmarks/anonymous' }`,
+      link: `${isLoggedIn ? '/bookmarks' : '/bookmarks/anonymous'}`,
     },
     {
       icon: LuBell,
       name: 'Notifications',
-      link:  `${isLoggedIn ?'/notifications':'/notifications/anonymous'}`,
+      link: `${isLoggedIn ? '/notifications' : '/notifications/anonymous'}`,
       badgeContent: 14,
     },
     {
       icon: FaRegUserCircle,
       name: 'Profile',
-      link: `${isLoggedIn? `/profile/${authUser?.username}`:'/anonymous'} `,
+      link: `${isLoggedIn ? `/profile/${authUser?.username}` : '/anonymous'} `,
     },
   ];
 
   const handlePost = async (postContent: string, postImages: File[], postVideos: File[]) => {
+    if (!authUser?.id) {
+      toast.error('You must be logged in to create a post');
+      return;
+    }
+    if (postImages.length > MAX_IMAGE_COUNT) {
+      toast.error('You must upload at most ' + MAX_IMAGE_COUNT + ' images');
+      return;
+    }
+    if (postVideos.length > MAX_VIDEO_COUNT) {
+      toast.error('You must upload at most ' + MAX_VIDEO_COUNT + ' videos');
+      return;
+    }
+
     const images: string[] = [];
     const videos: string[] = [];
     for (const image of postImages) {
       if (authUser.id) {
-        const result = await uploadPostImage(authUser?.id, image);
-        images.push(result?.secure_url);
+        const url = await uploadPostImage(authUser?.id, image);
+        images.push(url);
       }
     }
     for (const video of postVideos) {
       if (authUser.id) {
-        const result = await uploadPostVideo(authUser?.id, video);
-        videos.push(result?.secure_url);
+        const url = await uploadPostVideo(authUser?.id, video);
+        videos.push(url);
       }
     }
 

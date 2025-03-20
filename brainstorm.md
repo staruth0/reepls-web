@@ -278,3 +278,15 @@ Mobile
 - Support for non-Cameroonian phone numbers
 - Backend: pleas use the user's name not email to generate the username
 - When updating the profile, check that the username cannot have spaces; I am able to make my username have spaces (both frontend and backend)
+
+When a user
+-deletes a post (the correspoding media is in the media property)
+-deletes an article(the correspoding media is in the media property)
+-changes their profile picture
+-changes their banner
+
+it has to be removed from storages
+To remove the media
+-the filename is the media id which you can use to delete the media from cloudinary
+-split the url of the media by / and take the last element; remove extension by splitting by . and taking first
+-delete the resource by id using the cloudinary api; if it fails, ignore (make a log of it)

@@ -3,7 +3,14 @@ import Picker, { Theme } from 'emoji-picker-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuCalendar, LuImage, LuLoader, LuPlus, LuSmile, LuVideo, LuX } from 'react-icons/lu';
-import { allowedImageTypes, allowedVideoTypes, SHORT_POST_LENGTH } from '../../../constants';
+import { toast } from 'react-toastify';
+import {
+  allowedImageTypes,
+  allowedVideoTypes,
+  MAX_IMAGE_SIZE,
+  MAX_VIDEO_SIZE,
+  SHORT_POST_LENGTH,
+} from '../../../constants';
 import useTheme from '../../../hooks/useTheme';
 import { cn } from '../../../utils';
 
@@ -33,6 +40,10 @@ const PostModal = ({
       if (file.type && allowedImageTypes.includes(file.type.split('/')[1])) {
         newImages.push(file);
       }
+      if (file && file.size > MAX_IMAGE_SIZE) {
+        toast.error('Image size must be less than ' + MAX_IMAGE_SIZE / 1024 / 1024 + ' MB');
+        return;
+      }
     }
     setPostImages([...postImages, ...newImages]);
   };
@@ -44,6 +55,10 @@ const PostModal = ({
     for (const file of files) {
       if (file.type && allowedVideoTypes.includes(file.type.split('/')[1])) {
         newVideos.push(file);
+      }
+      if (file && file.size > MAX_VIDEO_SIZE) {
+        toast.error('Video size must be less than ' + MAX_VIDEO_SIZE / 1024 / 1024 + ' MB');
+        return;
       }
     }
     setPostVideos([...postVideos, ...newVideos]);

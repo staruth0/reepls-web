@@ -103,8 +103,8 @@ const CreatePost: React.FC = () => {
     }
 
     if (thumbnail && authUser?.id) {
-      const result = await uploadArticleThumbnail(authUser?.id, thumbnail);
-      setMedia([result.secure_url, ...media]);
+      const url = await uploadArticleThumbnail(authUser?.id, thumbnail);
+      setMedia([url, ...media]);
     }
 
     const article: Article = {
@@ -143,7 +143,7 @@ const CreatePost: React.FC = () => {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>, nextFocus: () => void) => {
-    if (event.key === 'Enter' && isLoggedIn) {
+    if (event.key === 'Enter') {
       event.preventDefault();
       nextFocus();
     }
@@ -217,9 +217,10 @@ const CreatePost: React.FC = () => {
             </div>
             <div id="editor" className="mb-20">
               <TipTapRichTextEditor
-                initialContent={content}
+                initialContent={htmlContent}
                 handleContentChange={setContent}
                 editorRef={editorRef}
+                handleMediaUpload={(url) => setMedia([url, ...media])}
                 handleHtmlContentChange={setHtmlContent}
                 disabled={!hasLoadedDraft}
                 className="block max-w-full bg-primary-100 static mx-auto my-1"
