@@ -57,9 +57,7 @@ const UserFeed: React.FC = () => {
     console.log('dataArticles', data);
   }, [data]);
 
-  const media = ['https://www.google.com/imgres?q=images&imgurl=https%3A%2F%2Fcdn.pixabay.com%2Fphoto%2F2024%2F05%2F26%2F10%2F15%2Fbird-8788491_1280.jpg&imgrefurl=https%3A%2F%2Fpixabay.com%2Fimages%2Fsearch%2Fnature%2F&docid=Ba_eiczVaD9-zM&tbnid=90TpIHBM_bySlM&vet=12ahUKEwimwry98paMAxVA5skDHUMkIh0QM3oECCgQAA..i&w=1280&h=853&hcb=2&ved=2ahUKEwimwry98paMAxVA5skDHUMkIh0QM3oECCgQAA',
-    'https://www.google.com/imgres?q=images&imgurl=https%3A%2F%2Fcdn.pixabay.com%2Fphoto%2F2024%2F05%2F26%2F10%2F15%2Fbird-8788491_1280.jpg&imgrefurl=https%3A%2F%2Fpixabay.com%2Fimages%2Fsearch%2Fnature%2F&docid=Ba_eiczVaD9-zM&tbnid=90TpIHBM_bySlM&vet=12ahUKEwimwry98paMAxVA5skDHUMkIh0QM3oECCgQAA..i&w=1280&h=853&hcb=2&ved=2ahUKEwimwry98paMAxVA5skDHUMkIh0QM3oECCgQAA'
-  ]
+  const media = ['https://i.postimg.cc/c4YBg1rc/ui.jpg','https://i.postimg.cc/bYRzzkR0/ux.jpg']
 
   return (
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>

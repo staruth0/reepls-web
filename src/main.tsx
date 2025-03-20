@@ -1,19 +1,21 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { Provider as ReduxProvider } from 'react-redux';
-import App from './App.tsx';
-import './index.scss';
-import './lang/i18n.ts';
-import { store } from './store/index.tsx';
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { Provider as ReduxProvider } from "react-redux";
+import { ErrorBoundary } from "react-error-boundary";
+import App from "./App.tsx";
+import "./index.scss";
+import "./lang/i18n.ts";
+import { store } from "./store/index.tsx";
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import AuthProvider from './context/AuthContext/AuthProvider.tsx';
-import CognitiveModeProvider from './context/CognitiveMode/CognitiveModeProvider.tsx';
-import FeedFollowingProvider from './context/Feedcontext/IsFeedFollowingProvider.tsx';
-import SideBarProvider from './context/SidebarContext/SideBarProvider.tsx';
-import { ThemeProvider } from './context/Theme/themeProvider.tsx';
-import VoiceLanguageProvider from './context/VoiceLanguageContext/VoiceLanguageProvider.tsx';
-import SearchContainerProvider from './context/suggestionContainer/isSearchProvider.tsx';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import AuthProvider from "./context/AuthContext/AuthProvider.tsx";
+import CognitiveModeProvider from "./context/CognitiveMode/CognitiveModeProvider.tsx";
+import FeedFollowingProvider from "./context/Feedcontext/IsFeedFollowingProvider.tsx";
+import SideBarProvider from "./context/SidebarContext/SideBarProvider.tsx";
+import { ThemeProvider } from "./context/Theme/themeProvider.tsx";
+import VoiceLanguageProvider from "./context/VoiceLanguageContext/VoiceLanguageProvider.tsx";
+import SearchContainerProvider from "./context/suggestionContainer/isSearchProvider.tsx";
+import ErrorFallback from "./components/molecules/ErrorFallback/ErrorFallback.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,7 +29,7 @@ const queryClient = new QueryClient({
   },
 });
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
       <ThemeProvider>
@@ -38,9 +40,19 @@ createRoot(document.getElementById('root')!).render(
                 <VoiceLanguageProvider>
                   <FeedFollowingProvider>
                     <SearchContainerProvider>
-                    <App />
+                      <ErrorBoundary
+                        FallbackComponent={ErrorFallback}
+                        onError={(error, info) => {
+                          console.error(
+                            "Error caught by ErrorBoundary:",
+                            error,
+                            info
+                          );
+                        }}
+                      >
+                        <App />
+                      </ErrorBoundary>
                     </SearchContainerProvider>
-                    
                   </FeedFollowingProvider>
                 </VoiceLanguageProvider>
               </SideBarProvider>

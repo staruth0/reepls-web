@@ -7,6 +7,8 @@ import BlogMessage from './BlogComponents/BlogMessage';
 import BlogProfile from './BlogComponents/BlogProfile';
 import BlogReactionSession from './BlogComponents/BlogReactionSession';
 import BlogReactionStats from './BlogComponents/BlogReactionStats';
+import ErrorFallback from '../../../components/molecules/ErrorFallback/ErrorFallback';
+import { ErrorBoundary } from 'react-error-boundary';
 
 interface BlogPostProps {
   media: string[];
@@ -19,12 +21,6 @@ interface BlogPostProps {
   user: User;
   slug: string;
 }
-
-// const sampleImages = [
-//   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-// ];
 
 const BlogPost: React.FC<BlogPostProps> = ({
   media,
@@ -44,12 +40,16 @@ const BlogPost: React.FC<BlogPostProps> = ({
     setIsCommentSectionOpen(!isCommentSectionOpen);
   };
 
-  useEffect(()=>{
-    console.log('user',user)
-  },[user])
+  useEffect(() => {
+    console.log('user', user);
+  }, [user]);
 
   return (
-    <div className="each_blog_post mt-5 shadow-md p-2 max-w-[680px] self-center w-full bg-background">
+    <div
+      className={`each_blog_post mt-5 shadow-md p-2 max-w-[680px]  self-center w-full bg-background ${
+        isArticle ? 'gradient-border' : ''
+      }`}
+    >
       {isArticle && <BlogArticleHeader />}
       <BlogProfile
         title={title}
@@ -66,7 +66,19 @@ const BlogPost: React.FC<BlogPostProps> = ({
         isArticle={isArticle}
         slug={slug}
       />
-      {!isCognitiveMode && media.length > 0 && <BlogImagery media={media} />}
+        <ErrorBoundary
+                              FallbackComponent={ErrorFallback}
+                              onError={(error, info) => {
+                                console.error(
+                                  "Error caught by ErrorBoundary:",
+                                  error,
+                                  info
+                                );
+                              }}
+                            >
+                                  {!isCognitiveMode && media.length > 0  && <BlogImagery media={media} />}
+                            </ErrorBoundary>
+  
       <BlogReactionStats toggleCommentSection={toggleCommentSection} date={date} article_id={article_id} />
       <BlogReactionSession
         isCommentSectionOpen={isCommentSectionOpen}
