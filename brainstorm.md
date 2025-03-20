@@ -226,7 +226,7 @@ Editor command addtions
 
 To do
 
-- Add Error boundary to app
+-
 - -Demarkating what a logged in vs anonymous user can do
   -How should articles be demacarted for maximum engagement?
   -What makes a post a communique
@@ -241,7 +241,7 @@ Posting works[Limit on length of subtitle, title, comments]
 
 Reading History()
 
-=
+==============
 
 Clean up work
 
@@ -252,10 +252,29 @@ Clean up work
 4. It seems create account with google and login with google have not actually been implemented
 5. Reduce/remove unnecessary console logs in the code base
 6. See more/see less should only be visble when the actual content is too long
-7.
+   7.Remove filler/default content: profile iomage/banner, [default about, bio, town on profile]
+7. Feature: display the writers profile on th article view page? Add the ability to add comments, reactions to articles
+8. Centralise the articles content on the page?
+9.
 
 For me
 
 - Fetching users media
 - uploading media from posting
 -
+
+Mobile
+-Articles dont display their content but instead just the title and a link to continue reading where it rendered full page
+-anonymous mood tries to load suggestions in search page causing errors
+-remove filler info like recent seraches on search page or filler post on feed if currently there
+-when signing up/in with google after signing redirects one to localhost:500/api-v1/... for some reason
+-Display name not username
+
+- I cannot sign in with email and password as i get an alet with 400 code fail after entering the verification code
+
+- Verified badge immediately shows when I create an account/ is that a backend or frontend problem? - the account is not verified
+  -Upgrade rebrand: replace the names to reepls and the logos as needed
+- Should not be able to create empty content: comments, posts, articles, etc
+- Support for non-Cameroonian phone numbers
+- Backend: pleas use the user's name not email to generate the username
+- When updating the profile, check that the username cannot have spaces; I am able to make my username have spaces (both frontend and backend)
