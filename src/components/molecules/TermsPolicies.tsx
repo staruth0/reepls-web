@@ -6,7 +6,7 @@ const TermsPolicies: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-plain-a flex flex-col">
+    <div className="min-h-screen  flex flex-col">
       {/* Topbar */}
       <Topbar>
         <p className="text-neutral-50">{t("Terms and Policies")}</p>

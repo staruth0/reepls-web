@@ -2,7 +2,7 @@ import React from "react";
 
 const BlogSkeletonComponent: React.FC = () => {
   return (
-    <div className="bg-neutral-50 dark:bg-neutral-800 text-neutral-300 p-4 rounded-lg w-full min-h-[300px] mt-7 flex flex-col justify-between  animate-pulse">
+    <div className="bg-neutral-50 dark:bg-neutral-800 text-neutral-300 p-4 rounded-lg min-w-[400px] w-full min-h-[300px] mt-7 flex flex-col justify-between  animate-pulse">
       <div className="flex items-center space-x-3">
         <div className="w-10 h-10 bg-neutral-200 dark:bg-neutral-700 rounded-full"></div>
         <div>

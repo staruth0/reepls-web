@@ -14,9 +14,6 @@ const AuthLayout = () => {
     navigate(-1);
   };
 
-  // Function to handle language change
-
-
   return (
     <div className="auth__layout">
       <div className="swiper__part">

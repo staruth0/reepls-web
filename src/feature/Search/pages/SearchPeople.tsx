@@ -1,83 +1,48 @@
 import React, { useEffect } from 'react';
 import AuthorComponent from '../../Saved/Components/AuthorComponent';
 import { useUser } from '../../../hooks/useUser';
-import { useGetFollowing } from '../../Follow/hooks';
-import { Follow, User } from '../../../models/datamodels';
-import { useGetTrendingAuthors } from '../../Feed/hooks';
+import { useGetPeopleResults } from '../hooks';
 
-export interface Contributor {
-  authorId: string;
-  totalViews: number;
-  totalShares: number;
-  totalPositiveReactions: number;
-  positiveReactionCounts: {
-    like: number;
-    clap: number;
-    love: number;
-    smile: number;
-    cry: number;
-  };
-  engagementRate: string;
-  weightedScore: string;
-  author: User;
+interface SearchResult {
+  _id: string;
+  username: string;
+  type: string;
+  score: number;
+  isFollowing: boolean;
 }
 
-export interface TrendingAuthorCategory {
-  leaderIn: string;
-  contributors: Contributor[];
+interface SearchPeopleProps {
+  query: string;
 }
 
-const SearchPeople: React.FC = () => {
+const SearchPeople: React.FC<SearchPeopleProps> = ({ query }) => {
   const { authUser } = useUser();
-  const { data: followingsData } = useGetFollowing(authUser?.id || "");
-  const { data: trendingAuthors, isLoading, error } = useGetTrendingAuthors();
+  const { data: searchResults, isLoading, error } = useGetPeopleResults(query);
 
   useEffect(() => {
-    console.log('author id', authUser?.id);
-    console.log('trending authors', trendingAuthors);
-  }, [authUser, trendingAuthors]);
-
-  const followings = followingsData?.data || [];
+    console.log('user id', authUser?.id);
+    console.log('search results', searchResults);
+  }, [authUser, searchResults]);
 
   return (
     <div className="people">
-      {/* Section for People You Follow */}
+      {/* Section for Search Results */}
       <div className="space-y-4 mt-4">
-        <p className="text-lg font-semibold">People You Follow</p>
-        {followings.length > 0 ? (
-          followings.map((following: Follow) => (
+        {isLoading ? (
+          <p className="text-neutral-500 text-center">Loading search results...</p>
+        ) : error ? (
+          <p className="text-red-500 text-center">Error: {error.message}</p>
+        ) : searchResults?.length > 0 ? (
+          searchResults.map((person: SearchResult) => (
             <AuthorComponent
-              key={following?.followed_id?.user_id}
-              user={following?.followed_id}
+              key={person._id}
+              username={person.username}
             />
           ))
         ) : (
-          <p className="text-neutral-500 text-center">No followings yet</p>
+          <p className="text-neutral-500 text-center">No people found</p>
         )}
       </div>
-
-      {/* Trending Authors Sections */}
-      {isLoading ? (
-        <p className="text-neutral-500 text-center mt-4">Loading trending authors...</p>
-      ) : error ? (
-        <p className="text-red-500 text-center mt-4">Error: {error.message}</p>
-      ) : (
-        trendingAuthors?.map((category:TrendingAuthorCategory) => (
-          <div key={category.leaderIn} className="space-y-4 mt-4">
-            <p className="text-lg font-semibold">Leading in {category.leaderIn}</p>
-            {category?.contributors?.length > 0 ? (
-              category.contributors.map((contributor) => (
-                <AuthorComponent
-                  key={contributor.authorId}
-                  user={contributor.author}
-                />
-              ))
-            ) : (
-              <p className="text-neutral-500 text-center">No trending authors in this category</p>
-            )}
-          </div>
-        ))
-      )}
     </div>
   );
 };

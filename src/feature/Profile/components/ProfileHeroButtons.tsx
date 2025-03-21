@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../hooks/useUser";
 import { useFollowUser, useUnfollowUser } from "../../Follow/hooks";
 import { useKnowUserFollowings } from "../../Follow/hooks/useKnowUserFollowings";
 import { toast } from "react-toastify";
+import SignInPopUp from "../../AnonymousUser/components/SignInPopUp";
+
 
 interface ProfileHeroButtonsProps {
   userId: string;
@@ -17,12 +19,11 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
 }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { authUser } = useUser();
+  const { authUser, isLoggedIn } = useUser();
   const { isFollowing: isUserFollowing } = useKnowUserFollowings();
-
   const { mutate: follow, isPending: isFollowPending } = useFollowUser();
-
   const { mutate: unFollow, isPending: isUnfollowPending } = useUnfollowUser();
+  const [showSignInPopup, setShowSignInPopup] = useState(false);
 
   const handleEditProfile = (username: string) => {
     navigate(`/profile/edit/${username}`);
@@ -33,6 +34,12 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
   };
 
   const handleFollowClick = () => {
+    if (!isLoggedIn) {
+
+      setShowSignInPopup(true);
+      return;
+    }
+
     if (isFollowPending || isUnfollowPending) return;
 
     if (isUserFollowing(userId)) {
@@ -55,7 +62,7 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
   };
 
   return (
-    <div className="flex gap-2 text-neutral-50 justify-center items-center">
+    <div className="flex gap-2 text-neutral-50 justify-center items-center relative">
       {isAuthUser ? (
         <>
           <button
@@ -72,16 +79,25 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
           </button>
         </>
       ) : (
-        <button
-          className={`px-8 py-3 rounded-full text-sm ${
-            isUserFollowing(userId)
-              ? "bg-neutral-600 text-neutral-50"
-              : "bg-main-green text-white"
-          }`}
-          onClick={handleFollowClick}
-        >
-          {getFollowStatusText()}
-        </button>
+        <>
+          <button
+            className={`px-8 py-3 rounded-full text-sm ${
+              isUserFollowing(userId)
+                ? "bg-neutral-600 text-neutral-50"
+                : "bg-main-green text-white"
+            }`}
+            onClick={handleFollowClick}
+          >
+            {getFollowStatusText()}
+          </button>
+          {showSignInPopup && (
+            <SignInPopUp
+              text="follow" 
+              position="below" 
+              onClose={() => setShowSignInPopup(false)} 
+            />
+          )}
+        </>
       )}
     </div>
   );

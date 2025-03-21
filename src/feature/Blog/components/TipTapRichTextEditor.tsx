@@ -166,7 +166,7 @@ function TipTapRichTextEditor({
     Iframe,
     ExportPdf.configure({ spacer: true }),
     ImportWord.configure({
-      upload: async (files: File[]): Promise<{ src: string; alt: string }[]> => {
+      upload: async (): Promise<{ src: string; alt: string }[]> => {
         toast.error('We do not support uploading documents yet!');
         throw new Error('Not implemented');
         // if (!authUser?.id) {

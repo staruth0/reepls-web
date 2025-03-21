@@ -35,7 +35,7 @@ const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children }) => {
         .then(() => {
           toast.success('Successfully updated banner image');
         })
-        .catch((error) => {
+        .catch(() => {
           toast.error('New banner could not be uploaded');
         });
     }
@@ -51,7 +51,7 @@ const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children }) => {
         .then(() => {
           toast.success('Successfully updated profile image');
         })
-        .catch((error) => {
+        .catch(() => {
           toast.error('New profile picture could not be uploaded');
         });
     }

@@ -32,8 +32,9 @@ const SimilarProfiles: React.FC = () => {
         <AuthorSuggestionComponent
           key={`${user.id}-${index}`}
           username={user.username!}
-          title={user.title || 'Suggested Author'}
+          title={user.bio || 'Suggested Author'}
           id={user._id || ''}
+          isverified={user.is_verified_writer!}
         />
       ))}
     </div>

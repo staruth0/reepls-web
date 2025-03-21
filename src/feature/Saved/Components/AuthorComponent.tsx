@@ -2,18 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { LuBadgeCheck, LuEllipsisVertical } from 'react-icons/lu';
 import { UserPlus, EyeOff, Flag, X } from 'lucide-react';
 import { profileAvatar } from '../../../assets/icons';
-import { User } from '../../../models/datamodels';
+// import { User } from '../../../models/datamodels';
 
 import { useFollowUser, useUnfollowUser } from '../../Follow/hooks';
 import { useKnowUserFollowings } from '../../Follow/hooks/useKnowUserFollowings';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useGetUserByUsername } from '../../Profile/hooks';
 
 interface AuthorComponentProps {
-  user: User;
+  username: string;
 }
 
-const AuthorComponent: React.FC<AuthorComponentProps> = ({ user }) => {
+const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
+  const {user} = useGetUserByUsername(username || '')
   const [showMenu, setShowMenu] = useState(false);
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
   const { isFollowing: isUserFollowing } = useKnowUserFollowings();
@@ -23,7 +25,7 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ user }) => {
 
   useEffect(()=>{
     console.log('userer',user);
-  },[])
+  },[user])
 
   const handleFollowClick = () => {
     if (isFollowPending || isUnfollowPending || !user?.id) return;
@@ -43,7 +45,7 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ user }) => {
   };
 
   const handleBlockConfirm = () => {
- 
+    if(!user?.id) return
 
     console.log(`Blocked ${user.username}`);
     toast.success(`User ${user.username} blocked successfully`);
@@ -52,20 +54,23 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ user }) => {
   };
 
   const handleViewProfile = () => {
+    if(!user?.id) return
     navigate(`/profile/${user.username}`);
     setShowMenu(false);
   };
 
   const handleReport = () => {
+    if(!user?.id) return
     navigate(`/report/${user.id}`);
     setShowMenu(false);
   };
 
   const getFollowStatusText = () => {
+    if(!user?.id) return
     if(isFollowPending || isUnfollowPending || !user.id) return
     if (isFollowPending) return 'Following...';
     if (isUnfollowPending) return 'Unfollowing...';
-    return isUserFollowing(user.id) ? 'Following' : 'Follow';
+    return isUserFollowing(user.id ) ? 'Following' : 'Follow';
   };
 
   return (
@@ -140,7 +145,7 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ user }) => {
           ></div>
           <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-800 rounded-md p-6 z-[99999] text-neutral-50">
             <h3 className="text-lg font-semibold mb-4">Confirm Block</h3>
-            <p className="mb-6">Are you sure you want to block {user.username}?</p>
+            <p className="mb-6">Are you sure you want to block {username}?</p>
             <div className="flex justify-end gap-4">
               <button
                 className="px-4 py-2 bg-neutral-600 rounded-md hover:bg-neutral-700"

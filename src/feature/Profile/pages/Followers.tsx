@@ -57,7 +57,7 @@ const Followers: React.FC = () => {
                   followings.map((following: Follow) => (
                     <AuthorComponent
                       key={following?.followed_id?.id}
-                      user={following.followed_id} 
+                      username={following?.followed_id?.username || ''} 
                     />
                   ))
                 ) : (
@@ -73,7 +73,7 @@ const Followers: React.FC = () => {
                   followers.map((follower: Follow) => (
                     <AuthorComponent
                       key={follower?.follower_id?.id}
-                      user={follower.follower_id} 
+                      username={follower?.follower_id?.username || ''} 
                     />
                   ))
                 ) : (

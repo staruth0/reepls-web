@@ -9,9 +9,10 @@ interface ProfileDetailsProps {
   user_id: string;
   bio: string;
   role: string;
+  isverified:boolean;
 }
 
-const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town,role,user_id,bio }) => {
+const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town,role,user_id,bio,isverified }) => {
   const { t } = useTranslation();
   const { goToFollowingsPage } = useRoute();
   const { data: followingData } = useGetFollowing(user_id);
@@ -28,7 +29,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town,role,user_id
     <div className="text-neutral-50">
       <div className="flex font-semibold gap-2">
         {name}
-        <LuBadgeCheck className="size-4 text-primary-400 mt-1" />
+      {isverified &&  <LuBadgeCheck className="size-4 text-primary-400 mt-1" />}
       </div>
       <p className="text-[13px]">{bio}</p>
       <div className="flex flex-wrap-reverse text-[13px] gap-3 mt-1">
