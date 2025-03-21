@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { cn } from '../../../../utils';
 import './Blog.scss';
 
 interface BlogMessageProps {
@@ -43,9 +44,11 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, isArticle, ar
       <div className="text-[15px] font-semibold mb-2">{title}</div>
       <p
         ref={contentRef}
-        className={`text-neutral-100 text-[14px] leading-[20px] transition-all duration-300 ${
-          isExpanded ? 'line-clamp-none' : 'line-clamp-3'
-        }`}>
+        className={cn(
+          'text-neutral-100 text-[14px] leading-[20px] transition-all duration-300',
+          isExpanded ? 'line-clamp-none' : 'line-clamp-3',
+          'whitespace-pre-wrap'
+        )}>
         {content}
       </p>
       {isArticle ? (

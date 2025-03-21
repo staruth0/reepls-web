@@ -23,9 +23,9 @@ const uploadUserProfile = async (userId: string, file: File): Promise<string> =>
   formData.append('upload_preset', uploadPreset as string);
   formData.append('cloud_name', cloudName as string);
   formData.append('asset_folder', 'profiles');
-  formData.append('overwrite', 'true');
+  // formData.append('overwrite', 'true');
   formData.append('folder', `profiles`);
-  formData.append('filename_override', userId);
+  // formData.append('filename_override', userId);
   const response = await axiosStorageClient.post(`/${cloudinaryResourceTypes.image}/upload`, formData);
   return response.data.secure_url;
 };
