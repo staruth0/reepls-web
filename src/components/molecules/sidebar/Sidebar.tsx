@@ -85,14 +85,24 @@ const Sidebar: React.FC = () => {
     const videos: string[] = [];
     for (const image of postImages) {
       if (authUser.id) {
-        const url = await uploadPostImage(authUser?.id, image);
-        images.push(url);
+        try {
+          const url = await uploadPostImage(authUser?.id, image);
+          images.push(url);
+        } catch (error) {
+          toast.error('Your images could not be uploaded. Please try again later.');
+          return;
+        }
       }
     }
     for (const video of postVideos) {
       if (authUser.id) {
-        const url = await uploadPostVideo(authUser?.id, video);
-        videos.push(url);
+        try {
+          const url = await uploadPostVideo(authUser?.id, video);
+          videos.push(url);
+        } catch (error) {
+          toast.error('Your videos could not be uploaded. Please try again later.');
+          return;
+        }
       }
     }
 

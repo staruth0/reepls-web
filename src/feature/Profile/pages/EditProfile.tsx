@@ -1,21 +1,21 @@
-import React, { useEffect, useReducer } from "react";
-import { useParams } from "react-router-dom";
-import Topbar from "../../../components/atoms/Topbar/Topbar";
-import ProfileConfigurations from "../components/ProfileConfigurations";
-import ProfileInput from "../components/ProfileInput";
-import { useGetUserByUsername, useUpdateUser } from "../hooks";
-import { toast } from "react-toastify"; // Import toast
-import ProfileEditBody from "../components/ProfileEditBody";
+import React, { useEffect, useReducer } from 'react';
 import { LuLoader } from 'react-icons/lu';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify'; // Import toast
+import Topbar from '../../../components/atoms/Topbar/Topbar';
+import ProfileConfigurations from '../components/ProfileConfigurations';
+import ProfileEditBody from '../components/ProfileEditBody';
+import ProfileInput from '../components/ProfileInput';
+import { useGetUserByUsername, useUpdateUser } from '../hooks';
 
 // Define action types
 type Action =
-  | { type: "SET_NAME"; payload: string }
-  | { type: "SET_BIO"; payload: string }
-  | { type: "SET_ABOUT"; payload: string }
-  | { type: "SET_LOCATION"; payload: string }
-  | { type: "SET_ALL"; payload: State }
-  | { type: "RESET" };
+  | { type: 'SET_NAME'; payload: string }
+  | { type: 'SET_BIO'; payload: string }
+  | { type: 'SET_ABOUT'; payload: string }
+  | { type: 'SET_LOCATION'; payload: string }
+  | { type: 'SET_ALL'; payload: State }
+  | { type: 'RESET' };
 
 // Define state structure
 interface State {
@@ -28,18 +28,18 @@ interface State {
 // Reducer function
 const profileReducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case "SET_NAME":
+    case 'SET_NAME':
       return { ...state, name: action.payload };
-    case "SET_BIO":
+    case 'SET_BIO':
       return { ...state, bio: action.payload };
-    case "SET_ABOUT":
+    case 'SET_ABOUT':
       return { ...state, about: action.payload };
-    case "SET_LOCATION":
+    case 'SET_LOCATION':
       return { ...state, location: action.payload };
-    case "SET_ALL":
+    case 'SET_ALL':
       return { ...action.payload };
-    case "RESET":
-      return { name: "", bio: "", about: "", location: "" };
+    case 'RESET':
+      return { name: '', bio: '', about: '', location: '' };
     default:
       return state;
   }
@@ -47,27 +47,27 @@ const profileReducer = (state: State, action: Action): State => {
 
 const EditProfile: React.FC = () => {
   const { username } = useParams();
-  const { user } = useGetUserByUsername(username || "");
+  const { user } = useGetUserByUsername(username || '');
   const { mutate, isPending, isError, isSuccess } = useUpdateUser();
 
   // Initialize reducer
   const [state, dispatch] = useReducer(profileReducer, {
-    name: "",
-    bio: "",
-    about: "",
-    location: "",
+    name: '',
+    bio: '',
+    about: '',
+    location: '',
   });
 
   // Update state when data is fetched
   useEffect(() => {
     if (!user) return;
     dispatch({
-      type: "SET_ALL",
+      type: 'SET_ALL',
       payload: {
-        name: user.username || "",
-        bio: user.bio || "",
-        about: user.about || "", // Updated from title to about
-        location: user.address || "",
+        name: user.username || '',
+        bio: user.bio || '',
+        about: user.about || '', // Updated from title to about
+        location: user.address || '',
       },
     });
   }, [user]);
@@ -75,10 +75,10 @@ const EditProfile: React.FC = () => {
   // Show toast notifications on success or error
   useEffect(() => {
     if (isSuccess) {
-      toast.success("Profile updated successfully!");
+      toast.success('Profile updated successfully!');
     }
     if (isError) {
-      toast.error("Failed to update profile. Try again.");
+      toast.error('Failed to update profile. Try again.');
     }
   }, [isSuccess, isError]);
 
@@ -107,45 +107,53 @@ const EditProfile: React.FC = () => {
               <ProfileInput
                 label="Name"
                 value={state.name}
-                onChange={(e) =>
-                  dispatch({ type: "SET_NAME", payload: e.target.value })
-                }
+                onChange={(e) => dispatch({ type: 'SET_NAME', payload: e.target.value })}
                 placeholder="Enter your name"
               />
+              {/* Username */}
+              <div className="bg-neutral-700 rounded-[5px] px-2 py-1 flex flex-col gap-1 mt-3">
+                <label className="text-neutral-400 text-[15px]">{'Username'}</label>
+                <div className="flex items-center gap-0">
+                  <span className="text-primary-200 text-[15px]">{'reepls.com/profile/'}</span>
+                  <input
+                    type="text"
+                    className="w-full bg-transparent text-primary-400 text-[16px] outline-none "
+                    maxLength={40}
+                    // change to username
+                    value={'my_username'}
+                    // onChange={(e) => dispatch({ type: 'SET_NAME', payload: e.target.value })}
+                    placeholder={'my_username'}
+                  />
+                </div>
+              </div>
+              {/* Bio */}
               <ProfileInput
                 label="Bio"
                 value={state.bio}
-                onChange={(e) =>
-                  dispatch({ type: "SET_BIO", payload: e.target.value })
-                }
+                onChange={(e) => dispatch({ type: 'SET_BIO', payload: e.target.value })}
                 placeholder="Enter your bio"
               />
               <ProfileInput
                 label="About" // Updated from Occupation to About
                 value={state.about}
                 onChange={
-                  (e) =>
-                    dispatch({ type: "SET_ABOUT", payload: e.target.value }) // Updated from SET_OCCUPATION to SET_ABOUT
+                  (e) => dispatch({ type: 'SET_ABOUT', payload: e.target.value }) // Updated from SET_OCCUPATION to SET_ABOUT
                 }
                 placeholder="Tell us about yourself"
               />
               <ProfileInput
                 label="Location"
                 value={state.location}
-                onChange={(e) =>
-                  dispatch({ type: "SET_LOCATION", payload: e.target.value })
-                }
+                onChange={(e) => dispatch({ type: 'SET_LOCATION', payload: e.target.value })}
                 placeholder="Enter your location"
               />
 
               <button
                 className="outline-none border-none bg-primary-400 text-white px-4 py-2 mt-8 rounded-full self-center cursor-pointer w-[320px] h-[40px] flex justify-center items-center"
                 onClick={handleUpdateProfile}
-                disabled={isPending}
-              >
-                {isPending && <LuLoader className="animate-spin text-foreground inline-block mx-4" /> }
-                {isPending ? "Saving.." : "Save"}
-
+                disabled={isPending}>
+                {isPending && <LuLoader className="animate-spin text-foreground inline-block mx-4" />}
+                {isPending ? 'Saving..' : 'Save'}
               </button>
             </div>
           </ProfileEditBody>

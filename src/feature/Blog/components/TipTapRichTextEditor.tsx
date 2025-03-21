@@ -75,7 +75,7 @@ function TipTapRichTextEditor({
   initialContent: EditorContent;
   handleContentChange: (content: EditorContent) => void;
   handleHtmlContentChange: (content: EditorContent) => void;
-  handleMediaUpload: (url: string) => void;
+  handleMediaUpload?: (url: string) => void;
   editorRef: React.RefObject<{ editor: Editor | null }>; // Update to match the correct type
   disabled?: boolean;
   hideToolbar?: boolean;
@@ -127,7 +127,7 @@ function TipTapRichTextEditor({
         }
         try {
           const url = await uploadArticleImage(authUser?.id, file);
-          handleMediaUpload(url);
+          handleMediaUpload?.(url);
           return Promise.resolve(url);
         } catch (error) {
           toast.error('Failed to upload image');
@@ -143,7 +143,7 @@ function TipTapRichTextEditor({
         }
         try {
           const url = await uploadArticleVideo(authUser?.id, file);
-          handleMediaUpload(url);
+          handleMediaUpload?.(url);
           return Promise.resolve(url);
         } catch (error) {
           toast.error('Failed to upload video');

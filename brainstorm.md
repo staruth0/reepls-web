@@ -290,3 +290,21 @@ To remove the media
 -the filename is the media id which you can use to delete the media from cloudinary
 -split the url of the media by / and take the last element; remove extension by splitting by . and taking first
 -delete the resource by id using the cloudinary api; if it fails, ignore (make a log of it)
+
+========
+
+Clear the local stored article
+No toast for reactions and comments
+Animations for reactions
+Sharing the link
+Padding on article posting page
+Play vids
+
+Error boundary redesign
+When fetching fails, always toast (eg, user with this username not found, etc)
+
+Now I think of it, the platform should not have suported videos
+
+Problems from backend: sending media as object, not changing the username, google auth,
+
+preference should include user choosing to have cognitive mode on etc

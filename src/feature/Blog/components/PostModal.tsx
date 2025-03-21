@@ -186,8 +186,8 @@ const PostModal = ({
                   </Button>
                   <Button
                     className={cn(
-                      'inline-flex items-center gap-2 py-1.5 px-12 border-2 rounded-full text-sm/6 font-semibold shadow-inner shadow-white/10 hover:bg-primary-400',
-                      'border-primary-400 cursor-pointer',
+                      'inline-flex items-center gap-2 py-1.5 px-12 border-2 rounded-full text-sm/6 font-semibold shadow-inner shadow-white/10 hover:bg-primary-400 hover:text-background',
+                      'border-primary-400 cursor-pointer ',
                       'transition-all duration-300 ease-in-out'
                     )}
                     onClick={() => handlePost(postContent, postImages, postVideos)}
