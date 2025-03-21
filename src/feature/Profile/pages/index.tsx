@@ -173,11 +173,12 @@ const Profile: React.FC = () => {
             <div className="flex items-center">
               <div className="flex-1">
                 <ProfileDetails
-                  name={user.username || "Default Name"}
-                  town={user.address || "Default Town"}
-                  role={user.role || "Reader"}
-                  user_id={user.id || ""}
-                  bio={user.bio || "Default Bio"}
+                  name={user.username!}
+                  town={user.address!}
+                  role={user.role!}
+                  user_id={user.id!}
+                  bio={user.bio!}
+                  isverified={user.is_verified_writer!}
                 />
               </div>
               <ProfileHeroButtons

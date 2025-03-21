@@ -3,17 +3,20 @@ import { LuBadgeCheck } from 'react-icons/lu';
 import { toast } from 'react-toastify';
 import { useFollowUser, useUnfollowUser } from '../../Follow/hooks';
 import { useKnowUserFollowings } from '../../Follow/hooks/useKnowUserFollowings';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthorSuggestionProps {
   username: string;
   title: string;
   id: string;
+  isverified:boolean;
 }
 
-const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username, title, id }) => {
+const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username, title, id,isverified }) => {
   const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
   const { isFollowing: isUserFollowing } = useKnowUserFollowings();
+  const navigate = useNavigate();
 
   const handleFollowClick = () => {
     if (isFollowPending || isUnfollowPending) return;
@@ -48,8 +51,8 @@ const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username, 
 
         <div className="flex flex-col justify-center items-start gap-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold m-0 line-clamp-1 text-[15px]">{username}</h2>
-            <LuBadgeCheck className="text-primary-400 size-5" strokeWidth={2.5} />
+            <h2 className="text-base font-semibold m-0 line-clamp-1 text-[15px] hover:cursor-pointer hover:underline" onClick={()=>navigate(`/profile/${username}`)} >{username}</h2>
+           {isverified && <LuBadgeCheck className="text-primary-400 size-5" strokeWidth={2.5} />}
             <div
               className="text-primary-400 text-[13px] cursor-pointer hover:underline"
               onClick={handleFollowClick}

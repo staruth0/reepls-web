@@ -40,6 +40,7 @@ const AuthorSuggestions: React.FC = () => {
           username={user.username!}
           title={user.title || 'Suggested Author'}
           id={user._id || ''}
+          isverified={user.is_verified_writer!}
         />
       ))}
       <SeeMore />

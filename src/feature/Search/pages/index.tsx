@@ -1,57 +1,41 @@
-import React, { useState } from "react";
-import Topbar from "../../../components/atoms/Topbar/Topbar";
-import Tabs from "../../../components/molecules/Tabs/Tabs";
-import Communique from "../../Feed/components/Communique/Communique";
-import SearchTopBar from "../components/SearchTopBar";
-import SearchTopics from "./SearchTopics";
-import SearchRecent from "./SearchRecent";
-import SearchPeople from "./SearchPeople";
-import { useUser } from "../../../hooks/useUser";
+import React, { useContext } from "react";
 import { useGetSearchSuggestions } from "../hooks";
-
-const tabs = [
-  { id: "Topics", title: "Topics" },
-  { id: "Recent", title: "Recent" },
-  { id: "People", title: "People" },
-];
-
-
+import { useUser } from "../../../hooks/useUser";
+import Topbar from "../../../components/atoms/Topbar/Topbar";
+import SearchTopBar from "../components/SearchTopBar";
+import Communique from "../../Feed/components/Communique/Communique";
+import SuggestionContainer from "../components/SuggestionContainer";
+import { SearchContainerContext } from "../../../context/suggestionContainer/isSearchcontainer";
 
 const Search: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
-  const {authUser} = useUser()
-  
-    const {data} = useGetSearchSuggestions(authUser?.id || "")
-
-
+  const { authUser } = useUser();
+  const { data } = useGetSearchSuggestions(authUser?.id || "");
+  const { isSearchContainerOpen } = useContext(SearchContainerContext);
   return (
     <div className={`grid font-roboto grid-cols-[4fr_1.65fr]`}>
-      <div className="search border-r-[1px] border-neutral-500 ">
+      <div className='search border-r-[1px] border-neutral-500 '>
         <Topbar>
           <SearchTopBar />
         </Topbar>
-        <div className="px-20 flex flex-col min-h-screen">
-          <div className="mt-10 w-[45%] self-center">
-            <Tabs
-              tabs={tabs}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              scale={true}
-            />
-          </div>
-
-          <div className="mt-8 text-[15px]">
-            {activeTab === "Topics" && <SearchTopics />}
-            {activeTab === "Recent" && (
-              <SearchRecent history={data?.searchHistory} />
-            )}
-            {activeTab === "People" && <SearchPeople />}
-          </div>
+        <div className='px-20 flex flex-col min-h-screen'>
+          {!isSearchContainerOpen && (
+            <div className='recent space-y-3 mt-5'>
+             { data?.searchHistory?.length  >= 1 && <div className='my-5 text-neutral-50 text-[18px] font-semibold'>
+                Recent Searches
+              </div>}
+              {data?.searchHistory?.map((article: string) => (
+                <SuggestionContainer key={article} text={article} />
+              ))}
+              {data?.searchHistory?.length === 0 && (
+                <p className='flex justify-center'>No recent searches</p>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Communique Section */}
-      <div className="communique  hidden lg:block">
+      <div className='communique  hidden lg:block'>
         <Communique />
       </div>
     </div>
