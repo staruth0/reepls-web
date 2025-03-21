@@ -7,6 +7,7 @@ import image1 from './IMAGE1.svg'
 import image2 from './IMAGE2.svg'
 import image3 from './IMAGE3.svg'
 import heroImage from './HEROIMAGE.svg'
+import Logo from './Logo.svg'
 
 
 
@@ -19,5 +20,6 @@ export const Pics = {
     image1,
     image2,
     image3,
-    heroImage
+    heroImage,
+    Logo
 }

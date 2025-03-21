@@ -86,7 +86,7 @@ export default {
               800: '#fff5d6',
             },
             neutral: {
-              50: '#474747', // No change
+              50: '#333333', // No change
               100: '#737373', // No change
               200: '#868686', // Changed from #9E9E9E
               300: '#838383', // Changed from #B3B3B3

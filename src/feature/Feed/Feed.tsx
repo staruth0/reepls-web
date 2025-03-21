@@ -55,7 +55,7 @@ const UserFeed: React.FC = () => {
     console.log('dataArticles', data);
   }, [data]);
 
-  const media = ['https://i.postimg.cc/c4YBg1rc/ui.jpg', 'https://i.postimg.cc/bYRzzkR0/ux.jpg'];
+  // const media = ['https://i.postimg.cc/c4YBg1rc/ui.jpg', 'https://i.postimg.cc/bYRzzkR0/ux.jpg'];
 
   return (
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
@@ -86,7 +86,7 @@ const UserFeed: React.FC = () => {
                       <BlogPost
                         key={article._id}
                         isArticle={article.isArticle!}
-                        media={media}
+                        media={article.media!}
                         title={article.title!}
                         content={article.content!}
                         date={article.createdAt!}

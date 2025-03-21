@@ -11,8 +11,9 @@ interface BlogImageryProps {
 }
 
 const BlogImagery: React.FC<BlogImageryProps> = ({ media }) => {
+  console.log("Verifying media",media)
   return (
-    <div className="relative w-full max-w-[300px] md:max-w-[500px] lg:max-w-[700px] mx-auto transition-all duration-300  ">
+    <div className="relative w-full max-w-[300px] md:max-w-[500px] lg:max-w-[700px] mx-auto transition-all duration-300">
       <Swiper
         modules={[Navigation, Pagination]}
         navigation
@@ -20,21 +21,35 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media }) => {
         loop={true}
         spaceBetween={20}
         slidesPerView={1}
-        className="rounded-sm absolute w-full z-0">
-        {media?.map((mediaItem, index) => (
-          <SwiperSlide key={index} className="flex justify-center">
-            {allowedImageTypes.includes(mediaItem.split('.').pop()!) ? (
-              <img
-                src={mediaItem}
-                alt={`Blog Visual ${index}`}
-                className="w-full h-96 object-cover rounded-sm  z-0"
-                loading="lazy"
-              />
-            ) : (
-              <video src={mediaItem} className="w-full h-96 object-cover rounded-sm  z-0" />
-            )}
-          </SwiperSlide>
-        ))}
+        className="rounded-sm absolute w-full z-0"
+      >
+        {media?.map((mediaItem, index) => {
+          const fileExtension = mediaItem.split('.').pop()?.toLowerCase() || '';
+
+          return (
+            <SwiperSlide key={index} className="flex justify-center">
+              {allowedImageTypes.includes(fileExtension) ? (
+                <img
+                  src={mediaItem}
+                  alt={`Blog Visual ${index}`}
+                  className="w-full h-96 object-cover rounded-sm"
+                  loading="lazy"
+                />
+              ) : (
+                <video
+                  src={mediaItem}
+                  className="w-full h-96 object-cover rounded-sm"
+                  controls
+                  muted
+                  autoPlay
+                  loop
+                  playsInline
+                  controlsList="nodownload"
+                />
+              )}
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
     </div>
   );
