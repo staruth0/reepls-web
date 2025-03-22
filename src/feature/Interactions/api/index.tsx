@@ -62,6 +62,20 @@ const getReactionsPerType = async (articleId: string) => {
   return data;
 };
 
+// Create a reaction for a comment
+const createCommentReaction = async (reaction: { type: string; user_id: string; comment_id: string }) => {
+  console.log("Creating reaction for comment:", reaction.comment_id);
+  const { data } = await apiClient.post(`/react/comments`, reaction);
+  return data;
+};
+
+// Fetch all reactions of a comment
+const getCommentReactions = async (commentId: string) => {
+  console.log("Fetching all reactions for comment:", commentId);
+  const { data } = await apiClient.get(`/react/comments/${commentId}/reactions`);
+  return data;
+};
+
 export {
   createReaction,
   getReactionById,
@@ -71,4 +85,7 @@ export {
   getReactedUsers,
   getArticleReactions,
   getReactionsPerType,
+  createCommentReaction,
+  getCommentReactions,
+  
 };

@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ThumbsUp } from "lucide-react";
-import { LuBadgeCheck } from "react-icons/lu";
+import { LuBadgeCheck, LuLoader } from "react-icons/lu";
 import { timeAgo } from "../../../utils/dateFormater";
-import { User } from "../../../models/datamodels";
+import { User, ReactionReceived } from "../../../models/datamodels";
+import { useCreateCommentReaction, useGetCommentReactions } from "../../Interactions/hooks";
+import { useUser } from "../../../hooks/useUser";
 
 interface MessageComponentProps {
   content: string;
@@ -10,11 +12,38 @@ interface MessageComponentProps {
   author_id: string;
   isSameAuthorAsPrevious?: boolean;
   author: User;
-  author_of_post:User;
+  author_of_post: User;
+  comment_id: string; 
 }
 
-const CommentMessageLevel2: React.FC<MessageComponentProps> = ({ content, createdAt, isSameAuthorAsPrevious, author, author_of_post }) => {
- 
+const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
+  content,
+  createdAt,
+  isSameAuthorAsPrevious,
+  author,
+  author_of_post,
+  comment_id,
+}) => {
+  const [reactedid, setReactedids] = useState<string[]>([]);
+  const { mutate: createReaction, isPending, isSuccess } = useCreateCommentReaction();
+  const { data: reactions } = useGetCommentReactions(comment_id);
+  const { authUser } = useUser();
+
+
+  useEffect(() => {
+    if (reactions?.reactions && Array.isArray(reactions.reactions)) {
+      const userIds = reactions.reactions.map((reaction: ReactionReceived) => reaction.user_id.id?.trim());
+      setReactedids(userIds);
+    }
+  }, [reactions]);
+
+  // Checkx if the current user has reacted
+  const hasUserReacted = authUser?.id ? reactedid.includes(authUser.id) : false;
+
+  console.log("Level 2 Comment reactions:", reactions);
+
+  const reactionCount = reactions?.reactions?.length || 0;
+
   const formatDate = () => {
     try {
       if (typeof createdAt === "string") {
@@ -25,7 +54,18 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({ content, create
       console.error("Error formatting date:", error);
     }
   };
+
   const isAuthor = author?._id === author_of_post?.id;
+
+  
+  const handleReact = () => {
+    if (!authUser?.id) return; 
+    createReaction({
+      type: "like",
+      user_id: authUser.id,
+      comment_id: comment_id,
+    });
+  };
 
   return (
     <div
@@ -46,16 +86,16 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({ content, create
               <div className="flex items-center gap-2">
                 {author?.username}
                 {author?.is_verified_writer && (
-                    <LuBadgeCheck
-                         className="text-primary-500 size-4"
-                         strokeWidth={2.5}
-                                 />
-                         )}
+                  <LuBadgeCheck
+                    className="text-primary-500 size-4"
+                    strokeWidth={2.5}
+                  />
+                )}
                 {isAuthor && (
-                   <div className="px-2 bg-secondary-400 text-[12px] text-plain-b rounded">
-                       Author
-                   </div>
-                               )}
+                  <div className="px-2 bg-secondary-400 text-[12px] text-plain-b rounded">
+                    Author
+                  </div>
+                )}
               </div>
               <div className="absolute right-2 text-[12px] font-light">
                 {formatDate()}
@@ -69,11 +109,24 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({ content, create
         <p className="mt-2 mb-1 text-neutral-50 text-[13px]">{content}</p>
       </div>
 
-      {/* Actions (React & Reply) */}
+      {/* Actions (React) */}
       <div className="flex gap-4 mt-2 text-gray-600 text-[11px] px-4">
-        <button className="flex items-center gap-1 hover:text-primary-400">
-          <ThumbsUp className="size-4" /> React • 500
-        </button>
+        <div className="flex items-center gap-1">
+          <ThumbsUp
+            onClick={handleReact}
+            className={`size-4 hover:text-primary-400 hover:cursor-pointer ${
+              hasUserReacted || isSuccess
+                ? "fill-primary-400 text-primary-400"
+                : ""
+            }`}
+          />
+          {isPending ? (
+            <LuLoader className="animate-spin text-primary-400 inline-block mx-1" />
+          ) : (
+            "React"
+          )}{" "}
+          <span>• {reactionCount}</span>
+        </div>
       </div>
     </div>
   );

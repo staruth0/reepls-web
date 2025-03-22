@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
-import { LuLoader } from 'react-icons/lu';
 import { toast } from 'react-toastify';
 import { useUser } from '../../../hooks/useUser';
 import { User } from '../../../models/datamodels';
 import { useGetRecommendedUsersById } from '../../Profile/hooks';
 import AuthorSugestionComponent from './AuthorSugestionComponent';
 import SeeMore from './SeeMore';
+import AuthSuggestionSkeleton from '../../../components/atoms/AuthorSuggestionSkeleton';
+
 const AuthorSuggestions: React.FC = () => {
   const { authUser } = useUser();
   const { data: recommendedUsers, isLoading, error } = useGetRecommendedUsersById(authUser?.id || '');
@@ -18,8 +19,10 @@ const AuthorSuggestions: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="w-full flex flex-col gap-6 mt-4 py-1">
-        <LuLoader className="animate-spin text-primary-400 text-xl m-4" />
+      <div className="w-full flex flex-col gap-1 mt-2 py-1">
+        <AuthSuggestionSkeleton/>
+        <AuthSuggestionSkeleton/>
+        <AuthSuggestionSkeleton/>
       </div>
     );
   }

@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useUser } from "../../../../hooks/useUser";
 import ThemeSwitcher from "../ThemeSwitcher";
+import { Pics } from "../../../../assets/images";
 
 const FooterBottom = () => {
   const { t } = useTranslation();
@@ -13,7 +14,7 @@ const FooterBottom = () => {
         <div className="flex justify-between w-full md:w-auto">
          <div className="flex items-center gap-2 cursor-pointer">
          <img
-            src="/public/LogoDark.svg"
+            src={Pics.logo}
             alt="Reepls Logo"
             className="w-8 h-8"
           />
