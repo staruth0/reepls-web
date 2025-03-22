@@ -61,12 +61,12 @@ function Home() {
       ) : (
         <>
           <Header />
-          <div className="md:px-[100px]">
+          <div className="lg:px-[100px]">
             <Banner />
             <Sections />
           </div>
           <FooterTop />
-          <div className="md:px-[100px]">
+          <div className="lg:px-[100px]">
             <FooterBottom />
           </div>
         </>

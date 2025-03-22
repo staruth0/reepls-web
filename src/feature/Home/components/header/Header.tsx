@@ -39,7 +39,7 @@ const Header = () => {
 
       <div
         className={`${navState ? "fixed top-0 left-0 right-0 w-screen shadow-sm" : "sticky top-0"
-          } navbar flex border-b-neutral-600 border-b items-center justify-between px-4 md:px-[128px] md:mb-16 py-4 w-full  bg-background z-20 `}
+          } navbar flex border-b-neutral-600 border-b items-center justify-between px-5 md:px-16 lg:px-[128px] md:mb-16 py-4 w-full  bg-background z-20 `}
       >
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
           <img src="/Logo.svg" alt="Reepl Logo" className="h-8 w-8" />

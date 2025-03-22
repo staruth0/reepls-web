@@ -3,7 +3,7 @@ import { ArrowRight, TrendingUp } from "lucide-react";
 import TrendingLink from "./TrendingLink";
 import AuthorSuggestions from "./AuthorSuggestions";
 import { useGetTrendingTopics } from "../hooks";
-import { LuLoader } from "react-icons/lu";
+import TrendingTopicsSkeleton from "../../../components/atoms/TrendingTopicsSkeleton";
 
 
 const Trending: React.FC = () => {
@@ -21,7 +21,7 @@ const Trending: React.FC = () => {
         <span>Trending</span>
       </div>
 
-   { isLoading ?<LuLoader className="animate-spin text-foreground inline-block mx-4" /> : <>   <div
+   { isLoading ?<TrendingTopicsSkeleton/> : <>   <div
         className={`flex flex-wrap gap-2 overflow-hidden transition-all duration-300 ${
           isExpanded ? "max-h-[500px]" : "max-h-[100px]"
         }`}

@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useUser } from "../../../../hooks/useUser";
 import { useNavigate } from "react-router-dom";
+import { Pics } from "../../../../assets/images";
 
 const FooterTop = () => {
   const { t } = useTranslation();
@@ -11,7 +12,7 @@ const FooterTop = () => {
     <div className="bg-secondary-400 py-10 md:py-24 px-4 md:px-20 overflow-hidden relative">
       <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
         <img
-          src="/src/assets/images/Ellipse.png"
+          src={Pics.ellipse}
           alt="Ellipse-image"
           className="w-12 h-12 md:w-32 md:h-32 absolute top-4 left-6 md:static"
         />
@@ -28,7 +29,7 @@ const FooterTop = () => {
         </div>
 
         <img
-          src="/src/assets/images/reeples.png"
+          src={Pics.reeplspng}
           alt="Decorative apostrophes"
           className="w-16 h-16 md:w-32 md:h-32 absolute bottom-4 right-6 md:static"
         />

@@ -27,6 +27,7 @@ const CommentSectionLevel2: React.FC<CommentSectionProps> = ({ article_id, comme
                     author_id={comment.author_id!}
                     author={comment.author!}
                     author_of_post={author_of_post}
+                    comment_id={comment._id!}
                   />
                 </>
               );

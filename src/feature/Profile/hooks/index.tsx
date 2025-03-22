@@ -52,16 +52,11 @@ export const useUpdateUser = (): {
 
   const { mutate, isPending, error, isError, isSuccess } = useMutation({
     mutationFn: (user: User) => updateUser(user),
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       console.log("User updated successfully:", data);
-      // Invalidate the user query to refetch the updated data
-      queryClient.invalidateQueries({ queryKey: ["user", variables.id] });
-      // If the username is updated, invalidate the username query as well
-      if (variables.username) {
-        queryClient.invalidateQueries({
-          queryKey: ["user", variables.username],
-        });
-      }
+    
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+     
     },
     onError: (error) => {
       console.error("Error updating user:", error);

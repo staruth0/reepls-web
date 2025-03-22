@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ThumbsUp, MessageCircle } from "lucide-react";
-import { LuBadgeCheck } from "react-icons/lu";
+import { LuBadgeCheck, LuLoader } from "react-icons/lu";
 import { timeAgo } from "../../../utils/dateFormater";
 import CommentSectionLevel2 from "./CommentSectionLevel2";
-import { Comment, User } from "../../../models/datamodels";
+import { Comment,  ReactionReceived,  User } from "../../../models/datamodels";
+import { useCreateCommentReaction, useGetCommentReactions } from "../../Interactions/hooks";
+import { useUser } from "../../../hooks/useUser";
 
 interface MessageComponentProps {
   content: string;
@@ -14,12 +16,39 @@ interface MessageComponentProps {
   comment_id: string;
   author: User;
   replies: Comment[];
-  author_of_post:User;
+  author_of_post: User;
 }
 
-const CommentMessage: React.FC<MessageComponentProps> = ({content,createdAt,isSameAuthorAsPrevious,article_id,comment_id,replies,author,author_of_post}) => {
-  // const { user } = useGetUserById(author_id);
-  const [isLevelTwoCommentOpen, setIsLevelTwoCommentOpen] = useState(false)
+const CommentMessage: React.FC<MessageComponentProps> = ({
+  content,
+  createdAt,
+  isSameAuthorAsPrevious,
+  article_id,
+  comment_id,
+  replies,
+  author,
+  author_of_post,
+}) => {
+  const [isLevelTwoCommentOpen, setIsLevelTwoCommentOpen] = useState(false);
+  const [reactedid, setReactedids] = useState<string[]>([]); 
+  const { mutate: createReaction, isPending, isSuccess } = useCreateCommentReaction();
+  const { data: reactions } = useGetCommentReactions(comment_id);
+  const { authUser } = useUser();
+
+
+  useEffect(() => {
+    if (reactions?.reactions && Array.isArray(reactions.reactions)) {
+      const userIds = reactions.reactions.map((reaction:ReactionReceived ) => reaction.user_id.id?.trim());
+      setReactedids(userIds);
+    }
+  }, [reactions]);
+
+  
+  const hasUserReacted = authUser?.id ? reactedid.includes(authUser.id) : false;
+
+  console.log("Comment reactions:", reactions);
+
+  const reactionCount = reactions?.reactions?.length || 0;
 
   const formatDate = () => {
     try {
@@ -33,6 +62,15 @@ const CommentMessage: React.FC<MessageComponentProps> = ({content,createdAt,isSa
   };
 
   const isAuthor = author?._id === author_of_post?.id;
+
+  const handleReact = () => {
+    if (!authUser?.id) return; 
+    createReaction({
+      type: "like",
+      user_id: authUser.id, 
+      comment_id: comment_id,
+    });
+  };
 
   return (
     <div
@@ -77,10 +115,23 @@ const CommentMessage: React.FC<MessageComponentProps> = ({content,createdAt,isSa
       </div>
 
       {/* Actions (React & Reply) */}
-      <div className="flex gap-4 mt-2 text-gray-600 text-[11px] px-4 ">
-        <button className="flex items-center gap-1 hover:text-primary-400">
-          <ThumbsUp className="size-4" /> React • 500
-        </button>
+      <div className="flex gap-4 mt-2 text-gray-600 text-[11px] px-4">
+        <div className="flex items-center gap-1">
+          <ThumbsUp
+            onClick={handleReact}
+            className={`size-4 hover:text-primary-400 hover:cursor-pointer ${
+              hasUserReacted || isSuccess
+                ? "fill-primary-400 text-primary-400"
+                : ""
+            }`}
+          />
+          {isPending ? (
+            <LuLoader className="animate-spin text-primary-400 inline-block mx-1" />
+          ) : (
+            "React"
+          )}{" "}
+          <span>• {reactionCount}</span>
+        </div>
         <button
           className="flex items-center gap-1 hover:text-primary-400"
           onClick={() => setIsLevelTwoCommentOpen(!isLevelTwoCommentOpen)}

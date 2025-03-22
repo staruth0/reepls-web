@@ -8,6 +8,8 @@ import {
   getReactedUsers,
   getArticleReactions,
   getReactionsPerType,
+  createCommentReaction,
+  getCommentReactions,
 } from "../api";
 import { Reaction } from "../../../models/datamodels";
 
@@ -121,5 +123,34 @@ export const useGetReactionsPerType = (articleId: string) => {
   return useQuery({
     queryKey: ["reactionsPerType", articleId],
     queryFn: () => getReactionsPerType(articleId),
+  });
+};
+
+
+// Hook to create a reaction for a comment
+export const useCreateCommentReaction = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (reaction: { type: string; user_id: string; comment_id: string }) =>
+      createCommentReaction(reaction),
+    onSuccess: (data) => {
+      console.log("Comment reaction created:", data);
+      queryClient.invalidateQueries({
+        queryKey: ["commentReactions"],
+      });
+    },
+    onError: (error) => {
+      console.error("Error creating comment reaction:", error);
+    },
+  });
+};
+
+// Hook to fetch all reactions of a comment
+export const useGetCommentReactions = (commentId: string) => {
+  return useQuery({
+    queryKey: ["commentReactions", commentId],
+    queryFn: () => getCommentReactions(commentId),
+    enabled: !!commentId, 
   });
 };

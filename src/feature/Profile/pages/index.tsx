@@ -19,6 +19,7 @@ import ProfileSkeleton from "../components/ProfileSkeleton";
 
 import BlogSkeletonComponent from "../../Blog/components/BlogSkeleton"; // Adjust path
 import { useGetAuthorArticles, useGetAuthorPosts } from "../../Blog/hooks/useArticleHook";
+import ProfileRightSideSkeleton from "../components/ProfileRightSideSkeleton";
 
 
 const Profile: React.FC = () => {
@@ -130,7 +131,9 @@ const Profile: React.FC = () => {
           <div className="px-20">
             <ProfileSkeleton />
           </div>
+          
         </div>
+        <ProfileRightSideSkeleton/>
       </div>
     );
   }

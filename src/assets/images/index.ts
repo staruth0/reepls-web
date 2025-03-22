@@ -8,6 +8,9 @@ import image2 from './IMAGE2(2x).png'
 import image3 from './IMAGE3(2x).png'
 import heroImage from './HEROIMAGE.svg'
 import Logo from './Logo.svg'
+import ellipse from './Ellipse.png'
+import reeplspng from './Reeples.png'
+import logo from '../../../public/LogoDark.svg'
 
 
 
@@ -21,5 +24,8 @@ export const Pics = {
     image2,
     image3,
     heroImage,
-    Logo
+    Logo,
+    ellipse,
+    reeplspng,
+    logo
 }

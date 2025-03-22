@@ -16,6 +16,7 @@ import { ThemeProvider } from "./context/Theme/themeProvider.tsx";
 import VoiceLanguageProvider from "./context/VoiceLanguageContext/VoiceLanguageProvider.tsx";
 import SearchContainerProvider from "./context/suggestionContainer/isSearchProvider.tsx";
 import ErrorFallback from "./components/molecules/ErrorFallback/ErrorFallback.tsx";
+import NotificationProvider from "./context/NotificationContext/NotificationProvider.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,7 +51,10 @@ createRoot(document.getElementById("root")!).render(
                           );
                         }}
                       >
+                        <NotificationProvider>
                         <App />
+                        </NotificationProvider>
+                        
                       </ErrorBoundary>
                     </SearchContainerProvider>
                   </FeedFollowingProvider>
