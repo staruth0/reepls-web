@@ -311,5 +311,7 @@ preference should include user choosing to have cognitive mode on etc
 
 ---
 
-After changing profile, refresh the page and refetch the user because stuff has changed
-No importing from public
+-After changing profile, refresh the page and refetch the user because stuff has changed
+-No importing from public
+-profile settings is not autofilled like profile edit; infact why are the two differebt pages when doing the same thing? Keep /setting and both of them
+direct to it

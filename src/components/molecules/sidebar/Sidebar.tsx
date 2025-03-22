@@ -19,7 +19,7 @@ import { SidebarContext } from '../../../context/SidebarContext/SidebarContext';
 import PostModal from '../../../feature/Blog/components/PostModal';
 import { useCreateArticle } from '../../../feature/Blog/hooks/useArticleHook';
 import { useUser } from '../../../hooks/useUser';
-import { Article } from '../../../models/datamodels';
+import { Article, MediaItem, MediaType } from '../../../models/datamodels';
 import { cn } from '../../../utils';
 import { uploadPostImage, uploadPostVideo } from '../../../utils/media';
 import SidebarItem from '../../atoms/SidebarItem';
@@ -81,13 +81,13 @@ const Sidebar: React.FC = () => {
       return;
     }
 
-    const images: string[] = [];
-    const videos: string[] = [];
+    const images: MediaItem[] = [];
+    const videos: MediaItem[] = [];
     for (const image of postImages) {
       if (authUser.id) {
         try {
           const url = await uploadPostImage(authUser?.id, image);
-          images.push(url);
+          images.push({ url, type: MediaType.Image });
         } catch (error) {
           toast.error('Your images could not be uploaded. Please try again later.');
           return;
@@ -98,7 +98,7 @@ const Sidebar: React.FC = () => {
       if (authUser.id) {
         try {
           const url = await uploadPostVideo(authUser?.id, video);
-          videos.push(url);
+          videos.push({ url, type: MediaType.Video });
         } catch (error) {
           toast.error('Your videos could not be uploaded. Please try again later.');
           return;

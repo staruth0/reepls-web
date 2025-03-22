@@ -53,6 +53,7 @@ import RichTextEditor, {
 import 'reactjs-tiptap-editor/style.css';
 import useTheme from '../../../hooks/useTheme';
 import { useUser } from '../../../hooks/useUser';
+import { MediaType } from '../../../models/datamodels';
 import '../../../styles/shadcn.scss';
 import { convertBase64ToBlob, debounce } from '../../../utils';
 import { uploadArticleImage, uploadArticleVideo } from '../../../utils/media';
@@ -75,7 +76,7 @@ function TipTapRichTextEditor({
   initialContent: EditorContent;
   handleContentChange: (content: EditorContent) => void;
   handleHtmlContentChange: (content: EditorContent) => void;
-  handleMediaUpload?: (url: string) => void;
+  handleMediaUpload?: (url: string, type: MediaType) => void;
   editorRef: React.RefObject<{ editor: Editor | null }>; // Update to match the correct type
   disabled?: boolean;
   hideToolbar?: boolean;
@@ -127,7 +128,7 @@ function TipTapRichTextEditor({
         }
         try {
           const url = await uploadArticleImage(authUser?.id, file);
-          handleMediaUpload?.(url);
+          handleMediaUpload?.(url, MediaType.Image);
           return Promise.resolve(url);
         } catch (error) {
           toast.error('Failed to upload image');
@@ -143,7 +144,7 @@ function TipTapRichTextEditor({
         }
         try {
           const url = await uploadArticleVideo(authUser?.id, file);
-          handleMediaUpload?.(url);
+          handleMediaUpload?.(url, MediaType.Video);
           return Promise.resolve(url);
         } catch (error) {
           toast.error('Failed to upload video');
