@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from 'react';
 import { LuLoader } from 'react-icons/lu';
-import { useParams, useNavigate } from 'react-router-dom'; // Added useNavigate
+import { useNavigate, useParams } from 'react-router-dom'; // Added useNavigate
 import { toast } from 'react-toastify'; // Added toast
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import ProfileConfigurations from '../components/ProfileConfigurations';
@@ -83,22 +83,19 @@ const EditProfile: React.FC = () => {
     }
     if (isError) {
       console.error('Update error:', error);
-      toast.error(`Failed to update profile: ${error?.message }`);
+      toast.error(`Failed to update profile: ${error?.message}`);
     }
   }, [isSuccess, isError, error, navigate, state.username]);
 
   const handleUpdateProfile = () => {
-    console.log('Button clicked, updating with:', state); 
-    mutate(
-      {
-        username: state.username,
-        name: state.name,
-        bio: state.bio,
-        about: state.about,
-        address: state.location,
-      },
-   
-    );
+    console.log('Button clicked, updating with:', state);
+    mutate({
+      username: state.username,
+      name: state.name,
+      bio: state.bio,
+      about: state.about,
+      address: state.location,
+    });
   };
 
   return (
@@ -125,8 +122,10 @@ const EditProfile: React.FC = () => {
                     className="w-full bg-transparent text-primary-400 text-[16px] outline-none"
                     maxLength={40}
                     value={state.username}
-                    onChange={(e) => dispatch({ type: 'SET_USERNAME', payload: e.target.value })}
-                    placeholder="Enter your username"
+                    onChange={(e) =>
+                      dispatch({ type: 'SET_USERNAME', payload: e.target.value.replace(/[^a-zA-Z0-9_]/g, '') })
+                    }
+                    placeholder="change your username"
                   />
                 </div>
               </div>
@@ -151,8 +150,7 @@ const EditProfile: React.FC = () => {
               <button
                 className="outline-none border-none bg-primary-400 text-white px-4 py-2 mt-8 rounded-full self-center cursor-pointer w-[320px] h-[40px] flex justify-center items-center"
                 onClick={handleUpdateProfile}
-                disabled={isPending}
-              >
+                disabled={isPending}>
                 {isPending && <LuLoader className="animate-spin text-foreground inline-block mx-4" />}
                 {isPending ? 'Saving..' : 'Save'}
               </button>

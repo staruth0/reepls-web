@@ -308,3 +308,8 @@ Now I think of it, the platform should not have suported videos
 Problems from backend: sending media as object, not changing the username, google auth,
 
 preference should include user choosing to have cognitive mode on etc
+
+---
+
+After changing profile, refresh the page and refetch the user because stuff has changed
+No importing from public
