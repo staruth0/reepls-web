@@ -1,16 +1,18 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuSearch, LuX } from 'react-icons/lu';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useUser } from '../../../hooks/useUser';
 import { useGetSearchSuggestions } from '../hooks';
 import SearchContainer from './SearchContainer';
 import { SearchContainerContext } from '../../../context/suggestionContainer/isSearchcontainer';
 
-const SearchTopBar: React.FC<{ initialSearchTerm?: string}> = ({ initialSearchTerm }) => {
+const SearchTopBar: React.FC<{ initialSearchTerm?: string}> = () => {
+   const [searchParams] = useSearchParams();
+    const query = searchParams.get("query") || ""; 
   const { isSearchContainerOpen, setSearchContainerOpen } = useContext(SearchContainerContext);
   const { t } = useTranslation();
-  const [searchTerm, setSearchTerm] = useState<string>(initialSearchTerm ?? '');
+  const [searchTerm, setSearchTerm] = useState<string>( query || "" );
   const navigate = useNavigate();
 
   const { authUser } = useUser();
