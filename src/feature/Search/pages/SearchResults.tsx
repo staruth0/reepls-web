@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Topbar from "../../../components/atoms/Topbar/Topbar";
 import Tabs from "../../../components/molecules/Tabs/Tabs";
@@ -10,6 +10,7 @@ import SearchArticles from "./SearchArticles";
 import SearchAll from "./SearchAll";
 import { useUser } from "../../../hooks/useUser";
 import { useStoreSearchSuggestion } from "../hooks";
+import { SearchContainerContext } from "../../../context/suggestionContainer/isSearchcontainer";
 
 const tabs = [
   { id: "All", title: "All" },
@@ -22,6 +23,7 @@ const SearchResults: React.FC = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("query") || ""; 
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
+  const {setSearchContainerOpen} = useContext(SearchContainerContext)
 
   const { authUser } = useUser();
   const { mutate } = useStoreSearchSuggestion();
@@ -36,8 +38,10 @@ const SearchResults: React.FC = () => {
       {
         onSuccess: () => {
           console.log('Search suggestion saved successfully');
+          setSearchContainerOpen(false)
         },
       }
+
     );
 
     
