@@ -9,7 +9,7 @@ import { useRoute } from "../../../../hooks/useRoute";
 import { useUser } from "../../../../hooks/useUser";
 import { Article, User } from "../../../../models/datamodels";
 import { formatDateWithMonth } from "../../../../utils/dateFormater";
-import { useFollowUser, useUnfollowUser } from "../../../Follow/hooks";
+import {  useUnfollowUser } from "../../../Follow/hooks";
 import { useKnowUserFollowings } from "../../../Follow/hooks/useKnowUserFollowings";
 import { useGetSavedArticles, useRemoveSavedArticle, useSaveArticle } from "../../../Saved/hooks";
 import "./Blog.scss";
@@ -33,7 +33,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
   const [showSignInPopup, setShowSignInPopup] = useState(false);
   const location = useLocation();
 
-  const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
+  // const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
   const { isFollowing } = useKnowUserFollowings();
   const { mutate: saveArticle, isPending: isSavePending } = useSaveArticle();
@@ -41,7 +41,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
   const { data: savedArticles } = useGetSavedArticles();
   const [saved, setSaved] = useState(false);
 
-  const {mutate} = useSendFollowNotification();
+  const {mutate: followUser, isPending: isFollowPending} = useSendFollowNotification();
 
   // Safely handle undefined content
   const articleTitle = title || (content ? content.split(" ").slice(0, 10).join(" ") + "..." : "Untitled Post");
@@ -92,12 +92,12 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
       unfollowUser(user?._id, {
         onSuccess: () => {
           toast.success("User unfollowed successfully");
-          mutate({receiver_id:user?._id || ''})
+         
         },
         onError: () => toast.error("Failed to unfollow user"),
       });
     } else {
-      followUser(user?._id, {
+      followUser({receiver_id:user?._id}, {
         onSuccess: () => {
           toast.success("User followed successfully");
         },

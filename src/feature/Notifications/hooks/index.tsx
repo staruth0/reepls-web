@@ -1,14 +1,8 @@
 import { useContext } from "react";
 import { NotificationContext } from "../../../context/NotificationContext/NotificationContext";
-import {
-  useSendReactionNotification,
-  useSendCommentNotification,
-  useSendFollowNotification,
-  useSendNewArticleNotification,
-  useUpdateNotificationReadStatus,
-} from "../hooks/useNotification";
 
-export const useNotifications = () => {
+
+export const useNotificationsValues = () => {
   const context = useContext(NotificationContext);
 
   if (!context) {
@@ -16,11 +10,6 @@ export const useNotifications = () => {
   }
 
   return {
-    ...context,
-    sendReactionNotification: useSendReactionNotification(),
-    sendCommentNotification: useSendCommentNotification(),
-    sendFollowNotification: useSendFollowNotification(),
-    sendNewArticleNotification: useSendNewArticleNotification(),
-    updateNotificationReadStatus: useUpdateNotificationReadStatus(),
+    ...context
   };
 };

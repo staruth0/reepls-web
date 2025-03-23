@@ -13,13 +13,14 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({ children })
   // const { authUser } = useUser();
 
   // Fetch notifications on mount and every 2 minutes
-  const { data: fetchedNotifications, refetch } = useFetchUserNotifications();
+  const { data, refetch } = useFetchUserNotifications();
 
   useEffect(() => {
-    if (fetchedNotifications) {
-      setNotifications(fetchedNotifications);
+    console.log('fetched notification',data)
+    if (data) {  
+      setNotifications(data.notifications);
     }
-  }, [fetchedNotifications]);
+  }, [data]);
 
   
   useEffect(() => {

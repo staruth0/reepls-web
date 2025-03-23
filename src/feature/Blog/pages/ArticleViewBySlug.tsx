@@ -54,7 +54,7 @@ const ArticleViewBySlug: React.FC = () => {
   const { data: article, isError, isPending } = useGetArticleBySlug(slug!);
   const { data: allReactions } = useGetArticleReactions(article?._id || '');
 
-  const synth = window.speechSynthesis;
+
   const articleUrl = `${window.location.origin}/posts/article/${slug}`;
   const articleTitle = title || content.split(' ').slice(0, 10).join(' ') + '...';
 

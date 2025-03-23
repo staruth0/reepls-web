@@ -36,6 +36,7 @@ const CommentTab: React.FC<CommentTabProps> = ({
   };
 
   const { mutate, isPending } = useCreateComment();
+  // const {mutate:sendComment,isPending:commenIspending} = useSendCommentNotification();
 
   const validateCommentData = (commentData: Comment): boolean => {
     if (!commentData.article_id) {

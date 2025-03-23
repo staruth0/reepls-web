@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../hooks/useUser";
-import { useFollowUser, useUnfollowUser } from "../../Follow/hooks";
+import {  useUnfollowUser } from "../../Follow/hooks";
 import { useKnowUserFollowings } from "../../Follow/hooks/useKnowUserFollowings";
 import { toast } from "react-toastify";
 import SignInPopUp from "../../AnonymousUser/components/SignInPopUp";
+import { useSendFollowNotification } from "../../Notifications/hooks/useNotification";
 
 
 interface ProfileHeroButtonsProps {
@@ -21,9 +22,9 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
   const { t } = useTranslation();
   const { authUser, isLoggedIn } = useUser();
   const { isFollowing: isUserFollowing } = useKnowUserFollowings();
-  const { mutate: follow, isPending: isFollowPending } = useFollowUser();
   const { mutate: unFollow, isPending: isUnfollowPending } = useUnfollowUser();
   const [showSignInPopup, setShowSignInPopup] = useState(false);
+   const {mutate: follow, isPending: isFollowPending} = useSendFollowNotification();
 
   const handleEditProfile = (username: string) => {
     navigate(`/profile/edit/${username}`);
@@ -48,7 +49,7 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
         onError: () => toast.error(t("Failed to unfollow user")),
       });
     } else {
-      follow(userId, {
+      follow({receiver_id:userId}, {
         onSuccess: () => toast.success(t("User followed successfully")),
         onError: () => toast.error(t("Failed to follow user")),
       });

@@ -12,7 +12,7 @@ import ErrorFallback from './components/molecules/ErrorFallback/ErrorFallback.ts
 import AuthProvider from './context/AuthContext/AuthProvider.tsx';
 import CognitiveModeProvider from './context/CognitiveMode/CognitiveModeProvider.tsx';
 import FeedFollowingProvider from './context/Feedcontext/IsFeedFollowingProvider.tsx';
-// import NotificationProvider from './context/NotificationContext/NotificationProvider.tsx';
+import NotificationProvider from './context/NotificationContext/NotificationProvider.tsx';
 import SideBarProvider from './context/SidebarContext/SideBarProvider.tsx';
 import { ThemeProvider } from './context/Theme/themeProvider.tsx';
 import VoiceLanguageProvider from './context/VoiceLanguageContext/VoiceLanguageProvider.tsx';
@@ -47,11 +47,11 @@ createRoot(document.getElementById('root')!).render(
                         onError={(error, info) => {
                           console.error('Error caught by ErrorBoundary:', error, info);
                         }}>
-                        {/* <NotificationProvider> */}
+                       <NotificationProvider> 
                         <AudioPlayerProvider>
                           <App />
                         </AudioPlayerProvider>
-                        {/* </NotificationProvider> */}
+                        </NotificationProvider> 
                       </ErrorBoundary>
                     </SearchContainerProvider>
                   </FeedFollowingProvider>
