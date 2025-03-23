@@ -1,10 +1,8 @@
 import React, { useEffect } from 'react';
-import { useGetPostResults } from '../hooks';
-import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
-import BlogPost from '../../Blog/components/BlogPost';
 import { Article } from '../../../models/datamodels';
-
-
+import BlogPost from '../../Blog/components/BlogPost';
+import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
+import { useGetPostResults } from '../hooks';
 
 interface SearchPostsProps {
   query: string;
@@ -31,17 +29,7 @@ const SearchPosts: React.FC<SearchPostsProps> = ({ query }) => {
       ) : posts?.length > 0 ? (
         <div className="px-1 sm:px-8  transition-all duration-300 ease-linear flex flex-col gap-7">
           {posts.map((article: Article) => (
-            <BlogPost
-            key={article._id}
-            isArticle={article.isArticle!}
-            media={article.media!}
-            title={article.title!}
-            content={article.content!}
-            date={article.createdAt!}
-            article_id={article._id!}
-            user={article.author_id!}
-            slug={article.slug || ''}
-            />
+            <BlogPost key={article._id} article={article} />
           ))}
         </div>
       ) : (

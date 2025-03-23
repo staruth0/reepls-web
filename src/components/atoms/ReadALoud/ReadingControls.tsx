@@ -1,165 +1,31 @@
-import { Loader2, PauseCircle, PlayCircle, Volume2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { Article } from '../../../models/datamodels';
-
-export const ReadAloud = ({ article }: { article: Article }) => {
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isReading, setIsReading] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const [isStopped, setIsStopped] = useState(false);
-
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
-
-  useEffect(() => {
-    if (article.text_to_speech) {
-      setAudio(new Audio(article.text_to_speech));
-    }
-  }, [article.text_to_speech]);
-
-  const handleSpeak = () => {
-    setIsGenerating(true);
-    setIsReading(true);
-    setIsPaused(false);
-    setIsStopped(false);
-  };
-
-  const handlePauseResume = () => {
-    setIsPaused(!isPaused);
-  };
-
-  const cancelSpeaking = () => {
-    setIsReading(false);
-    setIsPaused(false);
-    setIsStopped(true);
-  };
-
-  const getReadingStatusText = () => {
-    if (isGenerating) return 'Generating...';
-    if (isReading) return 'Reading...';
-    if (isPaused) return 'Paused';
-    if (isStopped) return 'Stopped';
-    return 'Read Aloud';
-  };
-
-  return (
-    <div className="flex justify-end my-4 gap-2">
-      <button
-        onClick={isReading ? cancelSpeaking : handleSpeak}
-        className="p-2 rounded-full hover:bg-neutral-800 flex items-center gap-2">
-        {isGenerating ? (
-          <Loader2 className="size-5 animate-spin" />
-        ) : isReading ? (
-          <Volume2 className="size-5 text-neutral-500" />
-        ) : (
-          <Volume2 className="size-5 text-neutral-500" />
-        )}
-        {getReadingStatusText()}
-      </button>
-      {isReading && (
-        <button onClick={handlePauseResume} className="p-2 rounded-full hover:bg-neutral-800 flex items-center gap-2">
-          {isPaused ? (
-            <PlayCircle className="size-5 text-neutral-500" />
-          ) : (
-            <PauseCircle className="size-5 text-neutral-500" />
-          )}
-          {isPaused ? 'Resume' : 'Pause'}
-        </button>
-      )}
-    </div>
-  );
-};
-
-/*import { Loader2, PauseCircle, PlayCircle, Volume2, VolumeX } from 'lucide-react';
+import { Loader2, PauseCircle, Volume2, VolumeX } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Article } from '../../../models/datamodels';
 import { useAudioPlayer } from '../../../providers/AudioProvider';
 import { apiClient } from '../../../services/apiClient';
+
 type AudioState = 'idle' | 'generating' | 'ready' | 'playing' | 'paused' | 'error';
 
-export const ArticleAudioControls = ({ article }: { article: Article }) => {
+export const ReadingControls = ({ article_id, article_tts }: { article_id: string; article_tts: string }) => {
   const { activeAudio, setActiveAudio } = useAudioPlayer();
   const [audioState, setAudioState] = useState<AudioState>('idle');
-  const [buttonIcon, setButtonIcon] = useState<React.ReactNode>(<PlayCircle className="size-5" />);
-  const [buttonText, setButtonText] = useState('Play');
-  const [volume, setVolume] = useState(1);
-  const [isMuted, setIsMuted] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(activeAudio?.src === article.text_to_speech);
-  // Check if this article's audio is currently playing
+  const [audioUrl, setAudioUrl] = useState<string | null>(article_tts || null);
 
   useEffect(() => {
-    // If the article has TTS, set state to ready
-    if (article.text_to_speech) {
+    if (article_tts) {
+      setAudioUrl(article_tts);
       setAudioState('ready');
     }
 
-    // Cleanup function to stop audio when component unmounts
     return () => {
-      if (isPlaying) {
+      if (audioState === 'playing' || audioState === 'paused') {
         stopAudio();
       }
     };
-  }, [article.text_to_speech]);
-
-  const generateAudio = async () => {
-    if (!article._id) return;
-
-    setAudioState('generating');
-    try {
-      const audioUrl = await generateTTS(article._id);
-      if (audioUrl) {
-        // Update the article's text_to_speech URL
-        article.text_to_speech = audioUrl;
-        setIsPlaying(true);
-        setAudioState('ready');
-        // Start playing automatically
-        playAudio();
-      } else {
-        setAudioState('error');
-        toast.error('Failed to generate speech');
-      }
-    } catch (error) {
-      console.error('Error generating TTS:', error);
-      setAudioState('error');
-      toast.error('Failed to generate speech');
-    }
-  };
-
-  const playAudio = () => {
-    if (!article.text_to_speech) {
-      generateAudio();
-      return;
-    }
-
-    // If another article is playing, stop it
-    if (activeAudio && !isPlaying) {
-      activeAudio.pause();
-      activeAudio.currentTime = 0;
-    }
-
-    // Create new audio element if needed
-    if (!activeAudio || !isPlaying) {
-      const audio = new Audio(article.text_to_speech);
-      audio.volume = isMuted ? 0 : volume;
-      setActiveAudio(audio);
-      audio.play();
-      setAudioState('playing');
-    } else {
-      // Resume current audio
-      activeAudio.play();
-      setAudioState('playing');
-    }
-  };
-
-  const pauseAudio = () => {
-    if (activeAudio && isPlaying) {
-      activeAudio.pause();
-      setAudioState('paused');
-    }
-  };
+  }, [audioUrl]);
 
   const stopAudio = () => {
-    if (activeAudio && isPlaying) {
+    if (activeAudio) {
       activeAudio.pause();
       activeAudio.currentTime = 0;
       setActiveAudio(null);
@@ -167,87 +33,100 @@ export const ArticleAudioControls = ({ article }: { article: Article }) => {
     }
   };
 
-  const toggleMute = () => {
-    if (activeAudio && isPlaying) {
-      setIsMuted(!isMuted);
-      activeAudio.volume = isMuted ? volume : 0;
+  const handleSpeak = async () => {
+    if (!audioUrl) {
+      setAudioState('generating');
+      try {
+        if (!article_id) {
+          throw new Error('Article ID is required');
+        }
+        const newAudioUrl = await generateTTS(article_id);
+        if (newAudioUrl) {
+          setAudioUrl(newAudioUrl);
+          const audio = new Audio(newAudioUrl);
+          setActiveAudio(audio);
+          audio.play();
+          setAudioState('playing');
+        } else {
+          setAudioState('error');
+          toast.error('Failed to generate audio');
+        }
+      } catch (error) {
+        setAudioState('error');
+        toast.error('Failed to generate audio');
+      }
+      return;
+    }
+
+    // If another article is playing, stop it
+    if (activeAudio && audioState !== 'playing') {
+      stopAudio();
+    }
+
+    const audio = new Audio(audioUrl);
+    setActiveAudio(audio);
+    audio.play();
+    setAudioState('playing');
+  };
+
+  const handlePauseResume = () => {
+    if (!activeAudio) return;
+
+    if (audioState === 'paused') {
+      activeAudio.play();
+      setAudioState('playing');
+    } else {
+      activeAudio.pause();
+      setAudioState('paused');
     }
   };
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
-    if (activeAudio && isPlaying) {
-      activeAudio.volume = isMuted ? 0 : newVolume;
-    }
-  };
-
-  const getButtonIcon = () => {
-    switch (audioState) {
-      case 'generating':
-        return <Loader2 className="size-5 animate-spin" />;
-      case 'playing':
-      case 'paused':
-        return <Volume2 className="size-5" />;
-      default:
-        return <Volume2 className="size-5" />;
-    }
-  };
-
-  const getButtonText = () => {
+  const getReadingStatusText = (audioState: AudioState) => {
     switch (audioState) {
       case 'generating':
         return 'Generating...';
       case 'playing':
-        return 'Playing';
+        return 'Reading...';
       case 'paused':
         return 'Paused';
       case 'error':
         return 'Error';
       default:
-        return 'Play';
+        return 'Read Aloud';
     }
   };
 
-  useEffect(() => {
-    setButtonIcon(getButtonIcon());
-    setButtonText(getButtonText());
-  }, [audioState]);
+  const getReadingStatusIcon = (audioState: AudioState) => {
+    switch (audioState) {
+      case 'generating':
+        return <Loader2 className="size-5 animate-spin" />;
+      case 'playing':
+        return <Volume2 className="size-5 text-neutral-500" />;
+      case 'paused':
+        return <PauseCircle className="size-5 text-neutral-500" />;
+      case 'error':
+        return <VolumeX className="size-5 text-neutral-500" />;
+      default:
+        return <Volume2 className="size-5 text-neutral-500" />;
+    }
+  };
+
+  const getControlButtonAction = (audioState: AudioState) => {
+    if (audioState === 'playing' || audioState === 'paused') {
+      return stopAudio;
+    }
+    return handleSpeak;
+  };
 
   return (
-    <div className="flex items-center gap-4 my-4">
+    <div className="flex justify-end my-4 gap-2">
       <button
-        onClick={isPlaying ? stopAudio : playAudio}
-        className="p-2 rounded-full hover:bg-neutral-800 flex items-center gap-2">
-        {buttonIcon}
-        {buttonText}
+        onClick={getControlButtonAction(audioState)}
+        disabled={audioState === 'generating'}
+        className="p-2 rounded-full hover:bg-neutral-800 flex items-center gap-2 disabled:opacity-50">
+        {getReadingStatusIcon(audioState)}
+        {getReadingStatusText(audioState)}
       </button>
-
-      {(audioState === 'playing' || audioState === 'paused') && (
-        <button
-          onClick={audioState === 'playing' ? pauseAudio : playAudio}
-          className="p-2 rounded-full hover:bg-neutral-800 flex items-center gap-2">
-          {audioState === 'playing' ? <PauseCircle className="size-5" /> : <PlayCircle className="size-5" />}
-          {audioState === 'playing' ? 'Pause' : 'Resume'}
-        </button>
-      )}
-
-      {(audioState === 'playing' || audioState === 'paused') && (
-        <div className="flex items-center gap-2">
-          <button onClick={toggleMute} className="p-2 rounded-full hover:bg-neutral-800">
-            {isMuted ? <VolumeX className="size-5" /> : <Volume2 className="size-5" />}
-          </button>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.1"
-            value={volume}
-            onChange={handleVolumeChange}
-            className="w-24"
-          />
-        </div>
-      )}
     </div>
   );
 };
@@ -262,4 +141,3 @@ const generateTTS = async (articleId: string): Promise<string | null> => {
     return null;
   }
 };
-*/

@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { useGetSearchResults } from '../hooks';
-import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
-import BlogPost from '../../Blog/components/BlogPost';
 import { Article } from '../../../models/datamodels';
+import BlogPost from '../../Blog/components/BlogPost';
+import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
+import { useGetSearchResults } from '../hooks';
 
 interface SearchAllProps {
   query: string;
@@ -29,17 +29,7 @@ const SearchAll: React.FC<SearchAllProps> = ({ query }) => {
       ) : results?.length > 0 ? (
         <div className="px-1 sm:px-8  transition-all duration-300 ease-linear flex flex-col gap-7">
           {results.map((item: Article) => (
-            <BlogPost
-              key={item._id}
-              isArticle={item.isArticle!}
-              media={item.media!}
-              title={item.title!}
-              content={item.content!}
-              date={item.createdAt!}
-              article_id={item._id!}
-              user={item.author_id!}
-              slug={item.slug || ''}
-            />
+            <BlogPost key={item._id} article={item} />
           ))}
         </div>
       ) : (

@@ -81,17 +81,7 @@ const UserFeed: React.FC = () => {
                 {data?.pages.map((page, i) => (
                   <div className="flex flex-col gap-7" key={i}>
                     {page.articles.map((article: Article) => (
-                      <BlogPost
-                        key={article._id}
-                        isArticle={article.isArticle!}
-                        media={article.media! || []}
-                        title={article.title!}
-                        content={article.content!}
-                        date={article.createdAt!}
-                        article_id={article._id!}
-                        user={article.author_id!}
-                        slug={article.slug || ''}
-                      />
+                      <BlogPost key={article._id} article={article} />
                     ))}
                   </div>
                 ))}

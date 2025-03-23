@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFallback from '../../../components/molecules/ErrorFallback/ErrorFallback';
 import { CognitiveModeContext } from '../../../context/CognitiveMode/CognitiveModeContext';
-import { MediaItem, User } from '../../../models/datamodels';
+import { Article } from '../../../models/datamodels';
 import BlogArticleHeader from './BlogArticleHeader';
 import BlogImagery from './BlogComponents/BlogImagery';
 import BlogMessage from './BlogComponents/BlogMessage';
@@ -11,28 +11,10 @@ import BlogReactionSession from './BlogComponents/BlogReactionSession';
 import BlogReactionStats from './BlogComponents/BlogReactionStats';
 
 interface BlogPostProps {
-  media: MediaItem[];
-  title: string;
-  subtitle?: string;
-  content: string;
-  date: string;
-  isArticle: boolean;
-  article_id: string;
-  user: User;
-  slug: string;
+  article: Article;
 }
 
-const BlogPost: React.FC<BlogPostProps> = ({
-  media,
-  title,
-  subtitle,
-  content,
-  date,
-  isArticle,
-  article_id,
-  user,
-  slug,
-}) => {
+const BlogPost: React.FC<BlogPostProps> = ({ article }) => {
   const { isCognitiveMode } = useContext(CognitiveModeContext);
   const [isCommentSectionOpen, setIsCommentSectionOpen] = useState<boolean>(false);
 
@@ -40,47 +22,51 @@ const BlogPost: React.FC<BlogPostProps> = ({
     setIsCommentSectionOpen(!isCommentSectionOpen);
   };
 
-  useEffect(() => {
-    console.log('user', user);
-    console.log('checking media', media);
-  }, [user, media]);
+  if (!article) {
+    return <div>Empty Article</div>;
+  }
 
   return (
     <div
       className={`each_blog_post mt-5 shadow-md p-2 max-w-[680px]  self-center w-full bg-background ${
-        isArticle ? 'gradient-border' : ''
+        article.isArticle ? 'gradient-border' : ''
       }`}>
-      {isArticle && <BlogArticleHeader />}
+      {article.isArticle && <BlogArticleHeader />}
       <BlogProfile
-        title={title}
-        user={user}
-        content={content}
-        date={date}
-        article_id={article_id}
-        isArticle={isArticle}
+        title={article.title || ''}
+        user={article.author_id || {}}
+        content={article.content || ''}
+        date={article.createdAt || ''}
+        article_id={article._id || ''}
+        isArticle={article.isArticle || false}
       />
       <BlogMessage
-        title={title}
-        content={isArticle ? subtitle ?? '' : content}
-        article_id={article_id}
-        isArticle={isArticle}
-        slug={slug}
+        title={article.title || ''}
+        content={article.content || ''}
+        article_id={article._id || ''}
+        isArticle={article.isArticle || false}
+        slug={article.slug || ''}
       />
       <ErrorBoundary
         FallbackComponent={ErrorFallback}
         onError={(error, info) => {
           console.error('Error caught by ErrorBoundary:', error, info);
         }}>
-        {!isCognitiveMode && media.length > 0 && <BlogImagery media={media} />}
+        {!isCognitiveMode && article?.media && <BlogImagery media={article.media} />}
       </ErrorBoundary>
 
-      <BlogReactionStats toggleCommentSection={toggleCommentSection} date={date} article_id={article_id} />
+      <BlogReactionStats
+        toggleCommentSection={toggleCommentSection}
+        date={article.createdAt || ''}
+        article_id={article._id || ''}
+      />
       <BlogReactionSession
         isCommentSectionOpen={isCommentSectionOpen}
-        message={content}
-        article_id={article_id}
+        message={article.content || ''}
+        article_id={article._id || ''}
         setIsCommentSectionOpen={toggleCommentSection}
-        author_of_post={user}
+        author_of_post={article.author_id || {}}
+        text_to_speech={article.text_to_speech || ''}
       />
     </div>
   );

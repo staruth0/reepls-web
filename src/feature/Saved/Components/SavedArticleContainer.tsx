@@ -11,17 +11,7 @@ const SavedArticlesContainer: React.FC<SavedContainerProps> = ({ articles }) => 
     <>
       <div className="transition-all duration-300 ease-linear flex flex-col-reverse gap-7">
         {articles.map((article) => (
-          <BlogPost
-            key={article._id}
-            isArticle={article.isArticle!}
-            media={article.media!}
-            title={article.title!}
-            content={article.content!}
-            user={article.author_id!}
-            date={article.createdAt!}
-            article_id={article._id!}
-            slug={article.slug || ''}
-          />
+          <BlogPost key={article._id} article={article} />
         ))}
       </div>
     </>

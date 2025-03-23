@@ -22,6 +22,7 @@ export const ArticleAudioControls = ({ article }: { article: Article }) => {
       barWidth: 2,
       barHeight: 0,
       cursorWidth: 0,
+      progressColor: '#57c016',
     });
 
     waveSurfer.load(audioUrl);
@@ -97,8 +98,7 @@ export const ArticleAudioControls = ({ article }: { article: Article }) => {
 
         {audioState === 'generating' && (
           <div className="flex items-center gap-2">
-            <Loader2 className="size-4 animate-spin" />
-            <span>Generating audio...</span>
+            <span className="animate-pulse ">Generating audio...</span>
           </div>
         )}
 
