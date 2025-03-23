@@ -1,9 +1,10 @@
 import React from 'react';
 import { LuBadgeCheck } from 'react-icons/lu';
 import { toast } from 'react-toastify';
-import { useFollowUser, useUnfollowUser } from '../../Follow/hooks';
+import {  useUnfollowUser } from '../../Follow/hooks';
 import { useKnowUserFollowings } from '../../Follow/hooks/useKnowUserFollowings';
 import { useNavigate } from 'react-router-dom';
+import { useSendFollowNotification } from '../../Notifications/hooks/useNotification';
 
 interface AuthorSuggestionProps {
   username: string;
@@ -13,7 +14,7 @@ interface AuthorSuggestionProps {
 }
 
 const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username, title, id,isverified }) => {
-  const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
+    const {mutate: followUser, isPending: isFollowPending} = useSendFollowNotification();
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
   const { isFollowing: isUserFollowing } = useKnowUserFollowings();
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username, 
         onError: () => toast.error('Failed to unfollow user'),
       });
     } else {
-      followUser(id, {
+      followUser({receiver_id:id}, {
         onSuccess: () => toast.success('User followed successfully'),
         onError: () => toast.error('Failed to follow user'),
       });

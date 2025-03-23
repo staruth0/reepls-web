@@ -45,6 +45,10 @@ export const useSendFollowNotification = () => {
     mutationFn: sendFollowNotification,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userNotifications"] });
+      queryClient.invalidateQueries({ queryKey: ['followers'] });
+      queryClient.invalidateQueries({
+        queryKey: ['following'],
+      });
     },
   });
 };

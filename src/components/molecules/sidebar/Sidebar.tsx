@@ -24,6 +24,7 @@ import { cn } from '../../../utils';
 import { uploadPostImage, uploadPostVideo } from '../../../utils/media';
 import SidebarItem from '../../atoms/SidebarItem';
 import './sidebar.scss';
+import { useNotificationsValues } from '../../../feature/Notifications/hooks';
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
@@ -32,6 +33,13 @@ const Sidebar: React.FC = () => {
   const { t } = useTranslation();
   const { mutate: createPost, isPending } = useCreateArticle();
   const { isOpen, toggleSidebar } = useContext(SidebarContext);
+
+  const {notifications} = useNotificationsValues();
+  const unreadNotifications = notifications.filter(notif => !notif.is_read);
+
+  console.log('all Not',notifications)
+  console.log('uread Not',unreadNotifications)
+  const unreadCount = unreadNotifications.length;
 
   const handleToggleSidebar = () => {
     console.log('Toggle sidebar', isOpen);
@@ -58,7 +66,7 @@ const Sidebar: React.FC = () => {
       icon: LuBell,
       name: 'Notifications',
       link: `${isLoggedIn ? '/notifications' : '/notifications/anonymous'}`,
-      badgeContent: 14,
+      badgeContent: unreadCount,
     },
     {
       icon: FaRegUserCircle,

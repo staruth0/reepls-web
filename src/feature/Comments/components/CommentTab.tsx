@@ -7,6 +7,7 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom"; 
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next"; 
+// import { useSendCommentNotification } from "../../Notifications/hooks/useNotification";
 
 interface CommentTabProps {
   article_id: string;
@@ -27,6 +28,7 @@ const CommentTab: React.FC<CommentTabProps> = ({ article_id, setIsCommentSection
   };
 
   const { mutate, isPending } = useCreateComment();
+  // const {mutate:sendComment,isPending:commenIspending} = useSendCommentNotification();
 
   const validateCommentData = (commentData: Comment): boolean => {
     if (!commentData.article_id) {
