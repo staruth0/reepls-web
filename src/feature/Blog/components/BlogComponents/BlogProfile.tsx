@@ -10,7 +10,7 @@ import { useUser } from "../../../../hooks/useUser";
 import { Article, User } from "../../../../models/datamodels";
 import { formatDateWithMonth } from "../../../../utils/dateFormater";
 import { useFollowUser, useUnfollowUser } from "../../../Follow/hooks";
-import { useKnowUserFollowings } from "../../../Follow/hooks/useKnowUserFollowings"; // Import the hook
+import { useKnowUserFollowings } from "../../../Follow/hooks/useKnowUserFollowings";
 import { useGetSavedArticles, useRemoveSavedArticle, useSaveArticle } from "../../../Saved/hooks";
 import "./Blog.scss";
 import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
@@ -19,8 +19,8 @@ interface BlogProfileProps {
   date: string;
   article_id: string;
   user: User;
-  content: string;
-  title: string;
+  content?: string; // Make content optional
+  title?: string; // Make title optional
   isArticle: boolean;
 }
 
@@ -34,16 +34,17 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
 
   const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
-  const { isFollowing } = useKnowUserFollowings(); // Use the hook
+  const { isFollowing } = useKnowUserFollowings();
   const { mutate: saveArticle, isPending: isSavePending } = useSaveArticle();
   const { mutate: removeSavedArticle, isPending: isRemovePending } = useRemoveSavedArticle();
   const { data: savedArticles } = useGetSavedArticles();
   const [saved, setSaved] = useState(false);
 
+  // Safely handle undefined content
+  const articleTitle = title || (content ? content.split(" ").slice(0, 10).join(" ") + "..." : "Untitled Post");
   const articleUrl = `${window.location.origin}/posts/${isArticle ? "article" : "post"}/${article_id}`;
-  const articleTitle = `${title ? title : content.split(" ").slice(0, 10).join(" ") + "..."}`;
 
-  const isCurrentAuthorArticle = user?._id === authUser?._id; // Use _id instead of id
+  const isCurrentAuthorArticle = user?._id === authUser?._id;
 
   const handleProfileClick = (username: string) => {
     if (username) {
@@ -79,22 +80,20 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
 
   const handleFollowClick = () => {
     if (!isLoggedIn) {
-      setShowSignInPopup(true); // Show popup if not logged in
+      setShowSignInPopup(true);
       return;
     }
-    console.log('reaching here', isFollowPending, '-', isUnfollowPending, '-', !user?._id);
     if (!user?._id) return;
 
-    console.log('reaching here2');
-    if (isFollowing(user?._id)) { // Use _id instead of id
-      unfollowUser(user?._id, { // Use _id instead of id
+    if (isFollowing(user?._id)) {
+      unfollowUser(user?._id, {
         onSuccess: () => {
           toast.success("User unfollowed successfully");
         },
         onError: () => toast.error("Failed to unfollow user"),
       });
     } else {
-      followUser(user?._id, { // Use _id instead of id
+      followUser(user?._id, {
         onSuccess: () => {
           toast.success("User followed successfully");
         },
@@ -122,14 +121,14 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
   }, [savedArticles, article_id]);
 
   const getFollowStatusText = (isMenu = false) => {
-    if (!isLoggedIn) return "Follow"; // Default text when not logged in
+    if (!isLoggedIn) return "Follow";
     if (isFollowPending) return "Following...";
     if (isUnfollowPending) return "Unfollowing...";
-    return isFollowing(user?._id || "") ? "Following" : isMenu ? "Follow author" : "Follow"; // Use _id instead of id
+    return isFollowing(user?._id || "") ? "Following" : isMenu ? "Follow author" : "Follow";
   };
 
   const getSaveStatusText = () => {
-    if (!isLoggedIn) return "Add To Saved"; // Default text when not logged in
+    if (!isLoggedIn) return "Add To Saved";
     if (isSavePending) return "Saving...";
     if (isRemovePending) return "Removing...";
     return saved ? "Unsave Post" : "Add To Saved";
