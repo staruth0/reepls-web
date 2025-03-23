@@ -132,7 +132,7 @@ const CommentTab: React.FC<CommentTabProps> = ({
                 onClick={() => setEmojiPickerVisible(!isEmojiPickerVisible)}
                 className="ml-2 p-1 text-neutral-100 hover:text-primary-400 transition-colors"
               >
-                <img src={smile} alt="" className="w-6 h-6"/>
+                <img src={smile} alt="" className="w-6 h-6" />
               </button>
               {/* Emoji Picker */}
               {isEmojiPickerVisible && (
