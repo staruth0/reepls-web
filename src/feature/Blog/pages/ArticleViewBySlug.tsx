@@ -54,7 +54,8 @@ const ArticleViewBySlug: React.FC = () => {
   const { data: article, isError, isPending } = useGetArticleBySlug(slug!);
   const { data: allReactions } = useGetArticleReactions(article?._id || '');
 
-  const articleUrl = `${window.location.origin}/posts/article/${articleUid}`;
+  const synth = window.speechSynthesis;
+  const articleUrl = `${window.location.origin}/posts/article/${slug}`;
   const articleTitle = title || content.split(' ').slice(0, 10).join(' ') + '...';
 
   // Follow/Unfollow State Management
@@ -126,7 +127,6 @@ const ArticleViewBySlug: React.FC = () => {
   const handleShareClick = () => {
     setShowSharePopup(true);
   };
-
 
   const onPublish = async () => {
     if (!title || !subtitle || !content) {
@@ -283,7 +283,6 @@ const ArticleViewBySlug: React.FC = () => {
 
             {/* Replace the old audio controls with the new component */}
             {article && <ArticleAudioControls article={article} />}
-       
 
             {/* Article Content */}
             <div id="article-content" className="w-full mb-14">
