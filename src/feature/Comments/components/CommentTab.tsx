@@ -136,7 +136,7 @@ const CommentTab: React.FC<CommentTabProps> = ({
               </button>
               {/* Emoji Picker */}
               {isEmojiPickerVisible && (
-                <div className="absolute z-10 mt-2 bg-background rounded-lg shadow-lg">
+                <div className="absolute right-0 z-10 mt-2 bg-background rounded-lg shadow-lg">
                   <EmojiPicker
                     onEmojiClick={handleEmojiClick}
                     theme={theme === "light" ? Theme.LIGHT : Theme.DARK}
