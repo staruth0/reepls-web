@@ -1,6 +1,7 @@
 import { AudioLines, Loader2, PauseCircle, PlayCircle, Volume2, VolumeX } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useUser } from '../../../hooks/useUser';
 import { useAudioPlayer } from '../../../providers/AudioProvider';
 import { apiClient } from '../../../services/apiClient';
 import { cn } from '../../../utils';
@@ -8,6 +9,7 @@ import { cn } from '../../../utils';
 type AudioState = 'idle' | 'generating' | 'ready' | 'playing' | 'paused' | 'error';
 
 export const ReadingControls = ({ article_id, article_tts }: { article_id: string; article_tts: string }) => {
+  const { isLoggedIn } = useUser(); // Use isLoggedIn instead of authUser
   const { activeAudio, setActiveAudio } = useAudioPlayer();
   const [audioState, setAudioState] = useState<AudioState>('idle');
   const [audioUrl, setAudioUrl] = useState<string | null>(article_tts || null);
@@ -46,6 +48,10 @@ export const ReadingControls = ({ article_id, article_tts }: { article_id: strin
   };
 
   const handlePlay = async () => {
+    if (!isLoggedIn) {
+      toast.error('Please login to read aloud');
+      return;
+    }
     // If another article is playing, stop it first
     if (activeAudio) {
       stopAudio();

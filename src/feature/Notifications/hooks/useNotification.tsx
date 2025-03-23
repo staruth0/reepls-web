@@ -23,6 +23,18 @@ export const useSendReactionNotification = () => {
     mutationFn: sendReactionNotification,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userNotifications"] });
+      queryClient.invalidateQueries({
+        queryKey: ["reaction"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["articleReactions"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["reactionsPerType"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["reactedUsers"],
+      });
     },
   });
 };

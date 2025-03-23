@@ -7,6 +7,7 @@ import {
   getDecryptedAccessToken,
   getDecryptedRefreshToken,
 } from '../feature/Auth/api/Encryption';
+import { refreshAuthTokens } from '../feature/Auth/api';
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_URL,
