@@ -1,5 +1,5 @@
-import { Bookmark, FilePen, Loader2, PauseCircle, PlayCircle, Share2, Volume2 } from 'lucide-react';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import { Bookmark, FilePen, Share2 } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Editor } from 'reactjs-tiptap-editor';
@@ -8,7 +8,6 @@ import { ArticleAudioControls } from '../../../components/atoms/ReadALoud/Articl
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import SharePopup from '../../../components/molecules/share/SharePopup';
 import { PREVIEW_SLUG } from '../../../constants';
-import { VoiceLanguageContext } from '../../../context/VoiceLanguageContext/VoiceLanguageContext';
 import { useUser } from '../../../hooks/useUser';
 import { Article, Follow, MediaItem, User } from '../../../models/datamodels';
 import { timeAgo } from '../../../utils/dateFormater';
@@ -31,7 +30,6 @@ const ArticleViewBySlug: React.FC = () => {
 
   const { articleUid, slug } = useParams();
   const { authUser, isLoggedIn } = useUser();
-  const { selectedVoice } = useContext(VoiceLanguageContext);
 
   const [title, setTitle] = useState<string>('*This article does not have a title*');
   const [subtitle, setsubtitle] = useState<string>('');
@@ -39,9 +37,6 @@ const ArticleViewBySlug: React.FC = () => {
   const [htmlArticleContent, setHtmlArticleContent] = useState<string>('*This article does not have any content*');
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [isPreview] = useState<boolean>(articleUid === PREVIEW_SLUG);
-  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
-  const [isPaused, setIsPaused] = useState<boolean>(false);
-  const [isPendingSpeech, setIsPendingSpeech] = useState<boolean>(false);
   const [showSharePopup, setShowSharePopup] = useState<boolean>(false);
   const [showSignInPopup, setShowSignInPopup] = useState<boolean>(false);
   const [showReactionsPopup, setShowReactionsPopup] = useState<boolean>(false);
@@ -59,7 +54,6 @@ const ArticleViewBySlug: React.FC = () => {
   const { data: article, isError, isPending } = useGetArticleBySlug(slug!);
   const { data: allReactions } = useGetArticleReactions(article?._id || '');
 
-  const synth = window.speechSynthesis;
   const articleUrl = `${window.location.origin}/posts/article/${articleUid}`;
   const articleTitle = title || content.split(' ').slice(0, 10).join(' ') + '...';
 
@@ -133,46 +127,6 @@ const ArticleViewBySlug: React.FC = () => {
     setShowSharePopup(true);
   };
 
-  const handleSpeak = () => {
-    if (!isLoggedIn) {
-      setShowSignInPopup(true);
-      return;
-    }
-    if (synth.speaking || isPendingSpeech) return;
-
-    setIsPendingSpeech(true);
-    const utterance = new SpeechSynthesisUtterance(content);
-    if (selectedVoice) utterance.voice = selectedVoice;
-
-    utterance.onstart = () => {
-      setIsPendingSpeech(false);
-      setIsSpeaking(true);
-      setIsPaused(false);
-    };
-
-    utterance.onend = () => {
-      setIsSpeaking(false);
-      setIsPaused(false);
-    };
-
-    synth.speak(utterance);
-  };
-
-  const handlePauseResume = () => {
-    if (synth.speaking && !synth.paused) {
-      synth.pause();
-      setIsPaused(true);
-    } else if (synth.paused) {
-      synth.resume();
-      setIsPaused(false);
-    }
-  };
-
-  const cancelSpeaking = () => {
-    synth.cancel();
-    setIsSpeaking(false);
-    setIsPaused(false);
-  };
 
   const onPublish = async () => {
     if (!title || !subtitle || !content) {
@@ -302,7 +256,7 @@ const ArticleViewBySlug: React.FC = () => {
               </div>
             )}
 
-            <h1 className="text-5xl font-semibold leading-tight mb-2 text-justify">{title}</h1>
+            <h1 className="text-5xl font-semibold leading-tight mb-2 ">{title}</h1>
             {subtitle && <h3 className="text-xl my-4">{subtitle}</h3>}
 
             {/* Author Profile Section */}
@@ -329,33 +283,7 @@ const ArticleViewBySlug: React.FC = () => {
 
             {/* Replace the old audio controls with the new component */}
             {article && <ArticleAudioControls article={article} />}
-            {/* Read Aloud Controls */}
-            <div className="flex justify-end my-4 gap-2">
-              <button
-                onClick={isSpeaking ? cancelSpeaking : handleSpeak}
-                className="p-2 rounded-full hover:bg-neutral-800 flex items-center gap-2">
-                {isPendingSpeech ? (
-                  <Loader2 className="size-5 animate-spin" />
-                ) : isSpeaking ? (
-                  <Volume2 className="size-5 text-neutral-500" />
-                ) : (
-                  <Volume2 className="size-5 text-neutral-500" />
-                )}
-                {isSpeaking ? 'Stop' : 'Read Aloud'}
-              </button>
-              {isSpeaking && (
-                <button
-                  onClick={handlePauseResume}
-                  className="p-2 rounded-full hover:bg-neutral-800 flex items-center gap-2">
-                  {isPaused ? (
-                    <PlayCircle className="size-5 text-neutral-500" />
-                  ) : (
-                    <PauseCircle className="size-5 text-neutral-500" />
-                  )}
-                  {isPaused ? 'Resume' : 'Pause'}
-                </button>
-              )}
-            </div>
+       
 
             {/* Article Content */}
             <div id="article-content" className="w-full mb-14">

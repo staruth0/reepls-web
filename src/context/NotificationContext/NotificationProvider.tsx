@@ -1,6 +1,8 @@
-import React, { ReactNode, useState, useEffect } from 'react';
-import { NotificationContext, NotificationContextProps, Notification } from './NotificationContext';
-import { io } from 'socket.io-client';
+import React, { ReactNode, useState, useEffect } from "react";
+import { NotificationContext, Notification } from "./NotificationContext";
+// import { io } from "socket.io-client";
+// import { useUser } from "../../hooks/useUser";
+import { useFetchUserNotifications } from "../../feature/Notifications/hooks/useNotification";
 
 interface NotificationProviderProps {
   children: ReactNode;
@@ -8,28 +10,53 @@ interface NotificationProviderProps {
 
 const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  // const { authUser } = useUser();
 
-  
-  const addNotification = (notification: Notification) => {
-    setNotifications((prev) => [notification, ...prev]); 
-  };
-
+  // Fetch notifications on mount and every 2 minutes
+  const { data: fetchedNotifications, refetch } = useFetchUserNotifications();
 
   useEffect(() => {
-    const socket = io('https://saah-server.vercel.app'); 
+    if (fetchedNotifications) {
+      setNotifications(fetchedNotifications);
+    }
+  }, [fetchedNotifications]);
 
-    
-    socket.on('new-notification', (notification: Notification) => {
-      addNotification(notification);
-    });
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch(); 
+    }, 2 * 60 * 1000); 
 
-    // Cleanup on unmount
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
+    // Cleanup interval on unmount
+    return () => clearInterval(interval);
+  }, [refetch]);
 
-  const value: NotificationContextProps = {
+  // Add a new notification (if needed for other purposes)
+  const addNotification = (notification: Notification) => {
+    setNotifications((prev) => [notification, ...prev]);
+  };
+
+  // // Socket.IO for real-time notifications
+  // useEffect(() => {
+  //   if (!authUser) return; // Don't connect if there's no logged-in user
+
+  //   const socket = io("http://localhost:5000");
+
+  //   socket.emit("join", authUser.id);
+
+  //   // Listen for new notifications
+  //   socket.on("notification", (notification: Notification) => {
+  //     console.log('received notification')
+  //     addNotification(notification);
+  //   });
+
+  //   // Cleanup on unmount
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, [authUser]); // Reconnect if the user changes
+
+  const value = {
     notifications,
     addNotification,
   };
