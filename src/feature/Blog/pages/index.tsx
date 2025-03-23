@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { type Editor } from 'reactjs-tiptap-editor';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import { useUser } from '../../../hooks/useUser';
-import { Article } from '../../../models/datamodels';
+import { Article, MediaItem, MediaType } from '../../../models/datamodels';
 import { uploadArticleThumbnail } from '../../../utils/media';
 import AuthPromptPopup from '../../AnonymousUser/components/AuthPromtPopup';
 import CreatePostTopBar from '../components/CreatePostTopBar';
@@ -22,7 +22,7 @@ const CreatePost: React.FC = () => {
   const [subtitle, setsubtitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [htmlContent, setHtmlContent] = useState<string>('');
-  const [media, setMedia] = useState<string[]>([]);
+  const [media, setMedia] = useState<MediaItem[]>([]);
   const { saveDraftArticle, loadDraftArticle, clearDraftArticle } = useDraft();
   const { mutate: createArticle } = useCreateArticle();
   const [initialEditorContent, setInitialEditorContent] = useState<{
@@ -94,7 +94,6 @@ const CreatePost: React.FC = () => {
 
   const onPublish = async () => {
     if (!isLoggedIn) return; // Prevent action if not logged in
-
     if (!title || !subtitle || !content) {
       toast.error(t('Please provide a title, subtitle and content.'), {
         autoClose: 1500,
@@ -104,13 +103,14 @@ const CreatePost: React.FC = () => {
 
     if (thumbnail && authUser?.id) {
       const url = await uploadArticleThumbnail(authUser?.id, thumbnail);
-      setMedia([url, ...media]);
+      setMedia([{ url, type: MediaType.Image }, ...media]);
     }
 
     const article: Article = {
       title,
       subtitle,
       content,
+      htmlContent,
       media,
       status: 'Published',
       type: 'LongForm',
@@ -220,7 +220,7 @@ const CreatePost: React.FC = () => {
                 initialContent={htmlContent}
                 handleContentChange={setContent}
                 editorRef={editorRef}
-                handleMediaUpload={(url) => setMedia([url, ...media])}
+                handleMediaUpload={(url, type) => setMedia([{ url, type }, ...media])}
                 handleHtmlContentChange={setHtmlContent}
                 disabled={!hasLoadedDraft}
                 className="block max-w-full bg-primary-100 static mx-auto my-1"

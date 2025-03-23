@@ -4,6 +4,16 @@ export enum UserRole {
   Writer = 'Writer',
 }
 
+export enum MediaType {
+  Video = 'video',
+  Image = 'image',
+}
+
+export type MediaItem = {
+  url: string;
+  type: MediaType;
+};
+
 export interface AuthTokens {
   access: {
     token: string;
@@ -58,7 +68,7 @@ export interface Article {
   htmlContent?: string;
   category?: string[];
   keywords?: string[];
-  media?: string[];
+  media?: MediaItem[];
   text_to_speech?: string;
   flagged?: boolean;
   author_id?: User;

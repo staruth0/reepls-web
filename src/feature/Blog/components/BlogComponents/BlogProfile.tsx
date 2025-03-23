@@ -14,6 +14,7 @@ import { useKnowUserFollowings } from "../../../Follow/hooks/useKnowUserFollowin
 import { useGetSavedArticles, useRemoveSavedArticle, useSaveArticle } from "../../../Saved/hooks";
 import "./Blog.scss";
 import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
+import { useSendFollowNotification } from "../../../Notifications/hooks/useNotification";
 
 interface BlogProfileProps {
   date: string;
@@ -39,6 +40,8 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
   const { mutate: removeSavedArticle, isPending: isRemovePending } = useRemoveSavedArticle();
   const { data: savedArticles } = useGetSavedArticles();
   const [saved, setSaved] = useState(false);
+
+  const {mutate} = useSendFollowNotification();
 
   // Safely handle undefined content
   const articleTitle = title || (content ? content.split(" ").slice(0, 10).join(" ") + "..." : "Untitled Post");
@@ -89,6 +92,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
       unfollowUser(user?._id, {
         onSuccess: () => {
           toast.success("User unfollowed successfully");
+          mutate({receiver_id:user?._id || ''})
         },
         onError: () => toast.error("Failed to unfollow user"),
       });

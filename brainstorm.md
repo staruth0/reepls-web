@@ -308,3 +308,25 @@ Now I think of it, the platform should not have suported videos
 Problems from backend: sending media as object, not changing the username, google auth,
 
 preference should include user choosing to have cognitive mode on etc
+
+---
+
+-After changing profile, refresh the page and refetch the user because stuff has changed
+-No importing from public
+-profile settings is not autofilled like profile edit; infact why are the two differebt pages when doing the same thing? Keep /setting and both of them
+direct to it
+prevnt iinexyt from console logging
+
+========
+THis is my idea for implementation of the TTS
+
+The way it works is that you an article whose speech has alreay been generated will have article.text_to_speech
+if not you call the api to generate it
+
+I am think that for articles, we can keep what I have instead (look at article titled: Advancements in AI Technology: Transforming the Future
+) to see how it looks;
+I have put it in ArticleAudioControls.tsx
+
+Now I think for short posts, it can be different: since the shortform posts are read on the feed and many ot them are showing at a time,
+if you you can get a situation where like 5 are plaing at the same time and you might even loose track of what you click to play. That is why
+i creayed a audioprovider.tsx that handles the current playing post so if you click another post, if anyone was playing it stops and the current one plays. That is what I hoped to implement in ReadingControls.tsx but it is not complete

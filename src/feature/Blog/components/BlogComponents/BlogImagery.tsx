@@ -4,14 +4,14 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { allowedImageTypes } from '../../../../constants';
+import { MediaItem, MediaType } from '../../../../models/datamodels';
 
 interface BlogImageryProps {
-  media: string[];
+  media: MediaItem[];
 }
 
 const BlogImagery: React.FC<BlogImageryProps> = ({ media }) => {
-  console.log("Verifying media",media)
+  console.log('Verifying media', media);
   return (
     <div className="relative w-full max-w-[300px] md:max-w-[500px] lg:max-w-[700px] mx-auto transition-all duration-300">
       <Swiper
@@ -21,27 +21,24 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media }) => {
         loop={true}
         spaceBetween={20}
         slidesPerView={1}
-        className="rounded-sm absolute w-full z-0"
-      >
+        className="rounded-sm absolute w-full z-0">
         {media?.map((mediaItem, index) => {
-          const fileExtension = mediaItem.split('.').pop()?.toLowerCase() || '';
-
           return (
             <SwiperSlide key={index} className="flex justify-center">
-              {allowedImageTypes.includes(fileExtension) ? (
+              {mediaItem.type === MediaType.Image ? (
                 <img
-                  src={mediaItem}
+                  src={mediaItem.url}
                   alt={`Blog Visual ${index}`}
                   className="w-full h-96 object-cover rounded-sm"
                   loading="lazy"
                 />
               ) : (
                 <video
-                  src={mediaItem}
+                  src={mediaItem.url}
                   className="w-full h-96 object-cover rounded-sm"
                   controls
                   muted
-                  autoPlay
+                  autoPlay={false}
                   loop
                   playsInline
                   controlsList="nodownload"

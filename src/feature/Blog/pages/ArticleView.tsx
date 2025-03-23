@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { Editor } from 'reactjs-tiptap-editor';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import { PREVIEW_SLUG } from '../../../constants';
-import { Article } from '../../../models/datamodels';
+import { Article, MediaItem } from '../../../models/datamodels';
 import { useSaveArticle } from '../../Saved/hooks';
 import BlogReactionStats from '../components/BlogComponents/BlogReactionStats';
 import CreatePostTopBar from '../components/CreatePostTopBar';
@@ -22,7 +22,7 @@ const ArticleView: React.FC = () => {
   const [subtitle, setsubtitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [htmlArticleContent, setHtmlArticleContent] = useState<string>('*This article does not have any content*');
-  const [media, setMedia] = useState<string[]>([]);
+  const [media, setMedia] = useState<MediaItem[]>([]);
   const [isPreview, _] = useState<boolean>(articleUid === PREVIEW_SLUG);
   const { loadDraftArticle } = useDraft();
   const editorRef = useRef<{ editor: Editor | null }>(null);
@@ -111,10 +111,10 @@ const ArticleView: React.FC = () => {
         setsubtitle(article.subtitle);
       }
       if (article.content) {
-        setHtmlArticleContent(article.content);
+        setContent(article.content);
       }
       if (article.htmlContent) {
-        setContent(article.htmlContent);
+        setHtmlArticleContent(article.htmlContent);
       }
     }
   }, [article, isPending]);

@@ -1,3 +1,5 @@
+// import config from '../config';
+
 const MAX_IMAGE_COUNT = 10;
 const MAX_VIDEO_COUNT = 4;
 
@@ -6,7 +8,7 @@ const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
 
 const SHORT_POST_LENGTH = 2500;
 
-const PREVIEW_SLUG = 'preview';
+const PREVIEW_SLUG = 'preview'; //'preview';
 
 const allowedImageTypes = ['jpeg', 'png', 'jpg', 'webp'];
 const allowedVideoTypes = [
@@ -40,8 +42,10 @@ const allowedVideoTypes = [
 ];
 
 // All about the api
-const API_BASE_URL = 'https://api.reepls.com';
-const API_VERSION = import.meta.env.VITE_API_VERSION || '/api-v1';
+// const API_BASE_URL = config.api.baseUrl;
+// const API_VERSION = config.api.version || '/api-v1';
+const API_BASE_URL = 'https://saah-server.vercel.app';
+const API_VERSION = import.meta.env.VITE_API_VERSION || "/api-v1";
 const API_URL = `${API_BASE_URL}${API_VERSION}`;
 
 const AUTH_TOKEN_KEY = 'AuthToken';
