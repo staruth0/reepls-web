@@ -1,9 +1,12 @@
 import axios, { AxiosInstance } from 'axios';
 import { toast } from 'react-toastify';
 import { API_URL, STORAGE_KEY } from '../constants';
-import { refreshAuthTokens } from '../feature/Auth/api/index';
-import { decryptLoginData, encryptAndStoreLoginData, getDecryptedAccessToken, getDecryptedRefreshToken } from '../feature/Auth/api/Encryption';
-
+import {
+  decryptLoginData,
+  encryptAndStoreLoginData,
+  getDecryptedAccessToken,
+  getDecryptedRefreshToken,
+} from '../feature/Auth/api/Encryption';
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_URL,
@@ -18,11 +21,7 @@ apiClient.interceptors.request.use(
     const token = getDecryptedAccessToken(); // Use the decrypted access token
 
     console.log('Testing token availability:', token);
-    if (
-      token &&
-      !config.url?.includes('/login') &&
-      !config.url?.includes('/register')
-    ) {
+    if (token && !config.url?.includes('/login') && !config.url?.includes('/register')) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;

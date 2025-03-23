@@ -94,7 +94,6 @@ const CreatePost: React.FC = () => {
 
   const onPublish = async () => {
     if (!isLoggedIn) return; // Prevent action if not logged in
-
     if (!title || !subtitle || !content) {
       toast.error(t('Please provide a title, subtitle and content.'), {
         autoClose: 1500,
@@ -111,6 +110,7 @@ const CreatePost: React.FC = () => {
       title,
       subtitle,
       content,
+      htmlContent,
       media,
       status: 'Published',
       type: 'LongForm',

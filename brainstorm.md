@@ -315,3 +315,4 @@ preference should include user choosing to have cognitive mode on etc
 -No importing from public
 -profile settings is not autofilled like profile edit; infact why are the two differebt pages when doing the same thing? Keep /setting and both of them
 direct to it
+prevnt iinexyt from console logging

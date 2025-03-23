@@ -74,8 +74,8 @@ function TipTapRichTextEditor({
 }: {
   userId?: string;
   initialContent: EditorContent;
-  handleContentChange: (content: EditorContent) => void;
-  handleHtmlContentChange: (content: EditorContent) => void;
+  handleContentChange?: (content: EditorContent) => void;
+  handleHtmlContentChange?: (content: EditorContent) => void;
   handleMediaUpload?: (url: string, type: MediaType) => void;
   editorRef: React.RefObject<{ editor: Editor | null }>; // Update to match the correct type
   disabled?: boolean;
@@ -220,8 +220,8 @@ function TipTapRichTextEditor({
     // @ts-ignore
     debounce((value: EditorContent) => {
       // handleContentChange(value);
-      handleContentChange(editorRef.current?.editor?.getText() ?? '');
-      handleHtmlContentChange(editorRef.current?.editor?.getHTML() ?? '');
+      handleContentChange?.(editorRef.current?.editor?.getText() ?? '');
+      handleHtmlContentChange?.(editorRef.current?.editor?.getHTML() ?? '');
     }, 1000),
     []
   );

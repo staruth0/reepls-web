@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Editor } from 'reactjs-tiptap-editor';
 import { profileAvatar } from '../../../assets/icons';
+import { ArticleAudioControls } from '../../../components/atoms/ReadALoud/ArticleAudioControls';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import SharePopup from '../../../components/molecules/share/SharePopup';
 import { PREVIEW_SLUG } from '../../../constants';
@@ -241,8 +242,8 @@ const ArticleViewBySlug: React.FC = () => {
     if (article) {
       if (article.title) setTitle(article.title);
       if (article.subtitle) setsubtitle(article.subtitle);
-      if (article.content) setHtmlArticleContent(article.content);
-      if (article.htmlContent) setContent(article.htmlContent);
+      if (article.content) setContent(article.content);
+      if (article.htmlContent) setHtmlArticleContent(article.htmlContent);
     }
   }, [article, isPending]);
 
@@ -326,6 +327,8 @@ const ArticleViewBySlug: React.FC = () => {
               )}
             </div>
 
+            {/* Replace the old audio controls with the new component */}
+            {article && <ArticleAudioControls article={article} />}
             {/* Read Aloud Controls */}
             <div className="flex justify-end my-4 gap-2">
               <button
@@ -358,8 +361,6 @@ const ArticleViewBySlug: React.FC = () => {
             <div id="article-content" className="w-full mb-14">
               <TipTapRichTextEditor
                 initialContent={htmlArticleContent}
-                handleContentChange={setContent}
-                handleHtmlContentChange={setHtmlArticleContent}
                 editorRef={editorRef}
                 disabled={true}
                 hideToolbar={true}

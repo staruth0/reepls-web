@@ -111,10 +111,10 @@ const ArticleView: React.FC = () => {
         setsubtitle(article.subtitle);
       }
       if (article.content) {
-        setHtmlArticleContent(article.content);
+        setContent(article.content);
       }
       if (article.htmlContent) {
-        setContent(article.htmlContent);
+        setHtmlArticleContent(article.htmlContent);
       }
     }
   }, [article, isPending]);
