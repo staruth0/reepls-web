@@ -55,7 +55,7 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
     }
   };
 
-  const isAuthor = author?._id === author_of_post?.id;
+  const isAuthor = author?._id === author_of_post?._id;
 
   
   const handleReact = () => {

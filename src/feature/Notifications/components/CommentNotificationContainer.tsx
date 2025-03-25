@@ -19,7 +19,7 @@ const CommentNotificationContainer: React.FC<CommentNotificationProps> = ({ user
           {user?.username}
           <div className="flex justify-between items-center w-full">
             <div className="text-[15px] font-normal">commented on your post</div>
-            <div className="text-[15px] font-normal">{timestamp}</div>
+            <div className="text-[15px] font-normal ">{timestamp}</div>
           </div>
         </div>
         <p className="text-[14px] text-neutral-100">{comment}</p>

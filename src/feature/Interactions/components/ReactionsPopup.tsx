@@ -100,7 +100,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
   if (isLoadingAllReactions || isLoadingReactionsPerType) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-[910]">
-        <div className="bg-[var(--plain-b)] rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh] p-4">
+        <div className="bg-[var(--plain-b)] rounded-lg md:w-[50vw] max-w-full shadow-lg h-[80vh] p-4">
           <div className="">
             <div className="flex items-center justify-between p-4">
               <div className="h-6 w-24 bg-[var(--neutral-300)] rounded animate-pulse"></div>
@@ -150,7 +150,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-[910]">
-      <div className="bg-[var(--plain-b)] rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh]">
+      <div className="bg-[var(--plain-b)] rounded-lg w-[95%] md:w-[50vw] max-w-full shadow-lg h-[50vh] md:h-[80vh]">
         <div className="border-b border-[var(--neutral-400-main)]">
           <div className="flex items-center justify-between p-4">
             <h2 className="text-lg font-semibold text-[var(--text-color)]">
@@ -163,7 +163,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
               <X size={20} />
             </button>
           </div>
-          <div className="w-[70%] px-2">
+          <div className="md:w-[70%] px-2">
             <ReactionTab
               tabs={reactionsTab}
               activeTab={activeTab}

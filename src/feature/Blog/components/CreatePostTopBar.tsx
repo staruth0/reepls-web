@@ -22,7 +22,7 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({ title, mainAction, acti
   const { t } = useTranslation();
 
   return (
-    <div className="w-full flex items-center justify-between px-10 sticky top-0 backdrop-blur-md">
+    <div className="w-full flex items-center justify-between px-4 lg:px-10 sticky top-0 backdrop-blur-md">
       <h2 className=" text-xl font-instrumentSerif overflow-hidden text-ellipsis whitespace-nowrap max-w-md">
         {t(title)}
       </h2>
