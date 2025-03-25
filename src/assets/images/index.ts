@@ -11,7 +11,8 @@ import Logo from './Logo.svg'
 import ellipse from './Ellipse.png'
 import reeplspng from './Reeples.png'
 import logo from '../../../public/LogoDark.svg'
-
+import imagePlaceholder from './profileimageplacehloder.png'
+import bannerPlaceholder from './bannerPlaceholder.jpg'
 
 
 export const Pics = {
@@ -27,5 +28,7 @@ export const Pics = {
     Logo,
     ellipse,
     reeplspng,
-    logo
+    logo,
+    imagePlaceholder,
+    bannerPlaceholder,
 }

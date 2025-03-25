@@ -17,7 +17,7 @@ const FollowNotificationContainer: React.FC<FollowNotificationProps> = ({ userna
         <div>{user?.username}</div>
         <div className="text-xl font-roboto font-bold text-neutral-50 flex items-center gap-3 ">
         <div className="text-[15px] font-normal">followed you</div>
-          <div className=" absolute right-5">
+          <div className=" absolute right-0">
            
             <div className="text-[15px] font-normal">{timestamp}</div>
           </div>

@@ -246,7 +246,7 @@ const ArticleViewBySlug: React.FC = () => {
             <ArticleViewSkeleton />
           </div>
         ) : (
-          <div className="max-w-4xl mx-auto mt-10 flex flex-col justify-center items-left">
+          <div className="max-w-4xl px-5 mx-auto mt-10 flex flex-col justify-center items-left">
             {isPreview && (
               <div className="mb-4">
                 <span className="text-sm font-semibold px-4 py-1 bg-foreground text-primary-500 rounded-full flex gap-2 items-center">
@@ -256,11 +256,11 @@ const ArticleViewBySlug: React.FC = () => {
               </div>
             )}
 
-            <h1 className="text-5xl font-semibold leading-tight mb-2 ">{title}</h1>
+            <h1 className="md:text-4xl text-[26px] lg:text-5xl font-semibold leading-normal lg:leading-tight mb-2 ">{title}</h1>
             {subtitle && <h3 className="text-xl my-4">{subtitle}</h3>}
 
             {/* Author Profile Section */}
-            <div className="flex items-center gap-4 mt-8 mb-4 relative">
+            <div className="flex my-4 items-center gap-4 mt-8 mb-4 relative">
               <img src={profileAvatar} alt="Author" className="rounded-full w-10 h-10" />
               <div>
                 <p className="font-semibold text-[16px]">{article?.author_id?.username || 'Unknown'}</p>
@@ -282,7 +282,10 @@ const ArticleViewBySlug: React.FC = () => {
             </div>
 
             {/* Replace the old audio controls with the new component */}
+            <div className='my-6'>
             {article && <ArticleAudioControls article={article} />}
+            </div>
+          
 
             {/* Article Content */}
             <div id="article-content" className="w-full mb-14">

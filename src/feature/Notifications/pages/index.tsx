@@ -23,14 +23,14 @@ const Notifications: React.FC = () => {
   };
 
   return (
-    <div className={`grid grid-cols-[4fr_1.65fr]`}>
-      <div className="profile border-r-[1px] border-neutral-500">
+    <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
+      <div className="profile border-r-[1px] min-h-screen border-neutral-500">
         <Topbar>
           <p>{t(`Notifications`)}</p>
         </Topbar>
 
         {/* Notification content */}
-        <div className="notification__content px-20">
+        <div className="notification__content mt-8 md:px-10 lg:px-20 px-5">
           <div className="mt-6 flex flex-col gap-5">
             {notifications.map((notification, index) => {
               const { type, sender_id, content, created_at } = notification;

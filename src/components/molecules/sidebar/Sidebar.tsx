@@ -137,7 +137,7 @@ const Sidebar: React.FC = () => {
     <div className="side">
       <LuCircleChevronRight
         className={cn(
-          'size-6 p-0 rounded-full cursor-pointer',
+          'size-7 md:size-6 p-0 rounded-full cursor-pointer',
           isOpen && 'rotate-180',
           'transition-all duration-300 ease-in-out',
           'hover:text-primary-400',

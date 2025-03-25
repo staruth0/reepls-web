@@ -63,17 +63,17 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
   };
 
   return (
-    <div className="flex gap-2 text-neutral-50 justify-center items-center relative">
+    <div className="flex gap-2 text-neutral-50 justify-start my-6 md:mt-0 md:justify-center items-center relative">
       {isAuthUser ? (
         <>
           <button
-            className="px-8 py-3 border text-neutral-50 border-neutral-100 text-[14px] rounded-full text-sm hover:bg-neutral-600 hover:border-transparent transition-all duration-300 ease-in-out hover:transform-none"
+            className="px-6 py-3 border text-neutral-50 border-neutral-100 text-[14px] rounded-full text-sm hover:bg-neutral-600 hover:border-transparent transition-all duration-300 ease-in-out hover:transform-none"
             onClick={() => handleEditProfile(authUser?.username || "")}
           >
             {t("Edit Profile")}
           </button>
           <button
-            className="px-8 py-3 text-neutral-50 bg-neutral-600 border border-neutral-600 rounded-full text-[14px] hover:bg-transparent hover:border-neutral-50 transition-all duration-300 ease-in-out hover:transform-none"
+            className="px-6 py-3 text-neutral-50 bg-neutral-600 border border-neutral-600 rounded-full text-[14px] hover:bg-transparent hover:border-neutral-50 transition-all duration-300 ease-in-out hover:transform-none"
             onClick={() => handleViewAnalytics(authUser?.username || "")}
           >
             {t("View Analytics")}

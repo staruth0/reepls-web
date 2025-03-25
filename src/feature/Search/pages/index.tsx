@@ -15,19 +15,17 @@ const Search: React.FC = () => {
   const { isSearchContainerOpen } = useContext(SearchContainerContext);
 
   return (
-    <div className={`grid font-roboto grid-cols-[4fr_1.65fr]`}>
-      <div className="search border-r-[1px] border-neutral-500">
+    <div className={`lg:grid font-roboto grid-cols-[4fr_1.65fr]`}>
+      <div className="search w-full md:border-r-[1px] border-neutral-500">
         <Topbar>
           <SearchTopBar />
         </Topbar>
-        <div className="px-20 flex flex-col min-h-screen">
+        <div className=" md:px-10 lg:px-20 px-5 w-full flex flex-col min-h-screen">
           {!isSearchContainerOpen && (
             <div className="recent space-y-3 mt-5">
               {isLoading ? (
-           
                 <RecentSearchesSkeleton />
               ) : (
-              
                 <>
                   {data?.searchHistory?.length >= 1 && (
                     <div className="my-5 text-neutral-50 text-[18px] font-semibold">

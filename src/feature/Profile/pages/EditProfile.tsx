@@ -99,13 +99,13 @@ const EditProfile: React.FC = () => {
   };
 
   return (
-    <div className="grid grid-cols-[4fr_1.66fr]">
-      <div className="profile border-r-[1px] border-neutral-500">
+    <div className="lg:grid grid-cols-[4fr_1.66fr]">
+      <div className="profile lg:border-r-[1px] min-h-screen border-neutral-500">
         <Topbar>
           <p>Profile</p>
         </Topbar>
-        <div className="profile__content px-20">
-          <ProfileEditBody>
+        <div className="profile__content sm:px-5 md:px-10 lg:px-20 ">
+          <ProfileEditBody user={user!}>
             <div className="flex flex-col w-full mt-8">
               <ProfileInput
                 label="Name"
@@ -158,7 +158,7 @@ const EditProfile: React.FC = () => {
           </ProfileEditBody>
         </div>
       </div>
-      <div className="profile__configurationz">
+      <div className="profile__configurationz hidden lg:block">
         <ProfileConfigurations />
       </div>
     </div>

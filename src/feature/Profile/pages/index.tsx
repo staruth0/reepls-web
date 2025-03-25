@@ -123,24 +123,27 @@ const Profile: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-[4fr_1.65fr]">
-        <div className="profile border-r-[1px] border-neutral-500 min-h-screen">
+      <div className="lg:grid grid-cols-[4fr_1.65fr]">
+        <div className="profile lg:border-r-[1px] border-neutral-500 min-h-screen">
           <Topbar>
             <p>{t("Profile")}</p>
           </Topbar>
-          <div className="px-20">
+          <div className=" px-5 md:px-10 lg:px-20">
             <ProfileSkeleton />
           </div>
           
         </div>
+        <div className="hidden lg:block">
         <ProfileRightSideSkeleton/>
+        </div>
+        
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="grid grid-cols-[4fr_1.65fr]">
+      <div className="lg:grid grid-cols-[4fr_1.65fr]">
         <div className="profile border-r-[1px] border-neutral-500 min-h-screen">
           <Topbar>
             <p>{t("Profile")}</p>
@@ -153,7 +156,7 @@ const Profile: React.FC = () => {
 
   if (!user) {
     return (
-      <div className="grid grid-cols-[4fr_1.65fr]">
+      <div className="lg:grid grid-cols-[4fr_1.65fr]">
         <div className="profile border-r-[1px] border-neutral-500 min-h-screen">
           <Topbar>
             <p>{t("Profile")}</p>
@@ -165,15 +168,15 @@ const Profile: React.FC = () => {
   }
 
   return (
-    <div className="grid grid-cols-[4fr_1.65fr]">
-      <div className="profile border-r-[1px] border-neutral-500">
+    <div className="lg:grid grid-cols-[4fr_1.65fr]">
+      <div className="profile border-r-[1px] min-h-screen border-neutral-500">
         <Topbar>
           <p>{t("Profile")}</p>
         </Topbar>
 
-        <div className="profile__content px-20 min-h-screen">
-          <ProfileBody>
-            <div className="flex items-center">
+        <div className="profile__content sm:px-5 md:px-10 lg:px-20  min-h-screen">
+          <ProfileBody user={user}>
+            <div className=" sm:flex items-center">
               <div className="flex-1">
                 <ProfileDetails
                   name={user.username!}

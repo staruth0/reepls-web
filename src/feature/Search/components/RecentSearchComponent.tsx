@@ -15,7 +15,7 @@ const RecentSearchesSkeleton: React.FC = () => {
      
               <div className="size-8 bg-neutral-700 rounded"></div>
            
-              <div className="h-8 bg-neutral-700 rounded w-96"></div>
+              <div className="h-8 bg-neutral-700 rounded w-44 lg:w-96"></div>
             </div>
            
             <div className="size-8 bg-neutral-700 rounded-full"></div>
