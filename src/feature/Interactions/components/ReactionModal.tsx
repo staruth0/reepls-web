@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { heart, sadface, smile, thumb, clap } from "../../../assets/icons";
 import {
-  useCreateReaction,
+
   useGetArticleReactions,
   useUpdateReaction,
 } from "../hooks";
@@ -9,6 +9,7 @@ import { useUser } from "../../../hooks/useUser";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify"; // Import toast (adjust if using a different library)
 import {ReactionReceived } from "../../../models/datamodels";
+import { useSendReactionNotification } from "../../Notifications/hooks/useNotification";
 
 interface ReactionModalProps {
   isOpen: boolean;
@@ -28,7 +29,8 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
   const [pendingReaction, setPendingReaction] = useState<string | null>(null);
   const [successReaction, setSuccessReaction] = useState<string | null>(null);
   const { authUser } = useUser();
-  const { mutate: createReaction } = useCreateReaction();
+  // const { mutate: createReaction } = useCreateReaction();
+  const { mutate: createReaction } = useSendReactionNotification();
   const { mutate: updateReaction } = useUpdateReaction();
   const { data: allReactions } = useGetArticleReactions(article_id);
 
@@ -112,7 +114,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
       setIsPending(true);
       setPendingReaction(reaction);
       createReaction(
-        { type: reaction, article_id, user_id: authUser?.id || "" },
+        { type: reaction, article_id },
         {
           onSuccess: () => {
             setIsPending(false);

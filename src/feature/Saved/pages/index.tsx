@@ -43,14 +43,14 @@ const Bookmarks: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
 
   return (
-    <div className={`grid grid-cols-[4fr_1.65fr] `}>
-      <div className="saved border-r-[1px] border-neutral-500 ">
+    <div className={`lg:grid grid-cols-[4fr_1.65fr] `}>
+      <div className="saved border-r-[1px] min-h-screen border-neutral-500 ">
         <Topbar>
           <p>Saved</p>
         </Topbar>
 
         {/* Saved content */}
-        <div className="notification__content px-20 mt-5 min-h-screen flex flex-col items-center">
+        <div className="notification__content sm:px-5 md:px-10 lg:px-20 mt-5 min-h-screen flex flex-col items-center">
           <div className="w-[82%]">
             <Tabs activeTab={activeTab} setActiveTab={setActiveTab} scale={false} tabs={tabs} borderBottom={true} />
           </div>

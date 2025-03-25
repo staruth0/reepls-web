@@ -94,6 +94,7 @@ export interface Comment {
   replies?: Comment[];
   _id?: string;
   author?: User;
+  comment_id?:string;
 }
 
 export interface Follow {

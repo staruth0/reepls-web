@@ -1,3 +1,5 @@
+// import config from '../config';
+
 import config from '../config';
 
 const MAX_IMAGE_COUNT = 10;

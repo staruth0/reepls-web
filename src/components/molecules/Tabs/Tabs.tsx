@@ -35,7 +35,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, setActiveTab, borderBottom
           <span
             key={tab.id}
             id={`tab-${tab.id}`}
-            className={`relative flex-1 px-2 py-2 cursor-pointer transition-all duration-300 flex items-center justify-center ${
+            className={`relative flex-1 px-2 py-2 cursor-pointer transition-all duration-300 line-clamp-1  flex items-center justify-center ${
               activeTab === tab.id
                 ? 'text-neutral-50'
                 : 'text-neutral-400'
@@ -43,7 +43,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, setActiveTab, borderBottom
             onClick={() => handleTabClick(tab.id)}
           >
             {tab.icon && tab.icon}
-            {t(tab.title)}
+           <div className='line-clamp-1'>{t(tab.title)}</div> 
             {activeTab === tab.id && (
               <div className="absolute bottom-0 left-0 w-full h-[2px] bg-primary-400"></div>
             )}

@@ -32,12 +32,12 @@ const Followers: React.FC = () => {
   }, [followersData, followingsData]);
 
   return (
-    <div className={`grid grid-cols-[4fr_1.66fr] `}>
-      <div className="profile border-r-[1px] min-h-screen border-neutral-500 ">
+    <div className={`lg:grid grid-cols-[4fr_1.66fr] `}>
+      <div className="profile lg:border-r-[1px] min-h-screen border-neutral-500 ">
         <Topbar>
           <p>{t(`Profile`)}</p>
         </Topbar>
-        <div className="px-20">
+        <div className="sm:px-5 md:px-10 lg:px-20 ">
           <div className="mt-6 flex justify-center">
             <div className="w-[200px] justify-center">
               <Tabs

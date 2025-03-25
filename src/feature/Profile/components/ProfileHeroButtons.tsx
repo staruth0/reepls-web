@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../hooks/useUser";
-import { useFollowUser, useUnfollowUser } from "../../Follow/hooks";
+import {  useUnfollowUser } from "../../Follow/hooks";
 import { useKnowUserFollowings } from "../../Follow/hooks/useKnowUserFollowings";
 import { toast } from "react-toastify";
 import SignInPopUp from "../../AnonymousUser/components/SignInPopUp";
+import { useSendFollowNotification } from "../../Notifications/hooks/useNotification";
 
 
 interface ProfileHeroButtonsProps {
@@ -21,9 +22,9 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
   const { t } = useTranslation();
   const { authUser, isLoggedIn } = useUser();
   const { isFollowing: isUserFollowing } = useKnowUserFollowings();
-  const { mutate: follow, isPending: isFollowPending } = useFollowUser();
   const { mutate: unFollow, isPending: isUnfollowPending } = useUnfollowUser();
   const [showSignInPopup, setShowSignInPopup] = useState(false);
+   const {mutate: follow, isPending: isFollowPending} = useSendFollowNotification();
 
   const handleEditProfile = (username: string) => {
     navigate(`/profile/edit/${username}`);
@@ -48,7 +49,7 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
         onError: () => toast.error(t("Failed to unfollow user")),
       });
     } else {
-      follow(userId, {
+      follow({receiver_id:userId}, {
         onSuccess: () => toast.success(t("User followed successfully")),
         onError: () => toast.error(t("Failed to follow user")),
       });
@@ -62,17 +63,17 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
   };
 
   return (
-    <div className="flex gap-2 text-neutral-50 justify-center items-center relative">
+    <div className="flex gap-2 text-neutral-50 justify-start my-6 md:mt-0 md:justify-center items-center relative">
       {isAuthUser ? (
         <>
           <button
-            className="px-8 py-3 border text-neutral-50 border-neutral-100 text-[14px] rounded-full text-sm hover:bg-neutral-600 hover:border-transparent transition-all duration-300 ease-in-out hover:transform-none"
+            className="px-6 py-3 border text-neutral-50 border-neutral-100 text-[14px] rounded-full text-sm hover:bg-neutral-600 hover:border-transparent transition-all duration-300 ease-in-out hover:transform-none"
             onClick={() => handleEditProfile(authUser?.username || "")}
           >
             {t("Edit Profile")}
           </button>
           <button
-            className="px-8 py-3 text-neutral-50 bg-neutral-600 border border-neutral-600 rounded-full text-[14px] hover:bg-transparent hover:border-neutral-50 transition-all duration-300 ease-in-out hover:transform-none"
+            className="px-6 py-3 text-neutral-50 bg-neutral-600 border border-neutral-600 rounded-full text-[14px] hover:bg-transparent hover:border-neutral-50 transition-all duration-300 ease-in-out hover:transform-none"
             onClick={() => handleViewAnalytics(authUser?.username || "")}
           >
             {t("View Analytics")}

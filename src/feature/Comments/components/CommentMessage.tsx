@@ -61,7 +61,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
     }
   };
 
-  const isAuthor = author?._id === author_of_post?.id;
+  const isAuthor = author?._id === author_of_post?._id;
 
   const handleReact = () => {
     if (!authUser?.id) return; 
@@ -71,10 +71,15 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
       comment_id: comment_id,
     });
   };
+  useEffect(()=>{
+    console.log('author comment',author?._id)
+    console.log('author post',author_of_post?._id)
+    console.log('isAtuhor',isAuthor)
+  },[isAuthor,author,author_of_post])
 
   return (
     <div
-      className={`min-w-[70%] p-2 relative self-start ${
+      className={`lg:min-w-[70%] w-full p-2 relative self-start ${
         isSameAuthorAsPrevious ? "self-end" : ""
       }`}
     >

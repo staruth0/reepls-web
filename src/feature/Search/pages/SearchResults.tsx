@@ -48,12 +48,12 @@ const SearchResults: React.FC = () => {
   }, [query, authUser]);
 
   return (
-    <div className={`grid font-roboto grid-cols-[4fr_1.65fr]`}>
-      <div className="search border-r-[1px] border-neutral-500 ">
+    <div className={`lg:grid font-roboto grid-cols-[4fr_1.65fr]`}>
+      <div className="search lg:border-r-[1px] border-neutral-500 ">
         <Topbar>
           <SearchTopBar />
         </Topbar>
-        <div className="px-10 flex flex-col min-h-screen items-center">
+        <div className=" flex flex-col min-h-screen items-center">
           <div className="mt-10 min-w-[370px] self-center">
             <Tabs
               tabs={tabs}
@@ -63,9 +63,9 @@ const SearchResults: React.FC = () => {
             />
           </div>
 
-          <div className="mt-8 text-[15px]">
+          <div className="mt-8 md:px-10 lg:px-20  text-[15px]">
           
-          {activeTab === "All" && <SearchAll query={query} />}
+            {activeTab === "All" && <SearchAll query={query} />}
             {activeTab === "Posts" && <SearchPosts query={query} />}
             {activeTab === "Articles" && <SearchArticles query={query} />}
             {activeTab === "People" && <SearchPeople query={query} />}
