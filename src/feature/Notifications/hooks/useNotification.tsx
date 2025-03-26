@@ -46,6 +46,9 @@ export const useSendCommentNotification = () => {
     mutationFn: sendCommentNotification,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userNotifications"] });
+      queryClient.invalidateQueries({
+        queryKey: ["comments"],
+      });
     },
   });
 };

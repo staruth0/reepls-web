@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useUser } from "../../../hooks/useUser";
-import { Comment } from "../../../models/datamodels";
-import { useCreateComment } from "../hooks";
 import { LuSend, LuLoader } from "react-icons/lu";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import useTheme from "../../../hooks/useTheme";
 import { smile } from "../../../assets/icons";
+import { useSendCommentNotification } from "../../Notifications/hooks/useNotification";
 
 interface CommentTabProps {
   article_id: string;
@@ -52,7 +51,9 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
     }
   };
 
-  const { mutate, isPending } = useCreateComment();
+  // const { mutate, isPending } = useCreateComment();
+  const { mutate, isPending } = useSendCommentNotification();
+  
 
   const handleCommentSubmit = () => {
     if (!authUser?.id) {
@@ -60,11 +61,9 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
       return;
     }
 
-    const commentValues: Comment = {
+    const commentValues = {
       article_id,
-      author_id: authUser.id,
       content: comment,
-      is_audio_comment: false,
       parent_comment_id,
     };
 
@@ -84,7 +83,7 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
   };
 
   return (
-    <div className="px-4">
+    <div className="px-4 self-end  w-[90%]">
       <div className="flex items-center w-full p-2 border border-neutral-300 rounded-full bg-background transition-colors mb-2">
         <input
           type="text"

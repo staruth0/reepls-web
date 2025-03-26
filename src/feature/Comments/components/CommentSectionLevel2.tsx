@@ -13,7 +13,7 @@ interface CommentSectionProps {
 const CommentSectionLevel2: React.FC<CommentSectionProps> = ({ article_id, comment_id, comments, author_of_post }) => {
 
   return (
-    <div className="flex flex-col  mt-3">
+    <div className="flex flex-col border-l border-neutral-400  mt-3">
    
             {comments?.map((comment: Comment, index: number) => {
            

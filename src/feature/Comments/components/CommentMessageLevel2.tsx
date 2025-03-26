@@ -69,7 +69,7 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
 
   return (
     <div
-      className={`min-w-[90%] p-2 relative self-start ${
+      className={`min-w-[90%] p-2 relative self-end ${
         isSameAuthorAsPrevious ? "self-end" : ""
       }`}
     >

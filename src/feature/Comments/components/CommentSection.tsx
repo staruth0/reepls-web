@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LuX, LuLoader, LuCircleAlert } from "react-icons/lu";
 import { Comment, User } from '../../../models/datamodels';
 import { useGetCommentsByArticleId } from '../hooks';
@@ -20,6 +20,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id, setIsCommen
     hasNextPage,
     isFetchingNextPage,
   } = useGetCommentsByArticleId(article_id);
+   const [isLevelTwoCommentOpen, setIsLevelTwoCommentOpen] = useState(false);
 
   useEffect(() => {
     console.log('comments', articleComments);
@@ -43,10 +44,10 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id, setIsCommen
         <LuX />
       </div>
 
-      <CommentTab
+   {!isLevelTwoCommentOpen &&   <CommentTab
         article_id={article_id}
         setIsCommentSectionOpen={setIsCommentSectionOpen}
-      />
+      />}
 
       {/* Render comments */}
       {articleComments?.pages.map((page, pageIndex) =>
@@ -67,6 +68,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id, setIsCommen
               replies={comment.replies!}
               author={comment.author!}
               author_of_post={author_of_post}
+              isLevelTwoCommentOpen={isLevelTwoCommentOpen}
+              setIsLevelTwoCommentOpen={setIsLevelTwoCommentOpen}
             />
           );
         })

@@ -17,6 +17,8 @@ interface MessageComponentProps {
   author: User;
   replies: Comment[];
   author_of_post: User;
+  isLevelTwoCommentOpen:boolean;
+  setIsLevelTwoCommentOpen:(isLevelTwoCommentOpen:boolean)=>void
 }
 
 const CommentMessage: React.FC<MessageComponentProps> = ({
@@ -28,8 +30,10 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   replies,
   author,
   author_of_post,
+  isLevelTwoCommentOpen,
+  setIsLevelTwoCommentOpen
 }) => {
-  const [isLevelTwoCommentOpen, setIsLevelTwoCommentOpen] = useState(false);
+
   const [reactedid, setReactedids] = useState<string[]>([]); 
   const { mutate: createReaction, isPending, isSuccess } = useCreateCommentReaction();
   const { data: reactions } = useGetCommentReactions(comment_id);
