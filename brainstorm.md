@@ -330,3 +330,24 @@ I have put it in ArticleAudioControls.tsx
 Now I think for short posts, it can be different: since the shortform posts are read on the feed and many ot them are showing at a time,
 if you you can get a situation where like 5 are plaing at the same time and you might even loose track of what you click to play. That is why
 i creayed a audioprovider.tsx that handles the current playing post so if you click another post, if anyone was playing it stops and the current one plays. That is what I hoped to implement in ReadingControls.tsx but it is not complete
+
+- No top bar on article view page
+- save next to author + share
+- Floating reaction for actions (save, share, )
+- Two input fields on comments
+- Differentiation between comments and sub-comment
+- Tag user for reply to reply
+- Tagging users
+- Limit possible emojis
+- Policy for expletives (article + pos)
+- Complete freedom of spech - send articles with expletives to admin
+- Edit+(Delete postponed) posts/articles
+- Very sensitive to expletives in comments
+- https://unrealspeech.com/studio
+- Less invasive notification for post
+
+- Reading History
+- Vocabulary
+
+- position the modal for reactions
+- Reporting
