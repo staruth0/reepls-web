@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "../../../hooks/useUser";
 import { Comment } from "../../../models/datamodels";
-import { useCreateComment } from "../hooks";
 import { LuLoader, LuSend } from "react-icons/lu";
 import { FaRegUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import useTheme from "../../../hooks/useTheme";
 import { smile } from "../../../assets/icons";
+import { useSendCommentNotification } from "../../Notifications/hooks/useNotification";
 
 interface CommentTabProps {
   article_id: string;
@@ -20,7 +20,7 @@ const CommentTab: React.FC<CommentTabProps> = ({
   article_id,
   setIsCommentSectionOpen,
 }) => {
-  const { authUser, isLoggedIn } = useUser();
+  const {  isLoggedIn } = useUser();
   const [comment, setComment] = useState<string>("");
   const [isEmojiPickerVisible, setEmojiPickerVisible] = useState(false);
   const CommentTabRef = useRef<HTMLInputElement | null>(null);
@@ -35,16 +35,12 @@ const CommentTab: React.FC<CommentTabProps> = ({
     }
   };
 
-  const { mutate, isPending } = useCreateComment();
-  // const {mutate:sendComment,isPending:commenIspending} = useSendCommentNotification();
+  // const { mutate, isPending } = useCreateComment();
+  const {mutate,isPending} = useSendCommentNotification();
 
   const validateCommentData = (commentData: Comment): boolean => {
     if (!commentData.article_id) {
       console.error("Article ID is required");
-      return false;
-    }
-    if (!commentData.author_id) {
-      console.error("Author ID is required");
       return false;
     }
     if (!commentData.content?.trim()) {
@@ -57,11 +53,9 @@ const CommentTab: React.FC<CommentTabProps> = ({
   const handleCommentSubmit = () => {
     if (!isLoggedIn) return;
 
-    const commentValues: Comment = {
+    const commentValues = {
       article_id,
-      author_id: authUser?.id,
       content: comment,
-      is_audio_comment: false,
     };
 
     if (!validateCommentData(commentValues)) {

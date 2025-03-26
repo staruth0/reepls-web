@@ -11,7 +11,7 @@ export const sendReactionNotification = async (payload: {
 
 // Send a comment notification
 export const sendCommentNotification = async (payload: {
-  comment_id: string;
+  parent_comment_id?: string;
   content: string;
   article_id: string;
 }) => {

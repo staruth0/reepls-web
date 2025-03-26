@@ -121,6 +121,10 @@ const Profile: React.FC = () => {
     isFetchingNextArticles,
   ]);
 
+  useEffect(()=>{
+    if(user)console.log('picture',user.profile_picture)
+  },[user])
+
   if (isLoading) {
     return (
       <div className="lg:grid grid-cols-[4fr_1.65fr]">
@@ -167,6 +171,7 @@ const Profile: React.FC = () => {
     );
   }
 
+  
   return (
     <div className="lg:grid grid-cols-[4fr_1.65fr]">
       <div className="profile border-r-[1px] min-h-screen border-neutral-500">
