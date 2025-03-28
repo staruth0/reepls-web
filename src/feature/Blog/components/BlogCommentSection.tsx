@@ -21,7 +21,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id, author_of_p
     hasNextPage,
     isFetchingNextPage,
   } = useGetCommentsByArticleId(article_id);
-   const [isLevelTwoCommentOpen, setIsLevelTwoCommentOpen] = useState(false);
+   const [isLevelTwoCommentOpen] = useState(false);
 
   useEffect(() => {
     console.log('comments', articleComments);
@@ -62,8 +62,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id, author_of_p
               replies={comment.replies!}
               author={comment.author!}
               author_of_post={author_of_post}
-              isLevelTwoCommentOpen={isLevelTwoCommentOpen}
-              setIsLevelTwoCommentOpen={setIsLevelTwoCommentOpen}
+             
             />
           );
         })

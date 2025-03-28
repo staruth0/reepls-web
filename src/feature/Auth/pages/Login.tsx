@@ -10,25 +10,20 @@ import InputField from '../components/InputField';
 import { useLoginUserWithPhone } from '../hooks/AuthHooks';
 import { useStoreCredential } from '../hooks/useStoreCredential';
 import '../styles/authpages.scss';
+
 function Login() {
   const { t } = useTranslation();
   const { storePhone, storePassword } = useStoreCredential();
   const { phone: enteredPhone, password: enteredPassword } = useSelector((state: RootState) => state.user);
 
-  //custom'hooks
   const Login = useLoginUserWithPhone();
-  // const { storeAccessToken,storeRefreshToken } = useTokenStorage();
+  const navigate = useNavigate();
 
-  // states
   const [phone, setPhone] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [passwordInputError, setPasswordInputError] = useState<boolean>(false);
   const [phoneInputError, setPhoneInputError] = useState<boolean>(false);
 
-  // navigate
-  const navigate = useNavigate();
-
-  // functions to handle DOM events
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const passwordValue = e.target.value;
     setPassword(passwordValue);
@@ -41,16 +36,17 @@ function Login() {
     }
   };
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const phoneValue = e.target.value;
-    setPhone(phoneValue);
-    storePhone(phoneValue);
+  const handlePhoneChange = (
+    value: string,
+ 
+  ) => {
+    setPhone(value);
+    storePhone(value);
 
-    if (/^[0-9]{9}$/.test(phoneValue) || phoneValue === '') {
-      setPhoneInputError(false);
-    } else {
-      setPhoneInputError(true);
-    }
+    // Validate phone number (minimum 8 digits including country code)
+    const digitsOnly = value.replace(/\D/g, '');
+    const isValid = digitsOnly.length >= 8 || value === '';
+    setPhoneInputError(!isValid);
   };
 
   const handlePhoneBlur = () => {
@@ -62,6 +58,18 @@ function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // Validate before submission
+    const digitsOnly = phone.replace(/\D/g, '');
+    if (phone.trim() === "" || digitsOnly.length < 8) {
+      setPhoneInputError(true);
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      setPasswordInputError(true);
+      return;
+    }
+
     console.log({
       password: enteredPassword,
       phone: enteredPhone,
@@ -69,11 +77,10 @@ function Login() {
 
     Login.mutate({
       password: enteredPassword,
-      phone: `+237${enteredPhone}`,
+      phone: enteredPhone?.startsWith('+') ? enteredPhone : `+${enteredPhone}`,
     });
   };
 
-  // functions to navigate
   const navigateToSignInWithEmail = () => {
     navigate('/auth/login/email');
   };
@@ -111,7 +118,7 @@ function Login() {
           inputErrorMessage={t('IncorrectPasswordMessage')}
         />
         {Login.error && <div className="text-red-500">{Login.error.message}</div>}
-        <button type="submit">
+        <button type="submit" disabled={Login.isPending}>
           {Login.isPending && <LuLoader className="animate-spin text-foreground inline-block mx-4" />}
           {t('ContinueButton')}
         </button>

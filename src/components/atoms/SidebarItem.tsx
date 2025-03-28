@@ -29,7 +29,7 @@ const SidebarItem: React.FC<sidebarprops> = ({ NavItemIcon, name, link, isSideba
         {isSidebarcollapsed && <p>{t(`${name}`)}</p>}
 
         {badgeContent && (
-          <div className="absolute inline-flex items-center justify-center size-6 text-xs font-bold text-white bg-red-500 border-2 border-neutral-200 rounded-full -top-3 -start-3">
+          <div className="absolute inline-flex items-center justify-center size-6 text-xs font-bold text-white bg-red-500  rounded-full -top-3 -start-3">
             {badgeContent}
           </div>
 

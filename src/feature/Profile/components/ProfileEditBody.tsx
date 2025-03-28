@@ -5,6 +5,7 @@ import { useUser } from '../../../hooks/useUser';
 import { uploadUserBanner, uploadUserProfile } from '../../../utils/media';
 import { User } from '../../../models/datamodels';
 import { Pics } from '../../../assets/images';
+import { useUpdateUser } from '../hooks';
 
 interface ProfileBodyProps {
   children: ReactNode;
@@ -13,6 +14,7 @@ interface ProfileBodyProps {
 
 const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
   const { authUser } = useUser();
+  const {mutate,isSuccess} = useUpdateUser()
 
   // Safely handle initial state with fallback if user is undefined
   const [bannerImage, setBannerImage] = useState<string | undefined>(() => {
@@ -40,8 +42,9 @@ const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
       reader.onload = (e) => setBannerImage(e.target?.result as string);
       reader.readAsDataURL(file);
       submitBannerImage(file)
-        .then(() => {
-          toast.success('Successfully updated banner image');
+        .then((data) => {
+          mutate({profile_picture:data})
+          if(isSuccess) toast.success('Successfully updated banner image');
         })
         .catch(() => {
           toast.error('New banner could not be uploaded');
@@ -56,8 +59,10 @@ const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
       reader.onload = (e) => setProfileImg(e.target?.result as string);
       reader.readAsDataURL(file);
       submitProfileImage(file)
-        .then(() => {
-          toast.success('Successfully updated profile image');
+        .then((data) => {
+          mutate({profile_picture:data})
+         if(isSuccess) toast.success('Successfully updated profile image');
+          
         })
         .catch(() => {
           toast.error('New profile picture could not be uploaded');

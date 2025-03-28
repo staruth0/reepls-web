@@ -8,7 +8,7 @@ interface CognitiveModeProviderProps {
 const CognitiveModeProvider: React.FC<CognitiveModeProviderProps> = ({
   children,
 }) => {
-  const [isCognitiveMode, setIsCognitiveMode] = useState<boolean>(true);
+  const [isCognitiveMode, setIsCognitiveMode] = useState<boolean>(false);
 
   const toggleCognitiveMode = () => {
     setIsCognitiveMode((prevMode) => !prevMode);

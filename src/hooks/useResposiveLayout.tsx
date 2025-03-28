@@ -14,9 +14,10 @@ export const useResponsiveLayout = () => {
     }, [screenWidth]);
 
     const isTablet = screenWidth >= 640 && screenWidth < 1024;
+    const isTabletSmall = screenWidth >= 640 && screenWidth < 900;
     const isMobile = screenWidth < 640;
     
 
-    return {screenWidth,isTablet,isMobile}
+    return {screenWidth,isTablet,isMobile,isTabletSmall}
 
 }

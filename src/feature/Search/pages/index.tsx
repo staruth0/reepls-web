@@ -9,6 +9,7 @@ import { SearchContainerContext } from "../../../context/suggestionContainer/isS
 import RecentSearchesSkeleton from "../components/RecentSearchComponent";
 
 
+
 const Search: React.FC = () => {
   const { authUser } = useUser();
   const { data, isLoading } = useGetSearchSuggestions(authUser?.id || "");
@@ -38,6 +39,7 @@ const Search: React.FC = () => {
                   {data?.searchHistory?.length === 0 && (
                     <p className="flex justify-center">No recent searches</p>
                   )}
+                 
                 </>
               )}
             </div>

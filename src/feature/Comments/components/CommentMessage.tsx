@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { ThumbsUp, MessageCircle } from "lucide-react";
-import { LuBadgeCheck, LuLoader } from "react-icons/lu";
+import { LuBadgeCheck, LuLoader,LuX } from "react-icons/lu";
 import { timeAgo } from "../../../utils/dateFormater";
 import CommentSectionLevel2 from "./CommentSectionLevel2";
-import { Comment,  ReactionReceived,  User } from "../../../models/datamodels";
+import { Comment, ReactionReceived, User } from "../../../models/datamodels";
 import { useCreateCommentReaction, useGetCommentReactions } from "../../Interactions/hooks";
 import { useUser } from "../../../hooks/useUser";
+
 
 interface MessageComponentProps {
   content: string;
@@ -17,8 +18,8 @@ interface MessageComponentProps {
   author: User;
   replies: Comment[];
   author_of_post: User;
-  isLevelTwoCommentOpen:boolean;
-  setIsLevelTwoCommentOpen:(isLevelTwoCommentOpen:boolean)=>void
+  onLevelTwoToggle?: (isOpen: boolean) => void;
+  activeLevelTwoCommentId?: string | null; // Add prop to track active tab
 }
 
 const CommentMessage: React.FC<MessageComponentProps> = ({
@@ -30,28 +31,25 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   replies,
   author,
   author_of_post,
-  isLevelTwoCommentOpen,
-  setIsLevelTwoCommentOpen
+  onLevelTwoToggle,
+  activeLevelTwoCommentId,
 }) => {
-
-  const [reactedid, setReactedids] = useState<string[]>([]); 
+  const [reactedid, setReactedids] = useState<string[]>([]);
+  const [isLevelTwoCommentOpen, setIsLevelTwoCommentOpen] = useState(false);
   const { mutate: createReaction, isPending, isSuccess } = useCreateCommentReaction();
   const { data: reactions } = useGetCommentReactions(comment_id);
   const { authUser } = useUser();
 
-
   useEffect(() => {
     if (reactions?.reactions && Array.isArray(reactions.reactions)) {
-      const userIds = reactions.reactions.map((reaction:ReactionReceived ) => reaction.user_id.id?.trim());
+      const userIds = reactions.reactions.map((reaction: ReactionReceived) =>
+        reaction.user_id.id?.trim()
+      );
       setReactedids(userIds);
     }
   }, [reactions]);
 
-  
   const hasUserReacted = authUser?.id ? reactedid.includes(authUser.id) : false;
-
-  console.log("Comment reactions:", reactions);
-
   const reactionCount = reactions?.reactions?.length || 0;
 
   const formatDate = () => {
@@ -68,18 +66,29 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   const isAuthor = author?._id === author_of_post?._id;
 
   const handleReact = () => {
-    if (!authUser?.id) return; 
+    if (!authUser?.id) return;
     createReaction({
       type: "like",
-      user_id: authUser.id, 
+      user_id: authUser.id,
       comment_id: comment_id,
     });
   };
-  useEffect(()=>{
-    console.log('author comment',author?._id)
-    console.log('author post',author_of_post?._id)
-    console.log('isAtuhor',isAuthor)
-  },[isAuthor,author,author_of_post])
+
+  const handleToggleLevelTwo = () => {
+    onLevelTwoToggle?.(true);
+    setIsLevelTwoCommentOpen(true);
+  };
+
+  const handleCloseLevelTwo = () => {
+    setIsLevelTwoCommentOpen(false);
+    onLevelTwoToggle?.(false); // Notify parent that it’s closed
+  };
+
+  useEffect(() => {
+    console.log("author comment", author?._id);
+    console.log("author post", author_of_post?._id);
+    console.log("isAuthor", isAuthor);
+  }, [isAuthor, author, author_of_post]);
 
   return (
     <div
@@ -89,12 +98,9 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
     >
       <div className="bg-neutral-700 p-3 relative rounded-xl shadow-sm inline-block w-full">
         <div className="flex items-center gap-2">
-          {/* Avatar */}
           <div className="size-6 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-[13px]">
             {author?.username?.charAt(0)}
           </div>
-
-          {/* User Details */}
           <div className="flex-1">
             <div className="font-semibold flex items-center justify-between text-neutral-50 text-[14px]">
               <div className="flex items-center gap-2">
@@ -118,12 +124,9 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
             <p className="text-[12px] text-gray-500">{author?.title}</p>
           </div>
         </div>
-
-        {/* Message Content */}
         <p className="mt-2 mb-1 text-neutral-50 text-[13px]">{content}</p>
       </div>
 
-      {/* Actions (React & Reply) */}
       <div className="flex gap-4 mt-2 text-gray-600 text-[11px] px-4">
         <div className="flex items-center gap-1">
           <ThumbsUp
@@ -141,21 +144,26 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
           )}{" "}
           <span>• {reactionCount}</span>
         </div>
+        <div className="flex items-center gap-2">
         <button
           className="flex items-center gap-1 hover:text-primary-400"
-          onClick={() => setIsLevelTwoCommentOpen(!isLevelTwoCommentOpen)}
+          onClick={handleToggleLevelTwo}
         >
           <MessageCircle className="size-4" />
           Reply • {replies?.length} replies
         </button>
+        {isLevelTwoCommentOpen && <LuX onClick={handleCloseLevelTwo} className="size-4 hover:text-primary-400"/>}
+        </div>
+       
       </div>
 
       {isLevelTwoCommentOpen && (
         <CommentSectionLevel2
           article_id={article_id}
-          comment_id={comment_id!}
+          comment_id={comment_id}
           comments={replies}
           author_of_post={author_of_post}
+          isTabActive={activeLevelTwoCommentId === comment_id} // Pass tab active state
         />
       )}
     </div>

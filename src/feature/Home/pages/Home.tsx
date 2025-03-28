@@ -29,7 +29,7 @@ function Home() {
       // Cleanup timeout on unmount
       return () => clearTimeout(splashTimer);
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn,setShowSplash]);
 
   const checkInternetConnection = () => {
     if (navigator.onLine) {
@@ -54,23 +54,21 @@ function Home() {
     }
   }, [splashText, navigate]);
 
+  if (showSplash) {
+    return <SplashComponent text={splashText} />;
+  }
+
   return (
     <div className="home__container bg-background">
-      {showSplash ? (
-        <SplashComponent text={splashText} />
-      ) : (
-        <>
-          <Header />
-          <div className="lg:px-[100px]">
-            <Banner />
-            <Sections />
-          </div>
-          <FooterTop />
-          <div className="lg:px-[100px]">
-            <FooterBottom />
-          </div>
-        </>
-      )}
+      <Header />
+      <div className="lg:px-[100px]">
+        <Banner />
+        <Sections />
+      </div>
+      <FooterTop />
+      <div className="lg:px-[100px]">
+        <FooterBottom />
+      </div>
     </div>
   );
 }
