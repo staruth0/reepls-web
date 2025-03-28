@@ -24,7 +24,7 @@ const FeedFollowing: React.FC = () => {
     toggleCognitiveMode();
   };
 
-  // Infinite scrolling logic
+  
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -34,9 +34,9 @@ const FeedFollowing: React.FC = () => {
         }
       },
       {
-        root: null, // Use viewport
-        rootMargin: '100px', // Trigger 100px before bottom
-        threshold: 0.5, // Trigger when 50% of bottomRef is visible
+        root: null,
+        rootMargin: '800px', 
+        threshold: 0.5, 
       }
     );
 

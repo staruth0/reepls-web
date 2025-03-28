@@ -35,7 +35,7 @@ const UserFeed: React.FC = () => {
       },
       {
         root: null, // Use the viewport as the scroll container
-        rootMargin: '100px', // Trigger when the bottomRef is 100px from the viewport edge
+        rootMargin: '800px', // Trigger when the bottomRef is 100px from the viewport edge
         threshold: 0.5, // Trigger when 50% of the bottomRef is visible
       }
     );

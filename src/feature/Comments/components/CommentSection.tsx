@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { LuX, LuLoader, LuCircleAlert } from "react-icons/lu";
-import { Comment, User } from '../../../models/datamodels';
-import { useGetCommentsByArticleId } from '../hooks';
-import CommentMessage from './CommentMessage';
-import CommentTab from './CommentTab';
+import { Comment, User } from "../../../models/datamodels";
+import { useGetCommentsByArticleId } from "../hooks";
+import CommentMessage from "./CommentMessage";
+import CommentTab from "./CommentTab";
 
 interface CommentSectionProps {
   article_id: string;
@@ -11,7 +11,11 @@ interface CommentSectionProps {
   author_of_post: User;
 }
 
-const CommentSection: React.FC<CommentSectionProps> = ({ article_id, setIsCommentSectionOpen, author_of_post }) => {
+const CommentSection: React.FC<CommentSectionProps> = ({
+  article_id,
+  setIsCommentSectionOpen,
+  author_of_post,
+}) => {
   const {
     data: articleComments,
     isLoading,
@@ -20,20 +24,34 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id, setIsCommen
     hasNextPage,
     isFetchingNextPage,
   } = useGetCommentsByArticleId(article_id);
-   const [isLevelTwoCommentOpen, setIsLevelTwoCommentOpen] = useState(false);
+  const [hasOpenLevelTwo, setHasOpenLevelTwo] = useState(false); // Any level-two open
+  const [activeLevelTwoCommentId, setActiveLevelTwoCommentId] = useState<string | null>(null); // Track active tab
 
   useEffect(() => {
-    console.log('comments', articleComments);
+    console.log("comments", articleComments);
   }, [article_id, articleComments]);
 
-  if (isLoading) return <LuLoader className="animate-spin text-primary-400 text-xl m-4" />;
+  if (isLoading)
+    return <LuLoader className="animate-spin text-primary-400 text-xl m-4" />;
   if (isError)
-    
     return (
       <div>
         <LuCircleAlert className="text-red-500 m-4" /> Error loading comments
       </div>
     );
+
+  const handleLevelTwoToggle = (commentId: string, isOpen: boolean) => {
+    setHasOpenLevelTwo(() => {
+      if (isOpen) return true;
+  
+      return false;
+    });
+    if (isOpen) {
+      setActiveLevelTwoCommentId(commentId);
+    } else if (activeLevelTwoCommentId === commentId) {
+      setActiveLevelTwoCommentId(null); 
+    }
+  };
 
   return (
     <div className="flex flex-col gap-2">
@@ -44,10 +62,12 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id, setIsCommen
         <LuX />
       </div>
 
-   {!isLevelTwoCommentOpen &&   <CommentTab
-        article_id={article_id}
-        setIsCommentSectionOpen={setIsCommentSectionOpen}
-      />}
+      {!hasOpenLevelTwo && (
+        <CommentTab
+          article_id={article_id}
+          setIsCommentSectionOpen={setIsCommentSectionOpen}
+        />
+      )}
 
       {/* Render comments */}
       {articleComments?.pages.map((page, pageIndex) =>
@@ -68,21 +88,24 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id, setIsCommen
               replies={comment.replies!}
               author={comment.author!}
               author_of_post={author_of_post}
-              isLevelTwoCommentOpen={isLevelTwoCommentOpen}
-              setIsLevelTwoCommentOpen={setIsLevelTwoCommentOpen}
+              onLevelTwoToggle={(isOpen) => handleLevelTwoToggle(comment._id!, isOpen)}
+              activeLevelTwoCommentId={activeLevelTwoCommentId} // Pass active ID
             />
           );
         })
       )}
 
-      {/* Show More Button */}
       {hasNextPage && (
         <button
           onClick={() => fetchNextPage()}
           disabled={isFetchingNextPage}
           className="text-primary-400 text-[15px] mt-4 self-center"
         >
-          {isFetchingNextPage ?<LuLoader className="animate-spin text-foreground inline-block mx-4" />: "Show More"}
+          {isFetchingNextPage ? (
+            <LuLoader className="animate-spin text-foreground inline-block mx-4" />
+          ) : (
+            "Show More"
+          )}
         </button>
       )}
     </div>

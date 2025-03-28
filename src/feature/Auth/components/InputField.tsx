@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { FaRegEyeSlash } from 'react-icons/fa6';
-// import { LuChevronDown } from 'react-icons/lu';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import 'react-phone-input-2/lib/style.css';
-import { cm } from '../../../assets/icons';
+import PhoneInput, { CountryData } from 'react-phone-input-2';
 import '../styles/input.scss';
 
 interface InputProps {
   label: string;
   placeholder: string;
   textValue: string;
-  handleInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleInputChange?: 
+    | ((e: React.ChangeEvent<HTMLInputElement>) => void)
+    | ((value: string, data: CountryData , event: React.ChangeEvent<HTMLInputElement>, formattedValue: string) => void);
   handleBlur?: () => void;
   type: string;
   isInputError?: boolean;
@@ -40,7 +41,7 @@ const InputField: React.FC<InputProps> = ({
           type={type}
           placeholder={`e.g ${placeholder}`}
           value={textValue}
-          onChange={handleInputChange}
+          onChange={handleInputChange as (e: React.ChangeEvent<HTMLInputElement>) => void}
           className={isInputError ? 'error' : ''}
           onBlur={handleBlur}
           required
@@ -53,27 +54,27 @@ const InputField: React.FC<InputProps> = ({
 
   if (type === 'phone') {
     return (
-      <div className="phone__input">
-        <div className="country__code">
-          <div>
-            <img src={cm} alt="Cameroon flag" className="flag__icon" />
-            <p>+237</p>
-          </div>
-
-
-        </div>
-        <div className="input__wrapper">
-          <input
-            type="tel"
-            placeholder={placeholder}
-            value={textValue}
-            onChange={handleInputChange}
-            className={`phone-input-field  ${isInputError ? 'error' : ' '}`}
-            onBlur={handleBlur}
-          />
-          <label>{label}</label>
-          {isInputError && <div className="input__error">{inputErrorMessage}</div>}
-        </div>
+      <div className="phone__input flex flex-col">
+        <PhoneInput
+          country={'cm'}
+          value={textValue}
+          onChange={(value, country, event, formattedValue) => {
+            if (handleInputChange) {
+              (handleInputChange as (
+                value: string,
+                data: CountryData | {},
+                event: React.ChangeEvent<HTMLInputElement>,
+                formattedValue: string
+              ) => void)(value, country, event, formattedValue);
+            }
+          }}
+          inputProps={{
+            onBlur: handleBlur,
+            required: true,
+          }}
+          inputClass={isInputError ? 'error' : ''}
+        />
+        {isInputError && <div className="text-red-600 text-[13px]">{inputErrorMessage}</div>}
       </div>
     );
   }
@@ -84,14 +85,13 @@ const InputField: React.FC<InputProps> = ({
         type={isPasswordVisible ? 'password' : 'text'}
         placeholder={`e.g ${placeholder}`}
         value={textValue}
-        onChange={handleInputChange}
+        onChange={handleInputChange as (e: React.ChangeEvent<HTMLInputElement>) => void}
         className={isInputError ? 'error' : ''}
         onBlur={handleBlur}
         required
       />
       <label className={isInputError ? 'error' : ''}>{label}</label>
       {isInputError && <div className="input__error">{inputErrorMessage}</div>}
-
       {isPasswordVisible ? (
         <FaRegEyeSlash className={`input__icon ${isInputError ? 'error' : ' '}`} onClick={togglePasswordVisibility} />
       ) : (

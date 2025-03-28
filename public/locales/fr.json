@@ -14,7 +14,7 @@
   "PhonePlaceholder": "678566385",
   "PhoneNumberPlaceholder": "678566385",
   "PhoneNumberLabel": "Numéro de téléphone",
-  "PhoneErrorMessage": "Numéro de téléphone invalide : doit contenir uniquement des chiffres et 9 caractères",
+  "PhoneErrorMessage": "Le numéro doit commencer par '+' et contenir 8-15 chiffres",
   "PasswordPlaceholder": "dfwni8y5*inikfmn",
   "PasswordErrorMessage": "Invalide : le mot de passe doit contenir un chiffre et un caractère spécial d'au moins 8 caractères",
   "NameLabel": "Nom",

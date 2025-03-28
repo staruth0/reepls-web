@@ -51,7 +51,7 @@ function RegisterWithPhone1() {
       name:username,
     });
 
-    mutate({ phone: `+237${phone}`, password,name:username });
+    mutate({ phone: `+${phone}`, password,name:username });
   };
 
   return (

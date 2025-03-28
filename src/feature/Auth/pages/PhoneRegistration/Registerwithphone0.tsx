@@ -1,36 +1,32 @@
 import React, { useState } from "react";
 import InputField from "../../components/InputField";
-import "../../styles/authpages.scss"
+import "../../styles/authpages.scss";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useStoreCredential } from "../../hooks/useStoreCredential";
 
-
-function Registerwithphone0() {
+function RegisterWithPhone0() {
   const { t } = useTranslation();
+  const { storePhone, storeName } = useStoreCredential();
+  const navigate = useNavigate();
 
-  //custom-hooks
-  const { storePhone,storeName } = useStoreCredential();
- 
-
-  //states
+  // states
   const [phone, setPhone] = useState<string>("");
   const [phoneInputError, setPhoneInputError] = useState<boolean>(false);
 
-  //navigate
-  const navigate = useNavigate();
+  // functions to handle DOM events
+  const handlePhoneNumberChange = (
+    value: string,
+  
+  ) => {
+    setPhone(value);
+    storePhone(value);
+    storeName(value);
 
-  //functions to handle DOM events
-  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const phoneValue = e.target.value;
-    setPhone(phoneValue);
-    storeName(phoneValue);
-
-    if (/^[0-9]{9}$/.test(phoneValue) || phoneValue === '') {
-      setPhoneInputError(false);
-    } else {
-      setPhoneInputError(true)
-    } 
+    // Validate phone number (minimum 8 digits after country code)
+    const digitsOnly = value.replace(/\D/g, '');
+    const isValid = digitsOnly.length >= 8 || value === '';
+    setPhoneInputError(!isValid);
   };
 
   const handlePhoneBlur = () => {
@@ -39,17 +35,16 @@ function Registerwithphone0() {
     }
   };
 
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    if (phone.trim() === "" || !/^[0-9]{9}$/.test(phone)) {
+    const digitsOnly = phone.replace(/\D/g, '');
+    if (phone.trim() === "" || digitsOnly.length < 8) {
       setPhoneInputError(true);
-      return
+      return;
     }
      
-    storePhone(phone)
-
+    storePhone(phone);
     navigateToPassword();
   };
 
@@ -57,6 +52,7 @@ function Registerwithphone0() {
   const navigateToSignInWithEmail = () => {
     navigate("/auth/register/email");
   };
+  
   const navigateToPassword = () => {
     navigate("/auth/register/phone/one");
   };
@@ -65,7 +61,7 @@ function Registerwithphone0() {
     <div className="register__phone__container">
       <div className="insightful__texts">
         <div>{t("GetInformed")}</div>
-        <p>{t("EnterEmailDescription")}</p>
+        <p>{t("EnterEmailDescription")}</p> 
       </div>
       <form onSubmit={handleSubmit}>
         <div>
@@ -80,16 +76,15 @@ function Registerwithphone0() {
             inputErrorMessage={t("PhoneErrorMessage")}
           />
         </div>
-
         <button type="submit">{t("ContinueButton")}</button>
       </form>
       <div className="bottom__links">
         <div className="alternate__email" onClick={navigateToSignInWithEmail}>
-         {t(" Create Account with Email instead")}
+          {t("Create Account with Email instead")}
         </div>
       </div>
     </div>
   );
 }
 
-export default Registerwithphone0;
+export default RegisterWithPhone0;
