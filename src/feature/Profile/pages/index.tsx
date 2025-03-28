@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { ErrorBoundary } from "react-error-boundary";
 import Topbar from "../../../components/atoms/Topbar/Topbar";
 import Tabs from "../../../components/molecules/Tabs/Tabs";
+import ErrorFallback from "../../../components/molecules/ErrorFallback/ErrorFallback";
 import ProfileAbout from "../components/ProfileAbout";
 import ProfileArticles from "../components/ProfileArticles";
 import ProfileBody from "../components/ProfileBody";
@@ -16,27 +18,44 @@ import { useUser } from "../../../hooks/useUser";
 import SimilarProfiles from "../components/SimilarProfiles";
 import { User } from "lucide-react";
 import ProfileSkeleton from "../components/ProfileSkeleton";
-
-import BlogSkeletonComponent from "../../Blog/components/BlogSkeleton"; // Adjust path
-import { useGetAuthorArticles, useGetAuthorPosts } from "../../Blog/hooks/useArticleHook";
+import BlogSkeletonComponent from "../../Blog/components/BlogSkeleton";
+import {
+  useGetAuthorArticles,
+  useGetAuthorPosts,
+} from "../../Blog/hooks/useArticleHook";
 import ProfileRightSideSkeleton from "../components/ProfileRightSideSkeleton";
+import { useQueryClient } from "@tanstack/react-query";
 
+
+const SimilarProfilesErrorFallback = () => (
+  <div className="p-4 text-sm text-gray-500">
+    Similar profiles unavailable right now
+  </div>
+);
+
+const ProfileMediaErrorFallback = () => (
+  <div className="p-4 border border-dashed border-gray-300 rounded-lg">
+    Media failed to load
+  </div>
+);
 
 const Profile: React.FC = () => {
-  
+  const queryClient = useQueryClient();
   const { t } = useTranslation();
   const { username } = useParams<{ username?: string }>();
   const { authUser } = useUser();
-  const bottomRef = useRef<HTMLDivElement>(null); // Ref for infinite scroll trigger
+  const bottomRef = useRef<HTMLDivElement>(null);
 
-  const { user: userByUsername, isLoading: isLoadingUsername, error: errorUsername } = useGetUserByUsername(username || "");
-
+  // User data
+  const {
+    user: userByUsername,
+    isLoading,
+    error,
+  } = useGetUserByUsername(username || "");
   const user = userByUsername;
-  const isLoading = isLoadingUsername;
-  const error = errorUsername;
   const authorId = user?.id || "";
 
-  // Infinite scrolling hooks
+  // Posts and Articles data
   const {
     data: authorPostsData,
     isLoading: isLoadingPosts,
@@ -55,17 +74,9 @@ const Profile: React.FC = () => {
     isFetchingNextPage: isFetchingNextArticles,
   } = useGetAuthorArticles(authorId);
 
-  useEffect(() => {
-    if (user) {
-      console.log("Displayed username:", user?.username);
-      console.log("Username from params:", username);
-      console.log("authUser", authUser);
-      console.log(username?.trim() === authUser?.username?.trim());
-    }
-  }, [user, username, authUser]);
-
   const isAuthUser = username?.trim() === authUser?.username?.trim();
 
+  // Tabs configuration
   const tabs = [
     { id: "about", title: "About" },
     {
@@ -78,38 +89,31 @@ const Profile: React.FC = () => {
     },
     { id: "media", title: "Media" },
   ];
-  
+
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
 
-  // Infinite scrolling observer
+  // Infinite scroll logic (unchanged from your original)
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
           if (activeTab === "posts" && hasNextPosts && !isFetchingNextPosts) {
-            console.log("Fetching next author posts...");
             fetchNextPosts();
-          } else if (activeTab === "articles" && hasNextArticles && !isFetchingNextArticles) {
-            console.log("Fetching next author articles...");
+          } else if (
+            activeTab === "articles" &&
+            hasNextArticles &&
+            !isFetchingNextArticles
+          ) {
             fetchNextArticles();
           }
         }
       },
-      {
-        root: null,
-        rootMargin: "100px",
-        threshold: 0.5,
-      }
+      { root: null, rootMargin: "100px", threshold: 0.5 }
     );
 
-    if (bottomRef.current) {
-      observer.observe(bottomRef.current); // Fixed to bottomRef
-    }
-
+    if (bottomRef.current) observer.observe(bottomRef.current);
     return () => {
-      if (bottomRef.current) {
-        observer.unobserve(bottomRef.current); // Fixed to bottomRef
-      }
+      if (bottomRef.current) observer.unobserve(bottomRef.current);
     };
   }, [
     activeTab,
@@ -121,6 +125,7 @@ const Profile: React.FC = () => {
     isFetchingNextArticles,
   ]);
 
+  // Loading and error states
   if (isLoading) {
     return (
       <div className="grid grid-cols-[4fr_1.65fr]">
@@ -131,9 +136,8 @@ const Profile: React.FC = () => {
           <div className="px-20">
             <ProfileSkeleton />
           </div>
-          
         </div>
-        <ProfileRightSideSkeleton/>
+        <ProfileRightSideSkeleton />
       </div>
     );
   }
@@ -145,7 +149,9 @@ const Profile: React.FC = () => {
           <Topbar>
             <p>{t("Profile")}</p>
           </Topbar>
-          <div>{error.message || t("Error loading profile")}</div>
+          <div className="p-4 text-red-500">
+            {error.message || t("Error loading profile")}
+          </div>
         </div>
       </div>
     );
@@ -158,7 +164,7 @@ const Profile: React.FC = () => {
           <Topbar>
             <p>{t("Profile")}</p>
           </Topbar>
-          <div>{t("User not found")}</div>
+          <div className="p-4">{t("User not found")}</div>
         </div>
       </div>
     );
@@ -166,12 +172,14 @@ const Profile: React.FC = () => {
 
   return (
     <div className="grid grid-cols-[4fr_1.65fr]">
-      <div className="profile border-r-[1px] border-neutral-500">
+      {/* Left Column - Main Profile Content */}
+      <div className="profile border-r-[1px] border-neutral-500 min-h-screen">
         <Topbar>
           <p>{t("Profile")}</p>
         </Topbar>
 
-        <div className="profile__content px-20 min-h-screen">
+        <div className="profile__content px-20">
+          {/* Safe Components (no boundary needed) */}
           <ProfileBody>
             <div className="flex items-center">
               <div className="flex-1">
@@ -191,6 +199,7 @@ const Profile: React.FC = () => {
             </div>
           </ProfileBody>
 
+          {/* Tabs */}
           <div className="mt-6">
             <Tabs
               tabs={tabs}
@@ -201,75 +210,108 @@ const Profile: React.FC = () => {
             />
           </div>
 
+          {/* Tab Content with Error Boundaries */}
           <div className="mt-6">
-            {activeTab === "about" && <ProfileAbout about={user?.about || "Default About"} />}
+            {activeTab === "about" && (
+              <ProfileAbout about={user?.about || ""} />
+            )}
+
             {activeTab === "posts" && (
-              <>
-                <div className="pb-10">
-                  {isLoadingPosts ? (
-                    <div className="p-2">
-                      <BlogSkeletonComponent />
-                      <BlogSkeletonComponent />
-                    </div>
-                  ) : (
-                    authorPostsData?.pages.map((page, i) => (
-                      <div key={i}>
-                        <ProfilePosts authorId={authorId} posts={page.articles} />
+              <ErrorBoundary
+                FallbackComponent={ErrorFallback}
+                onReset={() => {
+                  queryClient.invalidateQueries({
+                    queryKey: ["authorPosts", authorId],
+                  });
+                }}
+                resetKeys={[authorId, activeTab]}
+              >
+                <>
+                  <div className="pb-10">
+                    {isLoadingPosts ? (
+                      <div className="p-2">
+                        <BlogSkeletonComponent />
+                        <BlogSkeletonComponent />
                       </div>
-                    ))
+                    ) : (
+                      authorPostsData?.pages.map((page, i) => (
+                        <div key={i}>
+                          <ProfilePosts
+                            authorId={authorId}
+                            posts={page.articles}
+                          />
+                        </div>
+                      ))
+                    )}
+                    {isFetchingNextPosts && (
+                      <div className="p-2">
+                        <BlogSkeletonComponent />
+                        <BlogSkeletonComponent />
+                      </div>
+                    )}
+                  </div>
+                  {postsError && (
+                    <div className="text-red-500">{postsError.message}</div>
                   )}
-                  {isFetchingNextPosts && (
-                    <div className="p-2">
-                      <BlogSkeletonComponent />
-                      <BlogSkeletonComponent />
-                    </div>
-                  )}
-                </div>
-                <div>{postsError && postsError.message}</div>
-              </>
+                </>
+              </ErrorBoundary>
             )}
+
             {activeTab === "articles" && (
-              <>
-                <div className="pb-10">
-                  {isLoadingArticles ? (
-                    <div className="p-2">
-                      <BlogSkeletonComponent />
-                      <BlogSkeletonComponent />
-                    </div>
-                  ) : (
-                    authorArticlesData?.pages.map((page, i) => (
-                      <div key={i}>
-                        <ProfileArticles authorId={authorId} articles={page.articles} />
+              <ErrorBoundary FallbackComponent={ErrorFallback}>
+                <>
+                  <div className="pb-10">
+                    {isLoadingArticles ? (
+                      <div className="p-2">
+                        <BlogSkeletonComponent />
+                        <BlogSkeletonComponent />
                       </div>
-                    ))
+                    ) : (
+                      authorArticlesData?.pages.map((page, i) => (
+                        <div key={i}>
+                          <ProfileArticles
+                            authorId={authorId}
+                            articles={page.articles}
+                          />
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  {articlesError && (
+                    <div className="text-red-500">{articlesError.message}</div>
                   )}
-                  {isFetchingNextArticles && (
-                    <div className="p-2">
-                      <BlogSkeletonComponent />
-                      <BlogSkeletonComponent />
-                    </div>
-                  )}
-                </div>
-                <div>{articlesError && articlesError.message}</div>
-              </>
+                </>
+              </ErrorBoundary>
             )}
-            {activeTab === "media" && <ProfileMedia />}
+
+            {activeTab === "media" && (
+              <ErrorBoundary
+                FallbackComponent={ProfileMediaErrorFallback}
+                onError={(error) => console.error("Media error:", error)}
+              >
+                <ProfileMedia />
+              </ErrorBoundary>
+            )}
+
             <div ref={bottomRef} style={{ height: "100px" }} />
           </div>
         </div>
       </div>
 
+      {/* Right Column - Sidebar */}
       <div className="profile__configurations hidden lg:block">
         {isAuthUser ? (
           <ProfileConfigurations />
         ) : (
-          <div>
-            <div className="py-7 px-4 font-semibold text-neutral-50 flex items-center gap-2">
-              <User className="text-main-green" size={20} />
-              {t("Similar Profiles")}
+          <ErrorBoundary FallbackComponent={SimilarProfilesErrorFallback}>
+            <div>
+              <div className="py-7 px-4 font-semibold text-neutral-50 flex items-center gap-2">
+                <User className="text-main-green" size={20} />
+                {t("Similar Profiles")}
+              </div>
+              <SimilarProfiles />
             </div>
-            <SimilarProfiles />
-          </div>
+          </ErrorBoundary>
         )}
       </div>
     </div>

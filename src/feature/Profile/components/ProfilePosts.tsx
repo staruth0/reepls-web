@@ -10,7 +10,7 @@ interface ProfileArticlesProps {
 }
 
 const ProfilePosts: React.FC<ProfileArticlesProps> = ({ posts = [] }) => {
-  // If posts are not provided, this component assumes the parent handles loading/error states
+  
   const hasPosts = posts && posts.length > 0;
 
   return (

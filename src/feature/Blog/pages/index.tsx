@@ -1,27 +1,27 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { LuCalendar, LuEye, LuSave, LuShare, LuTag } from 'react-icons/lu';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { type Editor } from 'reactjs-tiptap-editor';
-import Topbar from '../../../components/atoms/Topbar/Topbar';
-import { useUser } from '../../../hooks/useUser';
-import { Article, MediaItem, MediaType } from '../../../models/datamodels';
-import { uploadArticleThumbnail } from '../../../utils/media';
-import AuthPromptPopup from '../../AnonymousUser/components/AuthPromtPopup';
-import CreatePostTopBar from '../components/CreatePostTopBar';
-import ImageSection from '../components/ImageSection';
-import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
-import { useCreateArticle } from '../hooks/useArticleHook';
-import useDraft from '../hooks/useDraft';
+import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { LuCalendar, LuEye, LuSave, LuShare, LuTag } from "react-icons/lu";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { type Editor } from "reactjs-tiptap-editor";
+import Topbar from "../../../components/atoms/Topbar/Topbar";
+import { useUser } from "../../../hooks/useUser";
+import { Article, MediaItem, MediaType } from "../../../models/datamodels";
+import { uploadArticleThumbnail } from "../../../utils/media";
+import AuthPromptPopup from "../../AnonymousUser/components/AuthPromtPopup";
+import CreatePostTopBar from "../components/CreatePostTopBar";
+import ImageSection from "../components/ImageSection";
+import TipTapRichTextEditor from "../components/TipTapRichTextEditor";
+import { useCreateArticle } from "../hooks/useArticleHook";
+import useDraft from "../hooks/useDraft";
 
 const CreatePost: React.FC = () => {
   const { authUser, isLoggedIn } = useUser();
   const [thumbnail, setThumbnail] = useState<File | null>(null);
-  const [title, setTitle] = useState<string>('');
-  const [subtitle, setsubtitle] = useState<string>('');
-  const [content, setContent] = useState<string>('');
-  const [htmlContent, setHtmlContent] = useState<string>('');
+  const [title, setTitle] = useState<string>("");
+  const [subtitle, setsubtitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+  const [htmlContent, setHtmlContent] = useState<string>("");
   const [media, setMedia] = useState<MediaItem[]>([]);
   const { saveDraftArticle, loadDraftArticle, clearDraftArticle } = useDraft();
   const { mutate: createArticle } = useCreateArticle();
@@ -31,10 +31,10 @@ const CreatePost: React.FC = () => {
     content: string;
     htmlContent: string;
   }>({
-    title: '',
-    subtitle: '',
-    content: '',
-    htmlContent: '',
+    title: "",
+    subtitle: "",
+    content: "",
+    htmlContent: "",
   });
   const [hasLoadedDraft, setHasLoadedDraft] = useState(false);
   const editorRef = useRef<{ editor: Editor | null }>(null);
@@ -43,49 +43,49 @@ const CreatePost: React.FC = () => {
 
   const actions = [
     {
-      label: 'Preview',
+      label: "Preview",
       disabled: !isLoggedIn,
       ActionIcon: LuEye,
       onClick: () => {
         if (!isLoggedIn) return;
         saveDraftArticle({ title, subtitle, content, htmlContent, media });
-        navigate('/posts/article/preview');
+        navigate("/posts/article/preview");
       },
     },
     {
-      label: 'Schedule',
+      label: "Schedule",
       disabled: !isLoggedIn,
       ActionIcon: LuCalendar,
       onClick: () => {
-        toast.info('Scheduling is not available yet', {
+        toast.info("Scheduling is not available yet", {
           autoClose: 1500,
         });
       },
     },
     {
-      label: 'Share',
+      label: "Share",
       disabled: true,
       ActionIcon: LuShare,
       onClick: () => {
         if (!isLoggedIn) return;
-        console.log('Sharing the post...');
+        console.log("Sharing the post...");
       },
     },
     {
-      label: 'Save Draft',
+      label: "Save Draft",
       disabled: !isLoggedIn,
       ActionIcon: LuSave,
       onClick: () => {
         if (!isLoggedIn) return;
-        console.log('Saving the draft...');
+        console.log("Saving the draft...");
       },
     },
     {
-      label: 'Add Tags',
+      label: "Add Tags",
       ActionIcon: LuTag,
       disabled: true,
       onClick: () => {
-        toast.info('Adding tags is not available yet', {
+        toast.info("Adding tags is not available yet", {
           autoClose: 1500,
         });
       },
@@ -95,7 +95,7 @@ const CreatePost: React.FC = () => {
   const onPublish = async () => {
     if (!isLoggedIn) return; // Prevent action if not logged in
     if (!title || !subtitle || !content) {
-      toast.error(t('Please provide a title, subtitle and content.'), {
+      toast.error(t("Please provide a title, subtitle and content."), {
         autoClose: 1500,
       });
       return;
@@ -112,29 +112,29 @@ const CreatePost: React.FC = () => {
       content,
       htmlContent,
       media,
-      status: 'Published',
-      type: 'LongForm',
+      status: "Published",
+      type: "LongForm",
       isArticle: true,
     };
-    const toastId = toast.info(t('Publishing the article...'), {
+    const toastId = toast.info(t("Publishing the article..."), {
       isLoading: true,
       autoClose: false,
     });
     createArticle(article, {
       onSuccess: () => {
         toast.update(toastId, {
-          render: t('Article created successfully'),
-          type: 'success',
+          render: t("Article created successfully"),
+          type: "success",
           isLoading: false,
           autoClose: 1500,
         });
-        navigate('/feed');
+        navigate("/feed");
         clearDraftArticle();
       },
       onError: (error) => {
         toast.update(toastId, {
-          render: t('Error creating article: ') + error,
-          type: 'error',
+          render: t("Error creating article: ") + error,
+          type: "error",
           isLoading: false,
           autoClose: 1500,
         });
@@ -142,8 +142,11 @@ const CreatePost: React.FC = () => {
     });
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>, nextFocus: () => void) => {
-    if (event.key === 'Enter') {
+  const handleKeyDown = (
+    event: React.KeyboardEvent<HTMLTextAreaElement>,
+    nextFocus: () => void
+  ) => {
+    if (event.key === "Enter") {
       event.preventDefault();
       nextFocus();
     }
@@ -168,7 +171,9 @@ const CreatePost: React.FC = () => {
       setContent(initialEditorContent.content);
       setHtmlContent(initialEditorContent.htmlContent);
       setTimeout(() => {
-        editorRef.current?.editor?.commands?.setContent(initialEditorContent.htmlContent);
+        editorRef.current?.editor?.commands?.setContent(
+          initialEditorContent.htmlContent
+        );
       }, 0);
     }
   }, [hasLoadedDraft, initialEditorContent]);
@@ -182,8 +187,8 @@ const CreatePost: React.FC = () => {
     <div className="relative min-h-screen">
       <Topbar>
         <CreatePostTopBar
-          title={t('New Article')}
-          mainAction={{ label: 'Publish', onClick: onPublish }}
+          title={t("New Article")}
+          mainAction={{ label: "Publish", onClick: onPublish }}
           actions={actions}
         />
       </Topbar>
@@ -191,26 +196,36 @@ const CreatePost: React.FC = () => {
       <div className="mt-10">
         {isLoggedIn ? (
           <div className="md:px-4">
-            <ImageSection onImageChange={(image) => setThumbnail(image as File)} />
+            <ImageSection
+              onImageChange={(image) => setThumbnail(image as File)}
+            />
             <div className="mx-auto mt-3 pl-20 max-w-5xl">
               <div className="">
                 <textarea
-                  placeholder={t('Enter your title here...')}
+                  placeholder={t("Enter your title here...")}
                   className="resize-none w-full h-auto mb-2 text-3xl font-semibold font-instrumentSerif border-none outline-none bg-transparent placeholder-gray-500"
                   value={title}
                   rows={2}
                   onChange={(e) => setTitle(e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(e, () => document.getElementById('subtitle')?.focus())}
+                  onKeyDown={(e) =>
+                    handleKeyDown(e, () =>
+                      document.getElementById("subtitle")?.focus()
+                    )
+                  }
                   disabled={!hasLoadedDraft}
                 />
                 <textarea
                   id="subtitle"
-                  placeholder={t('Enter your subtitle here...')}
+                  placeholder={t("Enter your subtitle here...")}
                   className="resize-none w-full h-auto mb-0 text-lg font-medium font-inter border-none outline-none bg-transparent placeholder-gray-400"
                   value={subtitle}
                   rows={2}
                   onChange={(e) => setsubtitle(e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(e, () => editorRef?.current?.editor?.commands?.focus())}
+                  onKeyDown={(e) =>
+                    handleKeyDown(e, () =>
+                      editorRef?.current?.editor?.commands?.focus()
+                    )
+                  }
                   disabled={!hasLoadedDraft}
                 />
               </div>
@@ -220,7 +235,9 @@ const CreatePost: React.FC = () => {
                 initialContent={htmlContent}
                 handleContentChange={setContent}
                 editorRef={editorRef}
-                handleMediaUpload={(url, type) => setMedia([{ url, type }, ...media])}
+                handleMediaUpload={(url, type) =>
+                  setMedia([{ url, type }, ...media])
+                }
                 handleHtmlContentChange={setHtmlContent}
                 disabled={!hasLoadedDraft}
                 className="block max-w-full bg-primary-100 static mx-auto my-1"
@@ -228,7 +245,7 @@ const CreatePost: React.FC = () => {
             </div>
           </div>
         ) : (
-          <AuthPromptPopup text={t('create a post')} />
+          <AuthPromptPopup text={t("create a post")} />
         )}
       </div>
     </div>

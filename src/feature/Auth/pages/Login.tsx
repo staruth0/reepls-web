@@ -10,47 +10,82 @@ import InputField from '../components/InputField';
 import { useLoginUserWithPhone } from '../hooks/AuthHooks';
 import { useStoreCredential } from '../hooks/useStoreCredential';
 import '../styles/authpages.scss';
+
+type ApiError = Error & {
+  response?: {
+    status?: number;
+    data?: {
+      message?: string;
+    };
+  };
+  isAxiosError?: boolean;
+  code?: string;
+};
+
 function Login() {
   const { t } = useTranslation();
   const { storePhone, storePassword } = useStoreCredential();
-  const { phone: enteredPhone, password: enteredPassword } = useSelector((state: RootState) => state.user);
+  const { phone: enteredPhone, password: enteredPassword } = useSelector(
+    (state: RootState) => state.user
+  );
 
-  //custom'hooks
   const Login = useLoginUserWithPhone();
-  // const { storeAccessToken,storeRefreshToken } = useTokenStorage();
-
-  // states
   const [phone, setPhone] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [passwordInputError, setPasswordInputError] = useState<boolean>(false);
   const [phoneInputError, setPhoneInputError] = useState<boolean>(false);
-
-  // navigate
   const navigate = useNavigate();
 
-  // functions to handle DOM events
+  const getErrorMessage = (error: ApiError) => {
+    // Network errors (no response from server)
+    if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+      return t('Network error. Please check your internet connection.');
+    }
+
+    // Timeout errors
+    if (error.code === 'ECONNABORTED') {
+      return t('Connection timeout. Please try again.');
+    }
+
+    // HTTP status code errors
+    switch (error.response?.status) {
+      case 400:
+        return t('Invalid request. Please check your phone number and password.');
+      case 401:
+        return t('Invalid phone number or password. Please try again.');
+      case 403:
+        return t('Account not verified. Please verify your phone number first.');
+      case 404:
+        return t('Account not found. Please check your phone number.');
+      case 408:
+        return t('Request timeout. Please try again.');
+      case 429:
+        return t('Too many attempts. Please wait before trying again.');
+      case 500:
+        return t('Server error. Please try again later.');
+      case 502:
+        return t('Service unavailable. Please try again soon.');
+      case 503:
+        return t('Service maintenance in progress. Please check back later.');
+      case 504:
+        return t('Gateway timeout. Please try again.');
+      default:
+        return error.message || t('Login failed. Please try again.');
+    }
+  };
+
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const passwordValue = e.target.value;
     setPassword(passwordValue);
     storePassword(passwordValue);
-
-    if (validatePassword(passwordValue) || passwordValue === '') {
-      setPasswordInputError(false);
-    } else {
-      setPasswordInputError(true);
-    }
+    setPasswordInputError(!(validatePassword(passwordValue) || passwordValue === ''));
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const phoneValue = e.target.value;
     setPhone(phoneValue);
     storePhone(phoneValue);
-
-    if (/^[0-9]{9}$/.test(phoneValue) || phoneValue === '') {
-      setPhoneInputError(false);
-    } else {
-      setPhoneInputError(true);
-    }
+    setPhoneInputError(!(/^[0-9]{9}$/.test(phoneValue) || phoneValue === ''));
   };
 
   const handlePhoneBlur = () => {
@@ -61,28 +96,20 @@ function Login() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    console.log({
-      password: enteredPassword,
-      phone: enteredPhone,
-    });
-
     Login.mutate({
       password: enteredPassword,
       phone: `+237${enteredPhone}`,
     });
   };
 
-  // functions to navigate
-  const navigateToSignInWithEmail = () => {
-    navigate('/auth/login/email');
-  };
-
   useEffect(() => {
     if (Login.error) {
-      toast.error(Login.error.message);
+      const error = Login.error as ApiError;
+      if (error.code === 'ERR_NETWORK') {
+        toast.error(t('You appear to be offline'));
+      }
     }
-  }, [Login.error]);
+  }, [Login.error, t]);
 
   return (
     <div className="register__phone__container">
@@ -110,14 +137,29 @@ function Login() {
           isInputError={passwordInputError}
           inputErrorMessage={t('IncorrectPasswordMessage')}
         />
-        {Login.error && <div className="text-red-500">{Login.error.message}</div>}
-        <button type="submit">
-          {Login.isPending && <LuLoader className="animate-spin text-foreground inline-block mx-4" />}
-          {t('ContinueButton')}
+        
+        {Login.error && (
+          <div className="text-center text-red-500 my-2">
+            {getErrorMessage(Login.error as ApiError)}
+          </div>
+        )}
+        
+        <button 
+          type="submit" 
+          className="hover:bg-primary-600 transition-colors"
+          disabled={Login.isPending}
+        >
+          {Login.isPending && (
+            <LuLoader className="animate-spin text-foreground inline-block mx-4" />
+          )}
+          {Login.isPending ? t('SigningIn') : t('ContinueButton')}
         </button>
       </form>
       <div className="bottom__links">
-        <div className="alternate__email" onClick={navigateToSignInWithEmail}>
+        <div 
+          className="alternate__email hover:text-primary-500 cursor-pointer transition-colors" 
+          onClick={() => navigate('/auth/login/email')}
+        >
           {t('AlternateSignInWithEmail')}
         </div>
       </div>
