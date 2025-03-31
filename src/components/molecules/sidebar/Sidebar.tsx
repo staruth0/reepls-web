@@ -71,7 +71,7 @@ const Sidebar: React.FC = () => {
     {
       icon: FaRegUserCircle,
       name: 'Profile',
-      link: `${isLoggedIn ? `/profile/${authUser?.username}` : '/anonymous'} `,
+      link: `${isLoggedIn ? `/profile/${authUser?.username}` : '/anonymous'}`,
     },
   ];
 

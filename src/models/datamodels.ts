@@ -38,7 +38,7 @@ export interface User {
   role?: UserRole;
   profile_picture?: string;
   saved_articles?: string[];
-  banner_image?: string;
+  banner_picture?: string;
   bio?: string;
   about?: string;
   address?: string;

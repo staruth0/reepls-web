@@ -5,6 +5,7 @@ import {  useUnfollowUser } from '../../Follow/hooks';
 import { useKnowUserFollowings } from '../../Follow/hooks/useKnowUserFollowings';
 import { useNavigate } from 'react-router-dom';
 import { useSendFollowNotification } from '../../Notifications/hooks/useNotification';
+import { useGetUserByUsername } from '../../Profile/hooks';
 
 interface AuthorSuggestionProps {
   username: string;
@@ -17,6 +18,7 @@ const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username, 
     const {mutate: followUser, isPending: isFollowPending} = useSendFollowNotification();
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
   const { isFollowing: isUserFollowing } = useKnowUserFollowings();
+  const {user} = useGetUserByUsername(username)
   const navigate = useNavigate();
 
   const handleFollowClick = () => {
@@ -46,9 +48,17 @@ const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username, 
   return (
     <div>
       <header className="flex gap-2">
-        <span className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-11 h-11 text-center">
-          {initial}
-        </span>
+      {user?.profile_picture !== 'https://example.com/default-profile.png' ? (
+          <img
+            src={user?.profile_picture}
+            alt="avatar"
+            className="cursor-pointer w-10 h-10 rounded-full object-cover"
+          />
+        ) : (
+         <span className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-12 h-12 text-center">
+          {initial  || 'D'}
+        </span> 
+        )}
 
         <div className="flex flex-col justify-center items-start gap-1">
           <div className="flex items-center gap-2">

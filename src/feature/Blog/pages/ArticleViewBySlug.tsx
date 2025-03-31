@@ -1,4 +1,4 @@
-import { Bookmark, FilePen, Share2 } from 'lucide-react';
+import { Bookmark, FilePen, MessageSquare, Share2 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -27,9 +27,9 @@ import ArticleViewSkeleton from './ArticleViewSkeleton';
 
 const ArticleViewBySlug: React.FC = () => {
   const navigate = useNavigate();
-
   const { articleUid, slug } = useParams();
   const { authUser, isLoggedIn } = useUser();
+  const commentSectionRef = useRef<HTMLDivElement>(null); // Ref for scrolling to comments
 
   const [title, setTitle] = useState<string>('*This article does not have a title*');
   const [subtitle, setsubtitle] = useState<string>('');
@@ -38,13 +38,12 @@ const ArticleViewBySlug: React.FC = () => {
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [isPreview] = useState<boolean>(articleUid === PREVIEW_SLUG);
   const [showSharePopup, setShowSharePopup] = useState<boolean>(false);
-  const [showSignInPopup, setShowSignInPopup] = useState<boolean>(false);
+  const [showSignInPopup, setShowSignInPopup] = useState<string | null>(null); // Store action type
   const [showReactionsPopup, setShowReactionsPopup] = useState<boolean>(false);
 
   const { loadDraftArticle, clearDraftArticle } = useDraft();
   const editorRef = useRef<{ editor: Editor | null }>(null);
   const { mutate: createArticle } = useCreateArticle();
-
   const { mutate: saveArticle, isPending: isSavePending } = useSaveArticle();
   const { mutate: removeSavedArticle, isPending: isRemovePending } = useRemoveSavedArticle();
   const { data: savedArticles } = useGetSavedArticles();
@@ -53,7 +52,6 @@ const ArticleViewBySlug: React.FC = () => {
   const { data: followings } = useGetFollowing(authUser?.id || '');
   const { data: article, isError, isPending } = useGetArticleBySlug(slug!);
   const { data: allReactions } = useGetArticleReactions(article?._id || '');
-
 
   const articleUrl = `${window.location.origin}/posts/article/${slug}`;
   const articleTitle = title || content.split(' ').slice(0, 10).join(' ') + '...';
@@ -74,7 +72,7 @@ const ArticleViewBySlug: React.FC = () => {
 
   const handleFollowClick = () => {
     if (!isLoggedIn) {
-      setShowSignInPopup(true);
+      setShowSignInPopup('follow');
       return;
     }
     if (isFollowPending || isUnfollowPending || !article?.author_id?._id) return;
@@ -100,7 +98,7 @@ const ArticleViewBySlug: React.FC = () => {
 
   const handleSaveClick = () => {
     if (!isLoggedIn) {
-      setShowSignInPopup(true);
+      setShowSignInPopup('save');
       return;
     }
     if (isSavePending || isRemovePending || !article?._id) return;
@@ -125,13 +123,32 @@ const ArticleViewBySlug: React.FC = () => {
   };
 
   const handleShareClick = () => {
+    if (!isLoggedIn) {
+      setShowSignInPopup('share');
+      return;
+    }
     setShowSharePopup(true);
+  };
+
+  const handleReactionsClick = () => {
+    if (!isLoggedIn) {
+      setShowSignInPopup('react');
+      return;
+    }
+    setShowReactionsPopup(true);
+  };
+
+  const handleCommentClick = () => {
+    if (!isLoggedIn) {
+      setShowSignInPopup('comment');
+      return;
+    }
+    commentSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const onPublish = async () => {
     if (!title || !subtitle || !content) {
       toast.error('Please provide a title, subtitle, and content.', { autoClose: 1500 });
-
       return;
     }
 
@@ -228,19 +245,12 @@ const ArticleViewBySlug: React.FC = () => {
     return isFollowing ? 'Following' : 'Follow';
   };
 
-  const getSaveStatusText = () => {
-    if (!isLoggedIn) return 'Save';
-    if (isSavePending) return 'Saving...';
-    if (isRemovePending) return 'Removing...';
-    return isSaved ? 'Saved' : 'Save';
-  };
-
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-h-screen relative">
       <Topbar>
         <CreatePostTopBar title={title} mainAction={mainAction} actions={[]} />
       </Topbar>
-      <div className="max-w-full h-full mb-10 inline-block overflow-clip self-center">
+      <div className="max-w-full h-full mb-20 inline-block overflow-clip self-center flex-grow">
         {!isPreview && isPending ? (
           <div className="max-w-full md:mx-20 mt-10 flex flex-col justify-center items-right">
             <ArticleViewSkeleton />
@@ -256,7 +266,7 @@ const ArticleViewBySlug: React.FC = () => {
               </div>
             )}
 
-            <h1 className="md:text-4xl text-[26px] lg:text-5xl font-semibold leading-normal lg:leading-tight mb-2 ">{title}</h1>
+            <h1 className="md:text-4xl text-[26px] lg:text-5xl font-semibold leading-normal lg:leading-tight mb-2">{title}</h1>
             {subtitle && <h3 className="text-xl my-4">{subtitle}</h3>}
 
             {/* Author Profile Section */}
@@ -274,21 +284,18 @@ const ArticleViewBySlug: React.FC = () => {
                       ? 'bg-neutral-600 text-neutral-50 hover:bg-neutral-700'
                       : 'bg-main-green text-white hover:bg-green-600'
                   }`}
-                  disabled={isFollowPending || isUnfollowPending} // Only disable during pending states
+                  disabled={!isLoggedIn || isFollowPending || isUnfollowPending}
                 >
                   {getFollowStatusText()}
                 </button>
               )}
             </div>
 
-            {/* Replace the old audio controls with the new component */}
-            <div className='my-6'>
-            {article && <ArticleAudioControls article={article} />}
-            </div>
-          
+            {/* Audio Controls */}
+            <div className="my-6">{article && <ArticleAudioControls article={article} />}</div>
 
             {/* Article Content */}
-            <div id="article-content" className="w-full mb-14">
+            <div id="article-content" className="w-full mb-5">
               <TipTapRichTextEditor
                 initialContent={htmlArticleContent}
                 editorRef={editorRef}
@@ -298,62 +305,85 @@ const ArticleViewBySlug: React.FC = () => {
                 className="w-full block"
               />
             </div>
-          </div>
-        )}
 
-        {/* Reactions Section */}
-        {!isPreview && !isPending && (
-          <div className="max-w-4xl mx-auto mt-1 flex justify-between items-center">
-            <div className="flex gap-4 items-center">
-              {/* Reaction Stats */}
-              <div className="flex items-center gap-2 relative cursor-pointer">
-                <ReactionModal article_id={article?._id || ''} />
-                <div
-                  className="ml-1 hover:underline underline-offset-1 text-[17px] text-neutral-50"
-                  onClick={() => setShowReactionsPopup(true)}>
-                  {allReactions?.reactions?.length || 0}
-                </div>
+            {/* Article Stats */}
+            {!isPreview && !isPending && (
+                <div className="text-neutral-100 text-md mb-5">{timeAgo(article?.createdAt)}</div>
+              
+            )}
+
+            {/* Comments Section */}
+            {!isPreview && !isPending && (
+              <div ref={commentSectionRef} className="max-w-4xl mx-auto mt-10">
+                <h2 className="text-2xl font-semibold mb-4">Comments</h2>
+                <CommentSection article_id={article?._id || ''} author_of_post={article?.author_id as User} />
               </div>
-
-              <button
-                onClick={handleSaveClick}
-                className="flex items-center gap-2 px-3 py-1 bg-neutral-800 text-neutral-50 rounded-full hover:bg-neutral-700">
-                <Bookmark size={18} />
-                {getSaveStatusText()}
-              </button>
-              <button
-                onClick={handleShareClick}
-                className="flex items-center gap-2 px-3 py-1 bg-neutral-800 text-neutral-50 rounded-full hover:bg-neutral-700">
-                <Share2 size={18} /> Share
-              </button>
-            </div>
-            <div className="text-neutral-500 text-xs">• {timeAgo(article?.createdAt)}</div>
+            )}
           </div>
-        )}
-
-        {/* Comments Section */}
-        {!isPreview && !isPending && (
-          <div className="max-w-4xl mx-auto mt-10">
-            <h2 className="text-2xl font-semibold mb-4">Comments</h2>
-            <CommentSection article_id={article?._id || ''} author_of_post={article?.author_id as User} />
-          </div>
-        )}
-
-        {/* Popups */}
-        {showSharePopup && (
-          <SharePopup url={articleUrl} title={articleTitle} onClose={() => setShowSharePopup(false)} />
-        )}
-        {showSignInPopup && (
-          <SignInPopUp text="access this feature" position="below" onClose={() => setShowSignInPopup(false)} />
-        )}
-        {showReactionsPopup && (
-          <ReactionsPopup
-            isOpen={showReactionsPopup}
-            onClose={() => setShowReactionsPopup(false)}
-            article_id={article?._id || ''}
-          />
         )}
       </div>
+
+      {/* Floating Action Container */}
+      {!isPreview && !isPending && (
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 bg-neutral-800 rounded-full shadow-lg p-2 flex gap-4 items-center justify-center md:bottom-6">
+          <button
+       
+            className={`p-2 rounded-full flex items-center ${
+              isLoggedIn ? ' text-neutral-50' : 'cursor-not-allowed'
+            }`}
+            title="React"
+          >
+            <ReactionModal article_id={article?._id || ''} />
+            <span className="ml-1 text-sm"      onClick={handleReactionsClick}>{allReactions?.reactions?.length || 0}</span>
+          </button>
+          <button
+            onClick={handleCommentClick}
+            className={`p-2 rounded-full ${
+              isLoggedIn ? 'hover:bg-neutral-700 text-neutral-50' : 'text-neutral-500 cursor-not-allowed'
+            }`}
+            title="Comment"
+          >
+            <MessageSquare size={20} />
+          </button>
+          <button
+            onClick={handleSaveClick}
+            className={`p-2 rounded-full ${
+              isLoggedIn ? 'hover:bg-neutral-700 text-neutral-50' : 'text-neutral-500 cursor-not-allowed'
+            }`}
+            title={isSaved ? 'Unsave' : 'Save'}
+          >
+            <Bookmark size={20} className={isSaved && isLoggedIn ? 'fill-current' : ''} />
+          </button>
+          <button
+            onClick={handleShareClick}
+            className={`p-2 rounded-full ${
+              isLoggedIn ? 'hover:bg-neutral-700 text-neutral-50' : 'text-neutral-500 cursor-not-allowed'
+            }`}
+            title="Share"
+          >
+            <Share2 size={20} />
+          </button>
+        </div>
+      )}
+
+      {/* Popups */}
+      {showSharePopup && (
+        <SharePopup url={articleUrl} title={articleTitle} onClose={() => setShowSharePopup(false)} />
+      )}
+      {showSignInPopup && (
+        <SignInPopUp
+          text={showSignInPopup}
+          position="above"
+          onClose={() => setShowSignInPopup(null)}
+        />
+      )}
+      {showReactionsPopup && (
+        <ReactionsPopup
+          isOpen={showReactionsPopup}
+          onClose={() => setShowReactionsPopup(false)}
+          article_id={article?._id || ''}
+        />
+      )}
     </div>
   );
 };

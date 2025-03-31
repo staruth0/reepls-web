@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { LuBadgeCheck, LuEllipsisVertical } from 'react-icons/lu';
 import { UserPlus, EyeOff, Flag, X } from 'lucide-react';
 import { profileAvatar } from '../../../assets/icons';
-// import { User } from '../../../models/datamodels';
-
 import { useFollowUser, useUnfollowUser } from '../../Follow/hooks';
 import { useKnowUserFollowings } from '../../Follow/hooks/useKnowUserFollowings';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +13,7 @@ interface AuthorComponentProps {
 }
 
 const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
-  const {user} = useGetUserByUsername(username || '')
+  const { user } = useGetUserByUsername(username || '');
   const [showMenu, setShowMenu] = useState(false);
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
   const { isFollowing: isUserFollowing } = useKnowUserFollowings();
@@ -23,9 +21,9 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
   const navigate = useNavigate();
 
-  useEffect(()=>{
-    console.log('userer',user);
-  },[user])
+  useEffect(() => {
+    console.log('userer', user);
+  }, [user]);
 
   const handleFollowClick = () => {
     if (isFollowPending || isUnfollowPending || !user?.id) return;
@@ -45,7 +43,7 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
   };
 
   const handleBlockConfirm = () => {
-    if(!user?.id) return
+    if (!user?.id) return;
 
     console.log(`Blocked ${user.username}`);
     toast.success(`User ${user.username} blocked successfully`);
@@ -54,34 +52,48 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
   };
 
   const handleViewProfile = () => {
-    if(!user?.id) return
+    if (!user?.id) return;
     navigate(`/profile/${user.username}`);
     setShowMenu(false);
   };
 
   const handleReport = () => {
-    if(!user?.id) return
+    if (!user?.id) return;
     navigate(`/report/${user.id}`);
     setShowMenu(false);
   };
 
   const getFollowStatusText = () => {
-    if(!user?.id) return
-    if(isFollowPending || isUnfollowPending || !user.id) return
+    if (!user?.id) return;
+    if (isFollowPending || isUnfollowPending || !user.id) return;
     if (isFollowPending) return 'Following...';
     if (isUnfollowPending) return 'Unfollowing...';
-    return isUserFollowing(user.id ) ? 'Following' : 'Follow';
+    return isUserFollowing(user.id) ? 'Following' : 'Follow';
   };
 
   return (
     <div className="flex items-center gap-2 relative">
-      <div>
-        <img src={profileAvatar} alt="profiles" />
+      <div className="flex-shrink-0">
+        {user?.profile_picture !== 'https://example.com/default-profile.png' ? (
+          <img
+            src={user?.profile_picture}
+            alt="avatar"
+            className="cursor-pointer w-10 h-10 rounded-full object-cover"
+          />
+        ) : (
+          <img
+            src={profileAvatar}
+            alt="avatar"
+            className="cursor-pointer w-10 h-10 rounded-full object-cover"
+          />
+        )}
       </div>
       <div className="text-neutral-50 w-full flex items-center justify-between">
         <div>
           <div className="text-[16px] flex items-center font-semibold">
-            {user?.username}
+            <span className="hover:underline hover:cursor-pointer" onClick={handleViewProfile}>
+              {user?.username}
+            </span>
             <span>
               {user?.is_verified_writer && <LuBadgeCheck className="size-4 text-primary-400" />}
             </span>

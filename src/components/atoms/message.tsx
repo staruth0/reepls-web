@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { User } from '../../models/datamodels';
 
+
 interface messageTypes {
   author: User;
   messageDate: string;
@@ -22,9 +23,20 @@ const Message = (props: messageTypes) => {
       className="flex flex-col gap-4 font-roboto  text-neutral-50 p-3 border-b-[1px] border-neutral-600 cursor-pointer"
       onClick={handleClick}>
       <header className="flex gap-2">
-        <span className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-14 h-14 text-center">
+        {/* <span className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-14 h-14 text-center">
           {props.author?.username?.charAt(0).toUpperCase()  || 'D'}
-        </span>
+        </span> */}
+            {props.author?.profile_picture !== 'https://example.com/default-profile.png' ? (
+          <img
+            src={props.author?.profile_picture}
+            alt="avatar"
+            className="cursor-pointer w-10 h-10 rounded-full object-cover"
+          />
+        ) : (
+         <span className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-14 h-14 text-center">
+          {props.author?.username?.charAt(0).toUpperCase()  || 'D'}
+        </span> 
+        )}
 
         <div className="flex flex-col justify-center items-start gap-1">
           <div className="flex items-center gap-2">
