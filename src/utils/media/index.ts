@@ -30,14 +30,15 @@ const uploadUserProfile = async (userId: string, file: File): Promise<string> =>
   return response.data.secure_url;
 };
 const uploadUserBanner = async (userId: string, file: File): Promise<string> => {
+  console.log('userid present in edit profile',userId)
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', uploadPreset as string);
   formData.append('cloud_name', cloudName as string);
   formData.append('asset_folder', 'banners');
   formData.append('folder', 'banners');
-  formData.append('overwrite', 'true');
-  formData.append('filename_override', userId);
+  // formData.append('overwrite', 'true');
+  // formData.append('filename_override', userId);
   const response = await axiosStorageClient.post(`/${cloudinaryResourceTypes.image}/upload`, formData);
   return response.data.secure_url;
 };

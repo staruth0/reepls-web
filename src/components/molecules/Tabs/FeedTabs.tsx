@@ -44,7 +44,7 @@ const FeedTabs: React.FC<TabsProps> = ({ tabs, scale, borderBottom }) => {
     <div className="flex flex-col items-center backdrop-blur-sm">
       <div
         ref={tabRef}
-        className={`relative flex justify-between w-full ${
+        className={`relative flex justify-between w-full  ${
           borderBottom ? "border-b" : ""
         }`}
       >
@@ -52,7 +52,7 @@ const FeedTabs: React.FC<TabsProps> = ({ tabs, scale, borderBottom }) => {
           <span
             key={tab.id}
             id={`tab-${tab.id}`}
-            className={`px-2 py-2 cursor-pointer transition-all border-b-2 -mb-0 flex items-center ${
+            className={`px-2 py-2  cursor-pointer transition-all border-b-2 -mb-0 flex items-center ${
               activeTab === tab.id
                 ? `border-primary-400 text-neutral-50 ${
                     scale ? "scale-110" : ""

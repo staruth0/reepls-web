@@ -1,5 +1,5 @@
 import { Camera } from 'lucide-react';
-import React, { ReactNode, useRef, useState } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useUser } from '../../../hooks/useUser';
 import { uploadUserBanner, uploadUserProfile } from '../../../utils/media';
@@ -14,11 +14,11 @@ interface ProfileBodyProps {
 
 const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
   const { authUser } = useUser();
-  const {mutate,isSuccess} = useUpdateUser()
+  const {mutate} = useUpdateUser()
 
   // Safely handle initial state with fallback if user is undefined
   const [bannerImage, setBannerImage] = useState<string | undefined>(() => {
-    return user?.banner_image || Pics.bannerPlaceholder;
+    return user?.banner_picture || Pics.bannerPlaceholder;
   });
   const [profileImg, setProfileImg] = useState<string | undefined>(() => {
     return user?.profile_picture || Pics.imagePlaceholder;
@@ -43,8 +43,8 @@ const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
       reader.readAsDataURL(file);
       submitBannerImage(file)
         .then((data) => {
-          mutate({profile_picture:data})
-          if(isSuccess) toast.success('Successfully updated banner image');
+          mutate({banner_picture:data})
+          toast.success('Successfully updated banner image');
         })
         .catch(() => {
           toast.error('New banner could not be uploaded');
@@ -61,7 +61,7 @@ const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
       submitProfileImage(file)
         .then((data) => {
           mutate({profile_picture:data})
-         if(isSuccess) toast.success('Successfully updated profile image');
+          toast.success('Successfully updated profile image');
           
         })
         .catch(() => {
@@ -89,6 +89,12 @@ const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
     setProfileImg(url);
     return url;
   };
+
+  useEffect(()=>{
+    console.log('profile',profileImg);
+    console.log('banner',bannerImage);
+
+  },[profileImg,bannerImage])
 
   return (
     <>
