@@ -49,6 +49,7 @@ export const useUpdateUser = (): {
   isSuccess: boolean;
 } => {
   const queryClient = useQueryClient();
+  
 
   const { mutate, isPending, error, isError, isSuccess } = useMutation({
     mutationFn: (user: User) => updateUser(user),
