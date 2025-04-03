@@ -13,26 +13,39 @@ import {
 } from '../../../constants';
 import useTheme from '../../../hooks/useTheme';
 import { cn } from '../../../utils';
+import { useUser } from '../../../hooks/useUser';
+import SignInPopUp from '../../AnonymousUser/components/SignInPopUp'; // Assuming this is the correct path
 
 const PostModal = ({
   isModalOpen,
   setIsModalOpen,
   handlePost,
-  isPending, // New prop to track posting status
+  isPending,
 }: {
   isModalOpen: boolean;
   setIsModalOpen: (value: boolean) => void;
   handlePost: (postContent: string, postImages: File[], postVideos: File[]) => void;
-  isPending: boolean; // Add isPending to props
+  isPending: boolean;
 }) => {
   const [postContent, setPostContent] = useState<string>('');
   const [postImages, setPostImages] = useState<File[]>([]);
   const [postVideos, setPostVideos] = useState<File[]>([]);
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState<boolean>(false);
+  const [showSignInPopup, setShowSignInPopup] = useState<string | null>(null); // Store action type for popup
   const { theme } = useTheme();
   const { t } = useTranslation();
+  const { isLoggedIn } = useUser();
+
+  const handleActionBlocked = (action: string) => {
+    if (!isLoggedIn) {
+      setShowSignInPopup(action);
+      return true;
+    }
+    return false;
+  };
 
   const onPickImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (handleActionBlocked('upload an image')) return;
     const files = e.target.files;
     if (!files) return;
     const newImages: File[] = [];
@@ -49,6 +62,7 @@ const PostModal = ({
   };
 
   const onPickVideo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (handleActionBlocked('upload a video')) return;
     const files = e.target.files;
     if (!files) return;
     const newVideos: File[] = [];
@@ -64,12 +78,41 @@ const PostModal = ({
     setPostVideos([...postVideos, ...newVideos]);
   };
 
+  const handlePostClick = () => {
+    if (handleActionBlocked('post')) return;
+    handlePost(postContent, postImages, postVideos);
+  };
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (handleActionBlocked('write a post')) return;
+    if (e.target.value.length <= SHORT_POST_LENGTH) {
+      setPostContent(e.target.value);
+    }
+  };
+
+  const handleEmojiClick = () => {
+    if (handleActionBlocked('add an emoji')) return;
+    setIsEmojiPickerOpen(!isEmojiPickerOpen);
+  };
+
+  const handleRemoveMedia = (type: 'image' | 'video', index: number) => {
+    if (handleActionBlocked('remove media')) return;
+    if (type === 'image') {
+      const updatedImages = postImages.filter((_, i) => i !== index);
+      setPostImages(updatedImages);
+    } else {
+      const updatedVideos = postVideos.filter((_, i) => i !== index);
+      setPostVideos(updatedVideos);
+    }
+  };
+
   return (
     <Dialog
       open={isModalOpen}
       as="div"
       className="relative z-[999] focus:outline-none"
-      onClose={() => setIsModalOpen(false)}>
+      onClose={() => setIsModalOpen(false)}
+    >
       <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
       <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
@@ -79,7 +122,8 @@ const PostModal = ({
             className={cn(
               'w-full h-full md:max-w-xl lg:max-w-2xl xl:max-w-3xl rounded-xl bg-background p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0',
               isModalOpen ? 'opacity-100' : 'opacity-0'
-            )}>
+            )}
+          >
             <DialogTitle as="h3" className="text-base/7 font-medium mb-4 flex-1">
               <div className="flex justify-between items-center">
                 <div className="text-lg font-semibold">Post to anyone</div>
@@ -91,16 +135,16 @@ const PostModal = ({
 
             <div className="h-[100%] flex-grow">
               <textarea
-                className="w-full resize-none p-2 mb-4 border-none outline-none h-80 bg-background"
+                className={cn(
+                  'w-full resize-none p-2 mb-4 border-none outline-none h-80 bg-background',
+                  !isLoggedIn && 'cursor-not-allowed text-neutral-500'
+                )}
                 autoFocus
-                placeholder="What's on your mind?"
+                placeholder={isLoggedIn ? "What's on your mind?" : "Sign in to post"}
                 rows={15}
                 value={postContent}
-                onChange={(e) => {
-                  if (e.target.value.length <= SHORT_POST_LENGTH) {
-                    setPostContent(e.target.value);
-                  }
-                }}
+                onChange={handleTextChange}
+                disabled={!isLoggedIn} // Disable textarea when not logged in
               />
               {(postImages.length > 0 || postVideos.length > 0) && (
                 <div className="display-media flex justify-start items-center overflow-x-auto gap-2 my-1 py-1 px-4 border-b border-t border-neutral-400">
@@ -109,10 +153,8 @@ const PostModal = ({
                       <img src={URL.createObjectURL(image)} alt="post image" className="object-cover h-full w-auto" />
                       <button
                         className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                        onClick={() => {
-                          const updatedImages = postImages.filter((_, i) => i !== index);
-                          setPostImages(updatedImages);
-                        }}>
+                        onClick={() => handleRemoveMedia('image', index)}
+                      >
                         <LuX className="size-3" />
                       </button>
                     </div>
@@ -122,10 +164,8 @@ const PostModal = ({
                       <video src={URL.createObjectURL(video)} className="object-cover w-auto h-full" />
                       <button
                         className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                        onClick={() => {
-                          const updatedVideos = postVideos.filter((_, i) => i !== index);
-                          setPostVideos(updatedVideos);
-                        }}>
+                        onClick={() => handleRemoveMedia('video', index)}
+                      >
                         <LuX className="size-3" />
                       </button>
                     </div>
@@ -138,13 +178,16 @@ const PostModal = ({
                   <button
                     className={cn(
                       'flex items-center justify-center border-none outline-none hover:text-primary-400 cursor-pointer',
-                      isEmojiPickerOpen && 'text-primary-400'
+                      isEmojiPickerOpen && 'text-primary-400',
+                      !isLoggedIn && 'text-neutral-500 cursor-not-allowed hover:text-neutral-500'
                     )}
                     title="Add Emoji"
-                    onClick={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)}>
+                    onClick={handleEmojiClick}
+                    disabled={!isLoggedIn}
+                  >
                     <LuSmile className="size-6" />
                   </button>
-                  {isEmojiPickerOpen && (
+                  {isEmojiPickerOpen && isLoggedIn && (
                     <Picker
                       searchPlaceHolder={t('Search Emojis')}
                       theme={theme === 'light' ? Theme.LIGHT : Theme.DARK}
@@ -159,18 +202,60 @@ const PostModal = ({
                 </div>
 
                 <div className="additional__actions flex gap-4">
-                  <label className="hover:text-primary-400 cursor-pointer" title="Add Image">
+                  <label
+                    className={cn(
+                      'hover:text-primary-400 cursor-pointer',
+                      !isLoggedIn && 'text-neutral-500 cursor-not-allowed hover:text-neutral-500'
+                    )}
+                    title="Add Image"
+                  >
                     <LuImage className="size-6" />
-                    <input type="file" accept="image/*" className="hidden" multiple onChange={onPickImage} />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      multiple
+                      onChange={onPickImage}
+                      disabled={!isLoggedIn}
+                    />
                   </label>
-                  <label className="hover:text-primary-400 cursor-pointer" title="Add Video">
+                  <label
+                    className={cn(
+                      'hover:text-primary-400 cursor-pointer',
+                      !isLoggedIn && 'text-neutral-500 cursor-not-allowed hover:text-neutral-500'
+                    )}
+                    title="Add Video"
+                  >
                     <LuVideo className="size-6" />
-                    <input type="file" accept="video/*" className="hidden" multiple onChange={onPickVideo} />
+                    <input
+                      type="file"
+                      accept="video/*"
+                      className="hidden"
+                      multiple
+                      onChange={onPickVideo}
+                      disabled={!isLoggedIn}
+                    />
                   </label>
-                  <button className="hover:text-primary-400 cursor-pointer" title="Add Event">
+                  <button
+                    className={cn(
+                      'hover:text-primary-400 cursor-pointer',
+                      !isLoggedIn && 'text-neutral-500 cursor-not-allowed hover:text-neutral-500'
+                    )}
+                    title="Add Event"
+                    onClick={() => handleActionBlocked('add an event')}
+                    disabled={!isLoggedIn}
+                  >
                     <LuCalendar className="size-6" />
                   </button>
-                  <button className="hover:text-primary-400 cursor-pointer" title="Add Other">
+                  <button
+                    className={cn(
+                      'hover:text-primary-400 cursor-pointer',
+                      !isLoggedIn && 'text-neutral-500 cursor-not-allowed hover:text-neutral-500'
+                    )}
+                    title="Add Other"
+                    onClick={() => handleActionBlocked('add other content')}
+                    disabled={!isLoggedIn}
+                  >
                     <LuPlus className="size-6" />
                   </button>
                 </div>
@@ -181,17 +266,26 @@ const PostModal = ({
                     </span>
                     /{SHORT_POST_LENGTH}
                   </span>
-                  <Button className="flex items-center gap-2 hover:text-primary-400 cursor-pointer">
+                  <Button
+                    className={cn(
+                      'flex items-center gap-2 hover:text-primary-400 cursor-pointer',
+                      !isLoggedIn && 'text-neutral-500 cursor-not-allowed hover:text-neutral-500'
+                    )}
+                    onClick={() => handleActionBlocked('schedule a post')}
+                    disabled={!isLoggedIn}
+                  >
                     <LuCalendar className="size-6" />
                   </Button>
                   <Button
                     className={cn(
-                      'inline-flex items-center gap-2 py-1.5 px-12 border-2 rounded-full text-sm/6 font-semibold shadow-inner shadow-white/10 hover:bg-primary-400 hover:text-background',
-                      'border-primary-400 cursor-pointer ',
+                      'inline-flex items-center gap-2 py-1.5 px-12 border-2 rounded-full text-sm/6 font-semibold shadow-inner shadow-white/10',
+                      isLoggedIn
+                        ? 'border-primary-400 hover:bg-primary-400 hover:text-background cursor-pointer'
+                        : 'border-neutral-500 text-neutral-500 cursor-not-allowed',
                       'transition-all duration-300 ease-in-out'
                     )}
-                    onClick={() => handlePost(postContent, postImages, postVideos)}
-                    disabled={isPending} // Disable button while posting
+                    onClick={handlePostClick}
+                    disabled={isPending || !isLoggedIn}
                   >
                     {isPending && <LuLoader className="animate-spin size-4 inline-block mx-2" />}
                     Post
@@ -202,6 +296,15 @@ const PostModal = ({
           </DialogPanel>
         </div>
       </div>
+
+      {/* SignIn Popup */}
+      {showSignInPopup && (
+        <SignInPopUp
+          text={showSignInPopup}
+          position="above"
+          onClose={() => setShowSignInPopup(null)}
+        />
+      )}
     </Dialog>
   );
 };

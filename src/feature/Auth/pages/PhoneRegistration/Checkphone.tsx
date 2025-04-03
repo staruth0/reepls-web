@@ -41,7 +41,7 @@ function Checkphone() {
 
   useEffect(() => {
     if (phone) {
-      console.log(phone);
+      console.log('number for auth',phone);
       handleCodeVerification();
     }
   }, [phone]);
@@ -54,7 +54,7 @@ function Checkphone() {
       </div>
       <form onSubmit={handleSubmit}>
         <OTPInput length={6} onComplete={handleOtpComplete} />
-        {codeGet.error && <div>Fetching Code</div>}
+        {codeGet.error && <div>{codeGet.error.message}</div>}
         {codeVerify.error && <div>An Error Occured While Verifying the code</div>}
         <button type="submit">
           {codeVerify.isPending && <LuLoader className="animate-spin text-foreground inline-block mx-4" />}

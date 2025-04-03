@@ -144,13 +144,13 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
 
   return (
     <div className="blog-profile relative">
-   {user?.profile_picture !== 'https://example.com/default-profile.png' ?   <img
+      {user?.profile_picture !== 'https://example.com/default-profile.png' ?   <img
         src={user?.profile_picture}
         alt="avatar"
         onClick={() => handleProfileClick(user?.username || "")}
         className="cursor-pointer size-14 rounded-full"
-      />:
-     <img
+        />:
+      <img
         src={profileAvatar}
         alt="avatar"
         onClick={() => handleProfileClick(user?.username || "")}
@@ -194,6 +194,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
             <div
               className="fixed inset-0 bg-black opacity-0 z-40"
               onClick={() => setShowMenu(false)}
+              
             ></div>
             <div className="absolute right-0 top-6 bg-neutral-800 shadow-md rounded-md p-2 w-52 text-neutral-50 z-50">
               <div
