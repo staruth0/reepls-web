@@ -345,9 +345,12 @@ i creayed a audioprovider.tsx that handles the current playing post so if you cl
 - Very sensitive to expletives in comments
 - https://unrealspeech.com/studio
 - Less invasive notification for post
+- Notifications sound
+- reepls dashboard
 
 - Reading History
 - Vocabulary
 
 - position the modal for reactions
 - Reporting
+  tylenol, ibuprofen, dayquill
