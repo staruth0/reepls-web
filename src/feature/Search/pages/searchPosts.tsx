@@ -27,7 +27,7 @@ const SearchPosts: React.FC<SearchPostsProps> = ({ query }) => {
           <p className="text-red-500 text-center">Error: {error.message}</p>
         </div>
       ) : posts?.length > 0 ? (
-        <div className="px-1 sm:px-8  transition-all duration-300 ease-linear flex flex-col gap-7">
+        <div className="px-1 sm:px-8 max-w-[680px]   transition-all duration-300 ease-linear flex flex-col gap-7">
           {posts.map((article: Article) => (
             <BlogPost key={article._id} article={article} />
           ))}

@@ -27,7 +27,7 @@ const SearchAll: React.FC<SearchAllProps> = ({ query }) => {
           <p className="text-red-500 text-center">Error: {error.message}</p>
         </div>
       ) : results?.length > 0 ? (
-        <div className="px-1 sm:px-8  transition-all duration-300 ease-linear flex flex-col gap-7">
+        <div className="px-1 sm:px-8 max-w-[680px]  transition-all duration-300 ease-linear flex flex-col gap-7">
           {results.map((item: Article) => (
             <BlogPost key={item._id} article={item} />
           ))}

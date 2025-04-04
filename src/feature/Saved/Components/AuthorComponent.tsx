@@ -30,16 +30,27 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
 
     if (isUserFollowing(user.id)) {
       unfollowUser(user.id, {
-        onSuccess: () => toast.success('User unfollowed successfully'),
-        onError: () => toast.error('Failed to unfollow user'),
+        onSuccess: () => {toast.success('User unfollowed successfully')
+          setShowMenu(false);
+        },
+        onError: () => {toast.error('Failed to unfollow user')
+          setShowMenu(false);
+        },
+        
       });
+    
     } else {
       followUser(user.id, {
-        onSuccess: () => toast.success('User followed successfully'),
-        onError: () => toast.error('Failed to follow user'),
+        onSuccess: () => {toast.success('User followed successfully')  
+           setShowMenu(false);},
+        onError: () => {toast.error('Failed to follow user')
+          setShowMenu(false);
+        },
       });
+
     }
-    setShowMenu(false);
+ 
+
   };
 
   const handleBlockConfirm = () => {
@@ -64,15 +75,18 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
   };
 
   const getFollowStatusText = () => {
-    if (!user?.id) return;
-    if (isFollowPending || isUnfollowPending || !user.id) return;
+    if (!user?.id) return "Follow";
+    
+    // Handle pending states first
     if (isFollowPending) return 'Following...';
     if (isUnfollowPending) return 'Unfollowing...';
+    
+    // Then check the actual follow status
     return isUserFollowing(user.id) ? 'Following' : 'Follow';
   };
 
   return (
-    <div className="flex items-center gap-2 relative">
+    <div className="flex items-center gap-2 w-full relative">
       <div className="flex-shrink-0">
         {user?.profile_picture !== 'https://example.com/default-profile.png' ? (
           <img
@@ -121,7 +135,7 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
               onClick={handleFollowClick}
             >
               <UserPlus size={18} className="text-neutral-500" />
-              <div>{getFollowStatusText()}</div>
+              <div className='text-neutral-50' >{getFollowStatusText()}</div>
             </div>
             <div
               className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"

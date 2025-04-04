@@ -61,12 +61,12 @@ function Home() {
   return (
     <div className="home__container bg-background">
       <Header />
-      <div className="lg:px-[100px]">
+      <div className="lg:px-[100px] max-w-screen-2xl mx-auto">
         <Banner />
         <Sections />
       </div>
       <FooterTop />
-      <div className="lg:px-[100px]">
+      <div className="lg:px-[100px] max-w-screen-2xl mx-auto">
         <FooterBottom />
       </div>
     </div>
