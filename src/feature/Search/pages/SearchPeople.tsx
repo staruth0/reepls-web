@@ -25,9 +25,9 @@ const SearchPeople: React.FC<SearchPeopleProps> = ({ query }) => {
   }, [authUser, searchResults]);
 
   return (
-    <div className="people">
+    <div className="people w-full min-w-[350px] max-w-[360px] flex flex-col items-center flex-shrink-0">
       {/* Section for Search Results */}
-      <div className="space-y-4 mt-4">
+      <div className="space-y-4 mt-4 ">
         {isLoading ? (
           <p className="text-neutral-500 text-center">Loading search results...</p>
         ) : error ? (

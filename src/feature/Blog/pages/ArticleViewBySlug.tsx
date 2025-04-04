@@ -16,7 +16,7 @@ import { useFollowUser, useGetFollowing, useUnfollowUser } from '../../Follow/ho
 import ReactionsPopup from '../../Interactions/components/ReactionsPopup';
 import { useGetArticleReactions } from '../../Interactions/hooks';
 import { useGetSavedArticles, useRemoveSavedArticle, useSaveArticle } from '../../Saved/hooks';
-import CommentSection from '../components/BlogCommentSection';
+
 import ReactionModal from '../components/BlogReactionModal';
 import CreatePostTopBar from '../components/CreatePostTopBar';
 import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
@@ -24,6 +24,7 @@ import { useCreateArticle, useGetArticleBySlug } from '../hooks/useArticleHook';
 import useDraft from '../hooks/useDraft';
 import '../styles/view.scss';
 import ArticleViewSkeleton from './ArticleViewSkeleton';
+import CommentSection from '../../Comments/components/CommentSection';
 
 const ArticleViewBySlug: React.FC = () => {
   const navigate = useNavigate();
@@ -55,6 +56,12 @@ const ArticleViewBySlug: React.FC = () => {
 
   const articleUrl = `${window.location.origin}/posts/article/${slug}`;
   const articleTitle = title || content.split(' ').slice(0, 10).join(' ') + '...';
+
+   const [isCommentSectionOpen, setIsCommentSectionOpen] = useState<boolean>(true);
+  
+    const toggleCommentSection2 = () => {
+      setIsCommentSectionOpen(true);
+    };
 
   // Follow/Unfollow State Management
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
@@ -250,7 +257,7 @@ const ArticleViewBySlug: React.FC = () => {
       <Topbar>
         <CreatePostTopBar title={title} mainAction={mainAction} actions={[]} />
       </Topbar>
-      <div className="max-w-full h-full mb-20 inline-block overflow-clip self-center flex-grow">
+      <div className="max-w-full h-full mb-56 inline-block overflow-clip self-center flex-grow">
         {!isPreview && isPending ? (
           <div className="max-w-full md:mx-20 mt-10 flex flex-col justify-center items-right">
             <ArticleViewSkeleton />
@@ -314,9 +321,9 @@ const ArticleViewBySlug: React.FC = () => {
 
             {/* Comments Section */}
             {!isPreview && !isPending && (
-              <div ref={commentSectionRef} className="max-w-4xl mx-auto mt-10">
+              <div ref={commentSectionRef} className="w-[100%] mx-auto mt-10">
                 <h2 className="text-2xl font-semibold mb-4">Comments</h2>
-                <CommentSection article_id={article?._id || ''} author_of_post={article?.author_id as User} />
+               { isCommentSectionOpen && <CommentSection article_id={article?._id || ''} setIsCommentSectionOpen={toggleCommentSection2} author_of_post={article?.author_id as User} />}
               </div>
             )}
           </div>
@@ -334,7 +341,7 @@ const ArticleViewBySlug: React.FC = () => {
             title="React"
           >
             <ReactionModal article_id={article?._id || ''} />
-            <span className="ml-1 text-sm"      onClick={handleReactionsClick}>{allReactions?.reactions?.length || 0}</span>
+            <span className="ml-1 text-sm" onClick={handleReactionsClick}>{allReactions?.reactions?.length || 0}</span>
           </button>
           <button
             onClick={handleCommentClick}

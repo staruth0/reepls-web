@@ -1,3 +1,4 @@
+// SearchTopBar.tsx
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuSearch, LuX } from 'react-icons/lu';
@@ -7,24 +8,25 @@ import { useGetSearchSuggestions } from '../hooks';
 import SearchContainer from './SearchContainer';
 import { SearchContainerContext } from '../../../context/suggestionContainer/isSearchcontainer';
 
-const SearchTopBar: React.FC<{ initialSearchTerm?: string}> = () => {
-   const [searchParams] = useSearchParams();
-    const query = searchParams.get("query") || ""; 
+const SearchTopBar: React.FC<{ initialSearchTerm?: string }> = ({ initialSearchTerm }) => {
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get("query") || "";
   const { isSearchContainerOpen, setSearchContainerOpen } = useContext(SearchContainerContext);
   const { t } = useTranslation();
-  const [searchTerm, setSearchTerm] = useState<string>( query || "" );
+  const [searchTerm, setSearchTerm] = useState<string>(initialSearchTerm || query || '');
   const navigate = useNavigate();
-
   const { authUser } = useUser();
   const { data } = useGetSearchSuggestions(authUser?.id || '');
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
+    const value = event.target.value;
+    setSearchTerm(value);
+    setSearchContainerOpen(!!value.trim()); // Only open when there's meaningful input
   };
 
   const handleClearSearch = () => {
     setSearchTerm('');
-    setSearchContainerOpen(false)
+    setSearchContainerOpen(false);
   };
 
   const handleSearch = () => {
@@ -32,8 +34,8 @@ const SearchTopBar: React.FC<{ initialSearchTerm?: string}> = () => {
     if (trimmedSearchTerm) {
       const query = encodeURIComponent(trimmedSearchTerm);
       navigate(`/search/results?query=${query}`);
+      setSearchContainerOpen(false); // Close container after search
     }
-    setSearchContainerOpen(false)
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -42,27 +44,17 @@ const SearchTopBar: React.FC<{ initialSearchTerm?: string}> = () => {
     }
   };
 
-  // Filter searchHistory using regex based on searchTerm
   const filteredSearchHistory = useMemo(() => {
-    if (!data?.searchHistory || !searchTerm) return data?.searchHistory || [];
-
-    const regex = new RegExp(searchTerm, 'i'); // Case-insensitive search
+    if (!data?.searchHistory || !searchTerm.trim()) return [];
+    const regex = new RegExp(searchTerm.trim(), 'i');
     return data.searchHistory.filter((historyItem: string) => regex.test(historyItem));
   }, [data?.searchHistory, searchTerm]);
 
   useEffect(() => {
-    if (data) {
-      console.log('Search History:', data.searchHistory);
+    if (initialSearchTerm) {
+      setSearchTerm(initialSearchTerm);
     }
-  }, [data]);
-
-  useEffect(() => {
-    if (searchTerm) {
-      setSearchContainerOpen(true)
-    } else {
-      setSearchContainerOpen(false)
-    }
-  }, [searchTerm]);
+  }, [initialSearchTerm]);
 
   return (
     <div className="w-full relative">
@@ -71,21 +63,25 @@ const SearchTopBar: React.FC<{ initialSearchTerm?: string}> = () => {
         value={searchTerm}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
-        placeholder={t('Search')}
-        className="w-full px-4 py-3 border-none bg-neutral-600 rounded-full outline-none"
+        placeholder={t('Search for posts, articles, and people')}
+        className="w-full px-4 py-3 border-none bg-neutral-600 rounded-full outline-none text-neutral-100 placeholder-neutral-400"
       />
-      <div className="absolute top-3 right-5 cursor-pointer flex items-center gap-1 text-neutral-400">
-        {searchTerm && <LuX className="size-5" onClick={handleClearSearch} />}
-        <LuSearch className="size-6" onClick={handleSearch} />
+      <div className="absolute top-3 right-5 cursor-pointer flex items-center gap-2 text-neutral-400">
+        {searchTerm && (
+          <LuX 
+            className="size-5 hover:text-neutral-200 transition-colors" 
+            onClick={handleClearSearch} 
+          />
+        )}
+        <LuSearch 
+          className="size-6 hover:text-neutral-200 transition-colors" 
+          onClick={handleSearch} 
+        />
       </div>
 
-      {isSearchContainerOpen && (
-        <div className="absolute top-14 left-0 w-full bg-neutral-600 rounded-lg shadow-lg z-50">
-          {filteredSearchHistory.length > 0 ? (
-            <SearchContainer searches={filteredSearchHistory} />
-          ) : (
-            <div className="p-4 text-neutral-300 text-center">No matching search history</div>
-          )}
+      {isSearchContainerOpen && filteredSearchHistory.length > 0 && (
+        <div className="absolute top-14 left-0 w-full bg-neutral-600 rounded-lg shadow-lg z-50 max-h-[300px] overflow-y-auto">
+          <SearchContainer searches={filteredSearchHistory} />
         </div>
       )}
     </div>

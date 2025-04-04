@@ -1,3 +1,4 @@
+// SearchResults.tsx
 import React, { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Topbar from "../../../components/atoms/Topbar/Topbar";
@@ -21,39 +22,39 @@ const tabs = [
 
 const SearchResults: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const query = searchParams.get("query") || ""; 
-  const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
-  const {setSearchContainerOpen} = useContext(SearchContainerContext)
-
+  const query = searchParams.get("query") || "";
+  const [activeTab, setActiveTab] = useState<string | number>(tabs[0].id);
+  const { setSearchContainerOpen } = useContext(SearchContainerContext);
   const { authUser } = useUser();
   const { mutate } = useStoreSearchSuggestion();
 
   useEffect(() => {
-    if (!authUser || !query || !authUser?.id) return;
+    if (!authUser?.id || !query) return;
+
     mutate(
       {
-        userid: authUser?.id || '',
-        searchSuggestions: query || '',
+        userid: authUser.id,
+        searchSuggestions: query,
       },
       {
         onSuccess: () => {
           console.log('Search suggestion saved successfully');
-          setSearchContainerOpen(false)
+          setSearchContainerOpen(false);
+        },
+        onError: (error) => {
+          console.error('Failed to save search suggestion:', error);
         },
       }
-
     );
-
-    
-  }, [query, authUser]);
+  }, [query, authUser, mutate, setSearchContainerOpen]);
 
   return (
-    <div className={`lg:grid font-roboto grid-cols-[4fr_1.65fr]`}>
-      <div className="search lg:border-r-[1px] border-neutral-500 ">
+    <div className="lg:grid font-roboto grid-cols-[4fr_1.65fr]">
+      <div className="search lg:border-r-[1px] border-neutral-500">
         <Topbar>
-          <SearchTopBar />
+          <SearchTopBar initialSearchTerm={query} />
         </Topbar>
-        <div className=" flex flex-col min-h-screen items-center">
+        <div className="flex flex-col min-h-screen items-center">
           <div className="mt-10 min-w-[370px] self-center">
             <Tabs
               tabs={tabs}
@@ -62,9 +63,7 @@ const SearchResults: React.FC = () => {
               scale={true}
             />
           </div>
-
-          <div className="mt-8 md:px-10 lg:px-20  text-[15px]">
-          
+          <div className="mt-8 md:px-10 lg:px-20 text-[15px] w-full flex flex-col items-center flex-shrink-0">
             {activeTab === "All" && <SearchAll query={query} />}
             {activeTab === "Posts" && <SearchPosts query={query} />}
             {activeTab === "Articles" && <SearchArticles query={query} />}
@@ -72,8 +71,6 @@ const SearchResults: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Communique Section */}
       <div className="communique hidden lg:block">
         <Communique />
       </div>

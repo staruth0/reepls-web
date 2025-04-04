@@ -99,12 +99,14 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
               setTimeout(() => setSuccessReaction(null), 1000);
               toast.success("Reaction updated successfully");
               console.log("Reaction updated successfully");
+              onClose()
             },
             onError: () => {
               setIsPending(false);
               setPendingReaction(null);
               toast.error("Failed to update reaction");
               console.log("Failed to update reaction");
+              onClose()
             },
           }
         );
@@ -123,12 +125,14 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
             setTimeout(() => setSuccessReaction(null), 1000);
             toast.success("Reaction created successfully");
             console.log("Reaction created successfully");
+            onClose()
           },
           onError: () => {
             setIsPending(false);
             setPendingReaction(null);
             toast.error("Failed to create reaction");
             console.log("Failed to create reaction");
+            onClose()
           },
         }
       );

@@ -11,7 +11,7 @@ const LanguageSwitcher = () => {
     setIsOpen(false);
   };
 
-  const {t} = useTranslation()
+  const {t} = useTranslation();
 
   return (
     <div className="relative">
@@ -29,8 +29,7 @@ const LanguageSwitcher = () => {
         <div
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
-          className="absolute z-100 top-4 right-0 bg-background border border-neutral-500 p-2 rounded-lg shadow-lg w-40"
-        >
+          className="absolute z-100 top-4 right-0 bg-background border border-neutral-500 p-2 rounded-lg shadow-lg w-40" >
           <div
             onClick={() => handleLanguageChange("en")}
             className="p-2 text-sm text-neutral-50 hover:bg-neutral-700 cursor-pointer transition-colors"

@@ -26,17 +26,21 @@ const Message = (props: messageTypes) => {
         {/* <span className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-14 h-14 text-center">
           {props.author?.username?.charAt(0).toUpperCase()  || 'D'}
         </span> */}
-            {props.author?.profile_picture !== 'https://example.com/default-profile.png' ? (
-          <img
-            src={props.author?.profile_picture}
-            alt="avatar"
-            className="cursor-pointer w-10 h-10 rounded-full object-cover"
-          />
-        ) : (
-         <span className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-14 h-14 text-center">
-          {props.author?.username?.charAt(0).toUpperCase()  || 'D'}
-        </span> 
-        )}
+          {
+  props.author?.profile_picture &&
+  props.author.profile_picture !== 'https://example.com/default-profile.png' &&
+  props.author.profile_picture !== 'https://example.com/new-profile-picture.jpg' ? (
+    <img
+      src={props.author.profile_picture}
+      alt="avatar"
+      className="cursor-pointer w-10 h-10 rounded-full object-cover"
+    />
+  ) : (
+    <span className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-14 h-14 text-center">
+      {props.author?.username?.charAt(0).toUpperCase() || 'D'}
+    </span>
+  )
+}
 
         <div className="flex flex-col justify-center items-start gap-1">
           <div className="flex items-center gap-2">
