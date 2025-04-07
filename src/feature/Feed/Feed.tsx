@@ -9,6 +9,7 @@ import { useGetAllArticles } from '../Blog/hooks/useArticleHook';
 import Communique from './components/Communique/Communique';
 import ToggleFeed from './components/ToogleFeed';
 import './feed.scss';
+import { LuLoader } from 'react-icons/lu';
 
 const UserFeed: React.FC = () => {
   const { toggleCognitiveMode, isCognitiveMode } = useContext(CognitiveModeContext);
@@ -92,9 +93,8 @@ const UserFeed: React.FC = () => {
         )}
         {/* Bottom trigger point */}
         {isFetchingNextPage && (
-          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse mt-4">
-            <BlogSkeletonComponent />
-            <BlogSkeletonComponent />
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse mt-8">
+             <LuLoader className="animate-spin text-primary-400  self-center size-10 inline-block mx-4" />
           </div>
         )}
         <div ref={bottomRef} style={{ height: '100px' }} />

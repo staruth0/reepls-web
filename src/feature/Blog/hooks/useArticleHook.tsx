@@ -196,7 +196,6 @@ export const useUpdateArticle = () => {
 // Hook for deleting an article
 export const useDeleteArticle = () => {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
 
   return useMutation({
     mutationFn: (articleId: string) => deleteArticle(articleId),
@@ -204,7 +203,7 @@ export const useDeleteArticle = () => {
       console.log('Article deleted');
       // Invalidatx the "articles" query to refresh the list
       queryClient.invalidateQueries({ queryKey: ['articles'] });
-      navigate('/articles');
+      
     },
     onError: (error) => {
       console.error('Error deleting article:', error);
