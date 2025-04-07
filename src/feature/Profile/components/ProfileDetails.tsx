@@ -41,7 +41,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town,role,user_id
       </div>
       <p className="text-[13px]">{bio}</p>
         </div>
-        <div onClick={handleGotoProfileSettings} >
+        <div className='sm:hidden' onClick={handleGotoProfileSettings} >
         <Settings className="w-5 h-5" />
         </div>
       
