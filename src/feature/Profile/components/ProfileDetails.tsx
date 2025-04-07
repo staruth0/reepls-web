@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { LuBadgeCheck, LuBriefcase, LuMapPin } from 'react-icons/lu';
 import { useRoute } from '../../../hooks/useRoute';
 import { useGetFollowers, useGetFollowing } from '../../Follow/hooks';
+import { Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 interface ProfileDetailsProps {
   name: string;
   town: string;
@@ -14,10 +16,14 @@ interface ProfileDetailsProps {
 
 const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town,role,user_id,bio,isverified }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { goToFollowingsPage } = useRoute();
   const { data: followingData } = useGetFollowing(user_id);
   const { data: followersData } = useGetFollowers(user_id);
 
+  const handleGotoProfileSettings =()=>{
+    navigate('/profileSettings')
+  }
 
   const handleFollowingsClick = () => { 
     // Handle followings click
@@ -27,11 +33,21 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town,role,user_id
 
   return (
     <div className="text-neutral-50">
-      <div className="flex font-semibold gap-2">
+      <div className='flex justify-between items-center sm:block '>
+        <div>
+        <div className="flex font-semibold gap-2">
         {name}
       {isverified &&  <LuBadgeCheck className="size-4 text-primary-400 mt-1" />}
       </div>
       <p className="text-[13px]">{bio}</p>
+        </div>
+        <div className='sm:hidden' onClick={handleGotoProfileSettings} >
+        <Settings className="w-5 h-5" />
+        </div>
+      
+
+      </div>
+      
       <div className="flex flex-wrap-reverse text-[13px] gap-3 mt-1">
         <div className="flex gap-1">
           <LuBriefcase className="size-4" /> {role}

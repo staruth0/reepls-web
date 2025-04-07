@@ -1,6 +1,6 @@
 import React from "react";
 import Message from "../atoms/message";
-import { useTranslation } from "react-i18next";
+// import { useTranslation } from "react-i18next";
 import "./index.scss";
 import { Article } from "../../models/datamodels";
 import { formatDateWithMonth } from "../../utils/dateFormater";
@@ -14,13 +14,13 @@ interface MessageListProps {
 const MessageList: React.FC<MessageListProps> = ({
   communiques,
 }) => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
 
 
 
   return (
     <div className={`right__recent`}>
-      <p className="recent">{t("recent")}</p>
+      {/* <p className="recent">{t("recent")}</p> */}
       <div className="message-list">
         {communiques?.slice(0, 2).map(
           (communique, index ) => (

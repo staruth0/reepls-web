@@ -25,6 +25,7 @@ import { uploadPostImage, uploadPostVideo } from '../../../utils/media';
 import SidebarItem from '../../atoms/SidebarItem';
 import './sidebar.scss';
 import { useNotificationsValues } from '../../../feature/Notifications/hooks';
+import { commuLeft } from '../../../assets/icons';
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
@@ -45,6 +46,10 @@ const Sidebar: React.FC = () => {
     console.log('Toggle sidebar', isOpen);
     toggleSidebar();
   };
+
+  const handleGotoCommuniquePage = ()=>{
+    navigate('/posts/communiques')
+  }
 
   const navLinks = [
     {
@@ -209,6 +214,17 @@ const Sidebar: React.FC = () => {
           </PopoverPanel>
         </Popover>
       </div>
+
+      <div className='md:hidden' onClick={handleGotoCommuniquePage}>
+      <div className="p-4 ">
+      <div className='flex gap-2'>
+        <img src={commuLeft} alt="star" />
+        {/* <LuStar className="size-6 bg-main-yellow rounded-full p-1" strokeWidth={2.5} /> */}
+      {isOpen &&  <div className='line-clamp-1'>{t(`Communiques`)}</div>}
+      </div>
+    </div>
+      </div>
+      
     </div>
   );
 };

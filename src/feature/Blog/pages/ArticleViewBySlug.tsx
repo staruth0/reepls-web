@@ -1,4 +1,4 @@
-import { Bookmark, FilePen, MessageSquare, Share2 } from 'lucide-react';
+import { Bookmark, FilePen, MessageSquare, Share2,ThumbsUp } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -53,6 +53,7 @@ const ArticleViewBySlug: React.FC = () => {
   const { data: followings } = useGetFollowing(authUser?.id || '');
   const { data: article, isError, isPending } = useGetArticleBySlug(slug!);
   const { data: allReactions } = useGetArticleReactions(article?._id || '');
+  const [showReactionsHoverPopup, setShowReactionsHoverPopup] = useState<boolean>(false);
 
   const articleUrl = `${window.location.origin}/posts/article/${slug}`;
   const articleTitle = title || content.split(' ').slice(0, 10).join(' ') + '...';
@@ -137,13 +138,13 @@ const ArticleViewBySlug: React.FC = () => {
     setShowSharePopup(true);
   };
 
-  const handleReactionsClick = () => {
-    if (!isLoggedIn) {
-      setShowSignInPopup('react');
-      return;
-    }
-    setShowReactionsPopup(true);
-  };
+  // const handleReactionsClick = () => {
+  //   if (!isLoggedIn) {
+  //     setShowSignInPopup('react');
+  //     return;
+  //   }
+  //   setShowReactionsPopup(true);
+  // };
 
   const handleCommentClick = () => {
     if (!isLoggedIn) {
@@ -330,48 +331,74 @@ const ArticleViewBySlug: React.FC = () => {
         )}
       </div>
 
-      {/* Floating Action Container */}
       {!isPreview && !isPending && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 bg-neutral-800 rounded-full shadow-lg p-2 flex gap-4 items-center justify-center md:bottom-6">
-          <button
-       
-            className={`p-2 rounded-full flex items-center ${
-              isLoggedIn ? ' text-neutral-50' : 'cursor-not-allowed'
-            }`}
-            title="React"
+  <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 bg-neutral-800 rounded-full shadow-lg p-2 flex gap-4 items-center justify-center md:bottom-6">
+    {/* Reactions Button with Hover Popup */}
+    <div 
+      className="relative group" // Added 'group' for hover control
+      onMouseEnter={() => isLoggedIn && setShowReactionsHoverPopup(true)}
+      onMouseLeave={() => setShowReactionsHoverPopup(false)}
+    >
+      <button
+        className={`p-2 rounded-full flex items-center ${
+          isLoggedIn ? 'text-neutral-50 hover:bg-neutral-700' : 'text-neutral-500 cursor-not-allowed'
+        }`}
+        title="React"
+      >
+        <ThumbsUp size={20} />
+        <span className="ml-1 text-sm">{allReactions?.reactions?.length || 0}</span>
+      </button>
+
+      {/* Reactions Popup with Overlay */}
+      {showReactionsHoverPopup && isLoggedIn && (
+        <>
+          {/* Overlay */}
+          <div 
+            className="fixed inset-0 z-40"
+            onClick={() => setShowReactionsHoverPopup(false)}
+          />
+          
+          {/* Reactions Container */}
+          <div 
+            className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-[999]  rounded-lg  p-2 min-w-[200px]"
           >
-            <ReactionModal article_id={article?._id || ''} />
-            <span className="ml-1 text-sm" onClick={handleReactionsClick}>{allReactions?.reactions?.length || 0}</span>
-          </button>
-          <button
-            onClick={handleCommentClick}
-            className={`p-2 rounded-full ${
-              isLoggedIn ? 'hover:bg-neutral-700 text-neutral-50' : 'text-neutral-500 cursor-not-allowed'
-            }`}
-            title="Comment"
-          >
-            <MessageSquare size={20} />
-          </button>
-          <button
-            onClick={handleSaveClick}
-            className={`p-2 rounded-full ${
-              isLoggedIn ? 'hover:bg-neutral-700 text-neutral-50' : 'text-neutral-500 cursor-not-allowed'
-            }`}
-            title={isSaved ? 'Unsave' : 'Save'}
-          >
-            <Bookmark size={20} className={isSaved && isLoggedIn ? 'fill-current' : ''} />
-          </button>
-          <button
-            onClick={handleShareClick}
-            className={`p-2 rounded-full ${
-              isLoggedIn ? 'hover:bg-neutral-700 text-neutral-50' : 'text-neutral-500 cursor-not-allowed'
-            }`}
-            title="Share"
-          >
-            <Share2 size={20} />
-          </button>
-        </div>
+            <div className="relative z-[9999]">
+              <ReactionModal article_id={article?._id || ''} />
+            </div>
+          </div>
+        </>
       )}
+    </div>
+
+    <button
+      onClick={handleCommentClick}
+      className={`p-2 rounded-full ${
+        isLoggedIn ? 'hover:bg-neutral-700 text-neutral-50' : 'text-neutral-500 cursor-not-allowed'
+      }`}
+      title="Comment"
+    >
+      <MessageSquare size={20} />
+    </button>
+    <button
+      onClick={handleSaveClick}
+      className={`p-2 rounded-full ${
+        isLoggedIn ? 'hover:bg-neutral-700 text-neutral-50' : 'text-neutral-500 cursor-not-allowed'
+      }`}
+      title={isSaved ? 'Unsave' : 'Save'}
+    >
+      <Bookmark size={20} className={isSaved && isLoggedIn ? 'fill-current' : ''} />
+    </button>
+    <button
+      onClick={handleShareClick}
+      className={`p-2 rounded-full ${
+        isLoggedIn ? 'hover:bg-neutral-700 text-neutral-50' : 'text-neutral-500 cursor-not-allowed'
+      }`}
+      title="Share"
+    >
+      <Share2 size={20} />
+    </button>
+  </div>
+)}
 
       {/* Popups */}
       {showSharePopup && (

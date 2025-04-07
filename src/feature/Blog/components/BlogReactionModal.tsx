@@ -105,7 +105,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ article_id }) => {
 
   return (
     <div
-      className=" mt-2 shadow-sm rounded-full p-3 transition-opacity duration-400 opacity-100"
+      className=" mt-2 shadow-sm rounded-full bg-background p-3 transition-opacity duration-400 opacity-100 z-[999]"
       style={{ bottom: "40px", left: "0px" }}
     >
       <div className="flex space-x-4">

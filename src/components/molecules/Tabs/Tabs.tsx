@@ -43,7 +43,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, setActiveTab, borderBottom
             onClick={() => handleTabClick(tab.id)}
           >
             {tab.icon && tab.icon}
-           <div className='line-clamp-1'>{t(tab.title)}</div> 
+           <div className=''>{t(tab.title)}</div> 
             {activeTab === tab.id && (
               <div className="absolute bottom-0 left-0 w-full h-[2px] bg-primary-400"></div>
             )}

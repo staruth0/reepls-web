@@ -1,7 +1,7 @@
-import { Bookmark, EllipsisVertical, EyeOff, Share2, UserPlus, X } from "lucide-react";
+import { Bookmark, EllipsisVertical, EyeOff, Share2, UserPlus, X, Trash2, Edit, Star, BarChart2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { LuBadgeCheck, LuLoader } from "react-icons/lu";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { profileAvatar } from "../../../../assets/icons";
 import SharePopup from "../../../../components/molecules/share/SharePopup";
@@ -9,19 +9,21 @@ import { useRoute } from "../../../../hooks/useRoute";
 import { useUser } from "../../../../hooks/useUser";
 import { Article, User } from "../../../../models/datamodels";
 import { formatDateWithMonth } from "../../../../utils/dateFormater";
-import {  useUnfollowUser } from "../../../Follow/hooks";
+import { useUnfollowUser } from "../../../Follow/hooks";
 import { useKnowUserFollowings } from "../../../Follow/hooks/useKnowUserFollowings";
 import { useGetSavedArticles, useRemoveSavedArticle, useSaveArticle } from "../../../Saved/hooks";
 import "./Blog.scss";
 import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
 import { useSendFollowNotification } from "../../../Notifications/hooks/useNotification";
+import { useDeleteArticle } from "../../hooks/useArticleHook";
+import ConfirmationModal from "../ConfirmationModal";
 
 interface BlogProfileProps {
   date: string;
   article_id: string;
   user: User;
-  content?: string; // Make content optional
-  title?: string; // Make title optional
+  content?: string;
+  title?: string;
   isArticle: boolean;
 }
 
@@ -31,28 +33,41 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
   const [showMenu, setShowMenu] = useState(false);
   const [showSharePopup, setShowSharePopup] = useState(false);
   const [showSignInPopup, setShowSignInPopup] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const location = useLocation();
 
-  // const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
   const { isFollowing } = useKnowUserFollowings();
   const { mutate: saveArticle, isPending: isSavePending } = useSaveArticle();
   const { mutate: removeSavedArticle, isPending: isRemovePending } = useRemoveSavedArticle();
   const { data: savedArticles } = useGetSavedArticles();
   const [saved, setSaved] = useState(false);
+  const { mutate: followUser, isPending: isFollowPending } = useSendFollowNotification();
+  const { mutate: deleteArticle, isPending: isDeletePending } = useDeleteArticle();
+  const navigate = useNavigate();
 
-  const {mutate: followUser, isPending: isFollowPending} = useSendFollowNotification();
-
-  // Safely handle undefined content
   const articleTitle = title || (content ? content.split(" ").slice(0, 10).join(" ") + "..." : "Untitled Post");
   const articleUrl = `${window.location.origin}/posts/${isArticle ? "article" : "post"}/${article_id}`;
 
-  const isCurrentAuthorArticle = user?._id === authUser?._id;
+  const isCurrentAuthorArticle = user?._id === authUser?.id;
 
   const handleProfileClick = (username: string) => {
     if (username) {
       goToProfile(username);
     }
+  };
+
+  const handleDeleteArticle = () => {
+    deleteArticle(article_id, {
+      onSuccess: () => {
+        toast.success('Article deleted successfully');
+        setShowDeleteConfirmation(false);
+      },
+      onError: () => {
+        toast.error('An error occurred while trying to delete article');
+        setShowDeleteConfirmation(false);
+      }
+    });
   };
 
   const handleSavedArticle = () => {
@@ -92,12 +107,11 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
       unfollowUser(user?._id, {
         onSuccess: () => {
           toast.success("User unfollowed successfully");
-         
         },
         onError: () => toast.error("Failed to unfollow user"),
       });
     } else {
-      followUser({receiver_id:user?._id}, {
+      followUser({ receiver_id: user?._id }, {
         onSuccess: () => {
           toast.success("User followed successfully");
         },
@@ -117,6 +131,23 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
     } else {
       setShowMenu(!showMenu);
     }
+  };
+
+  const handleEditClick = () => {
+    // Add your edit functionality here
+    toast.info("Edit functionality will be implemented soon");
+    setShowMenu(false);
+  };
+
+  const handleAddToFeatured = () => {
+    // Add your featured functionality here
+    toast.info("Add to featured functionality will be implemented soon");
+    setShowMenu(false);
+  };
+
+  const handleAnalyticsClick = (value:string) => {
+    navigate(`/post/analytics/${value}`)
+    setShowMenu(false);
   };
 
   useEffect(() => {
@@ -144,18 +175,21 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
 
   return (
     <div className="blog-profile relative">
-      {user?.profile_picture !== 'https://example.com/default-profile.png' ?   <img
-        src={user?.profile_picture}
-        alt="avatar"
-        onClick={() => handleProfileClick(user?.username || "")}
-        className="cursor-pointer size-14 rounded-full"
-        />:
-      <img
-        src={profileAvatar}
-        alt="avatar"
-        onClick={() => handleProfileClick(user?.username || "")}
-        className="cursor-pointer"
-      />}
+      {user?.profile_picture !== 'https://example.com/default-profile.png' ? (
+        <img
+          src={user?.profile_picture}
+          alt="avatar"
+          onClick={() => handleProfileClick(user?.username || "")}
+          className="cursor-pointer size-14 rounded-full"
+        />
+      ) : (
+        <img
+          src={profileAvatar}
+          alt="avatar"
+          onClick={() => handleProfileClick(user?.username || "")}
+          className="cursor-pointer"
+        />
+      )}
       <div className="profile-info">
         <div className="profile-name">
           <p
@@ -194,32 +228,73 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
             <div
               className="fixed inset-0 bg-black opacity-0 z-40"
               onClick={() => setShowMenu(false)}
-              
             ></div>
             <div className="absolute right-0 top-6 bg-neutral-800 shadow-md rounded-md p-2 w-52 text-neutral-50 z-50">
-              <div
-                className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-                onClick={handleSavedArticle}
-              >
-                <Bookmark size={18} className="text-neutral-500" />
-                <div>{getSaveStatusText()}</div>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer">
-                <EyeOff size={18} className="text-neutral-500" /> Hide post
-              </div>
-              <div
-                className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-                onClick={handleFollowClick}
-              >
-                <UserPlus size={18} className="text-neutral-500" />
-                {getFollowStatusText(true)}
-              </div>
-              <div
-                className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-                onClick={handleShareClick}
-              >
-                <Share2 size={18} className="text-neutral-500" /> Share
-              </div>
+              {isCurrentAuthorArticle ? (
+                <>
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                    onClick={handleEditClick}
+                  >
+                    <Edit size={18} className="text-neutral-500" />
+                    <div>Edit Post</div>
+                  </div>
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                    onClick={handleAddToFeatured}
+                  >
+                    <Star size={18} className="text-neutral-500" />
+                    <div>Add to Featured</div>
+                  </div>
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                    onClick={()=>handleAnalyticsClick(article_id)}
+                  >
+                    <BarChart2 size={18} className="text-neutral-500" />
+                    <div>Analytics</div>
+                  </div>
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                    onClick={handleShareClick}
+                  >
+                    <Share2 size={18} className="text-neutral-500" />
+                    <div>Share</div>
+                  </div>
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer text-red-500"
+                    onClick={() => setShowDeleteConfirmation(true)}
+                  >
+                    <Trash2 size={18} className="text-red-500" />
+                    <div>Delete</div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                    onClick={handleSavedArticle}
+                  >
+                    <Bookmark size={18} className="text-neutral-500" />
+                    <div>{getSaveStatusText()}</div>
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer">
+                    <EyeOff size={18} className="text-neutral-500" /> Hide post
+                  </div>
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                    onClick={handleFollowClick}
+                  >
+                    <UserPlus size={18} className="text-neutral-500" />
+                    {getFollowStatusText(true)}
+                  </div>
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                    onClick={handleShareClick}
+                  >
+                    <Share2 size={18} className="text-neutral-500" /> Share
+                  </div>
+                </>
+              )}
             </div>
           </>
         )}
@@ -233,6 +308,16 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
       </div>
       {showSharePopup && (
         <SharePopup url={articleUrl} title={articleTitle} onClose={() => setShowSharePopup(false)} />
+      )}
+      {showDeleteConfirmation && (
+        <ConfirmationModal
+          title="Delete Article"
+          message="Are you sure you want to delete this article? This action cannot be undone."
+          onConfirm={handleDeleteArticle}
+          onCancel={() => setShowDeleteConfirmation(false)}
+          confirmText={isDeletePending ? "Deleting..." : "Delete"}
+          confirmColor="red"
+        />
       )}
     </div>
   );

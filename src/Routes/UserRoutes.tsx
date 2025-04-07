@@ -5,6 +5,7 @@ import AnonymousProfile from '../feature/AnonymousUser/Pages/AnonymousProfile';
 import CreatePost from '../feature/Blog/pages';
 import ArticleView from '../feature/Blog/pages/ArticleView';
 import ArticleViewBySlug from '../feature/Blog/pages/ArticleViewBySlug';
+import PostArticleAnalytics from '../feature/Blog/pages/Post&ArticleAnalytics';
 import CommuniqueDetail from '../feature/Feed/CommuniqueDetail';
 import CommuniqueList from '../feature/Feed/CommuniqueList';
 import UserFeed from '../feature/Feed/Feed';
@@ -15,6 +16,7 @@ import Profile from '../feature/Profile/pages';
 import EditProfile from '../feature/Profile/pages/EditProfile';
 import Followers from '../feature/Profile/pages/Followers';
 import ProfileAnalytics from '../feature/Profile/pages/ProfileAnalytics';
+import ProfileSettings from '../feature/Profile/pages/ProfileSettings';
 import Bookmarks from '../feature/Saved/pages';
 import Search from '../feature/Search/pages';
 import SearchResults from '../feature/Search/pages/SearchResults';
@@ -69,6 +71,14 @@ const UserRoutes = {
     {
       path: '/profile/analytics/:username',
       element: <ProfileAnalytics />,
+    },
+    {
+      path: '/post/analytics/:id',
+      element: <PostArticleAnalytics/>,
+    },
+    {
+      path: '/profilesettings',
+      element: <ProfileSettings/>,
     },
     {
       path: '/Terms&Policies',
