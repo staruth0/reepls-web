@@ -18,9 +18,14 @@ const SideBarProvider: React.FC<SideBarProviderProps> = ({ children }) => {
         }, [screenWidth]);
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
- const isTabletSmall = screenWidth >= 640 && screenWidth < 900;
+ const isTabletSmall = screenWidth >= 640 && screenWidth < 930;
     const toggleSidebar = () => { 
-        setIsOpen((prev) => !prev);
+        if(isTabletSmall){
+            setIsOpen(false)
+        }else{
+            setIsOpen((prev) => !prev);
+        }
+       
     }
 
     useEffect(()=>{

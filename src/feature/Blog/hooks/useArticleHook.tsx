@@ -174,18 +174,17 @@ export const useGetArticlesByCategory = (category: string) => {
 // Hook for updating an article
 export const useUpdateArticle = () => {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+
 
   return useMutation({
     mutationFn: ({ articleId, article }: { articleId: string; article: Article }) => updateArticle(articleId, article),
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       console.log('Article updated:', data);
-      // Invalidatx the "article" and "articles" queries to refresh the data
       queryClient.invalidateQueries({
-        queryKey: ['article', variables.articleId],
+        queryKey: ['article'],
       });
       queryClient.invalidateQueries({ queryKey: ['articles'] });
-      navigate(`/articles/${variables.articleId}`);
+     
     },
     onError: (error) => {
       console.error('Error updating article:', error);

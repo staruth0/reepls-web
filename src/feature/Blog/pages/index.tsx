@@ -192,7 +192,7 @@ const CreatePost: React.FC = () => {
         {isLoggedIn ? (
           <div className="md:px-4">
             <ImageSection onImageChange={(image) => setThumbnail(image as File)} />
-            <div className="mx-auto mt-3 pl-20 max-w-5xl">
+            <div className="mx-auto mt-3 px-5 sm:px-0 max-w-4xl">
               <div className="">
                 <textarea
                   placeholder={t('Enter your title here...')}

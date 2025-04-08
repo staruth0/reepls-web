@@ -1,4 +1,4 @@
-import { Bookmark, EllipsisVertical, EyeOff, Share2, UserPlus, X, Trash2, Edit, Star, BarChart2 } from "lucide-react";
+import { Bookmark, EllipsisVertical, EyeOff, Share2, UserPlus, X, Trash2, Edit, BarChart2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { LuBadgeCheck, LuLoader } from "react-icons/lu";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -17,6 +17,7 @@ import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
 import { useSendFollowNotification } from "../../../Notifications/hooks/useNotification";
 import { useDeleteArticle } from "../../hooks/useArticleHook";
 import ConfirmationModal from "../ConfirmationModal";
+import PostEditModal from "../PostEditModal"; // Import the new PostEditModal
 
 interface BlogProfileProps {
   date: string;
@@ -34,7 +35,9 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
   const [showSharePopup, setShowSharePopup] = useState(false);
   const [showSignInPopup, setShowSignInPopup] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false); // New state for PostEditModal
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
   const { isFollowing } = useKnowUserFollowings();
@@ -44,7 +47,6 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
   const [saved, setSaved] = useState(false);
   const { mutate: followUser, isPending: isFollowPending } = useSendFollowNotification();
   const { mutate: deleteArticle, isPending: isDeletePending } = useDeleteArticle();
-  const navigate = useNavigate();
 
   const articleTitle = title || (content ? content.split(" ").slice(0, 10).join(" ") + "..." : "Untitled Post");
   const articleUrl = `${window.location.origin}/posts/${isArticle ? "article" : "post"}/${article_id}`;
@@ -62,11 +64,12 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
       onSuccess: () => {
         toast.success('Article deleted successfully');
         setShowDeleteConfirmation(false);
+        navigate('/feed'); // Navigate away after deletion
       },
       onError: () => {
         toast.error('An error occurred while trying to delete article');
         setShowDeleteConfirmation(false);
-      }
+      },
     });
   };
 
@@ -133,20 +136,18 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
     }
   };
 
-  const handleEditClick = () => {
-    // Add your edit functionality here
-    toast.info("Edit functionality will be implemented soon");
+  const handleEditClick = (id:string) => {
+    if(isArticle){
+      navigate(`/article/edit/${id}`)
+    }else{
+      setShowEditModal(true); 
+    }
+   
     setShowMenu(false);
   };
 
-  const handleAddToFeatured = () => {
-    // Add your featured functionality here
-    toast.info("Add to featured functionality will be implemented soon");
-    setShowMenu(false);
-  };
-
-  const handleAnalyticsClick = (value:string) => {
-    navigate(`/post/analytics/${value}`)
+  const handleAnalyticsClick = (value: string) => {
+    navigate(`/post/analytics/${value}`);
     setShowMenu(false);
   };
 
@@ -234,21 +235,14 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
                 <>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-                    onClick={handleEditClick}
+                    onClick={()=>handleEditClick(article_id)}
                   >
                     <Edit size={18} className="text-neutral-500" />
                     <div>Edit Post</div>
                   </div>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-                    onClick={handleAddToFeatured}
-                  >
-                    <Star size={18} className="text-neutral-500" />
-                    <div>Add to Featured</div>
-                  </div>
-                  <div
-                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-                    onClick={()=>handleAnalyticsClick(article_id)}
+                    onClick={() => handleAnalyticsClick(article_id)}
                   >
                     <BarChart2 size={18} className="text-neutral-500" />
                     <div>Analytics</div>
@@ -317,6 +311,13 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
           onCancel={() => setShowDeleteConfirmation(false)}
           confirmText={isDeletePending ? "Deleting..." : "Delete"}
           confirmColor="red"
+        />
+      )}
+      {showEditModal && (
+        <PostEditModal
+          isModalOpen={showEditModal}
+          setIsModalOpen={setShowEditModal}
+          articleId={article_id}
         />
       )}
     </div>

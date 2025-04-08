@@ -83,7 +83,7 @@ const getArticlesByCategory = async (category: string) => {
 // Update an article by ID
 const updateArticle = async (articleId: string, article: Article) => {
   console.log("Updating article with ID:", articleId, "Data:", article);
-  const { data } = await apiClient.patch(`/articles/${articleId}`, article);
+  const { data } = await apiClient.put(`/articles/${articleId}`, article);
   return data;
 };
 

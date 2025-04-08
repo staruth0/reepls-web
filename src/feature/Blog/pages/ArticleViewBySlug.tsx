@@ -264,7 +264,7 @@ const ArticleViewBySlug: React.FC = () => {
             <ArticleViewSkeleton />
           </div>
         ) : (
-          <div className="max-w-4xl px-5 mx-auto mt-10 flex flex-col justify-center items-left">
+          <div className="max-w-4xl sm:px-10 mx-auto mt-10 flex flex-col justify-center items-left">
             {isPreview && (
               <div className="mb-4">
                 <span className="text-sm font-semibold px-4 py-1 bg-foreground text-primary-500 rounded-full flex gap-2 items-center">
@@ -274,16 +274,20 @@ const ArticleViewBySlug: React.FC = () => {
               </div>
             )}
 
-            <h1 className="md:text-4xl text-[26px] lg:text-5xl font-semibold leading-normal lg:leading-tight mb-2">{title}</h1>
-            {subtitle && <h3 className="text-xl my-4">{subtitle}</h3>}
+            <h1 className="md:text-4xl px-4 md:px-0 text-[26px] lg:text-5xl font-semibold leading-normal lg:leading-tight mb-2">{title}</h1>
+            {subtitle && <h3 className="text-xl my-4 px-4 md:px-0">{subtitle}</h3>}
 
             {/* Author Profile Section */}
-            <div className="flex my-4 items-center gap-4 mt-8 mb-4 relative">
+            <div className="flex my-4 items-center gap-4 mt-8 mb-4 px-3 md:px-0">
+              <div className='flex gap-2'>
               <img src={profileAvatar} alt="Author" className="rounded-full w-10 h-10" />
               <div>
                 <p className="font-semibold text-[16px]">{article?.author_id?.username || 'Unknown'}</p>
                 <p className="text-sm text-neutral-500">{article?.author_id?.bio}</p>
               </div>
+
+              </div>
+             
               {!isPreview && (
                 <button
                   onClick={handleFollowClick}
@@ -300,7 +304,7 @@ const ArticleViewBySlug: React.FC = () => {
             </div>
 
             {/* Audio Controls */}
-            <div className="my-6">{article && <ArticleAudioControls article={article} />}</div>
+            <div className="my-6 px-2 md:px-0">{article && <ArticleAudioControls article={article} />}</div>
 
             {/* Article Content */}
             <div id="article-content" className="w-full mb-5">
@@ -316,13 +320,13 @@ const ArticleViewBySlug: React.FC = () => {
 
             {/* Article Stats */}
             {!isPreview && !isPending && (
-                <div className="text-neutral-100 text-md mb-5">{timeAgo(article?.createdAt)}</div>
+                <div className="text-neutral-100 text-md px-3 mb-5">{timeAgo(article?.createdAt)}</div>
               
             )}
 
             {/* Comments Section */}
             {!isPreview && !isPending && (
-              <div ref={commentSectionRef} className="w-[100%] mx-auto mt-10">
+              <div ref={commentSectionRef} className="w-[100%] px-3 md:px-0 mx-auto mt-10">
                 <h2 className="text-2xl font-semibold mb-4">Comments</h2>
                { isCommentSectionOpen && <CommentSection article_id={article?._id || ''} setIsCommentSectionOpen={toggleCommentSection2} author_of_post={article?.author_id as User} />}
               </div>

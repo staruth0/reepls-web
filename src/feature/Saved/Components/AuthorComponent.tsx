@@ -7,6 +7,8 @@ import { useKnowUserFollowings } from '../../Follow/hooks/useKnowUserFollowings'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useGetUserByUsername } from '../../Profile/hooks';
+import ReportUserPopup from '../../Reports/components/ReportUserPopup';
+
 
 interface AuthorComponentProps {
   username: string;
@@ -16,6 +18,7 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
   const { user } = useGetUserByUsername(username || '');
   const [showMenu, setShowMenu] = useState(false);
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
+  const [showReportPopup, setShowReportPopup] = useState(false);
   const { isFollowing: isUserFollowing } = useKnowUserFollowings();
   const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
@@ -30,27 +33,27 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
 
     if (isUserFollowing(user.id)) {
       unfollowUser(user.id, {
-        onSuccess: () => {toast.success('User unfollowed successfully')
+        onSuccess: () => {
+          toast.success('User unfollowed successfully');
           setShowMenu(false);
         },
-        onError: () => {toast.error('Failed to unfollow user')
+        onError: () => {
+          toast.error('Failed to unfollow user');
           setShowMenu(false);
         },
-        
       });
-    
     } else {
       followUser(user.id, {
-        onSuccess: () => {toast.success('User followed successfully')  
-           setShowMenu(false);},
-        onError: () => {toast.error('Failed to follow user')
+        onSuccess: () => {
+          toast.success('User followed successfully');
+          setShowMenu(false);
+        },
+        onError: () => {
+          toast.error('Failed to follow user');
           setShowMenu(false);
         },
       });
-
     }
- 
-
   };
 
   const handleBlockConfirm = () => {
@@ -70,18 +73,16 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
 
   const handleReport = () => {
     if (!user?.id) return;
-    navigate(`/report/${user.id}`);
+    setShowReportPopup(true);
     setShowMenu(false);
   };
 
   const getFollowStatusText = () => {
-    if (!user?.id) return "Follow";
-    
-    // Handle pending states first
+    if (!user?.id) return 'Follow';
+
     if (isFollowPending) return 'Following...';
     if (isUnfollowPending) return 'Unfollowing...';
-    
-    // Then check the actual follow status
+
     return isUserFollowing(user.id) ? 'Following' : 'Follow';
   };
 
@@ -135,7 +136,7 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
               onClick={handleFollowClick}
             >
               <UserPlus size={18} className="text-neutral-500" />
-              <div className='text-neutral-50' >{getFollowStatusText()}</div>
+              <div className="text-neutral-50">{getFollowStatusText()}</div>
             </div>
             <div
               className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
@@ -169,7 +170,7 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
             className="fixed inset-0 bg-black opacity-50 z-[99999]"
             onClick={() => setShowBlockConfirm(false)}
           ></div>
-          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-800 rounded-md p-6 z-[99999] text-neutral-50">
+          <div className="fixed w-[80%] sm:w-[60%] md:w-[50%] lg:w-[30%] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-800 rounded-md p-6 z-[99999] text-neutral-50">
             <h3 className="text-lg font-semibold mb-4">Confirm Block</h3>
             <p className="mb-6">Are you sure you want to block {username}?</p>
             <div className="flex justify-end gap-4">
@@ -188,6 +189,15 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
             </div>
           </div>
         </>
+      )}
+
+      {/* Report User Popup */}
+      {showReportPopup && (
+        <ReportUserPopup
+          username={user?.username || ''}
+          userId={user?.id || ''}
+          onClose={() => setShowReportPopup(false)}
+        />
       )}
     </div>
   );
