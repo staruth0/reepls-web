@@ -20,7 +20,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 }) => {
   return (
     <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-[999]">
-      <div className="bg-neutral-800 rounded-lg p-6 max-w-md w-full">
+      <div className="bg-neutral-800 rounded-lg p-6 m-5 sm:m-0  max-w-md w-full">
         <h3 className="text-xl font-semibold mb-2">{title}</h3>
         <p className="mb-6">{message}</p>
         <div className="flex justify-end gap-3">

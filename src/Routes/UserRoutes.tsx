@@ -2,6 +2,7 @@ import TermsPolicies from '../components/molecules/TermsPolicies';
 import AnonymousBookmarks from '../feature/AnonymousUser/Pages/AnonymousBookmarks';
 import AnonymousNotification from '../feature/AnonymousUser/Pages/AnonymousNotification';
 import AnonymousProfile from '../feature/AnonymousUser/Pages/AnonymousProfile';
+import EditPost from '../feature/Blog/components/EditPost';
 import CreatePost from '../feature/Blog/pages';
 import ArticleView from '../feature/Blog/pages/ArticleView';
 import ArticleViewBySlug from '../feature/Blog/pages/ArticleViewBySlug';
@@ -15,8 +16,9 @@ import Notifications from '../feature/Notifications/pages';
 import Profile from '../feature/Profile/pages';
 import EditProfile from '../feature/Profile/pages/EditProfile';
 import Followers from '../feature/Profile/pages/Followers';
-import ProfileAnalytics from '../feature/Profile/pages/ProfileAnalytics';
+// import ProfileAnalytics from '../feature/Profile/pages/ProfileAnalytics';
 import ProfileSettings from '../feature/Profile/pages/ProfileSettings';
+import UserAnalytics from '../feature/Profile/pages/UsewrAnalytics';
 import Bookmarks from '../feature/Saved/pages';
 import Search from '../feature/Search/pages';
 import SearchResults from '../feature/Search/pages/SearchResults';
@@ -45,6 +47,10 @@ const UserRoutes = {
       element: <SearchResults/>,
     },
     {
+      path: '/article/edit/:id',
+      element: <EditPost/>,
+    },
+    {
       path: '/profile',
       element: <Profile />,
     },
@@ -70,7 +76,7 @@ const UserRoutes = {
     },
     {
       path: '/profile/analytics/:username',
-      element: <ProfileAnalytics />,
+      element: <UserAnalytics />,
     },
     {
       path: '/post/analytics/:id',

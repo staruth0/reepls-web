@@ -40,16 +40,18 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ article_id }) => {
         },
         {
           onSuccess: () => {
+            toast.success("Reaction updated successfully");
             setIsPending(false);
             setPendingReaction(null);
             setSuccessReaction(reaction);
             setTimeout(() => setSuccessReaction(null), 1000);
-            toast.success("Reaction updated successfully");
+            
           },
           onError: () => {
+            toast.error("Failed to update reaction");
             setIsPending(false);
             setPendingReaction(null);
-            toast.error("Failed to update reaction");
+           
           },
         }
       );
@@ -61,16 +63,18 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ article_id }) => {
         { type: reaction, article_id, user_id: authUser.id },
         {
           onSuccess: () => {
+            toast.success("Reaction created successfully");
             setIsPending(false);
             setPendingReaction(null);
             setSuccessReaction(reaction);
             setTimeout(() => setSuccessReaction(null), 1000);
-            toast.success("Reaction created successfully");
+            
           },
           onError: () => {
+            toast.error("Failed to create reaction");
             setIsPending(false);
             setPendingReaction(null);
-            toast.error("Failed to create reaction");
+         
           },
         }
       );

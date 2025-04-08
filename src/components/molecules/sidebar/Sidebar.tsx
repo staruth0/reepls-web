@@ -37,6 +37,7 @@ const Sidebar: React.FC = () => {
 
   const {notifications} = useNotificationsValues();
   const unreadNotifications = notifications.filter(notif => !notif.is_read);
+   const screenWidth = window.innerWidth;
 
   console.log('all Not',notifications)
   console.log('uread Not',unreadNotifications)
@@ -138,12 +139,15 @@ const Sidebar: React.FC = () => {
     });
   };
 
+  const isTabletSmall = screenWidth >= 640 && screenWidth < 930;
+
   return (
     <div className="side">
       <LuCircleChevronRight
         className={cn(
           'size-7 md:size-6 p-0 rounded-full cursor-pointer',
           isOpen && 'rotate-180',
+          isTabletSmall && 'hidden',
           'transition-all duration-300 ease-in-out',
           'hover:text-primary-400',
           'bg-background border-none absolute z-10 top-1/2 right-0 transform translate-x-1/2 text-neutral-400'
