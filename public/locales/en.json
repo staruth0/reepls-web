@@ -157,5 +157,13 @@
       "terms": "Terms of Service",
       "policy": "Privacy Policy"
     }
-  }
+  },
+
+  "GenericErrorMessage": "Something went wrong. Please try again.",
+  "NetworkErrorMessage": "Oops! Looks like you’re offline. Check your connection and try again.",
+  "AuthErrorMessage": "Incorrect phone number or password. Please try again.",
+  "NotFoundErrorMessage": "We couldn’t find an account with that phone number.",
+  "ServerErrorMessage": "Our servers are having a moment. Please try again soon!",
+  "RateLimitErrorMessage": "Too many login attempts! Please wait a bit and try again.",
+  "UnexpectedErrorMessage": "Something unexpected happened during login. Please try again."
 }

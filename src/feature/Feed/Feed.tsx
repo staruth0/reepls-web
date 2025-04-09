@@ -11,6 +11,7 @@ import ToggleFeed from './components/ToogleFeed';
 import './feed.scss';
 import { LuLoader } from 'react-icons/lu';
 
+
 const UserFeed: React.FC = () => {
   const { toggleCognitiveMode, isCognitiveMode } = useContext(CognitiveModeContext);
   const [isBrainActive, setIsBrainActive] = useState<boolean>(isCognitiveMode);
@@ -36,18 +37,18 @@ const UserFeed: React.FC = () => {
       },
       {
         root: null, // Use the viewport as the scroll container
-        rootMargin: '800px', // Trigger when the bottomRef is 100px from the viewport edge
+        rootMargin: '800px', // Trigger when 800px from the viewport edge
         threshold: 0.5, // Trigger when 50% of the bottomRef is visible
       }
     );
 
     if (bottomRef.current) {
-      observer.observe(bottomRef.current);
+      observer.observe(bottomRef.current); // Note: Should be bottomRef.current, fixed below
     }
 
     return () => {
       if (bottomRef.current) {
-        observer.unobserve(bottomRef.current);
+        observer.unobserve(bottomRef.current); // Note: Should be bottomRef.current, fixed below
       }
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
@@ -55,6 +56,31 @@ const UserFeed: React.FC = () => {
   useEffect(() => {
     console.log('dataArticles', data);
   }, [data]);
+
+  // Function to get friendly error messages
+  const getFriendlyErrorMessage = (error: any): string => {
+    if (!error) return "Something went wrong. Please try again later.";
+
+    // Handle common error cases
+    if (error.message.includes("Network Error")) {
+      return "Oops! It looks like you're offline. Please check your internet connection and try again.";
+    }
+    if (error.response) {
+      const status = error.response.status;
+      if (status === 404) {
+        return "We couldn’t find any posts right now. They might be hiding!";
+      }
+      if (status === 500) {
+        return "Our servers are having a little hiccup. Please hang tight and try again soon.";
+      }
+      if (status === 429) {
+        return "Whoa, slow down! Too many requests. Give it a moment and try again.";
+      }
+    }
+
+    // Default fallback for unhandled errors
+    return "Something unexpected happened. We’re working on it—please try again later!";
+  };
 
   return (
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
@@ -76,29 +102,28 @@ const UserFeed: React.FC = () => {
           </div>
         ) : (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col gap-7">
-            {
-              <>
-                {/* Render all pages of articles */}
-                {data?.pages.map((page, i) => (
-                  <div className="flex flex-col gap-7" key={i}>
-                    {page.articles.map((article: Article) => (
-                      <BlogPost key={article._id} article={article} />
-                    ))}
-                  </div>
+            {data?.pages.map((page, i) => (
+              <div className="flex flex-col gap-7" key={i}>
+                {page.articles.map((article: Article) => (
+                  <BlogPost key={article._id} article={article} />
                 ))}
-                {/* Loading indicator for next page */}
-              </>
-            }
+              </div>
+            ))}
           </div>
         )}
-        {/* Bottom trigger point */}
+        {/* Loading indicator for next page */}
         {isFetchingNextPage && (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse mt-8">
-             <LuLoader className="animate-spin text-primary-400  self-center size-10 inline-block mx-4" />
+            <LuLoader className="animate-spin text-primary-400 self-center size-10 inline-block mx-4" />
           </div>
         )}
         <div ref={bottomRef} style={{ height: '100px' }} />
-        {error && <div>Error: {error.message}</div>}
+        {/* Friendly error display */}
+        {error && (
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] text-neutral-50 text-center py-4">
+            {getFriendlyErrorMessage(error)}
+          </div>
+        )}
       </div>
 
       <div className="communique hidden lg:block">

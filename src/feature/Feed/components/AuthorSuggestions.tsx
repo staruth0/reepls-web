@@ -11,30 +11,68 @@ const AuthorSuggestions: React.FC = () => {
   const { authUser } = useUser();
   const { data: recommendedUsers, isLoading, error } = useGetRecommendedUsersById(authUser?.id || '');
 
+  // Function to get friendly error messages specific to author suggestions
+  const getFriendlyErrorMessage = (error: any): string => {
+    if (!error) return "Something went wrong while finding authors for you.";
+
+    // Handle common error cases
+    if (error.message.includes("Network Error")) {
+      return "Looks like we’re offline! Check your connection and try again.";
+    }
+    if (error.response) {
+      const status = error.response.status;
+      if (status === 404) {
+        return "We couldn’t find any authors to recommend right now.";
+      }
+      if (status === 500) {
+        return "Our suggestion engine is having a moment. Please try again soon!";
+      }
+      if (status === 429) {
+        return "Too many requests! Give us a sec to catch up.";
+      }
+    }
+
+    // Default fallback for unhandled errors
+    return "Oops! Something unexpected happened while fetching author suggestions.";
+  };
+
+  // Toast error notification
   useEffect(() => {
     if (error) {
-      toast.error(error.message);
+      toast.error(getFriendlyErrorMessage(error));
     }
   }, [error]);
 
+  // Loading state
   if (isLoading) {
     return (
       <div className="w-full flex flex-col gap-1 mt-2 py-1">
-        <AuthSuggestionSkeleton/>
-        <AuthSuggestionSkeleton/>
-        <AuthSuggestionSkeleton/>
+        <AuthSuggestionSkeleton />
+        <AuthSuggestionSkeleton />
+        <AuthSuggestionSkeleton />
       </div>
     );
   }
 
+  // Error state with friendly message
   if (error) {
-    return <div className="w-full flex flex-col gap-6 mt-4 py-1 text-red-500">Error: {error.message}</div>;
+    return (
+      <div className="w-full flex flex-col gap-6 mt-4 py-1 text-neutral-50 text-center">
+        {getFriendlyErrorMessage(error)}
+      </div>
+    );
   }
 
+  // Empty state
   if (!recommendedUsers?.length) {
-    return <div className="w-full flex flex-col gap-6 mt-4 py-1 text-gray-500">No recommended authors found.</div>;
+    return (
+      <div className="w-full flex flex-col gap-6 mt-4 py-1 text-gray-500 text-center">
+        No recommended authors found yet. Follow some people to get suggestions!
+      </div>
+    );
   }
 
+  // Success state
   return (
     <div className="w-full flex flex-col gap-6 mt-4 py-1">
       {recommendedUsers?.slice(0, 4)?.map((user: User, index: number) => (
