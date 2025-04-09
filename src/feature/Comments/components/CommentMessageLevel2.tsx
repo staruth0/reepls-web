@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { ThumbsUp } from "lucide-react";
+import { ThumbsUp, Edit, Trash2, EllipsisVertical, Send } from "lucide-react"; // Added Send
 import { LuBadgeCheck, LuLoader } from "react-icons/lu";
 import { timeAgo } from "../../../utils/dateFormater";
 import { User, ReactionReceived } from "../../../models/datamodels";
 import { useCreateCommentReaction, useGetCommentReactions } from "../../Interactions/hooks";
 import { useUser } from "../../../hooks/useUser";
+import { useDeleteComment, useUpdateComment } from "../hooks"; // Added useUpdateComment
+import { toast } from "react-toastify";
 
 interface MessageComponentProps {
   content: string;
@@ -13,7 +15,7 @@ interface MessageComponentProps {
   isSameAuthorAsPrevious?: boolean;
   author: User;
   author_of_post: User;
-  comment_id: string; 
+  comment_id: string;
 }
 
 const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
@@ -25,23 +27,26 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
   comment_id,
 }) => {
   const [reactedid, setReactedids] = useState<string[]>([]);
+  const [showMenu, setShowMenu] = useState(false);
+  const [isEditing, setIsEditing] = useState(false); // State for edit mode
+  const [editedContent, setEditedContent] = useState(content); // State for input value
   const { mutate: createReaction, isPending, isSuccess } = useCreateCommentReaction();
   const { data: reactions } = useGetCommentReactions(comment_id);
+  const { mutate: deleteComment, isPending: isDeletePending } = useDeleteComment();
+  const { mutate: updateComment, isPending: isUpdatePending } = useUpdateComment(); // Added update hook
   const { authUser } = useUser();
-
 
   useEffect(() => {
     if (reactions?.reactions && Array.isArray(reactions.reactions)) {
-      const userIds = reactions.reactions.map((reaction: ReactionReceived) => reaction.user_id.id?.trim());
+      const userIds = reactions.reactions.map((reaction: ReactionReceived) =>
+        reaction.user_id.id?.trim()
+      );
       setReactedids(userIds);
     }
   }, [reactions]);
 
-  // Checkx if the current user has reacted
+  // Check if the current user has reacted
   const hasUserReacted = authUser?.id ? reactedid.includes(authUser.id) : false;
-
-  console.log("Level 2 Comment reactions:", reactions);
-
   const reactionCount = reactions?.reactions?.length || 0;
 
   const formatDate = () => {
@@ -56,14 +61,49 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
   };
 
   const isAuthor = author?._id === author_of_post?._id;
+  const isAuthAuthor = author?._id === authUser?.id;
 
-  
   const handleReact = () => {
-    if (!authUser?.id) return; 
+    if (!authUser?.id) return;
     createReaction({
       type: "like",
       user_id: authUser.id,
       comment_id: comment_id,
+    });
+  };
+
+  // Handlers for popup actions
+  const handleEditClick = () => {
+    setIsEditing(true);
+    setShowMenu(false);
+  };
+
+  const handleUpdateClick = () => {
+    updateComment(
+      { commentId: comment_id, content: editedContent },
+      {
+        onSuccess: () => {
+          toast.success("Comment updated successfully");
+          setIsEditing(false);
+        },
+        onError: () => {
+          toast.error("Failed to update comment");
+          setIsEditing(false);
+        },
+      }
+    );
+  };
+
+  const handleDeleteClick = () => {
+    deleteComment(comment_id, {
+      onSuccess: () => {
+        toast.success("Comment deleted successfully");
+        setShowMenu(false);
+      },
+      onError: () => {
+        toast.error("Failed to delete comment");
+        setShowMenu(false);
+      },
     });
   };
 
@@ -97,8 +137,14 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
                   </div>
                 )}
               </div>
-              <div className="absolute right-2 text-[12px] font-light">
+              <div className="absolute right-2 text-[12px] font-light flex items-center gap-2">
                 {formatDate()}
+                {isAuthAuthor && (
+                  <EllipsisVertical
+                    className="size-4 rotate-90 cursor-pointer text-neutral-50 hover:text-primary-400"
+                    onClick={() => setShowMenu(!showMenu)}
+                  />
+                )}
               </div>
             </div>
             <p className="text-[12px] text-gray-500">{author?.title}</p>
@@ -106,7 +152,56 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
         </div>
 
         {/* Message Content */}
-        <p className="mt-2 mb-1 text-neutral-50 text-[13px]">{content}</p>
+        {isEditing ? (
+          <div className="mt-2 mb-1 flex items-center gap-2">
+            <input
+              type="text"
+              value={editedContent}
+              onChange={(e) => setEditedContent(e.target.value)}
+              className="w-full bg-transparent text-neutral-50 text-[13px] outline-none caret-white"
+              autoFocus
+            />
+            <button onClick={handleUpdateClick} disabled={isUpdatePending}>
+              {isUpdatePending ? (
+                <LuLoader className="animate-spin text-foreground inline-block size-4" />
+              ) : (
+                <Send size={18} className="text-neutral-50 hover:text-primary-400" />
+              )}
+            </button>
+          </div>
+        ) : (
+          <p className="mt-2 mb-1 text-neutral-50 text-[13px]">{content}</p>
+        )}
+
+        {/* Popup Menu */}
+        {showMenu && (
+          <>
+            <div
+              className="fixed inset-0 bg-black opacity-0 z-40"
+              onClick={() => setShowMenu(false)}
+            ></div>
+            <div className="absolute right-2 top-8 bg-neutral-800 shadow-md rounded-md p-2 w-40 text-neutral-50 z-50">
+              <div
+                className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                onClick={handleEditClick}
+              >
+                <Edit size={18} className="text-neutral-500" />
+                <div>Edit</div>
+              </div>
+              <div
+                className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer text-red-500"
+                onClick={handleDeleteClick}
+              >
+                {isDeletePending ? (
+                  <LuLoader className="animate-spin text-foreground inline-block size-4" />
+                ) : (
+                  <Trash2 size={18} className="text-red-500" />
+                )}
+                <div>{isDeletePending ? "Deleting..." : "Delete"}</div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Actions (React) */}
