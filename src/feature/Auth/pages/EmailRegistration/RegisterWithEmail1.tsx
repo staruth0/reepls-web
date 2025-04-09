@@ -16,14 +16,49 @@ function RegisterWithEmail1() {
 
   const { email, password, username } = useSelector((state: RootState) => state.user);
 
-  //custom-hooks
+  // Custom hooks
   const { storePassword } = useStoreCredential();
 
-  //states
+  // States
   const [passwords, setPassword] = useState<string>('');
   const [passwordInputError, setPasswordInputError] = useState<boolean>(false);
-  //functions to handle DOM events
 
+  // Function to get friendly error messages specific to email registration
+  const getFriendlyErrorMessage = (error: any): string => {
+    if (!error) return t('GenericErrorMessage', { defaultValue: "Something went wrong. Please try again." });
+
+    // Handle common error cases
+    if (error.message.includes("Network Error")) {
+      return t('NetworkErrorMessage', { defaultValue: "Oops! Looks like you’re offline. Check your connection and try again." });
+    }
+    if (error.response) {
+      const status = error.response.status;
+      if (status === 400) {
+        return t('BadRequestErrorMessage', { defaultValue: "Something’s not right with your input. Please check and try again." });
+      }
+      if (status === 409) {
+        return t('ConflictErrorMessage', { defaultValue: "An account with this email already exists." });
+      }
+      if (status === 500) {
+        return t('ServerErrorMessage', { defaultValue: "Our servers are having a moment. Please try again soon!" });
+      }
+      if (status === 429) {
+        return t('RateLimitErrorMessage', { defaultValue: "Too many registration attempts! Please wait a bit and try again." });
+      }
+    }
+
+    // Default fallback for unhandled errors
+    return t('UnexpectedErrorMessage', { defaultValue: "Something unexpected happened during registration. Please try again." });
+  };
+
+  // Toast error notification
+  useEffect(() => {
+    if (error) {
+      toast.error(getFriendlyErrorMessage(error));
+    }
+  }, [error]);
+
+  // Functions to handle DOM events
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const passwordValue = e.target.value;
     setPassword(passwordValue);
@@ -44,16 +79,16 @@ function RegisterWithEmail1() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('password stored', { email, password, name:username });
 
-    mutate({ email, password, name:username });
-  };
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error.message);
+    if (!validatePassword(passwords)) {
+      setPasswordInputError(true);
+      return;
     }
-  }, [error]);
+
+    console.log('password stored', { email, password, name: username });
+
+    mutate({ email, password, name: username });
+  };
 
   return (
     <div className="register__phone__container">
@@ -74,7 +109,12 @@ function RegisterWithEmail1() {
             inputErrorMessage={t('PasswordErrorMessage')}
           />
         </div>
-        <button type="submit">
+        {error && (
+          <div className="text-neutral-50 text-center py-2">
+            {getFriendlyErrorMessage(error)}
+          </div>
+        )}
+        <button type="submit" disabled={isPending}>
           {isPending && <LuLoader className="animate-spin inline-block mx-4" />}
           {t('ContinueButton')}
         </button>

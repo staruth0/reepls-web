@@ -156,5 +156,12 @@
       "terms": "Conditions d'utilisation",
       "policy": "Politique de confidentialité"
     }
-  }
+  }, 
+  "GenericErrorMessage": "Une erreur s'est produite. Veuillez réessayer.",
+  "NetworkErrorMessage": "Oups ! Il semble que vous soyez hors ligne. Vérifiez votre connexion et réessayez.",
+  "AuthErrorMessage": "Numéro de téléphone ou mot de passe incorrect. Veuillez réessayer.",
+  "NotFoundErrorMessage": "Nous n'avons pas trouvé de compte avec ce numéro de téléphone.",
+  "ServerErrorMessage": "Nos serveurs rencontrent un problème. Veuillez réessayer ultérieurement !",
+  "RateLimitErrorMessage": "Trop de tentatives de connexion ! Veuillez patienter un moment avant de réessayer.",
+  "UnexpectedErrorMessage": "Un problème inattendu est survenu lors de la connexion. Veuillez réessayer."
 }

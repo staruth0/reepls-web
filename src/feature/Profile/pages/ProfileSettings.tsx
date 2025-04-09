@@ -19,7 +19,7 @@ const ProfileSettings:React.FC = () => {
     </div>
 
     {/*configurations Section */}
-    <div className="profile__configurationz hidden ">
+    <div className="profile__configurationz bg-background hidden ">
       <ProfileConfigurations />
     </div>
   </div>

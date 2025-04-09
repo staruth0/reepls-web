@@ -152,7 +152,7 @@ const UserAnalytics: React.FC = () => {
       </div>
 
       {/* Configurations Section - Hidden on mobile */}
-      <div className="hidden lg:block">
+      <div className="hidden bg-background lg:block">
         <ProfileConfigurations />
       </div>
     </div>

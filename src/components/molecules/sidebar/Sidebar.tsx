@@ -142,7 +142,7 @@ const Sidebar: React.FC = () => {
   const isTabletSmall = screenWidth >= 640 && screenWidth < 930;
 
   return (
-    <div className="side">
+    <div className="side bg-background">
       <LuCircleChevronRight
         className={cn(
           'size-7 md:size-6 p-0 rounded-full cursor-pointer',

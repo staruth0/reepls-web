@@ -24,7 +24,7 @@ const FeedFollowing: React.FC = () => {
     toggleCognitiveMode();
   };
 
-  
+  // Auto-fetch next page when scrolling to the bottom
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -35,18 +35,18 @@ const FeedFollowing: React.FC = () => {
       },
       {
         root: null,
-        rootMargin: '800px', 
-        threshold: 0.5, 
+        rootMargin: '800px',
+        threshold: 0.5,
       }
     );
 
     if (bottomRef.current) {
-      observer.observe(bottomRef.current);
+      observer.observe(bottomRef.current); // Fixed to bottomRef.current below
     }
 
     return () => {
       if (bottomRef.current) {
-        observer.unobserve(bottomRef.current);
+        observer.unobserve(bottomRef.current); // Fixed to bottomRef.current below
       }
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
@@ -54,6 +54,31 @@ const FeedFollowing: React.FC = () => {
   useEffect(() => {
     if (data) console.log('followed data', data);
   }, [data]);
+
+  // Function to get friendly error messages
+  const getFriendlyErrorMessage = (error: any): string => {
+    if (!error) return "Something went wrong. Please try again later.";
+
+    // Handle common error cases
+    if (error.message.includes("Network Error")) {
+      return "Oops! It looks like you're offline. Please check your internet connection and try again.";
+    }
+    if (error.response) {
+      const status = error.response.status;
+      if (status === 404) {
+        return "No posts from the people you follow just yet. Check back later!";
+      }
+      if (status === 500) {
+        return "Our servers are taking a quick nap. Please try again soon!";
+      }
+      if (status === 429) {
+        return "Slow down a bit! Too many requests—give it a moment and try again.";
+      }
+    }
+
+    // Default fallback for unhandled errors
+    return "Something unexpected popped up. We’re on it—please try again later!";
+  };
 
   return (
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
@@ -94,10 +119,15 @@ const FeedFollowing: React.FC = () => {
         {/* Bottom trigger for infinite scroll */}
         <div ref={bottomRef} style={{ height: '100px' }} />
 
-        {error && <div>Error: {error.message}</div>}
+        {/* Friendly error display */}
+        {error && (
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] text-neutral-50 text-center py-4">
+            {getFriendlyErrorMessage(error)}
+          </div>
+        )}
       </div>
 
-      <div className="communique hidden lg:block">
+      <div className="communique bg-background hidden lg:block">
         <Communique />
       </div>
     </div>

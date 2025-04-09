@@ -24,6 +24,34 @@ function Login() {
   const [passwordInputError, setPasswordInputError] = useState<boolean>(false);
   const [phoneInputError, setPhoneInputError] = useState<boolean>(false);
 
+  // Function to get friendly error messages specific to login
+  const getFriendlyErrorMessage = (error: any): string => {
+    if (!error) return t('GenericErrorMessage', { defaultValue: "Something went wrong. Please try again." });
+
+    // Handle common error cases
+    if (error.message.includes("Network Error")) {
+      return t('NetworkErrorMessage', { defaultValue: "Oops! Looks like you’re offline. Check your connection and try again." });
+    }
+    if (error.response) {
+      const status = error.response.status;
+      if (status === 401) {
+        return t('AuthErrorMessage', { defaultValue: "Incorrect phone number or password. Please try again." });
+      }
+      if (status === 404) {
+        return t('NotFoundErrorMessage', { defaultValue: "We couldn’t find an account with that phone number." });
+      }
+      if (status === 500) {
+        return t('ServerErrorMessage', { defaultValue: "Our servers are having a moment. Please try again soon!" });
+      }
+      if (status === 429) {
+        return t('RateLimitErrorMessage', { defaultValue: "Too many login attempts! Please wait a bit and try again." });
+      }
+    }
+
+    // Default fallback for unhandled errors
+    return t('UnexpectedErrorMessage', { defaultValue: "Something unexpected happened during login. Please try again." });
+  };
+
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const passwordValue = e.target.value;
     setPassword(passwordValue);
@@ -36,10 +64,7 @@ function Login() {
     }
   };
 
-  const handlePhoneChange = (
-    value: string,
- 
-  ) => {
+  const handlePhoneChange = (value: string) => {
     setPhone(value);
     storePhone(value);
 
@@ -85,9 +110,10 @@ function Login() {
     navigate('/auth/login/email');
   };
 
+  // Toast error notification
   useEffect(() => {
     if (Login.error) {
-      toast.error(Login.error.message);
+      toast.error(getFriendlyErrorMessage(Login.error));
     }
   }, [Login.error]);
 
@@ -117,7 +143,11 @@ function Login() {
           isInputError={passwordInputError}
           inputErrorMessage={t('IncorrectPasswordMessage')}
         />
-        {Login.error && <div className="text-red-500">{Login.error.message}</div>}
+        {Login.error && (
+          <div className="text-neutral-50 text-center py-2">
+            {getFriendlyErrorMessage(Login.error)}
+          </div>
+        )}
         <button type="submit" disabled={Login.isPending}>
           {Login.isPending && <LuLoader className="animate-spin text-foreground inline-block mx-4" />}
           {t('ContinueButton')}

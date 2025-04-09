@@ -97,7 +97,7 @@ const PopularTopicsPage: React.FC = () => {
         {error && <div>Error: {error.message}</div>}
       </div>
 
-      <div className="communique hidden lg:block">
+      <div className="communique bg-background hidden lg:block">
         <Communique />
       </div>
     </div>

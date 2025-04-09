@@ -137,7 +137,7 @@ const Profile: React.FC = () => {
           </div>
           
         </div>
-        <div className="hidden lg:block">
+        <div className="hidden bg-background lg:block">
         <ProfileRightSideSkeleton/>
         </div>
         
@@ -267,7 +267,7 @@ const Profile: React.FC = () => {
         </div>
       </div>
 
-      <div className="profile__configurations hidden lg:block">
+      <div className="profile__configurations bg-background hidden lg:block">
         {isAuthUser ? (
           <ProfileConfigurations />
         ) : (
