@@ -38,7 +38,7 @@ const CommuniqueDetail: React.FC = () => {
       </div>
 
       {/* Communique Section */}
-      <div className="communique flex flex-col">
+      <div className="communique bg-background flex flex-col">
         <Communique />
       </div>
     </div>

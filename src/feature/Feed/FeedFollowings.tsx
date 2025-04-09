@@ -127,7 +127,7 @@ const FeedFollowing: React.FC = () => {
         )}
       </div>
 
-      <div className="communique hidden lg:block">
+      <div className="communique bg-background hidden lg:block">
         <Communique />
       </div>
     </div>

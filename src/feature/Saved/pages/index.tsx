@@ -196,7 +196,7 @@ const Bookmarks: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="saved__authors px-6 py-4 hidden lg:block">
+      <div className="saved__authors bg-background px-6 py-4 hidden lg:block">
         <p>Your top saved Authors</p>
         <div className="mt-10 flex flex-col gap-6">
           {isLoadingFollowings ? (

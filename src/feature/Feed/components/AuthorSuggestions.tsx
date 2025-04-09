@@ -75,7 +75,7 @@ const AuthorSuggestions: React.FC = () => {
   // Success state
   return (
     <div className="w-full flex flex-col gap-6 mt-4 py-1">
-      {recommendedUsers?.slice(0, 4)?.map((user: User, index: number) => (
+      {recommendedUsers?.slice(0, 5)?.map((user: User, index: number) => (
         <AuthorSugestionComponent
           key={`${user.id}-${index}`}
           username={user.username!}
@@ -84,7 +84,7 @@ const AuthorSuggestions: React.FC = () => {
           isverified={user.is_verified_writer!}
         />
       ))}
-      <SeeMore />
+     
     </div>
   );
 };

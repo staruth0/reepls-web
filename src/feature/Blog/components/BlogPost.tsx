@@ -28,7 +28,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ article }) => {
 
   return (
     <div
-      className={`each_blog_post mt-5 shadow-md p-2 max-w-[680px]  self-center w-full bg-background`}>
+      className={`each_blog_post mt-5 shadow-sm p-2 max-w-[680px]  self-center w-full bg-background`}>
       {article.isArticle && <BlogArticleHeader />}
       <BlogProfile
         title={article.title || ''}

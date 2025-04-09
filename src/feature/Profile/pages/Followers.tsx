@@ -87,7 +87,7 @@ const Followers: React.FC = () => {
         </div>
       </div>
       {/* Configurations Section */}
-      <div className="profile__configurationz hidden lg:block">
+      <div className="profile__configurationz bg-background hidden lg:block">
         <ProfileConfigurations />
       </div>
     </div>

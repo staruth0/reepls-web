@@ -158,7 +158,7 @@ const EditProfile: React.FC = () => {
           </ProfileEditBody>
         </div>
       </div>
-      <div className="profile__configurationz hidden lg:block">
+      <div className="profile__configurationz bg-background hidden lg:block">
         <ProfileConfigurations />
       </div>
     </div>
