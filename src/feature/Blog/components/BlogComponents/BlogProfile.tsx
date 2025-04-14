@@ -18,6 +18,7 @@ import { useSendFollowNotification } from "../../../Notifications/hooks/useNotif
 import { useDeleteArticle } from "../../hooks/useArticleHook";
 import ConfirmationModal from "../ConfirmationModal";
 import PostEditModal from "../PostEditModal"; // Import the new PostEditModal
+import { t } from "i18next";
 
 interface BlogProfileProps {
   date: string;
@@ -83,18 +84,18 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
     if (saved) {
       removeSavedArticle(article_id, {
         onSuccess: () => {
-          toast.success("Article removed from saved");
+          toast.success(t("blog.alerts.articleRemoved"));
           setSaved(false);
         },
-        onError: () => toast.error("Failed to remove article"),
+        onError: () => toast.error(t("blog.alerts.articleRemoveFailed")),
       });
     } else {
       saveArticle(article_id, {
         onSuccess: () => {
-          toast.success("Article saved successfully");
+          toast.success(t("blog.alerts.articleSaved"));
           setSaved(true);
         },
-        onError: () => toast.error("Failed to save article"),
+        onError: () => toast.error(t("blog.alerts.articleSaveFailed")),
       });
     }
   };
@@ -109,16 +110,16 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
     if (isFollowing(user?._id)) {
       unfollowUser(user?._id, {
         onSuccess: () => {
-          toast.success("User unfollowed successfully");
+          toast.success(t("blog.alerts.userUnfollowed"));
         },
-        onError: () => toast.error("Failed to unfollow user"),
+        onError: () => toast.error(t("blog.alerts.userUnfollowFailed")),
       });
     } else {
       followUser({ receiver_id: user?._id }, {
         onSuccess: () => {
-          toast.success("User followed successfully");
+          toast.success(t("blog.alerts.userFollowed"));
         },
-        onError: () => toast.error("Failed to follow user"),
+        onError: () => toast.error(t("blog.alerts.userFollowFailed")),
       });
     }
   };
@@ -157,17 +158,17 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
   }, [savedArticles, article_id]);
 
   const getFollowStatusText = (isMenu = false) => {
-    if (!isLoggedIn) return "Follow";
-    if (isFollowPending) return "Following...";
-    if (isUnfollowPending) return "Unfollowing...";
-    return isFollowing(user?._id || "") ? "Following" : isMenu ? "Follow author" : "Follow";
+    if (!isLoggedIn) return t("follow");
+    if (isFollowPending) return `${t("following")}...`;
+    if (isUnfollowPending) return `${t("unfollowing")}...`;
+    return isFollowing(user?._id || "") ? t("following") : isMenu ? t("blog.Followauthor") : t("follow");
   };
 
   const getSaveStatusText = () => {
-    if (!isLoggedIn) return "Add To Saved";
-    if (isSavePending) return "Saving...";
-    if (isRemovePending) return "Removing...";
-    return saved ? "Unsave Post" : "Add To Saved";
+    if (!isLoggedIn) return t("blog.AddToSaved");
+    if (isSavePending) return t("blog.Saving");
+    if (isRemovePending) return t("blog.Removing");
+    return saved ? t("blog.UnsavePost") : t("blog.AddToSaved");
   };
 
   if (!user) {
@@ -238,28 +239,28 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
                     onClick={()=>handleEditClick(article_id)}
                   >
                     <Edit size={18} className="text-neutral-500" />
-                    <div>Edit Post</div>
+                    <div>{t("blog.EditPost")}</div>
                   </div>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                     onClick={() => handleAnalyticsClick(article_id)}
                   >
                     <BarChart2 size={18} className="text-neutral-500" />
-                    <div>Analytics</div>
+                    <div>{t("blog.Analytics")}</div>
                   </div>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                     onClick={handleShareClick}
                   >
                     <Share2 size={18} className="text-neutral-500" />
-                    <div>Share</div>
+                    <div>{t("blog.Share")}</div>
                   </div>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer text-red-500"
                     onClick={() => setShowDeleteConfirmation(true)}
                   >
                     <Trash2 size={18} className="text-red-500" />
-                    <div>Delete</div>
+                    <div>{t("blog.Delete")}</div>
                   </div>
                 </>
               ) : (
@@ -272,7 +273,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
                     <div>{getSaveStatusText()}</div>
                   </div>
                   <div className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer">
-                    <EyeOff size={18} className="text-neutral-500" /> Hide post
+                    <EyeOff size={18} className="text-neutral-500" /> {t("blog.Hidepost")}
                   </div>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
@@ -285,7 +286,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                     onClick={handleShareClick}
                   >
-                    <Share2 size={18} className="text-neutral-500" /> Share
+                    <Share2 size={18} className="text-neutral-500" /> {t("blog.Share")}
                   </div>
                 </>
               )}
@@ -294,7 +295,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
         )}
         {showSignInPopup && (
           <SignInPopUp
-            text="follow this user or access these options"
+            text={t("blog.followthisuser")}
             position="below"
             onClose={() => setShowSignInPopup(false)}
           />
@@ -305,11 +306,11 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
       )}
       {showDeleteConfirmation && (
         <ConfirmationModal
-          title="Delete Article"
-          message="Are you sure you want to delete this article? This action cannot be undone."
+          title={t("blog.DeleteArticle")}
+          message={t("blog.DeleteArticleConfirmation")}
           onConfirm={handleDeleteArticle}
           onCancel={() => setShowDeleteConfirmation(false)}
-          confirmText={isDeletePending ? "Deleting..." : "Delete"}
+          confirmText={isDeletePending ? t("blog.Deleting") : t("blog.Delete")}
           confirmColor="red"
         />
       )}

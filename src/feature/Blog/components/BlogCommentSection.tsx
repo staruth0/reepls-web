@@ -5,6 +5,7 @@ import { useGetCommentsByArticleId } from '../../Comments/hooks';
 
 import CommentMessage from '../../Comments/components/CommentMessage';
 import CommentTab from './BlogCommentTab';
+import { t } from 'i18next';
 
 
 interface CommentSectionProps {
@@ -31,7 +32,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id, author_of_p
   if (isError)
     return (
       <div>
-        <LuCircleAlert className="text-red-500 m-4" /> Error loading comments
+        <LuCircleAlert className="text-red-500 m-4" /> {t("blog.errors.default")}
       </div>
     );
 
@@ -78,7 +79,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ article_id, author_of_p
           {isFetchingNextPage ? (
             <LuLoader className="animate-spin text-foreground inline-block mx-4" />
           ) : (
-            'Show More'
+            t('blog.ShowMore')
           )}
         </button>
       )}

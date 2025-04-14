@@ -35,7 +35,7 @@ const Followers: React.FC = () => {
     <div className={`lg:grid grid-cols-[4fr_1.66fr] `}>
       <div className="profile lg:border-r-[1px] min-h-screen border-neutral-500 ">
         <Topbar>
-          <p>{t(`Profile`)}</p>
+          <p>{t(`profile.profile`)}</p>
         </Topbar>
         <div className="sm:px-5 md:px-10 lg:px-20 ">
           <div className="mt-6 flex justify-center">
@@ -62,7 +62,7 @@ const Followers: React.FC = () => {
                   ))
                 ) : (
                   <p className="text-neutral-500 text-center">
-                    No followings yet
+                    {t("profile.alerts.noFollowings")}
                   </p>
                 )}
               </div>
@@ -78,7 +78,7 @@ const Followers: React.FC = () => {
                   ))
                 ) : (
                   <p className="text-neutral-500 text-center">
-                    No followers yet
+                    {t("profile.alerts.noFollowings")}
                   </p>
                 )}
               </div>

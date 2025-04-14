@@ -61,12 +61,12 @@ const CommentTab: React.FC<CommentTabProps> = ({ article_id }) => {
 
     mutate(commentValues, {
       onSuccess: () => {
-        toast.success(t("You added 1 comment."));
+        toast.success(t("blog.alerts.addedComment"));
         setComment("");
       },
       onError: () => {
         console.error("Failed to post comment");
-        toast.error(t("Failed to post comment. Please try again later."));
+        toast.error(t("blog.alerts.commentFailed"));
       },
     });
   };
@@ -84,13 +84,13 @@ const CommentTab: React.FC<CommentTabProps> = ({ article_id }) => {
   }, [isLoggedIn]);
 
   return (
-    <div className="">
+    <div className="bg-red-500">
       <div className="flex items-center w-full p-2 border border-neutral-300 rounded-full bg-background transition-colors mb-5">
         <input
           type="text"
           placeholder={
             isLoggedIn
-              ? t("What are your thoughts...")
+              ? t("blog.yourThoughts")
               : t("Sign in to comment")
           }
           className="flex-grow bg-transparent outline-none text-sm text-neutral-100 placeholder-neutral-300 px-2 disabled:opacity-50 disabled:cursor-not-allowed"

@@ -126,7 +126,7 @@ const PostModal = ({
           >
             <DialogTitle as="h3" className="text-base/7 font-medium mb-4 flex-1">
               <div className="flex justify-between items-center">
-                <div className="text-lg font-semibold">Post to anyone</div>
+                <div className="text-lg font-semibold">{t("Post to anyone")}</div>
                 <button onClick={() => setIsModalOpen(false)}>
                   <LuX className="size-6" />
                 </button>
@@ -140,7 +140,7 @@ const PostModal = ({
                   !isLoggedIn && 'cursor-not-allowed text-neutral-500'
                 )}
                 autoFocus
-                placeholder={isLoggedIn ? "What's on your mind?" : "Sign in to post"}
+                placeholder={isLoggedIn ? t("What's on your mind?") : t("Sign in to post")}
                 rows={15}
                 value={postContent}
                 onChange={handleTextChange}
@@ -288,7 +288,7 @@ const PostModal = ({
                     disabled={isPending || !isLoggedIn}
                   >
                     {isPending && <LuLoader className="animate-spin size-4 inline-block mx-2" />}
-                    Post
+                    {t("Post")}
                   </Button>
                 </div>
               </div>
