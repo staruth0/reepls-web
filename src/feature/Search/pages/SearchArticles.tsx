@@ -4,6 +4,7 @@ import BlogPost from '../../Blog/components/BlogPost';
 import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
 import { useGetArticleResults } from '../hooks';
 import { toast } from 'react-toastify'; // Added for toast notifications
+import { useTranslation } from 'react-i18next';
 
 interface SearchArticlesProps {
   query: string;
@@ -11,30 +12,28 @@ interface SearchArticlesProps {
 
 const SearchArticles: React.FC<SearchArticlesProps> = ({ query }) => {
   const { data: articles, isLoading, error } = useGetArticleResults(query);
+  const {t} = useTranslation();
 
   // Function to get friendly error messages specific to article search results
-  const getFriendlyErrorMessage = (error: any): string => {
-    if (!error) return "Something went wrong while searching for articles.";
-
-    // Handle common error cases
+  const getFriendlyErrorMessage = (error: any, query?: string): string => {
+    if (!error) return t("search.errors.default");
+  
     if (error.message.includes("Network Error")) {
-      return "Oops! Looks like you’re offline. Check your connection and try again.";
+      return t("search.errors.network");
     }
     if (error.response) {
       const status = error.response.status;
       if (status === 404) {
-        return `No articles found for "${query}". Try a different search!`;
+        return t("search.errors.notFound", { query }); // Dynamic query
       }
       if (status === 500) {
-        return "Our search engine is having a little trouble. Please try again soon!";
+        return t("search.errors.server");
       }
       if (status === 429) {
-        return "Too many searches! Give us a moment to catch up.";
+        return t("search.errors.rateLimit");
       }
     }
-
-    // Default fallback for unhandled errors
-    return `Something unexpected happened while searching articles for "${query}".`;
+    return t("search.errors.default");
   };
 
   // Toast error notification

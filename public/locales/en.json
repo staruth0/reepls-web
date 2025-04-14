@@ -75,8 +75,30 @@
   "Profile": "Profile",
   "Create Post": "Create Post",
   "Creating...": "Creating...",
+  "Saved every": "Saved every",
   "For you": "For you",
-  "Following": "Following",
+  "following": "Following",
+  "unfollowing": "unfollowing",
+  "follow": "follow",
+  "What's on your mind?": "What's on your mind?",
+  "Sign in to post": "Sign in to post",
+  "Post to anyone": "Post to anyone",
+  "Cognitive Mode is on! Images are hidden. Turn it off to see pictures.": "Cognitive Mode is on! Images are hidden. Turn it off to see pictures.",
+  "Cognitive Mode is off! Turn it on to hide images and focus better.": "Cognitive Mode is off! Turn it on to hide images and focus better.",
+  "Got it!": "Got it!",
+  "You must be logged in to upload images": "You must be logged in to upload images",
+  "You must be logged in to upload videos": "You must be logged in to upload videos",
+  "Failed to upload video": "Failed to upload video",
+  "Failed to upload image": "Failed to upload image",
+  "We do not support uploading documents yet!": "We do not support uploading documents yet!",
+  "Comment updated successfully": "Comment updated successfully",
+  "Failed to update comment": "Failed to update comment",
+  "You added 1 comment.": "You added 1 comment.",
+  "Failed to post comment. Please try again later.": "Failed to post comment. Please try again later.",
+  "Comment deleted successfully": "Comment deleted successfully",
+  "Post": "Post",
+  "Write": "Write",
+  "unfollow": "unfollow",
   "Communiques": "Communiques",
   "React": "React",
   "Comments": "Comments",
@@ -165,5 +187,248 @@
   "NotFoundErrorMessage": "We couldn’t find an account with that phone number.",
   "ServerErrorMessage": "Our servers are having a moment. Please try again soon!",
   "RateLimitErrorMessage": "Too many login attempts! Please wait a bit and try again.",
-  "UnexpectedErrorMessage": "Something unexpected happened during login. Please try again."
+  "UnexpectedErrorMessage": "Something unexpected happened during login. Please try again.",
+
+  "feed": {
+    "seeMore": "See more",
+    "seeLess": "See less",
+    "trending": "Trending",
+    "following": "Following",
+    "suggestedAuthor": "Suggested Author",
+    "noSuggestions": "No recommended authors found yet. Follow some people to get suggestions!"
+  },
+
+  "search": {
+    "searchPlaceholder": "Search for topics, articles, and people",
+    "recentSearches": "Recent Searches",
+    "clearAll": "Clear All",
+    "noResults": "No results found",
+    "noResultsDescription": "Try searching for something else or check your spelling.",
+    "searchResults": "Search Results",
+    "people": "People",
+    "articles": "Articles",
+    "topics": "Topics",
+    "noArticlesFound": "No articles found",
+    "noPeopleFound": "No people found",
+    "noTopicsFound": "No topics found",
+    "loadingResults": "Loading results",
+
+    "errors": {
+      "default": "Something went wrong while searching for articles.",
+      "network": "Oops! Looks like you’re offline. Check your connection and try again.",
+      "notFound": "No results found for \"{{query}}\". Try a different search!",
+      "server": "Our search engine is having trouble. Please try again later!",
+      "rateLimit": "Too many searches! Wait a moment before trying again.",
+      "noResult": "No results found for \"{{query}}\". Try something else!"
+    }
+  },
+
+  "saved": {
+    "title": "saved",
+    "tabs": {
+      "posts": "post",
+      "articles": "articles",
+      "history": "Reading History"
+    },
+    "topSavedAuthors": "Your top saved Authors",
+    "loading": "Loading authors...",
+    "noFollowings": "No followings yet",
+    "errorMessages": {
+      "default": "Something went wrong while loading your \"{{context}}\".",
+      "networkError": "Oops! Looks like you’re offline. Check your connection and try again.",
+      "notFoundPostOrArticle": "We couldn’t find your saved posts or articles right now.",
+      "notFoundAuthors": "We couldn’t find your followed authors right now.",
+      "serverError": "Our servers are having a little trouble. Please try again soon!",
+      "tooManyRequest": "Too many requests! Give us a moment to catch up."
+    },
+    "alerts": {
+      "unfollowSuccess": "User unfollowed successfully",
+      "unfollowFailed": "Failed to unfollow user",
+      "followSuccess": "User followed successfully",
+      "followFailed": "Failed to follow user",
+      "following": "Following...",
+      "unfollowing": "Unfollowing...",
+      "follow": "Follow",
+      "unfollow": "Unfollow"
+    },
+    "authorActions": {
+      "block": "Block",
+      "viewProfile": "View Profile",
+      "reportUser": "Report User",
+      "confirmBlock": "Confirm Block",
+      "comfirmMessage": "Are you sure you want to block \"{{username}}\"?",
+      "cancel": "Cancel",
+      "blockSuccess": "User \"{{user.username}}\" blocked successfully"
+    }
+  },
+
+  "report": {
+    "title": "Report \"{{username}}\"",
+    "characterNum": "500 characters",
+    "clear": "Clear",
+    "submit": "Submit",
+    "submitting": "Submitting...",
+    "reason": "Please provide a reason for reporting",
+    "reportSuccess": "Report submitted successfully",
+    "reportFailed": "Failed to submit report, please try again later"
+  },
+
+  "profile": {
+    "noArticles": "No Articles available",
+    "createOne": "create one",
+    "noPosts": "We couldn't find any Posts.",
+    "Cameroon": "Cameroon",
+    "profile": "Profile",
+    "name": "Name",
+    "bio": "Bio",
+    "enterName": "Enter your name",
+    "changeUsername": "Change your unsername",
+    "enterBio": "Enter your bio",
+    "about": "About",
+    "aboutYou": "Tell us about yourself",
+    "location": "Location",
+    "enterLocation": "Enter your location",
+    "saving": "Saving...",
+    "save": "Save",
+    "similarProfile": "Similar Profiles",
+    "profileAnalytics": "Profile Analytics",
+    "analytics": "Analytics",
+    "profileSettings": "Profile Settings",
+    "userAnalytics": "User Analytics",
+    "activeDate": "Active since: April 2023",
+    "totalArticles": "Total Articles",
+    "totalPosts": "Total Posts",
+    "totalImpressions": "Total Impressions",
+    "totalReactions": "Total Reactions",
+    "profileValue": "Profile Value",
+    "totalEngagements": "Total Engagements",
+    "voiceLanguage": "Voice Language",
+    "explicitContent": "Explicit Content",
+    "videoAutoPlay": "Video Auto Play",
+    "TermsandPolicies": "Terms and Policies",
+    "logout": "Logout",
+
+    "alerts": {
+      "bannerSuccess": "Successfully updated banner image",
+      "bannerFailed": "Failed to upload banner image, please try again later",
+      "profileImageSuccess": "Successfully updated profile image",
+      "profileImageFailed": "New profile picture could not be uploaded",
+      "bannerLogin": "You must be logged in to upload a banner image",
+      "profileImageLogin": "You must be logged in to upload a profile image",
+      "unfollowSuccess": "User unfollowed successfully",
+      "unfollowFailed": "Failed to unfollow user",
+      "followSuccess": "User followed successfully",
+      "followFailed": "Failed to follow user",
+      "following": "Following...",
+      "unfollowing": "Unfollowing...",
+      "follow": "Follow",
+      "unfollow": "Unfollow",
+      "profileSuccess": "Profile updated successfully!",
+      "profileFailed": "Failed to update profile, please try again later.",
+      "noFollowings": "No followings yet",
+      "noUser": "User not found"
+    },
+
+    "errors": {
+      "error": "Error",
+      "noRecommendedUser": "No recommended authors found.",
+      "profileError": "Errors loading profile"
+      
+    }
+  },
+
+  "notification": {
+    "commented": "commented on your post",
+    "followedYou": "Followed you",
+    "communique": "posted a communique",
+    "reacted": "reacted to your post"
+  },
+
+  "notFound": {
+    "header": "404 - Not Found",
+    "detail": "The page you are looking for does not exist.",
+    "goBack": "Return to Feed"
+  },
+
+  "interaction": {
+    "all": "All",
+    "cancel": "Cancel",
+    "reactions": "reactions",
+    "errors": {
+      "reactionError": "Error loading reactions. Please try again later."
+    },
+    "alerts": {
+      "reactionUpdateSuccess": "Reaction updated successfully",
+      "reactionUpdateFailed": "Failed to update reaction",
+      "reactionCreatedSuccess": "Reaction created successfully",
+      "reactionCreatedFailed": "Failed to create reaction"
+    }
+  },
+
+  "blog": {
+    "Continuereading": "Continue reading",
+    "seeMore":"See more",
+    "seeLess":"See less",
+    "Followauthor":"Follow author",
+    "Unfollowauthor":"Unfollow author",
+    "AddToSaved":"Add to saved",
+    "Remove From Saved":"Remove from saved",
+    "saving":"Saving...",
+    "saved":"Saved",
+    "removing":"Removing...",
+    "removed":"Removed",
+    "UnsavePost": "Unsave Post",
+    "EditPost": "Edit Post",
+    "Analytics": "Analytics",
+    "Share": "Share",
+    "Delete": "Delete",
+    "Hidepost": "Hide post",
+    "React": "React",
+    "Comment": "Comment",
+    "Comments": "Comments",
+    "Article": "Article",
+    "ShowMore": "Show more",
+    "ShowLess": "Show less",
+    "yourThoughts": "What are your thoughts?...",
+    
+    "DeleteArticle": "Delete Article",
+    "DeleteArticleConfirmation": "Are you sure you want to delete this article? This action cannot be undone.",
+    "Deleting": "Deleting...",
+    "Deleted": "Deleted",
+    "followthisuser": "follow this user or access these options",
+
+    "alerts":{
+      "postSaved": "Post saved successfully",
+      "postUnSaved": "Post unsaved successfully",
+      "postSavedFailed": "Failed to save post",
+      "postUnSavedFailed": "Failed to unsave post",
+      "postDeleted": "Post deleted successfully",
+      "postDeleteFailed": "Failed to delete post",
+      "postPublished": "Post published successfully",
+      "postPublishFailed": "Failed to publish post",
+      "postUpdated": "Post updated successfully",
+      "postUpdateFailed": "Failed to update post",
+
+      "articleRemoved": "Article removed from saved",
+      "articleRemovedFailed": "Failed to remove article from saved",
+      "articleSaved": "Article saved successfully",
+      "articleSavedFailed": "Failed to save article",
+      "userUnfollowed": "User unfollowed successfully",
+      "userUnfollowFailed": "Failed to unfollow user",
+      "userFollowed": "User followed successfully",
+      "userFollowFailed": "Failed to follow user",
+      "addedComment": "You added 1 comment.",
+      "commentFailed": "Failed to add comment",
+      "commentDeleted": "Comment deleted successfully",
+      "ReactionSuccess": "Reaction added successfully",
+      "ReactionFailed": "Failed to add reaction"
+
+    },
+
+    "errors":{
+      "default": "Error loading comments"
+
+    }
+
+  }
 }

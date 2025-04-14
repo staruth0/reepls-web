@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 interface ReportUserPopupProps {
   username: string;
@@ -11,6 +12,7 @@ interface ReportUserPopupProps {
 const ReportUserPopup: React.FC<ReportUserPopupProps> = ({ username, userId, onClose }) => {
   const [reportText, setReportText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const {t} = useTranslation()
 
   const handleSubmit = async () => {
     if (!reportText.trim()) {
@@ -22,11 +24,11 @@ const ReportUserPopup: React.FC<ReportUserPopupProps> = ({ username, userId, onC
     try {
       // Here you would typically make an API call to submit the report
       console.log(`Reporting user ${userId} with reason: ${reportText}`);
-      toast.success('Report submitted successfully');
+      toast.success(t('report.reportSuccess'));
       setReportText('');
       onClose();
     } catch (error) {
-      toast.error('Failed to submit report');
+      toast.error(t('report.reportFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -48,7 +50,7 @@ const ReportUserPopup: React.FC<ReportUserPopupProps> = ({ username, userId, onC
       <div className="fixed w-[90%] sm:w-[70%] md:w-[60%] lg:w-[40%] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-800 rounded-md p-6 z-[99999] text-neutral-50">
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold">Report {username}</h3>
+          <h3 className="text-lg font-semibold">{t("report.title", {username})}</h3>
           <X
             className="size-5 cursor-pointer hover:text-neutral-300"
             onClick={onClose}
@@ -65,7 +67,7 @@ const ReportUserPopup: React.FC<ReportUserPopupProps> = ({ username, userId, onC
             disabled={isSubmitting}
           />
           <p className="text-sm text-neutral-400 mt-1">
-            {reportText.length}/500 characters
+            {reportText.length}/{t("report.characterNum")}
           </p>
         </div>
 
@@ -76,7 +78,7 @@ const ReportUserPopup: React.FC<ReportUserPopupProps> = ({ username, userId, onC
             onClick={handleClear}
             disabled={isSubmitting || !reportText}
           >
-            Clear
+           {t("report.clear")}
           </button>
           <button
             className="px-4 py-2 bg-primary-600 rounded-md hover:bg-primary-700 disabled:opacity-50"

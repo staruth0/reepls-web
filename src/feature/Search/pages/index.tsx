@@ -8,35 +8,36 @@ import SuggestionContainer from "../components/SuggestionContainer";
 import { SearchContainerContext } from "../../../context/suggestionContainer/isSearchcontainer";
 import RecentSearchesSkeleton from "../components/RecentSearchComponent";
 import { toast } from "react-toastify"; // Added for toast notifications
+import { useTranslation } from "react-i18next";
 
 const Search: React.FC = () => {
   const { authUser } = useUser();
   const { data, isLoading, error } = useGetSearchSuggestions(authUser?.id || ""); // Added error
   const { isSearchContainerOpen } = useContext(SearchContainerContext);
+  
+
+  const {t} = useTranslation()
 
   // Function to get friendly error messages specific to search suggestions
-  const getFriendlyErrorMessage = (error: any): string => {
-    if (!error) return "Something went wrong while loading your search history.";
-
-    // Handle common error cases
+  const getFriendlyErrorMessage = (error: any, query?: string): string => {
+    if (!error) return t("search.errors.default");
+  
     if (error.message.includes("Network Error")) {
-      return "Oops! Looks like you’re offline. Check your connection and try again.";
+      return t("search.errors.network");
     }
     if (error.response) {
       const status = error.response.status;
       if (status === 404) {
-        return "We couldn’t find your recent searches right now.";
+        return t("search.errors.notFound", { query }); // Dynamic query
       }
       if (status === 500) {
-        return "Our search system is taking a break. Please try again soon!";
+        return t("search.errors.server");
       }
       if (status === 429) {
-        return "Too many searches! Give us a moment to catch up.";
+        return t("search.errors.rateLimit");
       }
     }
-
-    // Default fallback for unhandled errors
-    return "Something unexpected happened while fetching your search history.";
+    return t("search.errors.default");
   };
 
   // Toast error notification
@@ -103,7 +104,7 @@ const Search: React.FC = () => {
               {data?.searchHistory?.length > 0 ? (
                 <>
                   <div className="mb-4 text-neutral-50 text-[18px] font-semibold">
-                    Recent Searches
+                    {t("search.recentSearches")}
                   </div>
                   {data.searchHistory.map((article: string) => (
                     <SuggestionContainer key={article} text={article} />

@@ -13,6 +13,7 @@ import AuthSkeletonComponent from '../../../components/atoms/AuthorComponentSkel
 import { toast } from 'react-toastify'; // Added for toast notifications
 import SavedPostsContainer from '../Components/SavedPostsContaniner';
 import SavedArticlesContainer from '../Components/SavedArticleContainer';
+import { useTranslation } from 'react-i18next';
 
 const Bookmarks: React.FC = () => {
   const { authUser } = useUser();
@@ -23,29 +24,31 @@ const Bookmarks: React.FC = () => {
   const [savedArticles, setSavedArticles] = useState<Article[]>([]);
   const [followings, setFollowings] = useState<Follow[]>([]);
 
+  const {t} = useTranslation();
+
   // Function to get friendly error messages
   const getFriendlyErrorMessage = (error: any, context: 'articles' | 'followings'): string => {
-    if (!error) return `Something went wrong while loading your ${context}.`;
+    if (!error) return t("saved.errorMessages.default", {context});
 
     if (error.message.includes("Network Error")) {
-      return "Oops! Looks like you’re offline. Check your connection and try again.";
+      return t("saved.errorMessages.networkError");
     }
     if (error.response) {
       const status = error.response.status;
       if (status === 404) {
         return context === 'articles'
-          ? "We couldn’t find your saved posts or articles right now."
-          : "We couldn’t find your followed authors right now.";
+          ? t("saved.errorMessages.notFoundPostOrArticle")
+          : t("saved.errorMessages.notFoundAuthors");
       }
       if (status === 500) {
-        return "Our servers are having a little trouble. Please try again soon!";
+        return t("saved.errorMessages.serverError");
       }
       if (status === 429) {
-        return "Too many requests! Give us a moment to catch up.";
+        return t("saved.errorMessages.tooManyRequest");
       }
     }
 
-    return `Something unexpected happened while fetching your ${context}.`;
+    return t("saved.errorMessages.default", {context});
   };
 
   // Toast error notifications
@@ -71,9 +74,9 @@ const Bookmarks: React.FC = () => {
   }, [followingsData]);
 
   const tabs = [
-    { id: 'posts', title: `Posts (${savedPosts.length})` },
-    { id: 'articles', title: `Articles (${savedArticles.length})` },
-    { id: 'history', title: 'Reading History', icon: <LuHistory className="mx-2" /> },
+    { id: 'posts', title: `${t("saved.tabs.posts")} (${savedPosts.length})` },
+    { id: 'articles', title: `${t("saved.tabs.articles")} (${savedArticles.length})` },
+    { id: 'history', title: `${t("saved.tabs.history")}`, icon: <LuHistory className="mx-2" /> },
   ];
 
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
@@ -84,7 +87,7 @@ const Bookmarks: React.FC = () => {
       <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
         <div className="saved border-r-[1px] min-h-screen border-neutral-500">
           <Topbar>
-            <p>Saved</p>
+            <p>{t("saved.title")}</p>
           </Topbar>
           <div className="notification__content sm:px-5 md:px-10 lg:px-20 mt-5 min-h-screen flex flex-col items-center">
             <div className="w-[82%]">
@@ -99,7 +102,7 @@ const Bookmarks: React.FC = () => {
           </div>
         </div>
         <div className="saved__authors px-6 py-4 hidden lg:block">
-          <p>Your top saved Authors</p>
+          <p>{t("saved.topSavedAuthors")}</p>
           <div className="mt-10 flex flex-col gap-6">
             {isLoadingFollowings ? (
               <>
@@ -111,7 +114,7 @@ const Bookmarks: React.FC = () => {
                 <AuthSkeletonComponent />
               </>
             ) : (
-              <p className="text-neutral-500 text-center">Loading authors...</p>
+              <p className="text-neutral-500 text-center">{t("loading")}</p>
             )}
           </div>
         </div>
@@ -125,7 +128,7 @@ const Bookmarks: React.FC = () => {
       <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
         <div className="saved border-r-[1px] min-h-screen border-neutral-500">
           <Topbar>
-            <p>Saved</p>
+            <p>{t("saved.title")}</p>
           </Topbar>
           <div className="notification__content sm:px-5 md:px-10 lg:px-20 mt-5 min-h-screen flex flex-col items-center">
             <div className="w-[82%]">
@@ -139,7 +142,7 @@ const Bookmarks: React.FC = () => {
           </div>
         </div>
         <div className="saved__authors px-6 py-4 hidden lg:block">
-          <p>Your top saved Authors</p>
+          <p>{t("saved.topSavedAuthors")}</p>
           <div className="mt-10 flex flex-col gap-6">
             {isLoadingFollowings ? (
               <>
@@ -162,7 +165,7 @@ const Bookmarks: React.FC = () => {
                 />
               ))
             ) : (
-              <p className="text-neutral-500 text-center">No followings yet</p>
+              <p className="text-neutral-500 text-center">{t("saved.noFollowings")}</p>
             )}
           </div>
         </div>
@@ -175,7 +178,7 @@ const Bookmarks: React.FC = () => {
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
       <div className="saved border-r-[1px] min-h-screen border-neutral-500">
         <Topbar>
-          <p>Saved</p>
+          <p>{t("saved.title")}</p>
         </Topbar>
         <div className="notification__content sm:px-5 md:px-10 lg:px-20 mt-5 min-h-screen flex flex-col items-center">
           <div className="w-[82%]">
@@ -192,12 +195,12 @@ const Bookmarks: React.FC = () => {
                 <SavedArticlesContainer articles={savedArticles} />
               </div>
             )}
-            {activeTab === 'history' && <div>Reading History</div>}
+            {activeTab === 'history' && <div>{t("saved.tabs.history")}</div>}
           </div>
         </div>
       </div>
       <div className="saved__authors bg-background px-6 py-4 hidden lg:block">
-        <p>Your top saved Authors</p>
+        <p>{t("saved.topSavedAuthors")}</p>
         <div className="mt-10 flex flex-col gap-6">
           {isLoadingFollowings ? (
             <>
@@ -220,7 +223,7 @@ const Bookmarks: React.FC = () => {
               />
             ))
           ) : (
-            <p className="text-neutral-500 text-center">No followings yet</p>
+            <p className="text-neutral-500 text-center">{t("saves.errorMessages.noFollowings")}</p>
           )}
         </div>
       </div>

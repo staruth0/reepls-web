@@ -4,11 +4,13 @@ import TrendingLink from "./TrendingLink";
 import AuthorSuggestions from "./AuthorSuggestions";
 import { useGetTrendingTopics } from "../hooks";
 import TrendingTopicsSkeleton from "../../../components/atoms/TrendingTopicsSkeleton";
+import { useTranslation } from "react-i18next";
 
 
 const Trending: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const {data, isLoading} = useGetTrendingTopics()
+  const {t} = useTranslation()
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -18,7 +20,7 @@ const Trending: React.FC = () => {
     <div className="w-full flex flex-col gap-3 px-6 py-1 sticky top-0">
       <div className="text-neutral-100 text-md font-semibold my-2 mb-2 flex items-center gap-2">
         <TrendingUp size={20} className="text-yellow-500" />
-        <span>Trending</span>
+        <span>{t("feed.trending")}</span>
       </div>
 
    { isLoading ?<TrendingTopicsSkeleton/> : <>   <div
@@ -35,7 +37,7 @@ const Trending: React.FC = () => {
         className="flex justify-center items-center text-[14px] py-2 text-neutral-50 gap-1 cursor-pointer"
         onClick={toggleExpand}
       >
-        <span>{isExpanded ? "See less" : "See more"}</span>
+        <span>{isExpanded ? `${t("feed.seeLess")}` : `${t("feed.seeMore")}`}</span>
         <ArrowRight
           size={18}
           className={`transition-transform duration-300 ${

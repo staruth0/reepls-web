@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { useCreateReaction, useGetArticleReactions, useUpdateReaction } from "../../Interactions/hooks";
 import { ReactionReceived } from "../../../models/datamodels";
+import { t } from "i18next";
 
 interface ReactionModalProps {
   article_id: string;
@@ -63,7 +64,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ article_id }) => {
         { type: reaction, article_id, user_id: authUser.id },
         {
           onSuccess: () => {
-            toast.success("Reaction created successfully");
+            toast.success(t("blog.alerts.ReactionSuccess"));
             setIsPending(false);
             setPendingReaction(null);
             setSuccessReaction(reaction);
@@ -71,7 +72,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ article_id }) => {
             
           },
           onError: () => {
-            toast.error("Failed to create reaction");
+            toast.error(t("blog.alerts.ReactionFailed"));
             setIsPending(false);
             setPendingReaction(null);
          

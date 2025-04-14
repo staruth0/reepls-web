@@ -63,7 +63,7 @@ const SearchTopBar: React.FC<{ initialSearchTerm?: string }> = ({ initialSearchT
         value={searchTerm}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
-        placeholder={t('Search for posts, articles, and people')}
+        placeholder={t('search.searchPlaceholder')}
         className="w-full px-4 py-3 border-none bg-neutral-600 rounded-full outline-none text-neutral-100 placeholder-neutral-400"
       />
       <div className="absolute top-3 right-5 cursor-pointer flex items-center gap-2 text-neutral-400">

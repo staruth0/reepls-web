@@ -58,6 +58,7 @@ import '../../../styles/shadcn.scss';
 import { convertBase64ToBlob, debounce } from '../../../utils';
 import { uploadArticleImage, uploadArticleVideo } from '../../../utils/media';
 import '../styles/editor.scss';
+import { t } from 'i18next';
 // Type for editor content (assuming HTML string output)
 type EditorContent = string;
 
@@ -123,7 +124,7 @@ function TipTapRichTextEditor({
     Image.configure({
       upload: async (file: File): Promise<string> => {
         if (!authUser?.id) {
-          toast.error('You must be logged in to upload images');
+          toast.error(t('You must be logged in to upload images'));
           return Promise.reject(new Error('User ID is required'));
         }
         try {
@@ -131,7 +132,7 @@ function TipTapRichTextEditor({
           handleMediaUpload?.(url, MediaType.Image);
           return Promise.resolve(url);
         } catch (error) {
-          toast.error('Failed to upload image');
+          toast.error(t('Failed to upload image'));
           return Promise.reject(error);
         }
       },
@@ -139,7 +140,7 @@ function TipTapRichTextEditor({
     Video.configure({
       upload: async (file: File): Promise<string> => {
         if (!authUser?.id) {
-          toast.error('You must be logged in to upload videos');
+          toast.error(t('You must be logged in to upload videos'));
           return Promise.reject(new Error('User ID is required'));
         }
         try {
@@ -147,7 +148,7 @@ function TipTapRichTextEditor({
           handleMediaUpload?.(url, MediaType.Video);
           return Promise.resolve(url);
         } catch (error) {
-          toast.error('Failed to upload video');
+          toast.error(t('Failed to upload video'));
           return Promise.reject(error);
         }
       },
@@ -168,7 +169,7 @@ function TipTapRichTextEditor({
     ExportPdf.configure({ spacer: true }),
     ImportWord.configure({
       upload: async (): Promise<{ src: string; alt: string }[]> => {
-        toast.error('We do not support uploading documents yet!');
+        toast.error(t('We do not support uploading documents yet!'));
         throw new Error('Not implemented');
         // if (!authUser?.id) {
         //   toast.error('You must be logged in to upload documents');

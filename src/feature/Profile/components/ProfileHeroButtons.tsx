@@ -26,6 +26,7 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
   const [showSignInPopup, setShowSignInPopup] = useState(false);
    const {mutate: follow, isPending: isFollowPending} = useSendFollowNotification();
 
+
   const handleEditProfile = (username: string) => {
     navigate(`/profile/edit/${username}`);
   };
@@ -45,21 +46,21 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
 
     if (isUserFollowing(userId)) {
       unFollow(userId, {
-        onSuccess: () => toast.success(t("User unfollowed successfully")),
-        onError: () => toast.error(t("Failed to unfollow user")),
+        onSuccess: () => toast.success(t("profile.alerts.unfollowSuccess")),
+        onError: () => toast.error(t("profile.alerts.unfollowFailed")),
       });
     } else {
       follow({receiver_id:userId}, {
-        onSuccess: () => toast.success(t("User followed successfully")),
-        onError: () => toast.error(t("Failed to follow user")),
+        onSuccess: () => toast.success(t("profile.alerts.followSuccess")),
+        onError: () => toast.error(t("profile.alerts.followFailed")),
       });
     }
   };
 
   const getFollowStatusText = () => {
-    if (isFollowPending) return t("Following...");
-    if (isUnfollowPending) return t("Unfollowing...");
-    return isUserFollowing(userId) ? t("Following") : t("Follow");
+    if (isFollowPending) return t("profile.alerts.following");
+    if (isUnfollowPending) return t("profile.alerts.Unfollowing");
+    return isUserFollowing(userId) ? t("profile.alerts.following") : t("profile.alerts.follow");
   };
 
   return (

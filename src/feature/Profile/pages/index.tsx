@@ -130,7 +130,7 @@ const Profile: React.FC = () => {
       <div className="lg:grid grid-cols-[4fr_1.65fr]">
         <div className="profile lg:border-r-[1px] border-neutral-500 min-h-screen">
           <Topbar>
-            <p>{t("Profile")}</p>
+            <p>{t("profile.profile")}</p>
           </Topbar>
           <div className=" px-5 md:px-10 lg:px-20">
             <ProfileSkeleton />
@@ -150,9 +150,9 @@ const Profile: React.FC = () => {
       <div className="lg:grid grid-cols-[4fr_1.65fr]">
         <div className="profile border-r-[1px] border-neutral-500 min-h-screen">
           <Topbar>
-            <p>{t("Profile")}</p>
+            <p>{t("profile.profile")}</p>
           </Topbar>
-          <div>{error.message || t("Error loading profile")}</div>
+          <div>{error.message || t("profile.errors.profileError")}</div>
         </div>
       </div>
     );
@@ -163,9 +163,9 @@ const Profile: React.FC = () => {
       <div className="lg:grid grid-cols-[4fr_1.65fr]">
         <div className="profile border-r-[1px] border-neutral-500 min-h-screen">
           <Topbar>
-            <p>{t("Profile")}</p>
+            <p>{t("profile.profile")}</p>
           </Topbar>
-          <div>{t("User not found")}</div>
+          <div>{t("profile.alerts.noUser")}</div>
         </div>
       </div>
     );
@@ -176,7 +176,7 @@ const Profile: React.FC = () => {
     <div className="lg:grid grid-cols-[4fr_1.65fr]">
       <div className="profile border-r-[1px] min-h-screen border-neutral-500">
         <Topbar>
-          <p>{t("Profile")}</p>
+          <p>{t("profile.profile")}</p>
         </Topbar>
 
         <div className="profile__content sm:px-5 md:px-10 lg:px-20  min-h-screen">
@@ -274,7 +274,7 @@ const Profile: React.FC = () => {
           <div>
             <div className="py-7 px-4 font-semibold text-neutral-50 flex items-center gap-2">
               <User className="text-main-green" size={20} />
-              {t("Similar Profiles")}
+              {t("profile.similarProfile")}
             </div>
             <SimilarProfiles />
           </div>

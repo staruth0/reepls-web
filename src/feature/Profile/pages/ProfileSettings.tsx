@@ -1,14 +1,16 @@
 import React from 'react'
 import ProfileConfigurations from '../components/ProfileConfigurations'
 import Topbar from '../../../components/atoms/Topbar/Topbar'
+import { useTranslation } from 'react-i18next'
 
 const ProfileSettings:React.FC = () => {
+  const {t} = useTranslation()
   return (
     <div className={`lg:grid  `}>
     {/* profile Section */}
     <div className="profile border-neutral-500 ">
       <Topbar>
-        <p>Profile Settings</p>
+        <p>{t("profile.profileSettings")}</p>
       </Topbar>
 
       {/* Analytics content */}

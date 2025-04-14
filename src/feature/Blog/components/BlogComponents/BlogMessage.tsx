@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../../../../utils';
 import './Blog.scss';
+import { useTranslation } from 'react-i18next';
 
 interface BlogMessageProps {
   title: string;
@@ -16,6 +17,8 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, isArticle, ar
   const [showToggle, setShowToggle] = useState(false);
   const contentRef = useRef<HTMLParagraphElement>(null);
   const navigate = useNavigate();
+
+  const {t} = useTranslation();
 
   useEffect(() => {
     if (contentRef.current) {
@@ -55,12 +58,12 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, isArticle, ar
         <button
           onClick={handleToggle}
           className="text-primary-400 underline decoration-dotted underline-offset-4 text-[14px] font-medium mt-1 cursor-pointer">
-          Continue reading
+          {t("blog.Continuereading")}
         </button>
       ) : (
         showToggle && (
           <button onClick={handleToggle} className="text-neutral-50 text-[14px] font-medium mt-1">
-            {isExpanded ? 'See less' : 'See more'}
+            {isExpanded ? t('blog.seeLess') : t('blog.seeMore')}
           </button>
         )
       )}

@@ -2,6 +2,7 @@ import React from 'react';
 import { thumb } from '../../../assets/icons';
 import { useGetUserById } from '../../Profile/hooks';
 import { useUpdateNotificationReadStatus } from '../hooks/useNotification';
+import { useTranslation } from 'react-i18next';
 
 
 interface CommentNotificationProps {
@@ -24,6 +25,8 @@ const CommentNotificationContainer: React.FC<CommentNotificationProps> = ({ user
       })
     }
 
+    const {t} = useTranslation();
+
   return (
     <div onClick={updateStatus} className={`flex gap-2 w-full items-start border-b-[1px] rounded border-neutral-500 pb-3 cursor-pointer ${!is_read ? 'bg-primary-700 p-2':''}`}>
       <img src={thumb} alt="comment" className="w-[25px] mt-1" />
@@ -31,7 +34,7 @@ const CommentNotificationContainer: React.FC<CommentNotificationProps> = ({ user
         <div className="text-[16px] font-roboto font-bold text-neutral-50 flex items-center gap-3 w-full">
          <div className='line-clamp-1'>  {user?.username}</div>
           <div className="flex justify-between items-center w-full">
-            <div className="text-[15px] font-normal">commented on your post</div>
+            <div className="text-[15px] font-normal">{t("notification.commented")}</div>
             <div className="text-[15px] font-normal ">{timestamp}</div>
           </div>
         </div>
