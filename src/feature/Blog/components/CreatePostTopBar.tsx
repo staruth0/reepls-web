@@ -75,7 +75,7 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({ title, mainAction, acti
                 <span className="text-sm flex items-center gap-0">
                   <LuDot className="size-8 text-primary-400 animate-pulse" />
                   <span className="text-sm">
-                    Saved every <span className="font-bold text-primary-400">2s</span>
+                    {t("Saved every")} <span className="font-bold text-primary-400">2s</span>
                   </span>
                 </span>
               </PopoverPanel>

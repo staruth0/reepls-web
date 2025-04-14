@@ -53,7 +53,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town,role,user_id
           <LuBriefcase className="size-4" /> {role}
         </div>
         <div className="flex gap-1">
-          <LuMapPin className="size-4" /> {town? `${town},`:''}Cameroon
+          <LuMapPin className="size-4" /> {town? `${town},`:''} {t("cameroon")}
         </div>
       </div>
       <div className="flex text-[13px] gap-3 mt-1 items-center">

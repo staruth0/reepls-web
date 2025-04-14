@@ -3,6 +3,7 @@ import { LuNewspaper } from 'react-icons/lu';
 import { Link } from 'react-router-dom';
 import { Article } from '../../../models/datamodels';
 import BlogPost from '../../Blog/components/BlogPost';
+import { useTranslation } from 'react-i18next';
 
 interface ProfileArticlesProps {
   authorId?: string;
@@ -12,6 +13,8 @@ interface ProfileArticlesProps {
 const ProfileArticles: React.FC<ProfileArticlesProps> = ({ articles = [] }) => {
   // If articles are not provided, this component assumes the parent handles loading/error states
   const hasArticles = articles && articles.length > 0;
+
+  const {t} = useTranslation();
 
   return (
     <div>
@@ -25,9 +28,9 @@ const ProfileArticles: React.FC<ProfileArticlesProps> = ({ articles = [] }) => {
         <div className="flex flex-col items-center justify-center space-y-2">
           <LuNewspaper className="text-4xl text-gray-500" />
           <p className="text-gray-500 flex gap-2">
-            No Articles available.
+            {t("profile.noArticles")}
             <Link to="/posts/create" className="text-primary-400">
-              Create an Article
+            {t("profile.createOne")}
             </Link>
           </p>
         </div>

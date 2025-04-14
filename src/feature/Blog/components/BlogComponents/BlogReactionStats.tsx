@@ -4,6 +4,7 @@ import { timeAgo } from '../../../../utils/dateFormater';
 import { useGetCommentsByArticleId } from '../../../Comments/hooks';
 import ReactionsPopup from '../../../Interactions/components/ReactionsPopup';
 import { useGetArticleReactions } from '../../../Interactions/hooks';
+import { t } from 'i18next';
 
 interface BlogReactionStatsProps {
   date: string;
@@ -63,7 +64,7 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({ date, toggleComme
           className="ml-4 text-neutral-50 hover:text-primary-500 hover:underline underline-offset-1"
           onClick={toggleCommentSection}
         >
-          {totalComments} Comments
+          {totalComments} {t("blog.Comments")}
         </div>
       </div>
 

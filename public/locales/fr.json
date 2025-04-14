@@ -69,6 +69,7 @@
   "Home": "Accueil",
   "Feed": "Flux",
   "Explore": "Explorer",
+  "Saved every": "Enregistré chaque",
   "Notifications": "Notifications",
   "Bookmarks": "Favoris",
   "Profile": "Profil",
@@ -76,6 +77,10 @@
   "Creating...": "Création...",
   "For you": "Pour vous",
   "Following": "Abonnements",
+  "following": "Abonnements",
+  "unfollowing": "Ne plus suivre",
+  "follow": "Suivre",
+  "unfollow": "Ne plus suivre",
   "Communiques": "Communiqués",
   "React": "Réagir",
   "Comments": "Commentaires",
@@ -112,7 +117,27 @@
   "About": "À propos",
   "Posts": "Publications",
   "Media": "Médias",
+  "What's on your mind?": "Qu'est-ce qui vous préoccupe ?",
+  "Sign in to post": "Connectez-vous pour publier",
+  "Post to anyone": "Publier pour tout le monde",
+  "Post": "Publier",
+  "Write": "Écrire",
   "Articles": "Articles",
+  "Cognitive Mode is on! Images are hidden. Turn it off to see pictures.": "Le mode cognitif est activé ! Les images sont cachées. Désactivez-le pour voir les images.",
+  "Cognitive Mode is off! Turn it on to hide images and focus better.": "Le mode cognitif est désactivé ! Activez-le pour cacher les images et mieux vous concentrer.",
+  "Got it!": "Compris !",
+  "You must be logged in to upload images.": "Vous devez être connecté pour télécharger des images.",
+  "You must be logged in to upload videos.": "Vous devez être connecté pour télécharger des vidéos.",
+  "Failed to upload video.": "Échec du téléchargement de la vidéo.",
+  "Failed to upload image.": "Échec du téléchargement de l'image.",
+  "We do not support uploading documents yet!": "Nous ne prenons pas encore en charge le téléchargement de documents.",
+  "Comment updated successfully": "Commentaire mis à jour avec succès",
+  "Comment failed to update": "Échec de la mise à jour du commentaire",
+  "You added 1 comment.": "Vous avez ajouté 1 commentaire",
+  "Failed to post comment. Please try again later.": "Échec de la publication du commentaire. Veuillez réessayer plus tard.",
+  "Comment deleted successfully": "Commentaire supprimé avec succès",
+  "What are your thoughts...": "Quelles sont vos pensées ?...",
+  "Sign in to comment": "Connectez-vous pour commenter",
   "Followers": "Abonnés",
   "Search": "Rechercher",
   "Enter your title here...": "Entrez votre titre ici...",
@@ -156,12 +181,250 @@
       "terms": "Conditions d'utilisation",
       "policy": "Politique de confidentialité"
     }
-  }, 
+  },
   "GenericErrorMessage": "Une erreur s'est produite. Veuillez réessayer.",
   "NetworkErrorMessage": "Oups ! Il semble que vous soyez hors ligne. Vérifiez votre connexion et réessayez.",
   "AuthErrorMessage": "Numéro de téléphone ou mot de passe incorrect. Veuillez réessayer.",
   "NotFoundErrorMessage": "Nous n'avons pas trouvé de compte avec ce numéro de téléphone.",
   "ServerErrorMessage": "Nos serveurs rencontrent un problème. Veuillez réessayer ultérieurement !",
   "RateLimitErrorMessage": "Trop de tentatives de connexion ! Veuillez patienter un moment avant de réessayer.",
-  "UnexpectedErrorMessage": "Un problème inattendu est survenu lors de la connexion. Veuillez réessayer."
+  "UnexpectedErrorMessage": "Un problème inattendu est survenu lors de la connexion. Veuillez réessayer.",
+
+  "feed": {
+    "seeMore": "Voir plus",
+    "seeLess": "Voir moins",
+    "trending": "Tendances",
+    "follow": "Suivre",
+    "unfollow": "Ne plus suivre",
+    "following": "Abonnements",
+    "unfollowing": "Ne plus suivre",
+    "suggestedAuthor": "Auteur suggéré",
+    "noSuggestions": "Aucun auteur recommandé n'a encore été trouvé. Suivez des personnes pour obtenir des suggestions !"
+  },
+
+  "search": {
+    "searchPlaceholder": "Rechercher des articles, des personnes, des sujets...",
+    "recentSearches": "Recherches récentes",
+    "searchResult": "Résultats de la recherche",
+    "noResults": "Aucun résultat trouvé pour votre recherche.",
+    "noResultsDescription": "Essayez d'autres mots-clés ou vérifiez l'orthographe.",
+    "searchHistory": "Historique de recherche",
+    "clearHistory": "Effacer l'historique",
+    "clearHistoryConfirmation": "Êtes-vous sûr de vouloir effacer l'historique de recherche ?",
+    "clearHistorySuccess": "Historique de recherche effacé avec succès.",
+    "loadingResults": "Chargement des résultats",
+
+    "errors": {
+      "default": "Une erreur s'est produite lors de la recherche d'articles.",
+      "network": "Oups ! Vous semblez hors ligne. Vérifiez votre connexion et réessayez.",
+      "notFound": "Aucun résultat trouvé pour \"{{query}}\". Essayez une autre recherche !",
+      "server": "Notre moteur de recherche rencontre un problème. Veuillez réessayer plus tard !",
+      "rateLimit": "Trop de recherches ! Attendez un moment avant de réessayer.",
+      "noResult": "Aucun résultat trouvé pour \"{{query}}\". Essayez autre chose !"
+    }
+  } ,
+
+    "saved": {
+      "title": "Enregistré",
+      "tabs": {
+        "posts": "Post",
+        "articles": "Articles",
+        "history": "Historique de lecture"
+      },
+      "topSavedAuthors": "Vos auteurs enregistrés préférés",
+      "loading": "Chargement des auteurs...",
+      "noFollowings": "Pas encore d'abonnements",
+      "errorMessages": {
+        "default": "Une erreur s'est produite lors du chargement de votre \"{{context}}\".",
+        "networkError": "Oups ! Vous semblez hors ligne. Vérifiez votre connexion et réessayez.",
+        "notFoundPostOrArticle": "Nous n'avons pas pu trouver vos posts ou articles enregistrés pour le moment.",
+        "notFoundAuthors": "Nous n'avons pas pu trouver vos auteurs suivis pour le moment.",
+        "serverError": "Nos serveurs rencontrent quelques difficultés. Veuillez réessayer bientôt !",
+        "tooManyRequest": "Trop de requêtes ! Donnez-nous un moment pour nous rattraper."
+      },
+      "alerts": {
+        "unfollowSuccess": "Utilisateur désabonné avec succès",
+        "unfollowFailed": "Échec du désabonnement de l'utilisateur",
+        "followSuccess": "Utilisateur abonné avec succès",
+        "followFailed": "Échec de l'abonnement à l'utilisateur",
+        "following": "Abonnement en cours...",
+        "unfollowing": "Désabonnement en cours...",
+        "follow": "Suivre",
+        "unfollow": "Ne plus suivre"
+      },
+      "authorActions": {
+        "block": "Bloquer",
+        "viewProfile": "Voir le profil",
+        "reportUser": "Signaler l'utilisateur",
+        "confirmBlock": "Confirmer le blocage",
+        "comfirmMessage": "Êtes-vous sûr de vouloir bloquer \"{{username}}\" ?",
+        "cancel": "Annuler",
+        "blockSuccess": "Utilisateur \"{{user.username}}\" bloqué avec succès"
+      }
+    },
+  
+    "report": {
+      "title": "Signaler \"{{username}}\"",
+      "characterNum": "500 caractères",
+      "clear": "Effacer",
+      "submit": "Soumettre",
+      "submitting": "Soumission en cours...",
+      "reason": "Veuillez fournir une raison pour le signalement",
+      "reportSuccess": "Signalement soumis avec succès",
+      "reportFailed": "Échec de la soumission du signalement, veuillez réessayer plus tard"
+    },
+  
+    "profile": {
+      "noArticles": "Aucun article disponible",
+      "createOne": "en créer un",
+      "noPosts": "Nous n'avons trouvé aucun post.",
+      "Cameroon": "Cameroun",
+      "profile": "Profil",
+      "name": "Nom",
+      "bio": "Bio",
+      "enterName": "Entrez votre nom",
+      "changeUsername": "Changez votre nom d'utilisateur",
+      "enterBio": "Entrez votre bio",
+      "about": "À propos",
+      "aboutYou": "Parlez-nous de vous",
+      "location": "Localisation",
+      "enterLocation": "Entrez votre localisation",
+      "saving": "Enregistrement...",
+      "save": "Enregistrer",
+      "similarProfile": "Profils similaires",
+      "profileAnalytics": "Analytiques du profil",
+      "analytics": "Analytiques",
+      "profileSettings": "Paramètres du profil",
+      "userAnalytics": "Analytiques de l'utilisateur",
+      "activeDate": "Actif depuis : avril 2023",
+      "totalArticles": "Nombre total d'articles",
+      "totalPosts": "Nombre total de posts",
+      "totalImpressions": "Nombre total d'impressions",
+      "totalReactions": "Nombre total de réactions",
+      "profileValue": "Valeur du profil",
+      "totalEngagements": "Nombre total d'engagements",
+      "voiceLanguage": "Langue de voix",
+      "explicitContent": "Contenu explicite",
+      "videoAutoPlay": "Lecture automatique",
+      "TermsandPolicies": "Conditions et politiques",
+      "logout": "Déconnexion",
+      
+  
+      "alerts": {
+        "bannerSuccess": "Image de bannière mise à jour avec succès",
+        "bannerFailed": "Échec du téléchargement de l'image de bannière, veuillez réessayer plus tard",
+        "profileImageSuccess": "Image de profil mise à jour avec succès",
+        "profileImageFailed": "La nouvelle image de profil n'a pas pu être téléchargée",
+        "bannerLogin": "Vous devez être connecté pour télécharger une image de bannière",
+        "profileImageLogin": "Vous devez être connecté pour télécharger une image de profil",
+        "unfollowSuccess": "Utilisateur désabonné avec succès",
+        "unfollowFailed": "Échec du désabonnement de l'utilisateur",
+        "followSuccess": "Utilisateur abonné avec succès",
+        "followFailed": "Échec de l'abonnement à l'utilisateur",
+        "following": "Abonnement en cours...",
+        "unfollowing": "Désabonnement en cours...",
+        "follow": "Suivre",
+        "unfollow": "Ne plus suivre",
+        "profileSuccess": "Profil mis à jour avec succès !",
+        "profileFailed": "Échec de la mise à jour du profil, veuillez réessayer plus tard.",
+        "noFollowings": "Pas encore d'abonnements",
+        "noUser": "Utilisateur non trouvé"
+      },
+  
+      "errors": {
+        "error": "Erreur",
+        "noRecommendedUser": "Aucun auteur recommandé trouvé.",
+        "profileError": "Erreurs lors du chargement du profil"
+      }
+    },
+  
+    "notification": {
+      "commented": "a commenté votre post",
+      "followedYou": "Vous a suivi",
+      "communique": "a posté un communiqué",
+      "reacted": "a réagi à votre post"
+    },
+  
+    "notFound": {
+      "header": "404 - Non trouvé",
+      "detail": "La page que vous recherchez n'existe pas.",
+      "goBack": "Retour au fil d'actualité"
+    },
+  
+    "interaction": {
+      "all": "Tous",
+      "cancel": "Annuler",
+      "reactions": "réactions",
+      "errors": {
+        "reactionError": "Erreur lors du chargement des réactions. Veuillez réessayer plus tard."
+      },
+      "alerts": {
+        "reactionUpdateSuccess": "Réaction mise à jour avec succès",
+        "reactionUpdateFailed": "Échec de la mise à jour de la réaction",
+        "reactionCreatedSuccess": "Réaction créée avec succès",
+        "reactionCreatedFailed": "Échec de la création de la réaction"
+      }
+    },
+
+    "blog": {
+    "Continuereading": "Continuer la lecture",
+    "seeMore": "Voir plus",
+    "seeLess": "Voir moins",
+    "Followauthor": "Suivre l'auteur",
+    "Unfollowauthor": "Ne plus suivre l'auteur",
+    "AddToSaved": "Ajouter aux enregistrés",
+    "Remove From Saved": "Retirer des enregistrés",
+    "saving": "Enregistrement...",
+    "saved": "Enregistré",
+    "removing": "Suppression...",
+    "removed": "Supprimé",
+    "UnsavePost": "Retirer le post des enregistrés",
+    "EditPost": "Modifier le post",
+    "Analytics": "Analytiques",
+    "Share": "Partager",
+    "Delete": "Supprimer",
+    "Hidepost": "Masquer le post",
+    "React": "Réagir",
+    "Reacted": "Réagi",
+    "Comment": "Commenter",
+    "Comments": "Commentaires",
+    "Article": "Article",
+    "ShowMore": "Afficher plus",
+    "ShowLess": "Afficher moins",
+    "yourThoughts": "Quelles sont vos pensées?...",
+    
+    "DeleteArticle": "Supprimer l'article",
+    "DeleteArticleConfirmation": "Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible.",
+    "Deleting": "Suppression...",
+    "Deleted": "Supprimé",
+    "followthisuser": "suivre cet utilisateur ou accéder à ces options",
+
+    "alerts": {
+      "postSaved": "Post enregistré avec succès",
+      "postUnSaved": "Post retiré des enregistrés avec succès",
+      "postSavedFailed": "Échec de l'enregistrement du post",
+      "postUnSavedFailed": "Échec du retrait du post des enregistrés",
+      "postDeleted": "Post supprimé avec succès",
+      "postDeleteFailed": "Échec de la suppression du post",
+      "postPublished": "Post publié avec succès",
+      "postPublishFailed": "Échec de la publication du post",
+      "postUpdated": "Post mis à jour avec succès",
+      "postUpdateFailed": "Échec de la mise à jour du post",
+
+      "articleRemoved": "Article retiré des enregistrés",
+      "articleRemovedFailed": "Échec du retrait de l'article des enregistrés",
+      "articleSaved": "Article enregistré avec succès",
+      "articleSavedFailed": "Échec de l'enregistrement de l'article",
+      "userUnfollowed": "Utilisateur désabonné avec succès",
+      "userUnfollowFailed": "Échec du désabonnement",
+      "userFollowed": "Utilisateur suivi avec succès",
+      "userFollowFailed": "Échec de l'abonnement",
+      "addedComment": "Commentaire ajouté avec succès",
+      "commentFailed": "Échec de l'ajout du commentaire",
+      "commentDeleted": "Commentaire supprimé avec succès",
+      "ReactionSuccess": "Réaction créée avec succès",
+      "ReactionFailed": "Échec de la création de la réaction"
+      
+    }
+} 
 }

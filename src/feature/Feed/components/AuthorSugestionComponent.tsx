@@ -6,10 +6,11 @@ import { useKnowUserFollowings } from '../../Follow/hooks/useKnowUserFollowings'
 import { useNavigate } from 'react-router-dom';
 import { useSendFollowNotification } from '../../Notifications/hooks/useNotification';
 import { useGetUserByUsername } from '../../Profile/hooks';
+import { useTranslation } from 'react-i18next';
 
 interface AuthorSuggestionProps {
   username: string;
-  title: string;
+  title: string;  
   id: string;
   isverified:boolean;
 }
@@ -20,6 +21,8 @@ const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username, 
   const { isFollowing: isUserFollowing } = useKnowUserFollowings();
   const {user} = useGetUserByUsername(username)
   const navigate = useNavigate();
+
+  const {t} = useTranslation();
 
   const handleFollowClick = () => {
     if (isFollowPending || isUnfollowPending) return;
@@ -38,9 +41,9 @@ const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username, 
   };
 
   const getFollowStatusText = () => {
-    if (isFollowPending) return 'Following...';
-    if (isUnfollowPending) return 'Unfollowing...';
-    return isUserFollowing(id) ? 'Following' : 'Follow';
+    if (isFollowPending) return `${t('feed.following')}...`;
+    if (isUnfollowPending) return `${t('feed.unfollowing')}...`;
+    return isUserFollowing(id) ? `${t('feed.following')}` : `${t('feed.follow')}`;
   };
 
   const initial = username.charAt(0).toUpperCase();

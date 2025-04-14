@@ -8,6 +8,7 @@ import { useCreateCommentReaction, useGetCommentReactions } from "../../Interact
 import { useUser } from "../../../hooks/useUser";
 import { useDeleteComment, useUpdateComment } from "../hooks";
 import { toast } from "react-toastify";
+import { t } from "i18next";
 
 interface MessageComponentProps {
   content: string;
@@ -102,11 +103,11 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
       { commentId: comment_id, content: editedContent },
       {
         onSuccess: () => {
-          toast.success("Comment updated successfully");
+          toast.success(t("Comment updated successfully"));
           setIsEditing(false);
         },
         onError: () => {
-          toast.error("Failed to update comment");
+          toast.error(t("Failed to update comment"));
           setIsEditing(false);
         },
       }

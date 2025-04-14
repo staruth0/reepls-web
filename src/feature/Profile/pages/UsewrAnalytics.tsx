@@ -14,6 +14,7 @@ import {
   Tooltip, 
   Legend 
 } from 'chart.js';
+import { useTranslation } from 'react-i18next';
 
 // Register ChartJS components
 ChartJS.register(
@@ -66,12 +67,15 @@ const UserAnalytics: React.FC = () => {
     }
   };
 
+   const {t} = useTranslation()
+
+
   return (
     <div className="flex flex-col lg:grid lg:grid-cols-[4fr_1.66fr] min-h-screen">
       {/* Profile Section */}
       <div className="flex flex-col lg:border-r border-neutral-500">
         <Topbar>
-          <p>User Analytics</p>
+          <p>{t("profile.userAnalytics")}</p>
         </Topbar>
 
         {/* Analytics content - Added overflow handling */}
@@ -95,7 +99,7 @@ const UserAnalytics: React.FC = () => {
                   {userData.bio}
                 </p>
                 <div className="text-neutral-400 text-sm">
-                  Active since: April 2023
+                  {t("profile.activeDate")}
                 </div>
               </div>
             </div>
@@ -105,7 +109,7 @@ const UserAnalytics: React.FC = () => {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
             <StatCard 
               icon={<BarChart2 className="text-neutral-100 size-5" />} 
-              label="Total Articles" 
+              label={t("profile.totalArticles" )}
               value={userData.totalArticles} 
             />
             <StatCard 
@@ -115,17 +119,17 @@ const UserAnalytics: React.FC = () => {
             />
             <StatCard 
               icon={<Eye className="text-neutral-100 size-5" />} 
-              label="Total Impressions" 
+              label={t("profile.totalImpressions")}
               value={userData.totalImpressions.toLocaleString()} 
             />
             <StatCard 
               icon={<Heart className="text-neutral-100 size-5" />} 
-              label="Total Reactions" 
+              label={t("profile.totalReactions" )}
               value={userData.totalReactions.toLocaleString()} 
             />
             <StatCard 
               icon={<UserPlus className="text-neutral-100 size-5" />} 
-              label="Profile Value" 
+              label={t("profile.profileValue" )}
               value={userData.totalProfileValue} 
             />
             <StatCard 
@@ -136,7 +140,7 @@ const UserAnalytics: React.FC = () => {
             
               <StatCard 
                 icon={<BarChart2 className="text-neutral-100 size-5" />} 
-                label="Total Engagements" 
+                label={t("profile.totalEngagements")} 
                 value={userData.totalEngagements.toLocaleString()} 
               />
         

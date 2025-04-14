@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { toast } from "react-toastify"; // Import toast (adjust if using a different library)
 import {ReactionReceived } from "../../../models/datamodels";
 import { useSendReactionNotification } from "../../Notifications/hooks/useNotification";
+import { useTranslation } from "react-i18next";
 
 interface ReactionModalProps {
   isOpen: boolean;
@@ -33,6 +34,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
   const { mutate: createReaction } = useSendReactionNotification();
   const { mutate: updateReaction } = useUpdateReaction();
   const { data: allReactions } = useGetArticleReactions(article_id);
+  const {t} = useTranslation()
 
   // State to store the array of user IDs
   const [userIds, setUserIds] = useState<string[]>([]);
@@ -97,14 +99,14 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
               setPendingReaction(null);
               setSuccessReaction(reaction);
               setTimeout(() => setSuccessReaction(null), 1000);
-              toast.success("Reaction updated successfully");
+              toast.success(t("interaction.alerts.reactionUpdateSuccess"))
               console.log("Reaction updated successfully");
               onClose()
             },
             onError: () => {
               setIsPending(false);
               setPendingReaction(null);
-              toast.error("Failed to update reaction");
+              toast.error(t("interaction.alerts.reactionUpdateFailed"));
               console.log("Failed to update reaction");
               onClose()
             },
@@ -123,14 +125,14 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
             setPendingReaction(null);
             setSuccessReaction(reaction);
             setTimeout(() => setSuccessReaction(null), 1000);
-            toast.success("Reaction created successfully");
+            toast.success(t("interaction.alerts.reactionCreatedSuccess"));
             console.log("Reaction created successfully");
             onClose()
           },
           onError: () => {
             setIsPending(false);
             setPendingReaction(null);
-            toast.error("Failed to create reaction");
+            toast.error(t("interaction.alerts.reactionCreatedFailed"));
             console.log("Failed to create reaction");
             onClose()
           },

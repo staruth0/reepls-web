@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { LuBrain } from 'react-icons/lu';
 import { cn } from '../../utils';
 import { motion } from 'framer-motion';
+import { t } from 'i18next';
 
 const CognitiveModeIndicator = ({
   className = '',
@@ -57,8 +58,8 @@ const CognitiveModeIndicator = ({
 
   // Dynamic message based on mode
   const popupMessage = isActive
-    ? "Cognitive Mode is on! Images are hidden. Turn it off to see pictures."
-    : "Cognitive Mode is off! Turn it on to hide images and focus better.";
+    ? t("Cognitive Mode is on! Images are hidden. Turn it off to see pictures.")
+    : t("Cognitive Mode is off! Turn it on to hide images and focus better.");
 
   return (
     <div className="relative">
@@ -93,7 +94,7 @@ const CognitiveModeIndicator = ({
             onClick={handleClosePopup}
             className="mt-2 text-xs underline hover:text-primary-200 transition-colors"
           >
-            Got it
+            {t("Got it!")}
           </button>
         </motion.div>
       )}

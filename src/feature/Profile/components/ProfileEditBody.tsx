@@ -6,6 +6,7 @@ import { uploadUserBanner, uploadUserProfile } from '../../../utils/media';
 import { User } from '../../../models/datamodels';
 import { Pics } from '../../../assets/images';
 import { useUpdateUser } from '../hooks';
+import { useTranslation } from 'react-i18next';
 
 interface ProfileBodyProps {
   children: ReactNode;
@@ -15,6 +16,8 @@ interface ProfileBodyProps {
 const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
   const { authUser } = useUser();
   const {mutate} = useUpdateUser()
+
+  const {t} = useTranslation();
 
   // Safely handle initial state with fallback if user is undefined
   const [bannerImage, setBannerImage] = useState<string | undefined>(() => {
@@ -44,10 +47,10 @@ const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
       submitBannerImage(file)
         .then((data) => {
           mutate({banner_picture:data})
-          toast.success('Successfully updated banner image');
+          toast.success(t("profile.alerts.bannerSuccess"));
         })
         .catch(() => {
-          toast.error('New banner could not be uploaded');
+          toast.error(t("profile.alerts.bannerFailed"));
         });
     }
   };
@@ -61,18 +64,18 @@ const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
       submitProfileImage(file)
         .then((data) => {
           mutate({profile_picture:data})
-          toast.success('Successfully updated profile image');
+          toast.success(t("profile.alerts.profileImageSuccess"));
           
         })
         .catch(() => {
-          toast.error('New profile picture could not be uploaded');
+          toast.error(t("profile.alerts.profileImageFailed"));
         });
     }
   };
 
   const submitBannerImage = async (file: File) => {
     if (!authUser?.id) {
-      toast.error('You must be logged in to upload a banner image');
+      toast.error(t("profile.alerts.bannerLogin"));
       return;
     }
     const url = await uploadUserBanner(authUser.id, file);
@@ -82,7 +85,7 @@ const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
 
   const submitProfileImage = async (file: File) => {
     if (!authUser?.id) {
-      toast.error('You must be logged in to upload a profile image');
+      toast.error(t("profile.alerts.profileImageLogin"));
       return;
     }
     const url = await uploadUserProfile(authUser.id, file);

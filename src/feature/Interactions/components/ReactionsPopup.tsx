@@ -5,6 +5,7 @@ import { clap, heart, sadface, smile, thumb } from "../../../assets/icons";
 import ReactionTab from "./ReactionTab";
 import { useGetArticleReactions, useGetReactionsPerType } from "../hooks";
 import { ReactionReceived } from "../../../models/datamodels";
+import { useTranslation } from "react-i18next";
 
 interface ReactionProps {
   article_id: string;
@@ -17,6 +18,8 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
   onClose,
   article_id,
 }) => {
+
+  const {t} = useTranslation()
   const {
     data: allReactions,
     isLoading: isLoadingAllReactions,
@@ -33,7 +36,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       id: "All",
       title: (
         <div className="font-semibold text-[16px] space-x-1">
-          <span>All</span>
+          <span>{t("interaction.all")}</span>
           <span>{allReactions?.reactions.totalUsers || 0}</span>
         </div>
       ),
@@ -135,13 +138,13 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-[910]">
         <div className="bg-[var(--plain-b)] rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh] p-4 flex items-center justify-center">
           <p className="text-[var(--text-color)]">
-            Error loading reactions. Please try again later.
+            {t("interaction.errors.reactionerror")}
           </p>
           <button
             onClick={onClose}
             className=""
           >
-            Cancel
+            {t("interaction.cancel")}
           </button>
         </div>
       </div>
@@ -154,7 +157,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
         <div className="border-b border-[var(--neutral-400-main)]">
           <div className="flex items-center justify-between p-4">
             <h2 className="text-lg font-semibold text-[var(--text-color)]">
-              Reactions
+              {t("interaction.reactions")}
             </h2>
             <button
               onClick={onClose}
