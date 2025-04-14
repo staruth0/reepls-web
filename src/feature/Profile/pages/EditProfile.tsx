@@ -70,7 +70,7 @@ const EditProfile: React.FC = () => {
     dispatch({
       type: 'SET_ALL',
       payload: {
-        name: user.name || user.username || '', // Use name if available
+        name: user.name || '', // Use name if available
         username: user.username || '',
         bio: user.bio || '',
         about: user.about || '',
