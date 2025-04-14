@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react';
 import { toast } from 'react-toastify';
+import AuthSuggestionSkeleton from '../../../components/atoms/AuthorSuggestionSkeleton';
 import { useUser } from '../../../hooks/useUser';
 import { User } from '../../../models/datamodels';
 import { useGetRecommendedUsersById } from '../../Profile/hooks';
 import AuthorSugestionComponent from './AuthorSugestionComponent';
+
 // import SeeMore from './SeeMore';
 import AuthSuggestionSkeleton from '../../../components/atoms/AuthorSuggestionSkeleton';
 import { useTranslation } from 'react-i18next';
+
 
 const AuthorSuggestions: React.FC = () => {
   const { authUser } = useUser();
@@ -15,27 +18,27 @@ const AuthorSuggestions: React.FC = () => {
 
   // Function to get friendly error messages specific to author suggestions
   const getFriendlyErrorMessage = (error: any): string => {
-    if (!error) return "Something went wrong while finding authors for you.";
+    if (!error) return 'Something went wrong while finding authors for you.';
 
     // Handle common error cases
-    if (error.message.includes("Network Error")) {
-      return "Looks like we’re offline! Check your connection and try again.";
+    if (error.message.includes('Network Error')) {
+      return 'Looks like we’re offline! Check your connection and try again.';
     }
     if (error.response) {
       const status = error.response.status;
       if (status === 404) {
-        return "We couldn’t find any authors to recommend right now.";
+        return 'We couldn’t find any authors to recommend right now.';
       }
       if (status === 500) {
-        return "Our suggestion engine is having a moment. Please try again soon!";
+        return 'Our suggestion engine is having a moment. Please try again soon!';
       }
       if (status === 429) {
-        return "Too many requests! Give us a sec to catch up.";
+        return 'Too many requests! Give us a sec to catch up.';
       }
     }
 
     // Default fallback for unhandled errors
-    return "Oops! Something unexpected happened while fetching author suggestions.";
+    return 'Oops! Something unexpected happened while fetching author suggestions.';
   };
 
   // Toast error notification
@@ -86,7 +89,6 @@ const AuthorSuggestions: React.FC = () => {
           isverified={user.is_verified_writer!}
         />
       ))}
-     
     </div>
   );
 };
