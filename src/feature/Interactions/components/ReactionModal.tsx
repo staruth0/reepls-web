@@ -178,7 +178,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
       ></div>
 
       <div
-        className={`absolute z-50 mt-2 bg-background shadow-lg rounded-full p-3 transition-opacity duration-400 ${
+        className={`absolute z-50 mt-2 bg-background shadow-sm rounded-full p-3 transition-opacity duration-400 ${
           isOpen ? "opacity-100" : "opacity-0"
         }`}
         style={{ bottom: "40px", left: "0px" }}
