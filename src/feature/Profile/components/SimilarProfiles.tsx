@@ -37,6 +37,7 @@ const SimilarProfiles: React.FC = () => {
           title={user.bio || 'Suggested Author'}
           id={user._id || ''}
           isverified={user.is_verified_writer!}
+          name={user.name!}
         />
       ))}
     </div>

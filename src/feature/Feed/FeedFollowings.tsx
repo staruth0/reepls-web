@@ -41,12 +41,12 @@ const FeedFollowing: React.FC = () => {
     );
 
     if (bottomRef.current) {
-      observer.observe(bottomRef.current); // Fixed to bottomRef.current below
+      observer.observe(bottomRef.current);
     }
 
     return () => {
       if (bottomRef.current) {
-        observer.unobserve(bottomRef.current); // Fixed to bottomRef.current below
+        observer.unobserve(bottomRef.current);
       }
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
@@ -80,6 +80,9 @@ const FeedFollowing: React.FC = () => {
     return "Something unexpected popped up. We’re on it—please try again later!";
   };
 
+  // Check if there are no articles
+  const hasNoArticles = !isLoading && (!data || data.pages.every((page) => page.articles.length === 0));
+
   return (
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
       <div className="Feed__Posts min-h-screen lg:border-r-[1px] border-neutral-500">
@@ -90,11 +93,17 @@ const FeedFollowing: React.FC = () => {
           </div>
         </Topbar>
 
-        {/* Display Skeleton or Articles */}
+        {/* Display Skeleton, No Articles Message, or Articles */}
         {isLoading ? (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse">
             <BlogSkeletonComponent />
             <BlogSkeletonComponent />
+          </div>
+        ) : hasNoArticles ? (
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] text-neutral-50 text-center py-4">
+            <p className="text-[16px] font-roboto">
+              this page is empty! Follow some users to see their posts or check back later for new content.
+            </p>
           </div>
         ) : (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col gap-7">
