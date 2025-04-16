@@ -6,8 +6,6 @@ import { User } from '../../../models/datamodels';
 import { useGetRecommendedUsersById } from '../../Profile/hooks';
 import AuthorSugestionComponent from './AuthorSugestionComponent';
 
-// import SeeMore from './SeeMore';
-import AuthSuggestionSkeleton from '../../../components/atoms/AuthorSuggestionSkeleton';
 import { useTranslation } from 'react-i18next';
 
 
@@ -83,8 +81,9 @@ const AuthorSuggestions: React.FC = () => {
       {recommendedUsers?.slice(0, 5)?.map((user: User, index: number) => (
         <AuthorSugestionComponent
           key={`${user.id}-${index}`}
+          name={user.name!}
           username={user.username!}
-          title={user.title || `${t("feed.suggestedAuthor")}`}
+          title={user.bio || `${t("feed.suggestedAuthor")}`}
           id={user._id || ''}
           isverified={user.is_verified_writer!}
         />

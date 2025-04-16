@@ -184,7 +184,7 @@ const Profile: React.FC = () => {
             <div className=" sm:flex items-center">
               <div className="flex-1">
                 <ProfileDetails
-                  name={user.username!}
+                  name={user.name!}
                   town={user.address!}
                   role={user.role!}
                   user_id={user.id!}

@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { LuBadgeCheck, LuLoader } from "react-icons/lu";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { profileAvatar } from "../../../../assets/icons";
 import SharePopup from "../../../../components/molecules/share/SharePopup";
 import { useRoute } from "../../../../hooks/useRoute";
 import { useUser } from "../../../../hooks/useUser";
@@ -17,7 +16,7 @@ import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
 import { useSendFollowNotification } from "../../../Notifications/hooks/useNotification";
 import { useDeleteArticle } from "../../hooks/useArticleHook";
 import ConfirmationModal from "../ConfirmationModal";
-import PostEditModal from "../PostEditModal"; // Import the new PostEditModal
+import PostEditModal from "../PostEditModal";
 import { t } from "i18next";
 
 interface BlogProfileProps {
@@ -36,7 +35,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
   const [showSharePopup, setShowSharePopup] = useState(false);
   const [showSignInPopup, setShowSignInPopup] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false); // New state for PostEditModal
+  const [showEditModal, setShowEditModal] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -65,7 +64,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
       onSuccess: () => {
         toast.success('Article deleted successfully');
         setShowDeleteConfirmation(false);
-        navigate('/feed'); // Navigate away after deletion
+        navigate('/feed');
       },
       onError: () => {
         toast.error('An error occurred while trying to delete article');
@@ -137,13 +136,12 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
     }
   };
 
-  const handleEditClick = (id:string) => {
-    if(isArticle){
-      navigate(`/article/edit/${id}`)
-    }else{
-      setShowEditModal(true); 
+  const handleEditClick = (id: string) => {
+    if (isArticle) {
+      navigate(`/article/edit/${id}`);
+    } else {
+      setShowEditModal(true);
     }
-   
     setShowMenu(false);
   };
 
@@ -176,36 +174,36 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
   }
 
   return (
-    <div className="blog-profile relative">
-      {user?.profile_picture !== 'https://example.com/default-profile.png' ? (
+    <div className="blog-profile relative flex items-center gap-3">
+      {user?.profile_picture && user?.profile_picture !== 'https://example.com/default-profile.png' && user?.profile_picture !== '' ? (
         <img
           src={user?.profile_picture}
           alt="avatar"
           onClick={() => handleProfileClick(user?.username || "")}
-          className="cursor-pointer size-14 rounded-full"
+          className="cursor-pointer size-14 rounded-full object-cover"
         />
       ) : (
-        <img
-          src={profileAvatar}
-          alt="avatar"
+        <span
+          className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-14 h-14 text-center"
           onClick={() => handleProfileClick(user?.username || "")}
-          className="cursor-pointer"
-        />
+        >
+          {user?.name?.charAt(0).toUpperCase() || 'D'}
+        </span>
       )}
-      <div className="profile-info">
-        <div className="profile-name">
+      <div className="profile-info flex-1">
+        <div className="profile-name flex items-center gap-1">
           <p
-            className="hover:underline cursor-pointer"
+            className="hover:underline cursor-pointer text-base font-semibold"
             onClick={() => handleProfileClick(user?.username || "")}
           >
-            {user?.username || "Default User"}
+            {user?.name || "no name"}
           </p>
-          {user?.is_verified_writer && <LuBadgeCheck className="size-4 text-primary-400 ml-1" />}
+          {user?.is_verified_writer && <LuBadgeCheck className="size-4 text-primary-400" />}
           {!location.pathname.includes("/feed/following") && (
             <div>
               {!isCurrentAuthorArticle && (
                 <span
-                  className={`cursor-pointer text-primary-400 hover:underline ml-1 ${
+                  className={`cursor-pointer text-primary-400 hover:underline ml-2 text-sm ${
                     !isLoggedIn ? "pointer-events-none opacity-50" : ""
                   }`}
                   onClick={handleFollowClick}
@@ -216,8 +214,8 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
             </div>
           )}
         </div>
-        <p>{user?.bio}</p>
-        <span>{formatDateWithMonth(date)}</span>
+        <p className="text-sm text-neutral-500">{user?.bio}</p>
+        <span className="text-sm text-neutral-400">{formatDateWithMonth(date)}</span>
       </div>
       <div className="relative">
         {showMenu ? (
@@ -236,7 +234,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
                 <>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-                    onClick={()=>handleEditClick(article_id)}
+                    onClick={() => handleEditClick(article_id)}
                   >
                     <Edit size={18} className="text-neutral-500" />
                     <div>{t("blog.EditPost")}</div>

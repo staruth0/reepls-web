@@ -21,7 +21,8 @@ const MessageList: React.FC<MessageListProps> = ({
   return (
     <div className={`right__recent`}>
       {/* <p className="recent">{t("recent")}</p> */}
-      <div className="message-list">
+         {communiques.length !== 0?      <>
+           <div className="message-list">
         {communiques?.slice(0, 2).map(
           (communique, index ) => (
             <Message
@@ -36,6 +37,8 @@ const MessageList: React.FC<MessageListProps> = ({
         )}
       </div>
       <SeeMore/>
+      </>: <p className="px-4 text-[13px]">No Comminiques avaliable</p>}
+ 
     </div>
   );
 };

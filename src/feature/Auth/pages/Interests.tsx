@@ -30,12 +30,12 @@ function Interests() {
       window.alert('Please select at least one interest');
       return;
     }
-    console.log('submitting this', { interests: interest, username });
-    updateUser.mutate({ interests: interest, username });
+    console.log('submitting this', { interests: interest,name: username });
+    updateUser.mutate({ interests: interest,name: username });
   };
 
   const handleSkip = () => {
-    updateUser.mutate({ interests: interest, username });
+    updateUser.mutate({ interests: interest, name:username });
   };
 
   // Show popup on successful update and redirect logic

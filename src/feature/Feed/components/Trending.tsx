@@ -33,7 +33,7 @@ const Trending: React.FC = () => {
         ))}
       </div>
 
-      <div
+    { data?.data?.legnth <=0 ? <div
         className="flex justify-center items-center text-[14px] py-2 text-neutral-50 gap-1 cursor-pointer"
         onClick={toggleExpand}
       >
@@ -44,7 +44,7 @@ const Trending: React.FC = () => {
             isExpanded ? "rotate-90" : ""
           }`}
         />
-      </div></>}
+      </div>: <p className="text-[13px]">No Trending Topics avaliable</p>}</>}
 
       <div>
         <div className="text-neutral-50 mt-1 font-semibold text-[15px]">
