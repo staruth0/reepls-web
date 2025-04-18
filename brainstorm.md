@@ -352,7 +352,6 @@ i creayed a audioprovider.tsx that handles the current playing post so if you cl
 
 - position the modal for reactions
 - Reporting
-- tylenol, ibuprofen, dayquill
 
 - Somehow auth still has lots of issues
 - Still receiving useless messages like respinse fail with .. instead of useful erros
