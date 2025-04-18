@@ -49,4 +49,14 @@ const deleteUser = async (userId: string): Promise<User | undefined> => {
   return data as User;
 };
 
-export { deleteUser, getAllUsers, getUserById, getUserByUsername, updateUser,getReccomendedUsersById };
+interface FetchMediaParams {
+  pageParam?: number;
+  userId: string;
+}
+
+const getUserMedia = async ({ pageParam = 1, userId }: FetchMediaParams) => {
+  console.log(`Fetching media for user ${userId}, page ${pageParam}`);
+  const { data } = await apiClient.get(`/api-v1/articles/user/${userId}/media?page=${pageParam}&limit=10`);
+  return data;
+};
+export { deleteUser, getAllUsers, getUserById, getUserByUsername, updateUser,getReccomendedUsersById ,getUserMedia};

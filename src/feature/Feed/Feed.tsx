@@ -20,6 +20,7 @@ const UserFeed: React.FC = () => {
   // Fetch data
   const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetAllArticles();
 
+
   // Handle cognitive mode toggle
   const handleBrainClick = () => {
     setIsBrainActive((prev) => !prev);
@@ -105,6 +106,7 @@ const UserFeed: React.FC = () => {
             {data?.pages.map((page, i) => (
               <div className="flex flex-col gap-7" key={i}>
                 {page.articles.map((article: Article) => (
+                
                   <BlogPost key={article._id} article={article} />
                 ))}
               </div>

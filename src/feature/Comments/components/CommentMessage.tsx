@@ -3,12 +3,13 @@ import { ThumbsUp, MessageCircle, Edit, Trash2, EllipsisVertical, Send } from "l
 import { LuBadgeCheck, LuLoader, LuX } from "react-icons/lu";
 import { timeAgo } from "../../../utils/dateFormater";
 import CommentSectionLevel2 from "./CommentSectionLevel2";
-import { Comment, ReactionReceived, User } from "../../../models/datamodels";
+import { Article, Comment, ReactionReceived, User } from "../../../models/datamodels";
 import { useCreateCommentReaction, useGetCommentReactions } from "../../Interactions/hooks";
 import { useUser } from "../../../hooks/useUser";
 import { useDeleteComment, useUpdateComment } from "../hooks";
 import { toast } from "react-toastify";
 import { t } from "i18next";
+import { useUpdateArticle } from "../../Blog/hooks/useArticleHook";
 
 interface MessageComponentProps {
   content: string;
@@ -22,6 +23,7 @@ interface MessageComponentProps {
   author_of_post: User;
   onLevelTwoToggle?: (isOpen: boolean) => void;
   activeLevelTwoCommentId?: string | null;
+  article:Article
 }
 
 const CommentMessage: React.FC<MessageComponentProps> = ({
@@ -35,6 +37,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   author_of_post,
   onLevelTwoToggle,
   activeLevelTwoCommentId,
+  article
 }) => {
   const [reactedid, setReactedids] = useState<string[]>([]);
   const [isLevelTwoCommentOpen, setIsLevelTwoCommentOpen] = useState(false);
@@ -46,6 +49,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   const { mutate: deleteComment, isPending: isDeletePending } = useDeleteComment();
   const { mutate: updateComment, isPending: isUpdatePending } = useUpdateComment();
   const { authUser } = useUser();
+   const { mutate } = useUpdateArticle();
 
   useEffect(() => {
     if (reactions?.reactions && Array.isArray(reactions.reactions)) {
@@ -79,6 +83,15 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
       type: "like",
       user_id: authUser.id,
       comment_id: comment_id,
+    },{
+      onSuccess:()=>{
+         mutate({
+          articleId: article._id || '',
+          article: {
+            engagement_ount: article.engagement_ount! + 1, 
+          },
+        });
+      }
     });
   };
 

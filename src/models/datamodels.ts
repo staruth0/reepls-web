@@ -79,8 +79,14 @@ export interface Article {
   reports_count?: number;
   slug?: string;
   _id?: string;
-  shares_count?: number;
   isArticle?: boolean;
+  shares_count?: number,
+  reaction_count?: number,
+  comment_count?: number,
+  impression_count?: number,
+  engagement_ount?: number,
+  author_follower_count?: number,
+  author_profile_views_count?: number,
 }
 
 export interface Comment {
@@ -166,4 +172,24 @@ export interface Tokens {
 export interface LoginResponse {
   user: User;
   tokens: Tokens;
+}
+
+// src/feature/Profile/types.ts
+export interface MediaItemType {
+  url: string;
+  type: 'image' | 'video';
+}
+
+export interface PostMedia {
+  media: MediaItemType[];
+  postId: string;
+  title: string;
+}
+
+export interface MediaResponse {
+  mediaData: PostMedia[];
+  totalMedia: number;
+  totalPages: number;
+  currentPage: number;
+  itemsPerPage: number;
 }

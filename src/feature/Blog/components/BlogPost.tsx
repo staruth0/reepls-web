@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFallback from '../../../components/molecules/ErrorFallback/ErrorFallback';
 import { CognitiveModeContext } from '../../../context/CognitiveMode/CognitiveModeContext';
@@ -9,6 +9,7 @@ import BlogMessage from './BlogComponents/BlogMessage';
 import BlogProfile from './BlogComponents/BlogProfile';
 import BlogReactionSession from './BlogComponents/BlogReactionSession';
 import BlogReactionStats from './BlogComponents/BlogReactionStats';
+import { useUpdateArticle } from '../hooks/useArticleHook';
 
 interface BlogPostProps {
   article: Article;
@@ -17,14 +18,26 @@ interface BlogPostProps {
 const BlogPost: React.FC<BlogPostProps> = ({ article }) => {
   const { isCognitiveMode } = useContext(CognitiveModeContext);
   const [isCommentSectionOpen, setIsCommentSectionOpen] = useState<boolean>(false);
+    const {mutate} = useUpdateArticle()
 
   const toggleCommentSection = () => {
     setIsCommentSectionOpen(!isCommentSectionOpen);
   };
 
+   useEffect(()=>{
+    mutate({
+      articleId:article._id || '',
+      article:{
+        impression_count:article.impression_count! +1,
+      }
+    })
+  },[article,mutate])
+
   if (!article) {
     return <div>Empty Article</div>;
   }
+
+ 
 
   return (
     <div
@@ -37,6 +50,8 @@ const BlogPost: React.FC<BlogPostProps> = ({ article }) => {
         date={article.createdAt || ''}
         article_id={article._id || ''}
         isArticle={article.isArticle || false}
+        article={article}
+
       />
       <BlogMessage
         title={article.title || ''}
@@ -44,6 +59,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ article }) => {
         article_id={article._id || ''}
         isArticle={article.isArticle || false}
         slug={article.slug || ''}
+        article={article}
       />
       <ErrorBoundary
         FallbackComponent={ErrorFallback}
@@ -65,6 +81,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ article }) => {
         setIsCommentSectionOpen={toggleCommentSection}
         author_of_post={article.author_id || {}}
         text_to_speech={article.text_to_speech || ''}
+        article={article}
       />
     </div>
   );

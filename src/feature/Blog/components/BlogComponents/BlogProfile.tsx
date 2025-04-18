@@ -1,4 +1,4 @@
-import { Bookmark, EllipsisVertical, EyeOff, Share2, UserPlus, X, Trash2, Edit, BarChart2 } from "lucide-react";
+import { Bookmark, EllipsisVertical,  Share2, UserPlus, X, Trash2, Edit, BarChart2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { LuBadgeCheck, LuLoader } from "react-icons/lu";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -14,7 +14,7 @@ import { useGetSavedArticles, useRemoveSavedArticle, useSaveArticle } from "../.
 import "./Blog.scss";
 import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
 import { useSendFollowNotification } from "../../../Notifications/hooks/useNotification";
-import { useDeleteArticle } from "../../hooks/useArticleHook";
+import { useDeleteArticle, useUpdateArticle } from "../../hooks/useArticleHook";
 import ConfirmationModal from "../ConfirmationModal";
 import PostEditModal from "../PostEditModal";
 import { t } from "i18next";
@@ -26,9 +26,10 @@ interface BlogProfileProps {
   content?: string;
   title?: string;
   isArticle: boolean;
+  article:Article
 }
 
-const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title, content, isArticle }) => {
+const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id,article, title, content, isArticle }) => {
   const { authUser, isLoggedIn } = useUser();
   const { goToProfile } = useRoute();
   const [showMenu, setShowMenu] = useState(false);
@@ -49,11 +50,19 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
   const { mutate: deleteArticle, isPending: isDeletePending } = useDeleteArticle();
 
   const articleTitle = title || (content ? content.split(" ").slice(0, 10).join(" ") + "..." : "Untitled Post");
-  const articleUrl = `${window.location.origin}/posts/${isArticle ? "article" : "post"}/${article_id}`;
+  const articleUrl = `${window.location.origin}/posts/${isArticle ? "article" : "post"}/${isArticle?'slug/'+article.slug: article_id}`;
+     const {mutate} = useUpdateArticle()
 
   const isCurrentAuthorArticle = user?._id === authUser?.id;
 
   const handleProfileClick = (username: string) => {
+         mutate({
+      articleId:article._id || '',
+      article:{
+       author_profile_views_count:article.author_profile_views_count! +1,
+        engagement_ount:article.engagement_ount! +1
+      }
+    })
     if (username) {
       goToProfile(username);
     }
@@ -84,7 +93,15 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
       removeSavedArticle(article_id, {
         onSuccess: () => {
           toast.success(t("blog.alerts.articleRemoved"));
+               mutate({
+      articleId:article._id || '',
+      article:{
+   
+        engagement_ount:article.engagement_ount! -1
+      }
+    })
           setSaved(false);
+          
         },
         onError: () => toast.error(t("blog.alerts.articleRemoveFailed")),
       });
@@ -93,6 +110,12 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
         onSuccess: () => {
           toast.success(t("blog.alerts.articleSaved"));
           setSaved(true);
+               mutate({
+      articleId:article._id || '',
+      article:{
+        engagement_ount:article.engagement_ount! +1
+      }
+    })
         },
         onError: () => toast.error(t("blog.alerts.articleSaveFailed")),
       });
@@ -110,6 +133,13 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
       unfollowUser(user?._id, {
         onSuccess: () => {
           toast.success(t("blog.alerts.userUnfollowed"));
+            mutate({
+      articleId:article._id || '',
+      article:{
+        author_follower_count:article.author_follower_count! -1,
+        engagement_ount:article.engagement_ount! -1
+      }
+    })
         },
         onError: () => toast.error(t("blog.alerts.userUnfollowFailed")),
       });
@@ -117,6 +147,13 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
       followUser({ receiver_id: user?._id }, {
         onSuccess: () => {
           toast.success(t("blog.alerts.userFollowed"));
+                mutate({
+      articleId:article._id || '',
+      article:{
+        author_follower_count:article.author_follower_count! + 1,
+        engagement_ount:article.engagement_ount! +1
+      }
+    })
         },
         onError: () => toast.error(t("blog.alerts.userFollowFailed")),
       });
@@ -214,8 +251,8 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
             </div>
           )}
         </div>
-        <p className="text-sm text-neutral-500">{user?.bio}</p>
-        <span className="text-sm text-neutral-400">{formatDateWithMonth(date)}</span>
+        <p className="text-sm text-neutral-100">{user?.bio}</p>
+        <span className="text-sm text-neutral-100">{formatDateWithMonth(date)}</span>
       </div>
       <div className="relative">
         {showMenu ? (
@@ -270,9 +307,9 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id, title
                     <Bookmark size={18} className="text-neutral-500" />
                     <div>{getSaveStatusText()}</div>
                   </div>
-                  <div className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer">
+                  {/* <div className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer">
                     <EyeOff size={18} className="text-neutral-500" /> {t("blog.Hidepost")}
-                  </div>
+                  </div> */}
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                     onClick={handleFollowClick}

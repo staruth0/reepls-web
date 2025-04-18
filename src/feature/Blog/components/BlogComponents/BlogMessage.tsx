@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '../../../../utils';
 import './Blog.scss';
 import { useTranslation } from 'react-i18next';
+import { Article } from '../../../../models/datamodels';
+import { useUpdateArticle } from '../../hooks/useArticleHook';
 
 interface BlogMessageProps {
   title: string;
@@ -10,15 +12,17 @@ interface BlogMessageProps {
   isArticle: boolean;
   article_id: string;
   slug?: string;
+  article: Article;
 }
 
-const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, isArticle, article_id, slug }) => {
+const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, article, isArticle, article_id, slug }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showToggle, setShowToggle] = useState(false);
+  const [hasClicked, setHasClicked] = useState(false); // Added to prevent multiple updates
   const contentRef = useRef<HTMLParagraphElement>(null);
   const navigate = useNavigate();
-
-  const {t} = useTranslation();
+  const { mutate } = useUpdateArticle();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (contentRef.current) {
@@ -36,7 +40,17 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, isArticle, ar
 
   const handleToggle = () => {
     if (isArticle) {
-      navigate(slug ? `/posts/article/slug/${slug}` : `/posts/article/${article_id}`);
+      if (!hasClicked) {
+        setHasClicked(true);
+        mutate({
+          articleId: article._id || '',
+          article: {
+            views_count:article.views_count! +1,
+            engagement_ount: article.engagement_ount! + 1, 
+          },
+        });
+        navigate(slug ? `/posts/article/slug/${slug}` : `/posts/article/${article_id}`);
+      }
     } else {
       setIsExpanded((prev) => !prev);
     }
@@ -51,13 +65,16 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, isArticle, ar
           'text-neutral-100 text-[14px] leading-[20px] transition-all duration-300',
           isExpanded ? 'line-clamp-none' : 'line-clamp-3',
           'whitespace-pre-wrap'
-        )}>
+        )}
+      >
         {content}
       </p>
       {isArticle ? (
         <button
           onClick={handleToggle}
-          className="text-primary-400 underline decoration-dotted underline-offset-4 text-[14px] font-medium mt-1 cursor-pointer">
+          disabled={hasClicked} // Disable button after first click
+          className="text-primary-400 underline decoration-dotted underline-offset-4 text-[14px] font-medium mt-1 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+        >
           {t("blog.Continuereading")}
         </button>
       ) : (

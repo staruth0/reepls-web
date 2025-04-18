@@ -261,7 +261,7 @@ const Profile: React.FC = () => {
                 <div>{articlesError && articlesError.message}</div>
               </>
             )}
-            {activeTab === "media" && <ProfileMedia />}
+            {activeTab === "media" && <ProfileMedia userId={user.id!} />}
             <div ref={bottomRef} style={{ height: "100px" }} />
           </div>
         </div>
