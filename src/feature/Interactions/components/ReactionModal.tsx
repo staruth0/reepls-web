@@ -8,22 +8,24 @@ import {
 import { useUser } from "../../../hooks/useUser";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify"; // Import toast (adjust if using a different library)
-import {ReactionReceived } from "../../../models/datamodels";
+import {Article, ReactionReceived } from "../../../models/datamodels";
 import { useSendReactionNotification } from "../../Notifications/hooks/useNotification";
 import { useTranslation } from "react-i18next";
+import { useUpdateArticle } from "../../Blog/hooks/useArticleHook";
 
 interface ReactionModalProps {
   isOpen: boolean;
   onClose: () => void;
   onReact: (reaction: string) => void;
   article_id: string;
+  article:Article
 }
 
 const ReactionModal: React.FC<ReactionModalProps> = ({
   isOpen,
   onClose,
   onReact,
-  article_id,
+  article_id,article
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isPending, setIsPending] = useState(false);
@@ -34,6 +36,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
   const { mutate: createReaction } = useSendReactionNotification();
   const { mutate: updateReaction } = useUpdateReaction();
   const { data: allReactions } = useGetArticleReactions(article_id);
+    const { mutate } = useUpdateArticle();
   const {t} = useTranslation()
 
   // State to store the array of user IDs
@@ -128,6 +131,12 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
             toast.success(t("interaction.alerts.reactionCreatedSuccess"));
             console.log("Reaction created successfully");
             onClose()
+              mutate({
+          articleId: article._id || '',
+          article: {
+            engagement_ount: article.engagement_ount! + 1, 
+          },
+        });
           },
           onError: () => {
             setIsPending(false);

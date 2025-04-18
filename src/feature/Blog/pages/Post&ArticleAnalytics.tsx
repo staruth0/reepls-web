@@ -1,12 +1,49 @@
-import React from 'react';
+// src/feature/Blog/components/PostArticleAnalytics.jsx
+import  { useEffect } from 'react';
 import ProfileConfigurations from '../../Profile/components/ProfileConfigurations';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import { Bookmark, MessageSquare, Heart, Eye, UserPlus, BarChart2 } from 'lucide-react';
 import { Pics } from '../../../assets/images';
+import { useParams } from 'react-router-dom';
+import { useGetArticleById } from '../hooks/useArticleHook';
+import { timeAgo } from '../../../utils/dateFormater';
+import { useGetCommentsByArticleId } from '../../Comments/hooks';
+import { useGetArticleReactions } from '../../Interactions/hooks';
+import PostArticleAnalyticsSkeleton from '../components/AnalyticsSkleton';
 
-const PostArticleAnalytics: React.FC = () => {
+
+const PostArticleAnalytics = () => {
+  const { id } = useParams();
+  const { data, isLoading } = useGetArticleById(id!);
+  const { data: articleComments } = useGetCommentsByArticleId(id!)
+  const { data: allReactions } = useGetArticleReactions(id!);
+
+  const totalComments = articleComments?.pages[0].data.totalComments;
+
+  useEffect(() => {
+    console.log('stats', data, 'id', id);
+  }, [data, id]);
+
+  if (isLoading) {
+    return  <div className="lg:grid grid-cols-[4fr_1.66fr]">
+      {/* Profile Section */}
+      <div className="flex flex-col lg:border-r-[1px] border-neutral-500 min-h-screen">
+        <Topbar>
+          <p>Post Analytics</p>
+        </Topbar>
+
+       <PostArticleAnalyticsSkeleton />
+      </div>
+
+      {/* Configurations Section */}
+      <div className="profile__configurationz hidden lg:block">
+        <ProfileConfigurations />
+      </div>
+    </div>
+  }
+
   return (
-    <div className={`lg:grid grid-cols-[4fr_1.66fr]`}>
+    <div className="lg:grid grid-cols-[4fr_1.66fr]">
       {/* Profile Section */}
       <div className="flex flex-col lg:border-r-[1px] border-neutral-500 min-h-screen">
         <Topbar>
@@ -14,32 +51,32 @@ const PostArticleAnalytics: React.FC = () => {
         </Topbar>
 
         {/* Analytics content */}
-        <div className=" px-5 md:px-10 lg:px-20 self-center  py-8">
+        <div className="px-5 md:px-10 lg:px-20 self-center py-8">
           {/* Article Title Section with Image - Responsive layout */}
           <div className="mb-8">
             {/* Flex container for lg+ screens */}
             <div className="lg:flex lg:gap-8">
               {/* Image container - takes full width on mobile, 60% on lg+ */}
-              <div className="relative w-full lg:w-[40%] h-64 md:h-auto lg:mb-0 rounded-lg overflow-hidden">
-                <img 
-                  src={Pics.blogPic} 
-                  alt="Article cover" 
+              <div className="relative flex-1 w-full lg:w-[40%] h-44 md:h-auto lg:mb-0 rounded-lg overflow-hidden">
+                <img
+                  src={Pics.blogPic}
+                  alt="Article cover"
                   className="w-full h-full object-cover"
                 />
               </div>
-              
+
               {/* Text content - takes full width on mobile, 40% on lg+ */}
-              <div className=" lg:flex lg:flex-col lg:justify-between">
+              <div className="lg:flex flex-1 lg:flex-col lg:justify-between">
                 <div>
                   <h1 className="text-[22px] font-bold mb-2 leading-tight">
-                    The long, old case of looted German colonial rule resuscitates
+                    {data?.title}
                   </h1>
-                  <p className="text-[14px] text-neutral-200 mb-4">
-                    The Tangue' alongside a number of other historic artwork from the fatherland have not found home yet.
+                  <p className="text-[14px] text-neutral-200 mb-4 line-clamp-3">
+                    {data?.content}
                   </p>
                 </div>
-                <div className="text-neutral-200 text-[14px] ">
-                  4 hrs ago
+                <div className="text-neutral-200 text-[14px]">
+                  {timeAgo(data?.createdAt)}
                 </div>
               </div>
             </div>
@@ -53,7 +90,7 @@ const PostArticleAnalytics: React.FC = () => {
                 <Eye className="text-neutral-100 size-5" />
                 <span className="text-neutral-100 text-sm">Impressions</span>
               </div>
-              <p className="text-2xl font-bold">500</p>
+              <p className="text-2xl font-bold">{data?.impression_count || 0}</p>
             </div>
 
             {/* Comments */}
@@ -62,7 +99,7 @@ const PostArticleAnalytics: React.FC = () => {
                 <MessageSquare className="text-neutral-100 size-5" />
                 <span className="text-neutral-100 text-sm">Comments</span>
               </div>
-              <p className="text-2xl font-bold">59</p>
+              <p className="text-2xl font-bold">{totalComments || 0}</p>
             </div>
 
             {/* Engagements */}
@@ -71,7 +108,7 @@ const PostArticleAnalytics: React.FC = () => {
                 <BarChart2 className="text-neutral-100 size-5" />
                 <span className="text-neutral-100 text-sm">Engagements</span>
               </div>
-              <p className="text-2xl font-bold">230</p>
+              <p className="text-2xl font-bold">{data?.engagement_count || 0}</p>
             </div>
 
             {/* Profile Value */}
@@ -80,7 +117,7 @@ const PostArticleAnalytics: React.FC = () => {
                 <UserPlus className="text-neutral-100 size-5" />
                 <span className="text-neutral-100 text-sm">Profile Value</span>
               </div>
-              <p className="text-2xl font-bold">14</p>
+              <p className="text-2xl font-bold">{data?.author_profile_views_count || 0}</p>
             </div>
 
             {/* Reactions */}
@@ -89,7 +126,7 @@ const PostArticleAnalytics: React.FC = () => {
                 <Heart className="text-neutral-100 size-5" />
                 <span className="text-neutral-100 text-sm">Reactions</span>
               </div>
-              <p className="text-2xl font-bold">148</p>
+              <p className="text-2xl font-bold">{allReactions?.reactions?.length || 0}</p>
             </div>
 
             {/* Follows */}
@@ -98,14 +135,14 @@ const PostArticleAnalytics: React.FC = () => {
                 <Bookmark className="text-neutral-100 size-5" />
                 <span className="text-neutral-100 text-sm">Follows</span>
               </div>
-              <p className="text-2xl font-bold">3</p>
+              <p className="text-2xl font-bold">{data?.author_follower_count || 0}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Configurations Section */}
-      <div className="profile__configurationz hidden lg:block">
+      <div className="profile__configurationz bg-background hidden lg:block">
         <ProfileConfigurations />
       </div>
     </div>

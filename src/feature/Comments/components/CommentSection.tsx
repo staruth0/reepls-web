@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { LuX, LuLoader, LuCircleAlert } from "react-icons/lu";
-import { Comment, User } from "../../../models/datamodels";
+import { Article, Comment, User } from "../../../models/datamodels";
 import { useGetCommentsByArticleId } from "../hooks";
 import CommentMessage from "./CommentMessage";
 import CommentTab from "./CommentTab";
@@ -9,12 +9,14 @@ interface CommentSectionProps {
   article_id: string;
   setIsCommentSectionOpen: (isOpen: boolean) => void;
   author_of_post: User;
+  article:Article
 }
 
 const CommentSection: React.FC<CommentSectionProps> = ({
   article_id,
   setIsCommentSectionOpen,
   author_of_post,
+  article
 }) => {
   const {
     data: articleComments,
@@ -90,6 +92,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
               author_of_post={author_of_post}
               onLevelTwoToggle={(isOpen) => handleLevelTwoToggle(comment._id!, isOpen)}
               activeLevelTwoCommentId={activeLevelTwoCommentId} // Pass active ID
+              article={article}
             />
           );
         })

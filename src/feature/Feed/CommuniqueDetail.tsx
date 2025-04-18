@@ -29,6 +29,7 @@ const CommuniqueDetail: React.FC = () => {
               date={article?.createdAt}
               article_id={id!}
               isArticle={article?.isArticle ?? false}
+              article={article}
             />
             <div className="mt-4">
               <PostDetail content={article?.content} title={article?.title} />

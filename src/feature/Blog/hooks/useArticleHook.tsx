@@ -15,7 +15,7 @@ import {
   getCommuniquerArticles,
   getFollowedArticles,
   getRecommendedArticles,
-
+getArticleStatitics,
   updateArticle,
 } from '../api';
 // Hook for creating an article
@@ -77,6 +77,25 @@ export const useGetAllArticles = () => {
         return allPages.length + 1; // Next page number
       }
       return undefined; // Stop when we’ve fetched all articles
+    },
+  });
+};
+
+
+// Hook for fetching recommended articles with infinite scrolling
+export const useGetRecommendedArticles = () => {
+  return useInfiniteQuery({
+    queryKey: ['recommended-articles'],
+    queryFn: getRecommendedArticles,
+    initialPageParam: 1, 
+    getNextPageParam: (lastPage, allPages) => {
+      console.log('lastpage (recommended)', lastPage);
+      console.log('allpage (recommended)', allPages);
+      const articlesFetched = allPages.length * 10; 
+      if (articlesFetched < lastPage.totalArticles) {
+        return allPages.length + 1; // Next page number
+      }
+      return undefined; 
     },
   });
 };
@@ -154,13 +173,7 @@ export const useGetAuthorArticles = (authorId: string) => {
 };
 
 
-// Hook for fetching recommended articles
-export const useGetRecommendedArticles = () => {
-  return useQuery({
-    queryKey: ['recommended-articles'],
-    queryFn: () => getRecommendedArticles(),
-  });
-};
+
 
 // Hook for fetching articles by category
 export const useGetArticlesByCategory = (category: string) => {
@@ -168,6 +181,14 @@ export const useGetArticlesByCategory = (category: string) => {
     queryKey: ['articles-by-category', category],
     queryFn: () => getArticlesByCategory(category),
     enabled: !!category,
+  });
+};
+// Hook for fetching articles by category
+export const useGetArticleStatitics = (id: string) => {
+  return useQuery({
+    queryKey: ['articles-by-category'],
+    queryFn: () => getArticleStatitics(id),
+    enabled: !!id,
   });
 };
 

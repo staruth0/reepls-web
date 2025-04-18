@@ -258,7 +258,7 @@ const ArticleViewBySlug: React.FC = () => {
             {!isPreview && !isPending && (
               <div ref={commentSectionRef} className="w-[100%] px-3 md:px-0 mx-auto mt-10">
                 <h2 className="text-2xl font-semibold mb-4">Comments</h2>
-                {isCommentSectionOpen && <CommentSection article_id={article?._id || ''} setIsCommentSectionOpen={toggleCommentSection2} author_of_post={article?.author_id as User} />}
+                {isCommentSectionOpen && <CommentSection article_id={article?._id || ''} article={article} setIsCommentSectionOpen={toggleCommentSection2} author_of_post={article?.author_id as User} />}
               </div>
             )}
           </div>
