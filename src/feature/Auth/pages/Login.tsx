@@ -26,30 +26,34 @@ function Login() {
 
   // Function to get friendly error messages specific to login
   const getFriendlyErrorMessage = (error: any): string => {
-    if (!error) return t('GenericErrorMessage', { defaultValue: "Something went wrong. Please try again." });
-
-    // Handle common error cases
+    if (!error) return t('authErrors.generic', { defaultValue: "Something went wrong. Please try again." });
+  
+    // Handle network errors
     if (error.message.includes("Network Error")) {
-      return t('NetworkErrorMessage', { defaultValue: "Oops! Looks like you’re offline. Check your connection and try again." });
+      return t('authErrors.network', { defaultValue: "No internet connection. Check and retry." });
     }
-    if (error.response) {
+  
+    // Handle API response errors
+    if (error.response?.status) {
       const status = error.response.status;
-      if (status === 401) {
-        return t('AuthErrorMessage', { defaultValue: "Incorrect phone number or password. Please try again." });
-      }
-      if (status === 404) {
-        return t('NotFoundErrorMessage', { defaultValue: "We couldn’t find an account with that phone number." });
-      }
-      if (status === 500) {
-        return t('ServerErrorMessage', { defaultValue: "Our servers are having a moment. Please try again soon!" });
-      }
-      if (status === 429) {
-        return t('RateLimitErrorMessage', { defaultValue: "Too many login attempts! Please wait a bit and try again." });
-      }
+      const errorKey = `authErrors.loginWithPhone.${status}`;
+      
+      // Default messages mapped to status codes
+      const defaultMessages: Record<number, string> = {
+        400: "Invalid phone number or password format.",
+        401: "Incorrect phone number or password.",
+        404: "Account not found. Please sign up.",
+        429: "Too many attempts. Wait and try again.",
+        500: "Server error. Please try again later."
+      };
+  
+      return t(errorKey, { 
+        defaultValue: defaultMessages[status] || t('authErrors.generic') 
+      });
     }
-
-    // Default fallback for unhandled errors
-    return t('UnexpectedErrorMessage', { defaultValue: "Something unexpected happened during login. Please try again." });
+  
+    // Fallback for unhandled errors
+    return t('authErrors.generic');
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -144,7 +148,7 @@ function Login() {
           inputErrorMessage={t('IncorrectPasswordMessage')}
         />
         {Login.error && (
-          <div className="text-neutral-50 text-center py-2">
+          <div className=" text-center py-2 text-red-500">
             {getFriendlyErrorMessage(Login.error)}
           </div>
         )}

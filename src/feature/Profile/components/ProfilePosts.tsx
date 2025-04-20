@@ -30,7 +30,7 @@ const ProfilePosts: React.FC<ProfileArticlesProps> = ({ posts = [] }) => {
           <p className="flex gap-2">
             {t("profile.noPosts")}
             <Link to="/posts/create" className="text-primary-400">
-              {("profile.createOne")}
+              {t("profile.createOne")}
             </Link>
           </p>
         </div>

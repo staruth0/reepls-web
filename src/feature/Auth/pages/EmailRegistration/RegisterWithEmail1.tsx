@@ -25,30 +25,33 @@ function RegisterWithEmail1() {
 
   // Function to get friendly error messages specific to email registration
   const getFriendlyErrorMessage = (error: any): string => {
-    if (!error) return t('GenericErrorMessage', { defaultValue: "Something went wrong. Please try again." });
-
-    // Handle common error cases
+    if (!error) return t('authErrors.generic', { defaultValue: "Something went wrong. Please try again." });
+  
+    // Handle network errors
     if (error.message.includes("Network Error")) {
-      return t('NetworkErrorMessage', { defaultValue: "Oops! Looks like you’re offline. Check your connection and try again." });
+      return t('authErrors.network', { defaultValue: "No internet connection. Check and retry." });
     }
-    if (error.response) {
+  
+    // Handle API response errors
+    if (error.response?.status) {
       const status = error.response.status;
-      if (status === 400) {
-        return t('BadRequestErrorMessage', { defaultValue: "Something’s not right with your input. Please check and try again." });
-      }
-      if (status === 409) {
-        return t('ConflictErrorMessage', { defaultValue: "An account with this email already exists." });
-      }
-      if (status === 500) {
-        return t('ServerErrorMessage', { defaultValue: "Our servers are having a moment. Please try again soon!" });
-      }
-      if (status === 429) {
-        return t('RateLimitErrorMessage', { defaultValue: "Too many registration attempts! Please wait a bit and try again." });
-      }
+      const errorKey = `authErrors.signupWithEmail.${status}`;
+      
+      // Default messages mapped to status codes
+      const defaultMessages: Record<number, string> = {
+        400: "Invalid email format. Check and retry.",
+        409: "Email already registered. Log in instead.",
+        429: "Too many sign-ups. Wait and retry.",
+        500: "Server error. Please try later."
+      };
+  
+      return t(errorKey, { 
+        defaultValue: defaultMessages[status] || t('authErrors.generic') 
+      });
     }
-
-    // Default fallback for unhandled errors
-    return t('UnexpectedErrorMessage', { defaultValue: "Something unexpected happened during registration. Please try again." });
+  
+    // Fallback for unhandled errors
+    return t('authErrors.generic');
   };
 
   // Toast error notification
@@ -110,7 +113,7 @@ function RegisterWithEmail1() {
           />
         </div>
         {error && (
-          <div className="text-neutral-50 text-center py-2">
+          <div className="text-red-500 text-center py-2">
             {getFriendlyErrorMessage(error)}
           </div>
         )}
