@@ -112,6 +112,7 @@
   "Older": "Older",
   "Journalism": "Journalism",
   "Tech": "Tech",
+  "Login with google": "Login with google",
   "Culture": "Culture",
   "Film": "Film",
   "Crime": "Crime",
@@ -181,17 +182,58 @@
     }
   },
 
-  "GenericErrorMessage": "Something went wrong. Please try again.",
-  "NetworkErrorMessage": "Oops! Looks like you’re offline. Check your connection and try again.",
-  "AuthErrorMessage": "Incorrect phone number or password. Please try again.",
-  "NotFoundErrorMessage": "We couldn’t find an account with that phone number.",
-  "ServerErrorMessage": "Our servers are having a moment. Please try again soon!",
-  "RateLimitErrorMessage": "Too many login attempts! Please wait a bit and try again.",
-  "UnexpectedErrorMessage": "Something unexpected happened during login. Please try again.",
+  "authErrors": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "No internet! Check your connection.",
+
+    "loginWithPhone": {
+      "400": "Phone number or password format is wrong.",
+      "401": "Wrong phone number or password. Try again.",
+      "404": "No account found with this number. Sign up!",
+      "429": "Too many tries! Wait and try later.",
+      "500": "Server problem. Try again soon."
+    },
+
+    "loginWithEmail": {
+      "400": "Email or password format is wrong.",
+      "401": "Wrong email or password. Try again.",
+      "404": "No account found with this email. Sign up!",
+      "429": "Too many attempts! Wait and retry.",
+      "500": "Server error. Please try again."
+    },
+
+    "signupWithPhone": {
+      "400": "Invalid phone number. Check and retry.",
+      "409": "Phone number already registered. Log in!",
+      "429": "Too many sign-ups. Wait and try later.",
+      "500": "Server issue. Try again soon."
+    },
+
+    "signupWithEmail": {
+      "400": "Invalid email. Check and retry.",
+      "409": "Email already registered. Log in!",
+      "429": "Too many sign-ups. Wait and retry.",
+      "500": "Server problem. Try again soon."
+    }
+  },
+
+  "swiper": {
+    "slide1": {
+      "text": "Creating Waves of professional impact",
+      "desc": "Stay informed with credible sources. We bring you the latest, unbiased updates from trusted voices around the globe."
+    },
+    "slide2": {
+      "text": "Building Bridges to Success",
+      "desc": "Unlock new dimensions of imagination and skill. Dive into creative pursuits that challenge boundaries and inspire innovation."
+    }
+  },
+
 
   "feed": {
     "seeMore": "See more",
     "seeLess": "See less",
+    "follow": "Follow",
+    "unfollow": "Unfollow",
     "trending": "Trending",
     "following": "Following",
     "suggestedAuthor": "Suggested Author",

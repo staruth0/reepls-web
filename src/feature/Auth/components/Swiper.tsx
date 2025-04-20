@@ -1,25 +1,24 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { LuCircleArrowLeft, LuCircleArrowRight } from 'react-icons/lu';
-import { Pics } from '../../../assets/images';
+import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
+import { LuCircleArrowLeft, LuCircleArrowRight } from "react-icons/lu";
+import { Pics } from "../../../assets/images";
+import { t } from "i18next";
 
 const slides = [
   {
     image: Pics.maleAuth,
-    text: 'Creating Waves of professional impact',
-    description: 'Stay informed with credible sources. We bring you the latest, unbiased updates from trusted voices around the globe.',
+    text: t("swiper.slide1.text"),
+    description: t("swiper.slide1.desc"),
   },
   {
     image: Pics.femaleAuth,
-    text: 'Building Bridges to Success',
-    description: 'Unlock new dimensions of imagination and skill. Dive into creative pursuits that challenge boundaries and inspire innovation',
+    text: t("swiper.slide2.text"),
+    description: t("swiper.slide2.desc"),
   },
 ];
 
 function Swiper() {
   const [activeSlide, setActiveSlide] = useState<number>(0);
-  const { t } = useTranslation();
 
   // Functions to handle DOM events
   const handlePrevSlide = () => {
@@ -53,7 +52,7 @@ function Swiper() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-background text-neutral-50 p-4 relative">
       {/* Logo */}
       <div className="absolute top-5 left-5 self-start text-2xl flex gap-2 items-center font-semibold text-plain-a mb-4">
-        <img src={'/Logo.svg'} alt="" />
+        <img src={"/Logo.svg"} alt="" />
         REEPLS
       </div>
 
@@ -63,10 +62,16 @@ function Swiper() {
         <div className="relative flex justify-center items-center w-full mb-5">
           {/* Navigation Buttons */}
           <div className="absolute flex justify-between w-full px-4 z-10">
-            <button onClick={handlePrevSlide} className="text-primary-200 transition-colors">
+            <button
+              onClick={handlePrevSlide}
+              className="text-primary-200 transition-colors"
+            >
               <LuCircleArrowLeft className="w-8 h-8" />
             </button>
-            <button onClick={handleNextSlide} className="text-primary-200 transition-colors">
+            <button
+              onClick={handleNextSlide}
+              className="text-primary-200 transition-colors"
+            >
               <LuCircleArrowRight className="w-8 h-8" />
             </button>
           </div>
@@ -108,10 +113,10 @@ function Swiper() {
             className="text-center mt-6"
           >
             <h2 className="text-2xl md:text-3xl font-semibold text-plain-a mb-3">
-              {t(slides[activeSlide].text)}
+              {slides[activeSlide].text}
             </h2>
             <p className="text-sm md:text-base text-plain-a max-w-md mx-auto">
-              {t(slides[activeSlide].description)}
+              {slides[activeSlide].description}
             </p>
           </motion.div>
         </AnimatePresence>
@@ -122,7 +127,7 @@ function Swiper() {
             <motion.div
               key={index}
               className={`w-16 h-1 rounded-full cursor-pointer ${
-                index === activeSlide ? 'bg-primary-400' : 'bg-primary-600'
+                index === activeSlide ? "bg-primary-400" : "bg-primary-600"
               }`}
               onClick={() => handleCurrentSlide(index)}
               animate={{
