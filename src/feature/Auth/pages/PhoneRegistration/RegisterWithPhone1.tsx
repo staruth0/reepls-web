@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react'; // Added useEffect
-import { useTranslation } from 'react-i18next';
-import { LuLoader } from 'react-icons/lu';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../../store';
-import { validatePassword } from '../../../../utils/validatePassword';
-import InputField from '../../components/InputField';
-import { usePhoneRegisterUser } from '../../hooks/AuthHooks';
-import { useStoreCredential } from '../../hooks/useStoreCredential';
-import '../../styles/authpages.scss';
-import { toast } from 'react-toastify'; // Added for toast notifications
+import React, { useState, useEffect } from "react"; // Added useEffect
+import { useTranslation } from "react-i18next";
+import { LuLoader } from "react-icons/lu";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../store";
+import { validatePassword } from "../../../../utils/validatePassword";
+import InputField from "../../components/InputField";
+import { usePhoneRegisterUser } from "../../hooks/AuthHooks";
+import { useStoreCredential } from "../../hooks/useStoreCredential";
+import "../../styles/authpages.scss";
+import { toast } from "react-toastify"; // Added for toast notifications
 
 function RegisterWithPhone1() {
   const { t } = useTranslation();
@@ -16,38 +16,48 @@ function RegisterWithPhone1() {
   const { storePassword } = useStoreCredential();
   const { mutate, isPending, error } = usePhoneRegisterUser();
 
-  const { phone, password, username } = useSelector((state: RootState) => state.user);
+  const { phone, password, username } = useSelector(
+    (state: RootState) => state.user
+  );
 
   // States
-  const [passwords, setPassword] = useState<string>('');
+  const [passwords, setPassword] = useState<string>("");
   const [passwordInputError, setPasswordInputError] = useState<boolean>(false);
 
   // Function to get friendly error messages specific to phone registration
   const getFriendlyErrorMessage = (error: any): string => {
-    if (!error) return t('GenericErrorMessage', { defaultValue: "Something went wrong. Please try again." });
+    if (!error)
+      return t("authErrors.generic", {
+        defaultValue: "Something went wrong. Please try again.",
+      });
 
-    // Handle common error cases
+    // Handle network errors
     if (error.message.includes("Network Error")) {
-      return t('NetworkErrorMessage', { defaultValue: "Oops! Looks like you’re offline. Check your connection and try again." });
-    }
-    if (error.response) {
-      const status = error.response.status;
-      if (status === 400) {
-        return t('BadRequestErrorMessage', { defaultValue: "Something’s not right with your input. Please check and try again." });
-      }
-      if (status === 409) {
-        return t('ConflictErrorMessage', { defaultValue: "An account with this phone number already exists." });
-      }
-      if (status === 500) {
-        return t('ServerErrorMessage', { defaultValue: "Our servers are having a moment. Please try again soon!" });
-      }
-      if (status === 429) {
-        return t('RateLimitErrorMessage', { defaultValue: "Too many registration attempts! Please wait a bit and try again." });
-      }
+      return t("authErrors.network", {
+        defaultValue: "No internet connection. Check and retry.",
+      });
     }
 
-    // Default fallback for unhandled errors
-    return t('UnexpectedErrorMessage', { defaultValue: "Something unexpected happened during registration. Please try again." });
+    // Handle API response errors
+    if (error.response?.status) {
+      const status = error.response.status;
+      const errorKey = `authErrors.signupWithPhone.${status}`;
+
+      // Default messages mapped to status codes
+      const defaultMessages: Record<number, string> = {
+        400: "Invalid phone number. Check and retry.",
+        409: "Phone number already registered. Log in instead.",
+        429: "Too many sign-ups. Wait and try later.",
+        500: "Server error. Please try later.",
+      };
+
+      return t(errorKey, {
+        defaultValue: defaultMessages[status] || t("authErrors.generic"),
+      });
+    }
+
+    // Fallback for unhandled errors
+    return t("authErrors.generic");
   };
 
   // Toast error notification
@@ -63,7 +73,7 @@ function RegisterWithPhone1() {
     setPassword(passwordValue);
     storePassword(passwordValue);
 
-    if (validatePassword(passwordValue) || passwordValue === '') {
+    if (validatePassword(passwordValue) || passwordValue === "") {
       setPasswordInputError(false);
     } else {
       setPasswordInputError(true);
@@ -71,7 +81,7 @@ function RegisterWithPhone1() {
   };
 
   const handlePasswordBlur = () => {
-    if (passwords === '') {
+    if (passwords === "") {
       setPasswordInputError(false);
     }
   };
@@ -84,7 +94,7 @@ function RegisterWithPhone1() {
       return;
     }
 
-    console.log('password stored', {
+    console.log("password stored", {
       phone: `+237${phone}`,
       password,
       name: username,
@@ -96,31 +106,31 @@ function RegisterWithPhone1() {
   return (
     <div className="register__phone__container">
       <div className="insightful__texts">
-        <div>{t('Create your password')}</div>
-        <p>{t('Create your password - description')}</p>
+        <div>{t("Create your password")}</div>
+        <p>{t("Create your password - description")}</p>
       </div>
       <form onSubmit={handleSubmit}>
         <div>
           <InputField
             textValue={passwords}
-            label={t('PasswordLabel')}
+            label={t("PasswordLabel")}
             type="password"
-            placeholder={t('PasswordPlaceholder')}
+            placeholder={t("PasswordPlaceholder")}
             handleInputChange={handlePasswordChange}
             handleBlur={handlePasswordBlur}
             isInputError={passwordInputError}
-            inputErrorMessage={t('PasswordErrorMessage')}
+            inputErrorMessage={t("PasswordErrorMessage")}
           />
         </div>
 
         {error && (
-          <div className="text-neutral-50 text-center py-2">
+          <div className="text-red-500 text-center py-2">
             {getFriendlyErrorMessage(error)}
           </div>
         )}
         <button type="submit" disabled={isPending}>
           {isPending && <LuLoader className="animate-spin inline-block mx-4" />}
-          {t('ContinueButton')}
+          {t("ContinueButton")}
         </button>
       </form>
     </div>

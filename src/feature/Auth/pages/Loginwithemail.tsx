@@ -26,30 +26,33 @@ function Loginwithemail() {
 
   // Function to get friendly error messages specific to email login
   const getFriendlyErrorMessage = (error: any): string => {
-    if (!error) return t('GenericErrorMessage', { defaultValue: "Something went wrong. Please try again." });
-
-    // Handle common error cases
-    if (error.message.includes("Network Error")) {
-      return t('NetworkErrorMessage', { defaultValue: "Oops! Looks like you’re offline. Check your connection and try again." });
+    if (!error) return t('authErrors.generic', { defaultValue: "Something went wrong. Please try again." });
+  
+    // Handle network errors
+    if (error.message?.includes("Network Error")) {
+      return t('authErrors.network', { defaultValue: "No internet connection. Check and retry." });
     }
-    if (error.response) {
-      const status = error.response.status;
-      if (status === 401) {
-        return t('AuthErrorMessage', { defaultValue: "Incorrect email or password. Please try again." });
-      }
-      if (status === 404) {
-        return t('NotFoundErrorMessage', { defaultValue: "We couldn’t find an account with that email." });
-      }
-      if (status === 500) {
-        return t('ServerErrorMessage', { defaultValue: "Our servers are having a moment. Please try again soon!" });
-      }
-      if (status === 429) {
-        return t('RateLimitErrorMessage', { defaultValue: "Too many login attempts! Please wait a bit and try again." });
-      }
+  
+    // Handle API response errors
+    if (error.response?.status) {
+      const status = error.response.status as keyof typeof defaultMessages; // Type assertion
+      
+      // Default messages with explicit type
+      const defaultMessages = {
+        400: "Email or password format is wrong.",
+        401: "Wrong email or password. Try again.",
+        404: "No account found with this email. Sign up!",
+        429: "Too many attempts! Wait and retry.",
+        500: "Server error. Please try again."
+      } as const; // "as const" for precise typing
+  
+      // Type-safe access with fallback
+      return t(`authErrors.loginWithEmail.${status}`, {
+        defaultValue: defaultMessages[status] ?? t('authErrors.generic')
+      });
     }
-
-    // Default fallback for unhandled errors
-    return t('UnexpectedErrorMessage', { defaultValue: "Something unexpected happened during login. Please try again." });
+  
+    return t('authErrors.generic');
   };
 
   // Toast error notification
@@ -124,7 +127,7 @@ function Loginwithemail() {
           inputErrorMessage={t('IncorrectPasswordMessage')}
         />
         {Login.error && (
-          <div className="text-neutral-50 text-center py-2">
+          <div className=" text-center py-2 text-red-500">
             {getFriendlyErrorMessage(Login.error)}
           </div>
         )}
