@@ -195,14 +195,12 @@ export const useGetArticleStatitics = (id: string) => {
 // Hook for updating an article
 export const useUpdateArticle = () => {
   const queryClient = useQueryClient();
-
-
   return useMutation({
     mutationFn: ({ articleId, article }: { articleId: string; article: Article }) => updateArticle(articleId, article),
     onSuccess: (data) => {
       console.log('Article updated:', data);
       queryClient.invalidateQueries({
-        queryKey: ['article'],
+        queryKey: ['articles'],
       });
       queryClient.invalidateQueries({ queryKey: ['articles'] });
      

@@ -9,6 +9,8 @@ import {
   updateUser,
   getReccomendedUsersById,
   getUserMedia,
+  getAuthorStatistics,
+  AuthorStatistics,
 } from "../api";
 
 // Hook for fetching a single user by ID
@@ -123,4 +125,15 @@ export const useGetUserMedia = (userId: string) => {
     },
     enabled: !!userId,
   });
+};
+
+// Hook for fetching author statistics by author ID
+export const useGetAuthorStatistics = (
+  authorId: string
+): { statistics: AuthorStatistics | undefined; isLoading: boolean; error: Error | null } => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['authorStatistics', authorId],
+    queryFn: () => getAuthorStatistics(authorId),
+  });
+  return { statistics: data, isLoading, error };
 };

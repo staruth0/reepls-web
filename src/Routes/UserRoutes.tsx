@@ -75,7 +75,7 @@ const UserRoutes = {
       element: <Followers />,
     },
     {
-      path: '/profile/analytics/:username',
+      path: '/profile/analytics/:id',
       element: <UserAnalytics />,
     },
     {
