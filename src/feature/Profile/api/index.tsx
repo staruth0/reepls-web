@@ -59,4 +59,25 @@ const getUserMedia = async ({ pageParam = 1, userId }: FetchMediaParams) => {
   const { data } = await apiClient.get(`/api-v1/articles/user/${userId}/media?page=${pageParam}&limit=10`);
   return data;
 };
-export { deleteUser, getAllUsers, getUserById, getUserByUsername, updateUser,getReccomendedUsersById ,getUserMedia};
+
+
+export interface AuthorStatistics {
+  views_count: number;
+  reports_count: number;
+  shares_count: number;
+  reaction_count: number;
+  comment_count: number;
+  impression_count: number;
+  engagement_count: number;
+  author_follower_count: number;
+  author_profile_views_count: number;
+}
+
+// Fetch author statistics by author ID
+const getAuthorStatistics = async (authorId: string): Promise<AuthorStatistics> => {
+  console.log('Fetching author statistics for author ID:', authorId);
+  const { data } = await apiClient.get(`/articles/author/statistics/${authorId}`);
+  return data as AuthorStatistics;
+};
+
+export { deleteUser, getAllUsers, getUserById, getUserByUsername, updateUser,getReccomendedUsersById ,getUserMedia,getAuthorStatistics};

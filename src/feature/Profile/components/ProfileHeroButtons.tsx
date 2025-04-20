@@ -75,7 +75,7 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
           </button>
           <button
             className="px-6 py-3 text-neutral-50 bg-neutral-600 border border-neutral-600 rounded-full text-[14px] hover:bg-transparent hover:border-neutral-50 transition-all duration-300 ease-in-out hover:transform-none"
-            onClick={() => handleViewAnalytics(authUser?.username || "")}
+            onClick={() => handleViewAnalytics(authUser?.id || "")}
           >
             {t("View Analytics")}
           </button>
