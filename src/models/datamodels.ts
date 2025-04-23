@@ -45,6 +45,7 @@ export interface User {
   title?: string;
   interests?: string[];
   is_verified_writer?: boolean;
+  canMakeCommunique?:boolean;
   is_email_verified?: boolean;
   is_phone_verified?: boolean;
   created_at?: Date | string;
@@ -87,6 +88,7 @@ export interface Article {
   engagement_ount?: number,
   author_follower_count?: number,
   author_profile_views_count?: number,
+  
 }
 
 export interface Comment {

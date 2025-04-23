@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { LuBadgeCheck, LuEllipsisVertical } from 'react-icons/lu';
 import { UserPlus, EyeOff, Flag, X } from 'lucide-react';
-import { useFollowUser, useUnfollowUser } from '../../Follow/hooks';
+import {  useUnfollowUser } from '../../Follow/hooks';
 import { useKnowUserFollowings } from '../../Follow/hooks/useKnowUserFollowings';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useGetUserByUsername } from '../../Profile/hooks';
 import ReportUserPopup from '../../Reports/components/ReportUserPopup';
 import { useTranslation } from 'react-i18next';
+import { useUser } from '../../../hooks/useUser';
+import { useSendFollowNotification } from '../../Notifications/hooks/useNotification';
 
 interface AuthorComponentProps {
   username: string;
@@ -19,10 +21,12 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
   const [showReportPopup, setShowReportPopup] = useState(false);
   const { isFollowing: isUserFollowing } = useKnowUserFollowings();
-  const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
+    const { mutate: followUser, isPending: isFollowPending } = useSendFollowNotification();
+  // const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const {authUser} = useUser();
 
   useEffect(() => {
     console.log('userer', user);
@@ -43,7 +47,7 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
         },
       });
     } else {
-      followUser(user.id, {
+      followUser({receiver_id:user.id}, {
         onSuccess: () => {
           toast.success(t('saved.alerts.followSuccess'));
           setShowMenu(false);
@@ -87,7 +91,7 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
   };
 
   return (
-    <div className="flex items-center gap-2 w-full relative">
+    <div className="flex items-center gap-2 w-full min-w-[350px] relative">
       <div className="flex-shrink-0">
         {user?.profile_picture && user?.profile_picture !== 'https://example.com/default-profile.png' && user?.profile_picture !== '' ? (
           <img
@@ -133,13 +137,13 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
             onClick={() => setShowMenu(false)}
           ></div>
           <div className="absolute right-0 top-10 bg-neutral-800 shadow-md rounded-md p-2 w-52 text-neutral-50 z-50">
-            <div
+        { user?._id === authUser?.id ? '':   <div
               className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
               onClick={handleFollowClick}
             >
               <UserPlus size={18} className="text-neutral-500" />
               <div className="text-neutral-50">{getFollowStatusText()}</div>
-            </div>
+            </div>}
             <div
               className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
               onClick={() => setShowBlockConfirm(true)}

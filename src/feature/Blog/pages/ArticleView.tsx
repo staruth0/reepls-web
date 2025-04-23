@@ -23,6 +23,7 @@ const ArticleView: React.FC = () => {
   const [content, setContent] = useState<string>('');
   const [htmlArticleContent, setHtmlArticleContent] = useState<string>('*This article does not have any content*');
   const [media, setMedia] = useState<MediaItem[]>([]);
+  const [isCommunique, setIsCommunique] = useState<boolean>(false);
   const [isPreview, _] = useState<boolean>(articleUid === PREVIEW_SLUG);
   const { loadDraftArticle } = useDraft();
   const editorRef = useRef<{ editor: Editor | null }>(null);
@@ -48,6 +49,7 @@ const ArticleView: React.FC = () => {
       status: 'Published',
       type: 'LongForm',
       isArticle: true,
+      is_communiquer:isCommunique,
     };
     const toastId = toast.info('Publishing the article...', {
       isLoading: true,
@@ -98,6 +100,7 @@ const ArticleView: React.FC = () => {
       setContent(draftArticle.content);
       setHtmlArticleContent(draftArticle.htmlContent);
       setMedia(draftArticle.media);
+      setIsCommunique(draftArticle.isCommunique || false);
       console.log('draftArticle', draftArticle);
     }
   }, [articleUid]);
@@ -116,6 +119,7 @@ const ArticleView: React.FC = () => {
       if (article.htmlContent) {
         setHtmlArticleContent(article.htmlContent);
       }
+      setIsCommunique(article.isCommunique || false);
     }
   }, [article, isPending]);
 
@@ -148,7 +152,13 @@ const ArticleView: React.FC = () => {
   return (
     <div className="">
       <Topbar>
-        <CreatePostTopBar title={title} mainAction={mainAction} actions={[]} />
+        <CreatePostTopBar
+          title={title}
+          mainAction={mainAction}
+          actions={[]}
+          isCommunique={isCommunique}
+          onToggleCommunique={setIsCommunique}
+        />
       </Topbar>
       <div className="max-w-full h-full mb-10 inline-block overflow-clip">
         {!isPreview && isPending ? (

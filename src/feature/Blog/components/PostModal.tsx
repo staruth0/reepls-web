@@ -14,7 +14,8 @@ import {
 import useTheme from '../../../hooks/useTheme';
 import { cn } from '../../../utils';
 import { useUser } from '../../../hooks/useUser';
-import SignInPopUp from '../../AnonymousUser/components/SignInPopUp'; // Assuming this is the correct path
+import SignInPopUp from '../../AnonymousUser/components/SignInPopUp';
+import StarToggle from '../../../components/atoms/CommuniqueBtn';
 
 const PostModal = ({
   isModalOpen,
@@ -24,17 +25,18 @@ const PostModal = ({
 }: {
   isModalOpen: boolean;
   setIsModalOpen: (value: boolean) => void;
-  handlePost: (postContent: string, postImages: File[], postVideos: File[]) => void;
+  handlePost: (postContent: string, postImages: File[], postVideos: File[], isCommunique: boolean) => void;
   isPending: boolean;
 }) => {
   const [postContent, setPostContent] = useState<string>('');
   const [postImages, setPostImages] = useState<File[]>([]);
   const [postVideos, setPostVideos] = useState<File[]>([]);
+  const [isCommunique, setIsCommunique] = useState<boolean>(false);
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState<boolean>(false);
   const [showSignInPopup, setShowSignInPopup] = useState<string | null>(null); // Store action type for popup
   const { theme } = useTheme();
   const { t } = useTranslation();
-  const { isLoggedIn } = useUser();
+  const { isLoggedIn,authUser } = useUser();
 
   const handleActionBlocked = (action: string) => {
     if (!isLoggedIn) {
@@ -80,7 +82,7 @@ const PostModal = ({
 
   const handlePostClick = () => {
     if (handleActionBlocked('post')) return;
-    handlePost(postContent, postImages, postVideos);
+    handlePost(postContent, postImages, postVideos, isCommunique);
   };
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -266,6 +268,7 @@ const PostModal = ({
                     </span>
                     /{SHORT_POST_LENGTH}
                   </span>
+                 {authUser.canMakeCommunique && <StarToggle isCommunique={isCommunique} onToggle={setIsCommunique} />}
                   <Button
                     className={cn(
                       'flex items-center gap-2 hover:text-primary-400 cursor-pointer',

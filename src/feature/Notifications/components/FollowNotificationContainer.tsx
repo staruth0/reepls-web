@@ -4,39 +4,64 @@ import { useGetUserById } from '../../Profile/hooks';
 import { useUpdateNotificationReadStatus } from '../hooks/useNotification';
 import { useTranslation } from 'react-i18next';
 
-
 interface FollowNotificationProps {
   username: string;
   timestamp: string;
-  is_read:boolean;
-  id:string
+  is_read: boolean;
+  id: string;
 }
 
-const FollowNotificationContainer: React.FC<FollowNotificationProps> = ({ username, timestamp ,is_read,id}) => {
-    const {user} = useGetUserById(username)
-      const {mutate} = useUpdateNotificationReadStatus();
-    
-        const updateStatus = ()=>{
-          mutate( {notificationId:id , isRead:true},{
-            onSuccess:()=>{
-              console.log('success read')
-            }
-          })
-        }
+const FollowNotificationContainer: React.FC<FollowNotificationProps> = ({
+  username,
+  timestamp,
+  is_read,
+  id
+}) => {
+  const { user } = useGetUserById(username);
+  const { mutate } = useUpdateNotificationReadStatus();
+  const { t } = useTranslation();
 
-        const {t} = useTranslation();
+  const updateStatus = () => {
+    mutate({ notificationId: id, isRead: true }, {
+      onSuccess: () => {
+        console.log('success read');
+      }
+    });
+  };
+
   return (
-    <div onClick={updateStatus} className={`flex gap-2 w-full items-start border-b-[1px] rounded border-neutral-500 pb-3 cursor-pointer ${!is_read ? 'bg-primary-700 p-2':''}`}>
-      <img src={thumb} alt="user" className="w-[25px] mt-1" />
-      <div className="flex-1 flex  gap-3 items-center relative">
-        <div className='text-[16px]'>{user?.username}</div>
-        <div className="text-xl font-roboto font-bold text-neutral-50 flex items-center gap-3 ">
-        <div className="text-[15px] font-normal">{t("notification.followedYou")}</div>
-          <div className=" absolute right-0">
-           
-            <div className="text-[15px] font-normal">{timestamp}</div>
-          </div>
+    <div
+      onClick={updateStatus}
+      className={`
+        flex p-4 gap-3 w-full
+        transition-all duration-200
+        border-b border-gray-200 dark:border-gray-700
+     
+        cursor-pointer
+        ${!is_read ? 'bg-gray-800/5' : ''}
+      `}
+    >
+      <div className="flex-shrink-0">
+        <img 
+          src={thumb} 
+          alt="follow" 
+          className="w-6 h-6 text-blue-500" 
+        />
+      </div>
+      
+      <div className="flex-1 flex items-center justify-between min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+            {user?.username}
+          </span>
+          <span className="text-sm text-gray-600 dark:text-gray-300">
+            {t("notification.followedYou")}
+          </span>
         </div>
+        
+        <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+          {timestamp}
+        </span>
       </div>
     </div>
   );

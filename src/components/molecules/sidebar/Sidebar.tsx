@@ -23,6 +23,7 @@ import { Article, MediaItem, MediaType } from '../../../models/datamodels';
 import { cn } from '../../../utils';
 import { uploadPostImage, uploadPostVideo } from '../../../utils/media';
 import SidebarItem from '../../atoms/SidebarItem';
+import StarToggle from '../../../components/atoms/CommuniqueBtn';
 import './sidebar.scss';
 import { useNotificationsValues } from '../../../feature/Notifications/hooks';
 import { commuLeft } from '../../../assets/icons';
@@ -31,6 +32,7 @@ const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const { authUser, isLoggedIn } = useUser();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
+  const [isCommunique, setIsCommunique] = useState<boolean>(false);
   const { t } = useTranslation();
   const { mutate: createPost, isPending } = useCreateArticle();
   const { isOpen, toggleSidebar } = useContext(SidebarContext);
@@ -81,7 +83,7 @@ const Sidebar: React.FC = () => {
     },
   ];
 
-  const handlePost = async (postContent: string, postImages: File[], postVideos: File[]) => {
+  const handlePost = async (postContent: string, postImages: File[], postVideos: File[], isCommunique: boolean) => {
     if (!authUser?.id) {
       toast.error('You must be logged in to create a post');
       return;
@@ -126,6 +128,7 @@ const Sidebar: React.FC = () => {
       type: 'ShortForm',
       status: 'Published',
       isArticle: false,
+      is_communiquer:isCommunique,
     };
 
     createPost(post, {
@@ -142,7 +145,7 @@ const Sidebar: React.FC = () => {
   const isTabletSmall = screenWidth >= 640 && screenWidth < 930;
 
   return (
-    <div className="side bg-background">
+    < div className="side bg-background">
       <LuCircleChevronRight
         className={cn(
           'size-7 md:size-6 p-0 rounded-full cursor-pointer',
@@ -223,7 +226,7 @@ const Sidebar: React.FC = () => {
       <div className="p-4 ">
       <div className='flex gap-2'>
         <img src={commuLeft} alt="star" />
-        {/* <LuStar className="size-6 bg-main-yellow rounded-full p-1" strokeWidth={2.5} /> */}
+        <StarToggle isCommunique={isCommunique} onToggle={setIsCommunique} />
       {isOpen &&  <div className='line-clamp-1'>{t(`Communiques`)}</div>}
       </div>
     </div>
