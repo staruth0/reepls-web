@@ -19,10 +19,11 @@ const CreatePost: React.FC = () => {
   const { authUser, isLoggedIn } = useUser();
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [title, setTitle] = useState<string>('');
-  const [subtitle, setsubtitle] = useState<string>('');
+  const [subtitle, setSubtitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [htmlContent, setHtmlContent] = useState<string>('');
   const [media, setMedia] = useState<MediaItem[]>([]);
+  const [isCommunique, setIsCommunique] = useState<boolean>(false);
   const { saveDraftArticle, loadDraftArticle, clearDraftArticle } = useDraft();
   const { mutate: createArticle } = useCreateArticle();
   const [initialEditorContent, setInitialEditorContent] = useState<{
@@ -30,11 +31,13 @@ const CreatePost: React.FC = () => {
     subtitle: string;
     content: string;
     htmlContent: string;
+    isCommunique: boolean;
   }>({
     title: '',
     subtitle: '',
     content: '',
     htmlContent: '',
+    isCommunique: false,
   });
   const [hasLoadedDraft, setHasLoadedDraft] = useState(false);
   const editorRef = useRef<{ editor: Editor | null }>(null);
@@ -48,7 +51,7 @@ const CreatePost: React.FC = () => {
       ActionIcon: LuEye,
       onClick: () => {
         if (!isLoggedIn) return;
-        saveDraftArticle({ title, subtitle, content, htmlContent, media });
+        saveDraftArticle({ title, subtitle, content, htmlContent, media, isCommunique });
         navigate('/posts/article/preview');
       },
     },
@@ -93,7 +96,7 @@ const CreatePost: React.FC = () => {
   ];
 
   const onPublish = async () => {
-    if (!isLoggedIn) return; // Prevent action if not logged in
+    if (!isLoggedIn) return;
     if (!title || !subtitle || !content) {
       toast.error(t('Please provide a title, subtitle and content.'), {
         autoClose: 1500,
@@ -115,6 +118,7 @@ const CreatePost: React.FC = () => {
       status: 'Published',
       type: 'LongForm',
       isArticle: true,
+      is_communiquer:isCommunique,
     };
     const toastId = toast.info(t('Publishing the article...'), {
       isLoading: true,
@@ -153,12 +157,19 @@ const CreatePost: React.FC = () => {
     if (hasLoadedDraft) return;
     const draftArticle = loadDraftArticle();
     if (draftArticle) {
-      setInitialEditorContent(draftArticle);
+      setInitialEditorContent({
+        title: draftArticle.title,
+        subtitle: draftArticle.subtitle,
+        content: draftArticle.content,
+        htmlContent: draftArticle.htmlContent,
+        isCommunique: draftArticle.isCommunique || false,
+      });
       setTitle(draftArticle.title);
-      setsubtitle(draftArticle.subtitle);
+      setSubtitle(draftArticle.subtitle);
       setContent(draftArticle.content);
       setHtmlContent(draftArticle.htmlContent);
       setMedia(draftArticle.media);
+      setIsCommunique(draftArticle.isCommunique || false);
     }
     setHasLoadedDraft(true);
   }, []);
@@ -175,8 +186,8 @@ const CreatePost: React.FC = () => {
 
   useEffect(() => {
     if (!hasLoadedDraft) return;
-    saveDraftArticle({ title, subtitle, content, htmlContent, media });
-  }, [title, subtitle, content, htmlContent, media]);
+    saveDraftArticle({ title, subtitle, content, htmlContent, media, isCommunique });
+  }, [title, subtitle, content, htmlContent, media, isCommunique]);
 
   return (
     <div className="relative min-h-screen">
@@ -185,6 +196,8 @@ const CreatePost: React.FC = () => {
           title={t('New Article')}
           mainAction={{ label: 'Publish', onClick: onPublish }}
           actions={actions}
+          isCommunique={isCommunique}
+          onToggleCommunique={setIsCommunique}
         />
       </Topbar>
 
@@ -209,7 +222,7 @@ const CreatePost: React.FC = () => {
                   className="resize-none w-full h-auto mb-0 text-lg font-medium font-inter border-none outline-none bg-transparent placeholder-gray-400"
                   value={subtitle}
                   rows={2}
-                  onChange={(e) => setsubtitle(e.target.value)}
+                  onChange={(e) => setSubtitle(e.target.value)}
                   onKeyDown={(e) => handleKeyDown(e, () => editorRef?.current?.editor?.commands?.focus())}
                   disabled={!hasLoadedDraft}
                 />

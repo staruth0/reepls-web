@@ -6,6 +6,7 @@ type DraftArticle = {
   content: string;
   htmlContent: string;
   media: MediaItem[];
+  isCommunique:boolean
 };
 
 type DraftPost = {
@@ -15,13 +16,14 @@ type DraftPost = {
 
 const useDraft = () => {
   return {
-    saveDraftArticle: ({ title, subtitle, content, htmlContent, media }: DraftArticle) => {
+    saveDraftArticle: ({ title, subtitle, content, htmlContent, media,isCommunique }: DraftArticle) => {
       const article: DraftArticle = {
         title,
         subtitle,
         content,
         htmlContent,
         media,
+        isCommunique
       };
       localStorage.setItem('LocalDraftArticle', JSON.stringify(article));
     },

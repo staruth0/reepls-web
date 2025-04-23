@@ -56,7 +56,7 @@ interface FetchMediaParams {
 
 const getUserMedia = async ({ pageParam = 1, userId }: FetchMediaParams) => {
   console.log(`Fetching media for user ${userId}, page ${pageParam}`);
-  const { data } = await apiClient.get(`/api-v1/articles/user/${userId}/media?page=${pageParam}&limit=10`);
+  const { data } = await apiClient.get(`/articles/user/${userId}/media?page=${pageParam}&limit=10`);
   return data;
 };
 

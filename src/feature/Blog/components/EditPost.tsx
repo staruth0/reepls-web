@@ -22,12 +22,13 @@ const EditPost: React.FC = () => {
   const [content, setContent] = useState<string>('');
   const [htmlContent, setHtmlContent] = useState<string>('');
   const [media, setMedia] = useState<MediaItem[]>([]);
+  const [isCommunique, setIsCommunique] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
   const editorRef = useRef<{ editor: Editor | null }>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { id } = useParams(); 
-  const articleId= id;
+  const articleId = id;
   const { data: article, isLoading: isFetchingArticle } = useGetArticleById(articleId || '');
   const { mutate: updateArticle, isPending: isUpdating } = useUpdateArticle();
 
@@ -86,6 +87,7 @@ const EditPost: React.FC = () => {
       setContent(article.content || '');
       setHtmlContent(article.htmlContent || '');
       setMedia(article.media || []);
+      setIsCommunique(article.is_communiquer || false);
       // If there's a thumbnail in media, we could set it here (assuming first image is thumbnail)
       const thumbnailMedia = article.media?.find((m:MediaItem) => m.type === MediaType.Image);
       if (thumbnailMedia) {
@@ -128,6 +130,7 @@ const EditPost: React.FC = () => {
       status: 'Published',
       type: 'LongForm',
       isArticle: true,
+      is_communiquer:isCommunique,
     };
 
     const toastId = toast.info(t('Updating the article...'), { isLoading: true, autoClose: false });
@@ -141,7 +144,7 @@ const EditPost: React.FC = () => {
             isLoading: false,
             autoClose: 1500,
           });
-          navigate(`/posts/article/${article?.slug || articleId}`); // Navigate to article page
+          navigate(`/posts/article/slug/${article?.slug || articleId}`); // Navigate to article page
         },
         onError: (error: any) => {
           toast.update(toastId, {
@@ -173,6 +176,8 @@ const EditPost: React.FC = () => {
           title={t('Edit Article')}
           mainAction={{ label: 'Update', onClick: onUpdate }}
           actions={actions}
+          isCommunique={isCommunique}
+          onToggleCommunique={setIsCommunique}
         />
       </Topbar>
 

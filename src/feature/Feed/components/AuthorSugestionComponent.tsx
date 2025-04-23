@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSendFollowNotification } from '../../Notifications/hooks/useNotification';
 import { useGetUserByUsername } from '../../Profile/hooks';
 import { useTranslation } from 'react-i18next';
+import { useUser } from '../../../hooks/useUser';
 
 interface AuthorSuggestionProps {
   username: string;
@@ -21,6 +22,7 @@ const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username,n
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
   const { isFollowing: isUserFollowing } = useKnowUserFollowings();
   const { user } = useGetUserByUsername(username);
+  const {authUser} = useUser();
   const navigate = useNavigate();
 
   const { t } = useTranslation();
@@ -74,12 +76,12 @@ const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username,n
               {name}
             </h2>
             {isverified && <LuBadgeCheck className="text-primary-400 size-5" strokeWidth={2.5} />}
-            <div
+          { user?._id === authUser?.id? "" :  <div
               className="text-primary-400 text-[13px] cursor-pointer hover:underline"
               onClick={handleFollowClick}
             >
               {getFollowStatusText()}
-            </div>
+            </div>}
           </div>
           <p className="text-neutral-100 text-xs whitespace-nowrap overflow-hidden text-ellipsis line-clamp-1">
             {title}

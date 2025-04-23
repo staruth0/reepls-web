@@ -30,7 +30,7 @@ const ProfileBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
       >
         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
           <img
-            src={user.profile_picture !== 'https://example.com/default-profile.png' ? user.profile_picture :  Pics.imagePlaceholder}
+            src={(user.profile_picture !== 'https://example.com/default-profile.png' || '') ? user.profile_picture :  Pics.imagePlaceholder}
             alt="profile"
             className="w-28 h-28 rounded-full border-2 border-white shadow-lg absolute bottom-0 left-4 translate-y-1/2 cursor-pointer"
             onClick={handleImageClick}

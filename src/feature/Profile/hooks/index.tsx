@@ -106,9 +106,6 @@ export const useGetRecommendedUsersById = ( userId: string) => {
   
 };
 
-
-
-
 export const useGetUserMedia = (userId: string) => {
   return useInfiniteQuery({
     queryKey: ['userMedia', userId],
