@@ -8,6 +8,7 @@ import {
   XIcon,
 } from "react-share";
 import { IoCopyOutline, IoCheckmarkCircle } from "react-icons/io5"; 
+import { t } from "i18next";
 
 interface SharePopupProps {
   url: string; // URL of the post to share
@@ -40,7 +41,7 @@ const SharePopup: React.FC<SharePopupProps> = ({ url, title, onClose }) => {
       {/* Share Popup */}
       <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-900 rounded-2xl shadow-2xl p-6 z-[1100] w-[90%] max-w-md sm:max-w-lg transition-all duration-300">
         <h3 className="text-neutral-50 text-xl font-bold mb-6 tracking-tight">
-          Share this post
+          {t("Share this post")}
         </h3>
         <div className="flex flex-nowrap gap-6 overflow-x-auto justify-start pb-4">
           {/* Facebook Share */}
@@ -112,7 +113,7 @@ const SharePopup: React.FC<SharePopupProps> = ({ url, title, onClose }) => {
               )}
             </button>
             <span className="text-neutral-400 text-sm mt-2 font-medium">
-              {copied ? "Copied" : "Copy Link"}
+              {copied ? t("Copied") : t("Copy Link")}
             </span>
           </div>
         </div>

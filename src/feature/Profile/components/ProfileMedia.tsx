@@ -4,6 +4,7 @@ import { useGetUserMedia } from '../hooks';
 import ProfileMediaSkeleton from './ProfileMediaSkeleton';
 import MediaItem from './MediaItemComponent';
 import { MediaItemType, PostMedia } from '../../../models/datamodels';
+import { t } from 'i18next';
 
 
 interface ProfileMediaProps {
@@ -77,7 +78,7 @@ const ProfileMedia: React.FC<ProfileMediaProps> = ({ userId }) => {
             </div>
           ) : (
             <div className="text-neutral-50 text-center py-4">
-             {error?'':'No media available.'}
+             {error?'': t('No media available.')}
             </div>
           )}
         </div>

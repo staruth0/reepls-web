@@ -149,7 +149,7 @@ const ProfileConfigurations: React.FC = () => {
               onClick={() => setShowLanguageMenu(!showLanguageMenu)}
             >
               {languages.find((lang) => lang.code === i18n.language)?.label ||
-                "English"}
+                t("English")}
               <svg
                 className={`w-4 h-4 transition-transform ${
                   showLanguageMenu ? "rotate-180" : ""

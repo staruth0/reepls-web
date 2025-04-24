@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import WaveSurfer from 'wavesurfer.js';
 import { Article } from '../../../models/datamodels';
 import { apiClient } from '../../../services/apiClient';
+import { t } from 'i18next';
 
 type AudioState = 'idle' | 'generating' | 'ready' | 'playing' | 'paused' | 'error';
 
@@ -59,11 +60,11 @@ export const ArticleAudioControls = ({ article }: { article: Article }) => {
           setAudioState('ready');
         } else {
           setAudioState('error');
-          toast.error('Failed to generate audio');
+          toast.error(t('Failed to generate audio'));
         }
       } catch (error) {
         setAudioState('error');
-        toast.error('Failed to generate audio');
+        toast.error(t('Failed to generate audio'));
       }
       return;
     }
@@ -92,19 +93,19 @@ export const ArticleAudioControls = ({ article }: { article: Article }) => {
 
         {!audioUrl && audioState === 'idle' && (
           <div className="flex items-center gap-2">
-            <span>Click play to generate speech for this article</span>
+            <span>{t("Click play to generate speech for this article")}</span>
           </div>
         )}
 
         {audioState === 'generating' && (
           <div className="flex items-center gap-2">
-            <span className="animate-pulse ">Generating audio...</span>
+            <span className="animate-pulse ">{t("Generating audio...")}</span>
           </div>
         )}
 
         {audioState === 'error' && (
           <div className="flex items-center gap-2 text-red-600">
-            <span>Error generating audio. Click play to try again.</span>
+            <span>{t("Error generating audio. Click play to try again.")}</span>
           </div>
         )}
       </div>
