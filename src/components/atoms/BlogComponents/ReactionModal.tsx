@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { heart, sadface, smile, thumb } from '../../../assets/icons';
+import { t } from 'i18next';
 
 interface ReactionModalProps {
   isOpen: boolean;
@@ -23,10 +24,10 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ isOpen, onClose, onReact 
   if (!isVisible) return null;
 
   const reactions = [
-    { icon: heart, name: 'Love' },
-    { icon: thumb, name: 'Like' },
-    { icon: smile, name: 'Laugh' },
-    { icon: sadface, name: 'Sad' },
+    { icon: heart, name: t("love") },
+    { icon: thumb, name: t("like") },
+    { icon: smile, name: t('Laugh') },
+    { icon: sadface, name: t('Sad') },
   ];
 
   return (

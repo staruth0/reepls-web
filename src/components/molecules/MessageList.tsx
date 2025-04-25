@@ -5,6 +5,7 @@ import "./index.scss";
 import { Article } from "../../models/datamodels";
 import { formatDateWithMonth } from "../../utils/dateFormater";
 import SeeMore from "../../feature/Feed/components/SeeMore";
+import { t } from "i18next";
 
 interface MessageListProps {
   type: "recent" | "older";
@@ -37,7 +38,7 @@ const MessageList: React.FC<MessageListProps> = ({
         )}
       </div>
       <SeeMore/>
-      </>: <p className="px-4 text-[13px]">No Comminiques avaliable</p>}
+      </>: <p className="px-4 text-[13px]">{t("No Comminiques avaliable")}</p>}
  
     </div>
   );

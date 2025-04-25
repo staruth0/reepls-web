@@ -7,6 +7,7 @@ import { apiClient } from '../../../services/apiClient';
 import { cn } from '../../../utils';
 import { Article } from '../../../models/datamodels';
 import { useUpdateArticle } from '../../../feature/Blog/hooks/useArticleHook';
+import { t } from 'i18next';
 
 type AudioState = 'idle' | 'generating' | 'ready' | 'playing' | 'paused' | 'error';
 
@@ -118,19 +119,19 @@ export const ReadingControls = ({ article_id, article_tts,article }: { article_i
   const getReadingStatusText = (audioState: AudioState) => {
     switch (audioState) {
       case 'idle':
-        return 'Read Aloud';
+        return t('Read Aloud');
       case 'generating':
-        return 'Generating...';
+        return t('Generating...');
       case 'playing':
-        return 'Reading...';
+        return t('Reading...');
       case 'paused':
         return 'Paused';
       case 'ready':
-        return 'Read Aloud';
+        return t('Read Aloud');
       case 'error':
         return 'Error';
       default:
-        return 'Read Aloud';
+        return t('Read Aloud');
     }
   };
 

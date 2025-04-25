@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import './ExpiredToken.scss'
+import { t } from 'i18next'
 
 const ExpiredToken: React.FC = () => {
     const navigate = useNavigate()
@@ -11,8 +12,8 @@ const ExpiredToken: React.FC = () => {
 
   return (
       <div className='expired__container'>
-          <h2> Token has Expired </h2>
-          <button onClick={handleLogin}> Login</button>
+          <h2> {t("Token has Expired")} </h2>
+          <button onClick={handleLogin}> {t("Login")}</button>
      </div>
   )
 }

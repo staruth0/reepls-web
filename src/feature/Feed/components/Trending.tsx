@@ -44,11 +44,11 @@ const Trending: React.FC = () => {
             isExpanded ? "rotate-90" : ""
           }`}
         />
-      </div>: <p className="text-[13px]">No Trending Topics avaliable</p>}</>}
+      </div>: <p className="text-[13px]">{t("No Trending Topics avaliable")}</p>}</>}
 
       <div>
         <div className="text-neutral-50 mt-1 font-semibold text-[15px]">
-          REEPLS SUGGESTIONS
+          {t('REEPLS SUGGESTIONS')}
         </div>
         <AuthorSuggestions />
       </div>
