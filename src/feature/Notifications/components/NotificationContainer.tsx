@@ -3,6 +3,7 @@ import { thumb } from '../../../assets/icons';
 import { useUpdateNotificationReadStatus } from '../hooks/useNotification';
 import { useGetUserById } from '../../Profile/hooks';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 interface PostNotificationProps {
   username: string;
@@ -10,6 +11,8 @@ interface PostNotificationProps {
   communique: string;
   is_read: boolean;
   id: string;
+  slug:string
+  article_id:string
 }
 
 const PostNotificationContainer: React.FC<PostNotificationProps> = ({
@@ -17,13 +20,17 @@ const PostNotificationContainer: React.FC<PostNotificationProps> = ({
   timestamp,
   communique,
   is_read,
-  id
+  id,
+  slug,
+  article_id
 }) => {
   const { user } = useGetUserById(username);
   const { mutate } = useUpdateNotificationReadStatus();
   const { t } = useTranslation();
+  const navigate = useNavigate()
 
   const updateStatus = () => {
+    navigate(`${slug?`/posts/article/slug/${slug}`:`/posts/post/${article_id}` }`)
     mutate({ notificationId: id, isRead: true }, {
       onSuccess: () => {
         console.log('success read');

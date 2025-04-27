@@ -8,6 +8,7 @@ export interface Notification {
   sender_id: string; 
   receiver_id: string | string[]; 
   created_at:Date;
+  slug:string;
   is_read:boolean;
   content: string; 
   timestamp?: Date; 

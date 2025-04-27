@@ -3,6 +3,7 @@ import { thumb } from '../../../assets/icons';
 import { useGetUserById } from '../../Profile/hooks';
 import { useUpdateNotificationReadStatus } from '../hooks/useNotification';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 interface FollowNotificationProps {
   username: string;
@@ -20,8 +21,10 @@ const FollowNotificationContainer: React.FC<FollowNotificationProps> = ({
   const { user } = useGetUserById(username);
   const { mutate } = useUpdateNotificationReadStatus();
   const { t } = useTranslation();
+  const navigate = useNavigate()
 
   const updateStatus = () => {
+    navigate(`/profile/${username}`)
     mutate({ notificationId: id, isRead: true }, {
       onSuccess: () => {
         console.log('success read');

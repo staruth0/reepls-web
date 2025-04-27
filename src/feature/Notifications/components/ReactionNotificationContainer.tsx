@@ -2,6 +2,7 @@ import React from 'react';
 import { thumb } from '../../../assets/icons';
 import { useGetUserById } from '../../Profile/hooks';
 import { useUpdateNotificationReadStatus } from '../hooks/useNotification';
+import { useNavigate } from 'react-router-dom';
 
 
 interface ReactionNotificationProps {
@@ -10,6 +11,8 @@ interface ReactionNotificationProps {
   postSnippet: string;
   is_read: boolean;
   id: string;
+  slug:string;
+  article_id:string
 }
 
 const ReactionNotificationContainer: React.FC<ReactionNotificationProps> = ({ 
@@ -17,12 +20,16 @@ const ReactionNotificationContainer: React.FC<ReactionNotificationProps> = ({
   timestamp, 
   postSnippet, 
   is_read, 
-  id 
+  id ,
+  slug,
+  article_id
 }) => {
   const { user } = useGetUserById(username);
   const { mutate } = useUpdateNotificationReadStatus();
+  const navigate = useNavigate();
 
   const updateStatus = () => {
+     navigate(`${slug?`/posts/article/slug/${slug}`:`/posts/post/${article_id}` }`)
     mutate({ notificationId: id, isRead: true }, {
       onSuccess: () => {
         console.log('success read');
