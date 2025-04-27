@@ -33,7 +33,7 @@ const Notifications: React.FC = () => {
         <div className="notification__content mt-8 mb-10 md:px-10 lg:px-20 px-5">
           <div className="mt-6 flex flex-col gap-5">
             {notifications.map((notification, index) => {
-              const { type, sender_id, content, created_at,is_read,_id } = notification;
+              const { type, sender_id, content, created_at,is_read,_id ,slug,article_id} = notification;
 
             
               switch (type) {
@@ -56,6 +56,8 @@ const Notifications: React.FC = () => {
                       comment={content}
                       is_read={is_read}
                       id={_id}
+                      slug={slug}
+                      article_id={article_id!}
                     />
                   );
                 case 'reaction':
@@ -67,6 +69,8 @@ const Notifications: React.FC = () => {
                       postSnippet={content}
                       is_read={is_read}
                       id={_id}
+                      slug={slug}
+                      article_id={article_id!}
                     />
                   );
                 case 'post':
@@ -78,6 +82,8 @@ const Notifications: React.FC = () => {
                       communique={content}
                       is_read={is_read}
                       id={_id}
+                      slug={slug}
+                      article_id={article_id!}
                     />
                   );
                 default:

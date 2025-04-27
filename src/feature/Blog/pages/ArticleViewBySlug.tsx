@@ -16,7 +16,7 @@ import { useGetArticleReactions } from '../../Interactions/hooks';
 import { useGetSavedArticles, useRemoveSavedArticle, useSaveArticle } from '../../Saved/hooks';
 import ReactionModal from '../components/BlogReactionModal';
 import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
-import { useGetArticleBySlug } from '../hooks/useArticleHook';
+import { useGetArticleById, useGetArticleBySlug } from '../hooks/useArticleHook';
 import useDraft from '../hooks/useDraft';
 import '../styles/view.scss';
 import ArticleViewSkeleton from './ArticleViewSkeleton';
@@ -25,7 +25,7 @@ import ReactionsPopup from '../../Interactions/components/ReactionsPopup';
 
 const ArticleViewBySlug: React.FC = () => {
   const navigate = useNavigate();
-  const { articleUid, slug } = useParams();
+  const { articleUid,id, slug } = useParams();
   const { authUser, isLoggedIn } = useUser();
   const commentSectionRef = useRef<HTMLDivElement>(null);
 
@@ -47,11 +47,14 @@ const ArticleViewBySlug: React.FC = () => {
   const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
   const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
   const { data: followings } = useGetFollowing(authUser?.id || '');
-  const { data: article, isError, isPending } = useGetArticleBySlug(slug!);
+  const { data: articleslug, isError, isPending } = useGetArticleBySlug(slug!);
+  const {data:articleid} = useGetArticleById(id!)
+
+  const article = slug? articleslug: articleid;
   const { data: allReactions } = useGetArticleReactions(article?._id || '');
   const [showReactionsHoverPopup, setShowReactionsHoverPopup] = useState<boolean>(false);
 
-  const articleUrl = `${window.location.origin}/posts/article/${slug}`;
+  const articleUrl = `${window.location.origin}/posts/article/slug/${slug}`;
   const articleTitle = title || content.split(' ').slice(0, 10).join(' ') + '...';
 
   const [isCommentSectionOpen, setIsCommentSectionOpen] = useState<boolean>(true);

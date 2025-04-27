@@ -65,6 +65,7 @@ export const ArticleAudioControls = ({ article }: { article: Article }) => {
       } catch (error) {
         setAudioState('error');
         toast.error(t('Failed to generate audio'));
+        console.log(error)
       }
       return;
     }
@@ -123,7 +124,8 @@ export const ArticleAudioControls = ({ article }: { article: Article }) => {
 const generateTTS = async (articleId: string): Promise<string | null> => {
   try {
     const { data } = await apiClient.get(`/tts/${articleId}`);
-    return data?.audioUrl || null;
+    console.log('tts',data?.ttsResult?.audioUrl)
+    return data?.ttsResult?.audioUrl || null;
   } catch (error) {
     console.error('Error generating TTS:', error);
     return null;

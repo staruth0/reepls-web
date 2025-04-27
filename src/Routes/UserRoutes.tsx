@@ -119,6 +119,10 @@ const UserRoutes = {
       element: <ArticleViewBySlug />,
     },
     {
+      path: '/posts/article/slug/:id',
+      element: <ArticleViewBySlug />,
+    },
+    {
       path: '/posts/communique/:id',
       element: <CommuniqueDetail />,
     },

@@ -10,7 +10,7 @@ interface PostDetailProps {
 
 const PostDetail:React.FC<PostDetailProps> = ({content, title}) => {
   return (
-    <div className="w-[580px] px-5 flex flex-col gap-4">
+    <div className="w-[620px] px-5 flex flex-col gap-4">
       <h1 className="font-roboto font-bold text-xl px-1">
         {title}
       </h1>

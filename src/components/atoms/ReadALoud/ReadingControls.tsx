@@ -190,7 +190,7 @@ export const ReadingControls = ({ article_id, article_tts,article }: { article_i
 const generateTTS = async (articleId: string): Promise<string | null> => {
   try {
     const { data } = await apiClient.get(`/tts/${articleId}`);
-    return data?.audioUrl || null;
+       return data?.ttsResult?.audioUrl || null;
   } catch (error) {
     console.error('Error generating TTS:', error);
     return null;
