@@ -1,9 +1,10 @@
-import React from 'react';
-import { thumb } from '../../../assets/icons';
-import { useUpdateNotificationReadStatus } from '../hooks/useNotification';
-import { useGetUserById } from '../../Profile/hooks';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+// import { thumb } from "../../../assets/icons";
+import { useUpdateNotificationReadStatus } from "../hooks/useNotification";
+import { useGetUserById } from "../../Profile/hooks";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { LuFile } from "react-icons/lu";
 
 interface PostNotificationProps {
   username: string;
@@ -11,8 +12,8 @@ interface PostNotificationProps {
   communique: string;
   is_read: boolean;
   id: string;
-  slug:string
-  article_id:string
+  slug: string;
+  article_id: string;
 }
 
 const PostNotificationContainer: React.FC<PostNotificationProps> = ({
@@ -22,20 +23,25 @@ const PostNotificationContainer: React.FC<PostNotificationProps> = ({
   is_read,
   id,
   slug,
-  article_id
+  article_id,
 }) => {
   const { user } = useGetUserById(username);
   const { mutate } = useUpdateNotificationReadStatus();
   const { t } = useTranslation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const updateStatus = () => {
-    navigate(`${slug?`/posts/article/slug/${slug}`:`/posts/post/${article_id}` }`)
-    mutate({ notificationId: id, isRead: true }, {
-      onSuccess: () => {
-        console.log('success read');
+    navigate(
+      `${slug ? `/posts/article/slug/${slug}` : `/posts/post/${article_id}`}`
+    );
+    mutate(
+      { notificationId: id, isRead: true },
+      {
+        onSuccess: () => {
+          console.log("success read");
+        },
       }
-    });
+    );
   };
 
   return (
@@ -47,31 +53,29 @@ const PostNotificationContainer: React.FC<PostNotificationProps> = ({
         border-b border-gray-200 dark:border-gray-700
        
         cursor-pointer
-        ${!is_read ? 'bg-gray-800/5' : ''}
+        ${!is_read ? "bg-gray-800/5" : ""}
       `}
     >
       <div className="flex-shrink-0">
-        <img 
-          src={thumb} 
-          alt="post" 
-          className="w-6 h-6 text-blue-500" 
-        />
+        <div className="w-7 h-7 rounded-full bg-primary-300 flex  items-center justify-center">
+          <LuFile className=" text-white" />
+        </div>
       </div>
-      
+
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline justify-between gap-2 mb-1">
-          <span className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+          <span className="text-sm font-bold text-neutral-100  truncate">
             {user?.username}
           </span>
-          <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+          <span className="text-xs text-neutral-200 whitespace-nowrap">
             {timestamp}
           </span>
         </div>
-        
-        <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+
+        <p className="text-sm text-neutral-200  mb-1">
           {t("notification.communique")}
         </p>
-        
+
         <div className="text-sm text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700/50 rounded px-3 py-2">
           {communique}
         </div>
