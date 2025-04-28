@@ -6,6 +6,7 @@ import {
   sendNewArticleNotification,
   fetchUserNotifications,
   updateNotificationReadStatus,
+  fetchVapidPublicKey,
 } from "../api";
 
 // Hook to fetch user notifications
@@ -75,6 +76,7 @@ export const useSendNewArticleNotification = () => {
     mutationFn: sendNewArticleNotification,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userNotifications"] });
+       queryClient.invalidateQueries({ queryKey: ['articles'] });
     },
   });
 };
@@ -88,5 +90,14 @@ export const useUpdateNotificationReadStatus = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userNotifications"] });
     },
+  });
+};
+
+
+// React Query hook to manage fetching the VAPID public key
+export const useFetchVapidPublicKey = () => {
+  return useQuery({
+    queryKey: ['vapidPublicKey'],
+    queryFn: fetchVapidPublicKey,
   });
 };

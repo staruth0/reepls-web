@@ -17,7 +17,7 @@ import { toast } from 'react-toastify';
 import { MAX_IMAGE_COUNT, MAX_VIDEO_COUNT } from '../../../constants';
 import { SidebarContext } from '../../../context/SidebarContext/SidebarContext';
 import PostModal from '../../../feature/Blog/components/PostModal';
-import { useCreateArticle } from '../../../feature/Blog/hooks/useArticleHook';
+
 import { useUser } from '../../../hooks/useUser';
 import { Article, MediaItem, MediaType } from '../../../models/datamodels';
 import { cn } from '../../../utils';
@@ -27,6 +27,7 @@ import StarToggle from '../../../components/atoms/CommuniqueBtn';
 import './sidebar.scss';
 import { useNotificationsValues } from '../../../feature/Notifications/hooks';
 import { commuLeft } from '../../../assets/icons';
+import { useSendNewArticleNotification } from '../../../feature/Notifications/hooks/useNotification';
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ const Sidebar: React.FC = () => {
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
   const [isCommunique, setIsCommunique] = useState<boolean>(false);
   const { t } = useTranslation();
-  const { mutate: createPost, isPending } = useCreateArticle();
+  const { mutate: createPost, isPending } = useSendNewArticleNotification();
   const { isOpen, toggleSidebar } = useContext(SidebarContext);
 
   const {notifications} = useNotificationsValues();

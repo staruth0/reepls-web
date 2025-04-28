@@ -1,3 +1,4 @@
+import { Article } from "../../../models/datamodels";
 import { apiClient } from "../../../services/apiClient";
 
 // Send a reaction notification
@@ -26,14 +27,7 @@ export const sendFollowNotification = async (payload: { receiver_id: string }) =
 };
 
 // Send a new article notification
-export const sendNewArticleNotification = async (payload: {
-  title: string;
-  subtitle: string;
-  content: string;
-  htmlContent: string;
-  isArticle: boolean;
-  media: { url: string; type: string }[];
-}) => {
+export const sendNewArticleNotification = async (payload:Article) => {
   const { data } = await apiClient.post("/notification/new-article", payload);
   return data;
 };
@@ -52,5 +46,11 @@ export const updateNotificationReadStatus = async (
   const { data } = await apiClient.patch(
     `/notification/${notificationId}/read-status?isRead=${isRead}`
   );
+  return data;
+};
+
+export const fetchVapidPublicKey = async () => {
+  console.log("Fetching VAPID public key");
+  const { data } = await apiClient.get('/push-notification/vapidPublicKey');
   return data;
 };
