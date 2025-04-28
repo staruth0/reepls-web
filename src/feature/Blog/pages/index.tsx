@@ -12,8 +12,9 @@ import AuthPromptPopup from '../../AnonymousUser/components/AuthPromtPopup';
 import CreatePostTopBar from '../components/CreatePostTopBar';
 import ImageSection from '../components/ImageSection';
 import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
-import { useCreateArticle } from '../hooks/useArticleHook';
+// import { useCreateArticle } from '../hooks/useArticleHook';
 import useDraft from '../hooks/useDraft';
+import { useSendNewArticleNotification } from '../../Notifications/hooks/useNotification';
 
 const CreatePost: React.FC = () => {
   const { authUser, isLoggedIn } = useUser();
@@ -25,7 +26,7 @@ const CreatePost: React.FC = () => {
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [isCommunique, setIsCommunique] = useState<boolean>(false);
   const { saveDraftArticle, loadDraftArticle, clearDraftArticle } = useDraft();
-  const { mutate: createArticle } = useCreateArticle();
+  const { mutate: createArticle } = useSendNewArticleNotification();
   const [initialEditorContent, setInitialEditorContent] = useState<{
     title: string;
     subtitle: string;
