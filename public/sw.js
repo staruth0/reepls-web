@@ -13,10 +13,18 @@ self.addEventListener("push", (event) => {
 
 // Handle the 'notificationclick' event when the user clicks on the notification
 self.addEventListener('notificationclick', (event) => {
-  event.notification.close(); // Close the notification popup
-  const notificationData = event.notification.data; // Access stored data (e.g., URL)
+  event.notification.close();
+  const notificationData = event.notification.data;
+
   if (notificationData && notificationData.url) {
-    // Open the URL stored in the notification
-    clients.openWindow(`${notificationData.url}`);
+    let finalUrl = notificationData.url;
+
+    // If the URL does not start with http or https, assume it's relative
+    if (!/^https?:\/\//i.test(finalUrl)) {
+      finalUrl = self.location.origin + finalUrl;
+    }
+
+    // Open the absolute URL
+    event.waitUntil(clients.openWindow(finalUrl));
   }
 });
