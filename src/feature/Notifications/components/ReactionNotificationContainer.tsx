@@ -53,16 +53,16 @@ const ReactionNotificationContainer: React.FC<ReactionNotificationProps> = ({
         <img 
           src={thumb} 
           alt="reaction" 
-          className="w-6 h-6 text-blue-500" 
+          className="w-6 h-6" 
         />
       </div>
       
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline justify-between gap-2 mb-1">
-          <span className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+          <span className="text-sm font-bold text-neutral-100  truncate">
             {user?.name}
           </span>
-          <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+          <span className="text-xs text-neutral-200  whitespace-nowrap">
             {timestamp}
           </span>
         </div>

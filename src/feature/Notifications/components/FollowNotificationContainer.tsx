@@ -1,9 +1,10 @@
-import React from 'react';
-import { thumb } from '../../../assets/icons';
-import { useGetUserById } from '../../Profile/hooks';
-import { useUpdateNotificationReadStatus } from '../hooks/useNotification';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+// import { thumb } from "../../../assets/icons";
+import { useGetUserById } from "../../Profile/hooks";
+import { useUpdateNotificationReadStatus } from "../hooks/useNotification";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { LucideUser } from "lucide-react";
 
 interface FollowNotificationProps {
   username: string;
@@ -16,20 +17,23 @@ const FollowNotificationContainer: React.FC<FollowNotificationProps> = ({
   username,
   timestamp,
   is_read,
-  id
+  id,
 }) => {
   const { user } = useGetUserById(username);
   const { mutate } = useUpdateNotificationReadStatus();
   const { t } = useTranslation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const updateStatus = () => {
-    navigate(`/profile/${username}`)
-    mutate({ notificationId: id, isRead: true }, {
-      onSuccess: () => {
-        console.log('success read');
+    navigate(`/profile/${username}`);
+    mutate(
+      { notificationId: id, isRead: true },
+      {
+        onSuccess: () => {
+          console.log("success read");
+        },
       }
-    });
+    );
   };
 
   return (
@@ -41,28 +45,26 @@ const FollowNotificationContainer: React.FC<FollowNotificationProps> = ({
         border-b border-gray-200 dark:border-gray-700
      
         cursor-pointer
-        ${!is_read ? 'bg-gray-800/5' : ''}
+        ${!is_read ? "bg-gray-800/5" : ""}
       `}
     >
       <div className="flex-shrink-0">
-        <img 
-          src={thumb} 
-          alt="follow" 
-          className="w-6 h-6 text-blue-500" 
-        />
+        <div className="w-7 h-7 rounded-full bg-primary-300 flex items-center justify-center p-1">
+          <LucideUser className=" text-white" />
+        </div>
       </div>
-      
+
       <div className="flex-1 flex items-center justify-between min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+          <span className="text-sm font-bold text-neutral-100  truncate">
             {user?.username}
           </span>
-          <span className="text-sm text-gray-600 dark:text-gray-300">
+          <span className="text-sm text-neutral-100 truncate">
             {t("notification.followedYou")}
           </span>
         </div>
-        
-        <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+
+        <span className="text-xs text-neutral-200 whitespace-nowrap">
           {timestamp}
         </span>
       </div>
