@@ -19,6 +19,14 @@ function App() {
   const { data } = useFetchVapidPublicKey();
   const {authUser} = useUser();
 
+  function urlBase64ToUint8Array(base64String:string) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+}
+
+
   // Set the theme of the app based on the user's preferences
   useEffect(() => {
     document.body.className = theme === 'dark' ? 'dark-theme' : ''; // Apply dark theme if selected
@@ -26,6 +34,7 @@ function App() {
 
   // Register the service worker when the app loads
   useEffect(() => {
+    console.log('vapiddata',data);
     if ('serviceWorker' in navigator && 'PushManager' in window) {
       // Check if Service Worker and PushManager are supported by the browser
       navigator.serviceWorker
@@ -39,7 +48,7 @@ function App() {
           console.error('Service Worker Error:', error); // Log error if the Service Worker fails to register
         });
     }
-  }, []); // Empty dependency array ensures this runs only once when the app loads
+  }, [data]); // Empty dependency array ensures this runs only once when the app loads
 
   // Function to subscribe to push notifications
   const subscribeToPush = async () => {
@@ -48,19 +57,20 @@ function App() {
     // Subscribe the user to push notifications
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true, // Ensures notifications are always visible to the user
-      applicationServerKey: data.publicVapid, // VAPID public key to authenticate requests
+      applicationServerKey: urlBase64ToUint8Array(data.publicVapid), // VAPID public key to authenticate requests
     });
 
     // Extract the required subscription details
-    const subscriptionData = {
-      endpoint: subscription.endpoint, // The push service endpoint
-      expirationTime: 20000, // Matching the format from the image
-      keys: {
-        p256dh: 'string',
-        auth: 'string' 
-      },
-      userId: `${authUser.id}`,
-    };
+ const subscriptionData = {
+  endpoint: subscription.endpoint,
+  expirationTime: 20000,
+  keys: {
+    p256dh: subscription.toJSON().keys?.p256dh || '',
+    auth: subscription.toJSON().keys?.auth || '',
+  },
+  userId: `${authUser.id}`,
+};
+
 
     try {
       // Send subscription object to the backend
@@ -73,21 +83,21 @@ function App() {
 
   return (
     <>
-      {/* RouterProvider renders the appropriate routes for the app */}
+  
       <RouterProvider router={router} />
-      {/* ToastContainer is used for in-app toast notifications */}
+     
       <ToastContainer
-        position="top-right" // Position of toast notifications
-        autoClose={5000} // Auto dismiss after 5 seconds
+        position="top-right" 
+        autoClose={5000} 
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick={false}
-        rtl={false} // Left-to-right layout
+        rtl={false} 
         pauseOnFocusLoss
-        draggable // Toasts are draggable
+        draggable
         pauseOnHover
-        theme={theme} // Toast follows current theme (light/dark)
-        transition={Bounce} // Adds a bounce effect to toasts
+        theme={theme}
+        transition={Bounce} 
       />
     </>
   );
