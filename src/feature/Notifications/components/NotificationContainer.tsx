@@ -2,7 +2,6 @@ import React from "react";
 // import { thumb } from "../../../assets/icons";
 import { useUpdateNotificationReadStatus } from "../hooks/useNotification";
 import { useGetUserById } from "../../Profile/hooks";
-import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { LuFile } from "react-icons/lu";
 
@@ -27,7 +26,7 @@ const PostNotificationContainer: React.FC<PostNotificationProps> = ({
 }) => {
   const { user } = useGetUserById(username);
   const { mutate } = useUpdateNotificationReadStatus();
-  const { t } = useTranslation();
+
   const navigate = useNavigate();
 
   const updateStatus = () => {
@@ -51,7 +50,6 @@ const PostNotificationContainer: React.FC<PostNotificationProps> = ({
         flex p-4 gap-3 w-full
         transition-all duration-200
         border-b border-gray-200 dark:border-gray-700
-       
         cursor-pointer
         ${!is_read ? "bg-gray-800/5" : ""}
       `}
@@ -65,16 +63,14 @@ const PostNotificationContainer: React.FC<PostNotificationProps> = ({
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline justify-between gap-2 mb-1">
           <span className="text-sm font-bold text-neutral-100  truncate">
-            {user?.username}
+            {user?.name}
           </span>
           <span className="text-xs text-neutral-200 whitespace-nowrap">
             {timestamp}
           </span>
         </div>
 
-        <p className="text-sm text-neutral-200  mb-1">
-          {t("notification.communique")}
-        </p>
+       
 
         <div className="text-sm text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700/50 rounded px-3 py-2">
           {communique}

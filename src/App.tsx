@@ -35,6 +35,8 @@ function App() {
   // Register the service worker when the app loads
   useEffect(() => {
     console.log('vapiddata',data);
+    if (!data?.publicVapid || !authUser?.id) return;
+    
     if ('serviceWorker' in navigator && 'PushManager' in window) {
       // Check if Service Worker and PushManager are supported by the browser
       navigator.serviceWorker
@@ -53,6 +55,14 @@ function App() {
   // Function to subscribe to push notifications
   const subscribeToPush = async () => {
     const registration = await navigator.serviceWorker.ready; // Ensure Service Worker is ready
+
+     // Check if the user is already subscribed
+  const existingSubscription = await registration.pushManager.getSubscription();
+
+  if (existingSubscription) {
+    console.log('Already subscribed to push notifications.');
+    return; // Stop here to avoid duplicate subscriptions
+  }
 
     // Subscribe the user to push notifications
     const subscription = await registration.pushManager.subscribe({
