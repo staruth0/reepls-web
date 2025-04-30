@@ -3,7 +3,7 @@ import { LuHistory } from 'react-icons/lu';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import Tabs from '../../../components/molecules/Tabs/Tabs';
 import { useUser } from '../../../hooks/useUser';
-import { Article, Follow } from '../../../models/datamodels';
+import { Follow } from '../../../models/datamodels';
 import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
 import { useGetFollowing } from '../../Follow/hooks';
 import { useGetSavedArticles } from '../../Saved/hooks';
@@ -14,6 +14,20 @@ import { toast } from 'react-toastify'; // Added for toast notifications
 import SavedPostsContainer from '../Components/SavedPostsContaniner';
 import SavedArticlesContainer from '../Components/SavedArticleContainer';
 import { useTranslation } from 'react-i18next';
+
+interface Article {
+  id: string;
+  isArticle: boolean;
+  // Add other Article properties
+}
+
+interface SavedArticleWrapper {
+  article: Article;
+}
+
+interface SavedArticlesResponse {
+  articles: SavedArticleWrapper[];
+}
 
 const Bookmarks: React.FC = () => {
   const { authUser } = useUser();
@@ -62,12 +76,22 @@ const Bookmarks: React.FC = () => {
   }, [savedArticlesError, followingsError]);
 
   // Filter and separate saved articles into posts and articles
-  useEffect(() => {
-    if (!savedArticlesData) return;
-    console.log('saved articles', savedArticlesData);
-    setSavedPosts(savedArticlesData?.articles.filter((item: Article) => !item.isArticle) || []);
-    setSavedArticles(savedArticlesData?.articles.filter((item: Article) => item.isArticle) || []);
-  }, [savedArticlesData]);
+useEffect(() => {
+  if (!savedArticlesData) return;
+  console.log('saved articles', savedArticlesData);
+
+  const articles = (savedArticlesData as SavedArticlesResponse)?.articles || [];
+  setSavedPosts(
+    articles
+      .filter((item: SavedArticleWrapper) => item.article && !item.article.isArticle)
+      .map((item: SavedArticleWrapper) => item.article)
+  );
+  setSavedArticles(
+    articles
+      .filter((item: SavedArticleWrapper) => item.article && item.article.isArticle)
+      .map((item: SavedArticleWrapper) => item.article)
+  );
+}, [savedArticlesData]);
 
   useEffect(() => {
     setFollowings(followingsData?.data || []);
@@ -199,7 +223,7 @@ const Bookmarks: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="saved__authors bg-background px-6 py-4 hidden lg:block">
+      <div className="saved__authors bg-background px-6 py-4 hidden lg:block ">
         <p>{t("saved.topSavedAuthors")}</p>
         <div className="mt-10 flex flex-col gap-6">
           {isLoadingFollowings ? (
