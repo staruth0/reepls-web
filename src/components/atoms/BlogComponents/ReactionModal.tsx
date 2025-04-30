@@ -17,7 +17,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ isOpen, onClose, onReact 
     if (isOpen) {
       setIsVisible(true);
     } else {
-      setTimeout(() => setIsVisible(false), 300);
+      setTimeout(() => setIsVisible(false), 400);
     }
   }, [isOpen]);
 
