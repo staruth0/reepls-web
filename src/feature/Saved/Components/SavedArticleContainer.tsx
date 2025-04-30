@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Article } from '../../../models/datamodels';
 import BlogPost from '../../Blog/components/BlogPost';
 
@@ -7,6 +7,9 @@ interface SavedContainerProps {
 }
 
 const SavedArticlesContainer: React.FC<SavedContainerProps> = ({ articles }) => {
+  useEffect(()=>{
+    console.log('articles saved', articles)
+  },[articles])
   return (
     <>
       <div className="transition-all duration-300 ease-linear flex flex-col-reverse gap-7">

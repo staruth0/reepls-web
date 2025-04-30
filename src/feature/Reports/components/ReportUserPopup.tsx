@@ -60,7 +60,7 @@ const ReportUserPopup: React.FC<ReportUserPopupProps> = ({ username, userId, onC
         {/* Textarea */}
         <div className="mb-6">
           <textarea
-            className="w-full h-32 p-3 bg-neutral-900 border border-neutral-700 rounded-md text-neutral-50 placeholder-neutral-400 focus:outline-none focus:border-primary-400 resize-none"
+            className="w-full h-32 p-3 bg-neutral-900  border border-neutral-700 rounded-md text-neutral-400 placeholder-neutral-400 focus:outline-none focus:border-primary-400 resize-none"
             placeholder="Please describe why you are reporting this user..."
             value={reportText}
             onChange={(e) => setReportText(e.target.value)}
