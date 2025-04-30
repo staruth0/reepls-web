@@ -22,6 +22,7 @@ const StarToggle: React.FC<StarToggleProps> = ({ isCommunique, onToggle }) => {
   return (
     <div className="relative inline-block">
       <button
+        type="button"
         onClick={handleToggle}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

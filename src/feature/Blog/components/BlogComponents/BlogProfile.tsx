@@ -201,8 +201,8 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user, date, article_id,articl
 
   const getSaveStatusText = () => {
     if (!isLoggedIn) return t("blog.AddToSaved");
-    if (isSavePending) return t("blog.Saving");
-    if (isRemovePending) return t("blog.Removing");
+    if (isSavePending) return t("blog.saving");
+    if (isRemovePending) return t("blog.removing");
     return saved ? t("blog.UnsavePost") : t("blog.AddToSaved");
   };
 
