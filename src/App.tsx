@@ -32,25 +32,7 @@ function App() {
     document.body.className = theme === 'dark' ? 'dark-theme' : ''; // Apply dark theme if selected
   }, [theme]);
 
-  // Register the service worker when the app loads
-  useEffect(() => {
-    console.log('vapiddata',data);
-    if (!data?.publicVapid || !authUser?.id) return;
-    
-    if ('serviceWorker' in navigator && 'PushManager' in window) {
-      // Check if Service Worker and PushManager are supported by the browser
-      navigator.serviceWorker
-        .register('/sw.js') // Register the service worker file at '/sw.js'
-        .then((registration) => {
-          console.log('Service Worker Registered:', registration); // Logs successful registration
-          // Automatically subscribe to push notifications after Service Worker registers
-          subscribeToPush();
-        })
-        .catch((error) => {
-          console.error('Service Worker Error:', error); // Log error if the Service Worker fails to register
-        });
-    }
-  }, [data]); // Empty dependency array ensures this runs only once when the app loads
+
 
   // Function to subscribe to push notifications
   const subscribeToPush = async () => {
@@ -90,6 +72,26 @@ function App() {
       console.error('Subscription failed:', error); // Logs if the subscription fails
     }
   };
+
+    // Register the service worker when the app loads
+  useEffect(() => {
+    console.log('vapiddata',data);
+    if (!data?.publicVapid || !authUser?.id) return;
+    
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      // Check if Service Worker and PushManager are supported by the browser
+      navigator.serviceWorker
+        .register('/sw.js') // Register the service worker file at '/sw.js'
+        .then((registration) => {
+          console.log('Service Worker Registered:', registration); // Logs successful registration
+          // Automatically subscribe to push notifications after Service Worker registers
+          subscribeToPush();
+        })
+        .catch((error) => {
+          console.error('Service Worker Error:', error); // Log error if the Service Worker fails to register
+        });
+    }
+  }, [data,authUser?.id]); // Empty dependency array ensures this runs only once when the app loads
 
   return (
     <>
