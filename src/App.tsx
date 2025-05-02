@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { Bounce, ToastContainer } from 'react-toastify';
+import { Bounce, ToastContainer, toast } from 'react-toastify';
 import NotFound from './feature/NotFound';
 import useTheme from './hooks/useTheme';
 import './index.css';
@@ -14,90 +14,185 @@ import { useUser } from './hooks/useUser';
 // Setting up routes for your app
 const router = createBrowserRouter([WebRoutes, AuthRoutes, UserRoutes, { path: '*', element: <NotFound /> }]);
 
-function App() {
-  const { theme } = useTheme(); // Get the current theme (light/dark) of the app
-  const { data } = useFetchVapidPublicKey();
-  const {authUser} = useUser();
-
-  function urlBase64ToUint8Array(base64String:string) {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const rawData = window.atob(base64);
-  return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+// Type for subscription data
+interface SubscriptionData {
+  endpoint: string;
+  expirationTime: number | null;
+  keys: {
+    p256dh: string;
+    auth: string;
+  };
+  userId: string;
 }
 
+// Type for PushSubscription JSON result
+interface PushSubscriptionJSON {
+  endpoint: string;
+  expirationTime: number | null;
+  keys?: {
+    p256dh: string;
+    auth: string;
+  };
+}
+
+function App() {
+  const { theme } = useTheme(); // Get the current theme (light/dark) of the app
+  const { data, isLoading, error } = useFetchVapidPublicKey();
+  const { authUser } = useUser();
+  const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null);
+  const [permissionGranted, setPermissionGranted] = useState<boolean>(false);
+
+  // Convert the base64 VAPID key to UInt8Array format
+  function urlBase64ToUint8Array(base64String: string): Uint8Array {
+    if (!base64String) {
+      console.error('Invalid base64 string provided');
+      return new Uint8Array();
+    }
+    
+    try {
+      const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+      const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+      const rawData = window.atob(base64);
+      return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+    } catch (error) {
+      console.error('Error converting base64 to Uint8Array:', error);
+      return new Uint8Array();
+    }
+  }
 
   // Set the theme of the app based on the user's preferences
   useEffect(() => {
     document.body.className = theme === 'dark' ? 'dark-theme' : ''; // Apply dark theme if selected
   }, [theme]);
 
-
-
-  // Function to subscribe to push notifications
-  const subscribeToPush = async () => {
-    const registration = await navigator.serviceWorker.ready; // Ensure Service Worker is ready
-
-     // Check if the user is already subscribed
-  const existingSubscription = await registration.pushManager.getSubscription();
-
-  if (existingSubscription) {
-    console.log('Already subscribed to push notifications.');
-    return; // Stop here to avoid duplicate subscriptions
-  }
-
-    // Subscribe the user to push notifications
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true, // Ensures notifications are always visible to the user
-      applicationServerKey: urlBase64ToUint8Array(data.publicVapid), // VAPID public key to authenticate requests
-    });
-
-    // Extract the required subscription details
- const subscriptionData = {
-  endpoint: subscription.endpoint,
-  expirationTime: 20000,
-  keys: {
-    p256dh: subscription.toJSON().keys?.p256dh || '',
-    auth: subscription.toJSON().keys?.auth || '',
-  },
-  userId: `${authUser.id}`,
-};
-
-
-    try {
-      // Send subscription object to the backend
-      await apiClient.post('/push-notification/subscribe', subscriptionData); // Replace URL with your backend endpoint
-      console.log('Subscribed to push notifications!');
-    } catch (error) {
-      console.error('Subscription failed:', error); // Logs if the subscription fails
-    }
-  };
-
-    // Register the service worker when the app loads
+  // Register the service worker
   useEffect(() => {
-    console.log('vapiddata',data);
-    if (!data?.publicVapid || !authUser?.id) return;
-    
     if ('serviceWorker' in navigator && 'PushManager' in window) {
-      // Check if Service Worker and PushManager are supported by the browser
       navigator.serviceWorker
-        .register('/sw.js') // Register the service worker file at '/sw.js'
+        .register('/sw.js')
         .then((registration) => {
-          console.log('Service Worker Registered:', registration); // Logs successful registration
-          // Automatically subscribe to push notifications after Service Worker registers
-          subscribeToPush();
+          console.log('Service Worker Registered:', registration);
+          setSwRegistration(registration);
         })
         .catch((error) => {
-          console.error('Service Worker Error:', error); // Log error if the Service Worker fails to register
+          console.error('Service Worker Registration Failed:', error);
+          toast.error('Failed to enable notifications. Please try again later.');
         });
+    } else {
+      console.warn('Push notifications not supported in this browser');
     }
-  }, [data,authUser?.id]); // Empty dependency array ensures this runs only once when the app loads
+  }, []);
+
+  // Check notification permission
+  useEffect(() => {
+    const checkPermission = async () => {
+      if ('Notification' in window) {
+        const permission = Notification.permission;
+        setPermissionGranted(permission === 'granted');
+        
+        if (permission === 'denied') {
+          console.warn('Notification permission was denied');
+        }
+      }
+    };
+    
+    checkPermission();
+  }, []);
+
+  // Subscribe to push notifications
+  useEffect(() => {
+    const subscribeToPush = async () => {
+      // Only proceed if we have all the necessary data
+      if (!data?.publicVapid || !authUser?.id || !swRegistration || !permissionGranted) {
+        return;
+      }
+      
+      try {
+        // Check for existing subscription
+        const existingSubscription = await swRegistration.pushManager.getSubscription();
+        
+        if (existingSubscription) {
+          console.log('Already subscribed to push notifications');
+          
+          // Get the subscription as JSON
+          const subscriptionJSON = existingSubscription.toJSON() as PushSubscriptionJSON;
+          
+          // Optionally update the backend with the existing subscription
+          const subscriptionData: SubscriptionData = {
+            endpoint: existingSubscription.endpoint,
+            expirationTime: existingSubscription.expirationTime || null,
+            keys: {
+              p256dh: subscriptionJSON.keys?.p256dh || '',
+              auth: subscriptionJSON.keys?.auth || '',
+            },
+            userId: `${authUser.id}`,
+          };
+          
+          await apiClient.post('/push-notification/subscribe', subscriptionData);
+          console.log('Updated existing subscription with user ID');
+          return;
+        }
+        
+        // Request permission if not already granted
+        if (Notification.permission !== 'granted') {
+          const permission = await Notification.requestPermission();
+          if (permission !== 'granted') {
+            console.log('Notification permission denied');
+            return;
+          }
+          setPermissionGranted(true);
+        }
+        
+        // Subscribe the user with properly converted VAPID key
+        const applicationServerKey = urlBase64ToUint8Array(data.publicVapid);
+        
+        console.log('Attempting to subscribe with key:', data.publicVapid);
+        
+        const subscription = await swRegistration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: applicationServerKey,
+        });
+        
+        // Get the subscription as JSON
+        const subscriptionJSON = subscription.toJSON() as PushSubscriptionJSON;
+        
+        // Prepare subscription data for backend
+        const subscriptionData: SubscriptionData = {
+          endpoint: subscription.endpoint,
+          expirationTime: subscription.expirationTime || null,
+          keys: {
+            p256dh: subscriptionJSON.keys?.p256dh || '',
+            auth: subscriptionJSON.keys?.auth || '',
+          },
+          userId: `${authUser.id}`,
+        };
+        
+        // Send subscription to backend
+        await apiClient.post('/push-notification/subscribe', subscriptionData);
+        console.log('Successfully subscribed to push notifications');
+        toast.success('Notifications enabled successfully!');
+      } catch (error: any) {
+        console.error('Push subscription failed:', error);
+        toast.error('Failed to enable notifications: ' + (error.message || 'Unknown error'));
+      }
+    };
+    
+    subscribeToPush();
+  }, [data, authUser?.id, swRegistration, permissionGranted]);
+
+  // Show loading state or error if applicable
+  if (isLoading) {
+    console.log('Loading VAPID key...');
+  }
+  
+  if (error) {
+    console.error('Error fetching VAPID key:', error);
+  }
 
   return (
     <>
-  
       <RouterProvider router={router} />
-     
+      
       <ToastContainer
         position="top-right" 
         autoClose={5000} 

@@ -45,4 +45,25 @@ export const getSavedArticle = async ({ pageParam = 1 }) => {
   }
 };
 
-export { saveArticle, removeSavedArticle, getSavedArticles };
+// Update reading history for a specific article
+const updateReadingHistory = async (articleSlug:string) => {
+  console.log(`Updating reading history for article: ${articleSlug}`);
+  const { data } = await apiClient.patch(`/users/reading-history/${articleSlug}`);
+  return data;
+};
+
+// Get reading history for the user
+const getReadingHistory = async () => {
+  console.log("Fetching reading history for current user");
+  const { data } = await apiClient.get("/users/reading-history/fetch");
+  return data;
+};
+
+// Delete reading history for a specific article
+const deleteReadingHistory = async (articleSlug:string) => {
+  console.log(`Deleting reading history for article: ${articleSlug}`);
+  const { data } = await apiClient.delete(`/users/reading-history/${articleSlug}`);
+  return data;
+};
+
+export { saveArticle, removeSavedArticle, getSavedArticles,updateReadingHistory,getReadingHistory,deleteReadingHistory };

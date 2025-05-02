@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
-import { saveArticle, removeSavedArticle, getSavedArticles, getSavedArticle, getSavedPosts } from "../api";
+import { saveArticle, removeSavedArticle, getSavedArticles, getSavedArticle, getSavedPosts, getReadingHistory, updateReadingHistory, deleteReadingHistory } from "../api";
 
 export const useSaveArticle = () => {
   const queryClient = useQueryClient();
@@ -76,5 +76,35 @@ export const useGetSavedArticle = () => {
     },
     enabled: true, 
  
+  });
+};
+
+// Hook for updating reading history
+export const useUpdateReadingHistory = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (articleSlug:string) => updateReadingHistory(articleSlug),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["readingHistory"] });
+    },
+  });
+};
+
+// Hook for getting reading history
+export const useGetReadingHistory = () => {
+  return useQuery({
+    queryKey: ["readingHistory"],
+    queryFn: () => getReadingHistory(),
+  });
+};
+
+// Hook for deleting reading history
+export const useDeleteReadingHistory = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (articleSlug:string) => deleteReadingHistory(articleSlug),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["readingHistory"] });
+    },
   });
 };

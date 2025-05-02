@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react';
 import { Article } from '../../../models/datamodels';
-import BlogPost from '../../Blog/components/BlogPost';
+
 import { useTranslation } from 'react-i18next';
+import BlogPost from '../../Blog/components/BlogPost';
 
 // Saved Articles Container
 interface SavedArticlesContainerProps {
   articles: Article[];
 }
 
-const SavedArticlesContainer: React.FC<SavedArticlesContainerProps> = ({ articles }) => {
+const ReadingHistoryContainer: React.FC<SavedArticlesContainerProps> = ({ articles }) => {
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -30,4 +31,5 @@ const SavedArticlesContainer: React.FC<SavedArticlesContainerProps> = ({ article
   );
 };
 
-export default SavedArticlesContainer;
+export default ReadingHistoryContainer;
+

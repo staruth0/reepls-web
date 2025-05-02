@@ -13,7 +13,7 @@ import { timeAgo } from '../../../utils/dateFormater';
 import SignInPopUp from '../../AnonymousUser/components/SignInPopUp';
 import { useFollowUser, useGetFollowing, useUnfollowUser } from '../../Follow/hooks';
 import { useGetArticleReactions } from '../../Interactions/hooks';
-import { useGetSavedArticles, useRemoveSavedArticle, useSaveArticle } from '../../Saved/hooks';
+import { useGetSavedArticles, useRemoveSavedArticle, useSaveArticle, useUpdateReadingHistory } from '../../Saved/hooks';
 import ReactionModal from '../components/BlogReactionModal';
 import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
 import { useGetArticleById, useGetArticleBySlug } from '../hooks/useArticleHook';
@@ -58,6 +58,17 @@ const ArticleViewBySlug: React.FC = () => {
   const articleTitle = title || content.split(' ').slice(0, 10).join(' ') + '...';
 
   const [isCommentSectionOpen, setIsCommentSectionOpen] = useState<boolean>(true);
+   const { mutate } = useUpdateReadingHistory();
+  // Handle mutation and show toast on error
+  useEffect(() => {
+    if (slug) {
+      mutate(slug, {
+        onError: () => {
+          toast.error('error adding article to reading history');
+        },
+      });
+    }
+  }, [slug, mutate]);
 
   const toggleCommentSection2 = () => {
     setIsCommentSectionOpen(true);
