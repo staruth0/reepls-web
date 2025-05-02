@@ -1,104 +1,213 @@
-// Listen for the 'push' event triggered when a notification is received
-self.addEventListener("push", (event) => {
+// Handle push notifications
+self.addEventListener('push', event => {
   try {
-    const data = event.data.json(); // Extract the payload sent from the backend
-    console.log('Push event received:', data);
+    const data = event.data.json();
     
-    // Display the notification to the user
+    const options = {
+      body: data.body,
+      icon: `/Logo.svg`, // Add your app icon
+      data: data.data || {} // Pass through all the data from the payload
+    };
+
+    // Add vibration pattern for different notification types
+    if (data.data && data.data.type) {
+      switch (data.data.type) {
+        case 'follow':
+          options.vibrate = [100, 50, 100];
+          break;
+        case 'reaction':
+          options.vibrate = [100, 30, 100, 30, 100];
+          break;
+        case 'comment':
+        case 'comment-reply':
+          options.vibrate = [200, 100, 200];
+          break;
+        default:
+          options.vibrate = [100, 50, 100];
+      }
+    }
+
+    // You can customize notification appearance based on type
+    if (data.data) {
+      // Add actions based on notification type
+      switch (data.data.type) {
+        case 'follow':
+          options.actions = [
+            {
+              action: 'view-profile',
+              title: 'View Profile'
+            }
+          ];
+          break;
+        case 'reaction':
+        case 'comment':
+        case 'comment-reply':
+          options.actions = [
+            {
+              action: 'view-post',
+              title: 'View Post'
+            }
+          ];
+          break;
+      }
+    }
+
     event.waitUntil(
-      self.registration.showNotification(data.title, {
-        body: data.body, // Notification body text
-        icon: `/Logo.svg`, // Icon for the notification
-        data: { url: data.url }, // Store a URL in the notification for later use
-        badge: '/badge-icon.png', // Small icon for Android
-        vibrate: [100, 50, 100], // Vibration pattern for devices that support it
-      })
+      self.registration.showNotification(data.title, options)
     );
   } catch (error) {
     console.error('Error processing push notification:', error);
   }
 });
 
-// Handle the 'notificationclick' event when the user clicks on the notification
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  
+// Handle notification click
+self.addEventListener('notificationclick', event => {
   try {
-    const notificationData = event.notification.data;
-    console.log('Notification clicked with data:', notificationData);
+    const notification = event.notification;
+    const data = notification.data;
+    const action = event.action;
     
-    if (notificationData && notificationData.url) {
-      let finalUrl = notificationData.url;
+    // Close the notification
+    notification.close();
+    
+    // Determine the URL to open based on the notification type and action
+    let url = '/';
+    
+    // Fix the URL format - the URLs in your payloads are missing quotes and need to be treated as template strings
+    const fixUrl = (urlString) => {
+      if (!urlString) return '/';
       
-      // The backend might be sending an object instead of a string due to missing quotes
-      // Check if the URL isn't a string and convert it to a string
-      if (typeof finalUrl !== 'string') {
-        console.warn('URL is not a string:', finalUrl);
-        finalUrl = String(finalUrl);
-      }
-      
-      // Clean up any extra spaces that might be in the URL
-      finalUrl = finalUrl.trim();
-      
-      // If the URL contains template variables (${...}) that weren't processed
-      // Just extract the base path as a fallback
-      if (finalUrl.includes('${')) {
-        console.warn('Unprocessed template variables found in URL:', finalUrl);
-        // Extract just the base path before the template variable
-        finalUrl = finalUrl.split('${')[0];
-        // Remove trailing slash if present
-        finalUrl = finalUrl.endsWith('/') ? finalUrl.slice(0, -1) : finalUrl;
-      }
-      
-      // If the URL does not start with http or https, assume it's relative
-      if (!/^https?:\/\//i.test(finalUrl)) {
-        // Ensure we don't have double slashes in the path
-        if (finalUrl.startsWith('/')) {
-          finalUrl = self.location.origin + finalUrl;
-        } else {
-          finalUrl = self.location.origin + '/' + finalUrl;
+      // Handle template string formats like /posts/article/slug/${article.slug}
+      if (urlString.includes('${')) {
+        // For demonstration, extract the path pattern before the variable
+        const pathPattern = urlString.split('${')[0];
+        // Extract the variable name inside ${}
+        const varNameWithEnd = urlString.split('${')[1];
+        const varName = varNameWithEnd ? varNameWithEnd.split('}')[0] : '';
+        
+        // Use the corresponding data property if available
+        if (data[varName]) {
+          return `${pathPattern}${data[varName]}`;
+        } else if (varName.includes('.') && varName.split('.').length === 2) {
+          // Handle nested properties like article.slug
+          const [obj, prop] = varName.split('.');
+          if (data[obj] && data[obj][prop]) {
+            return `${pathPattern}${data[obj][prop]}`;
+          }
         }
       }
       
-      console.log('Opening URL:', finalUrl);
-      
-      // Open the URL in an existing window if available, or open a new one
-      event.waitUntil(
-        clients.matchAll({type: 'window'}).then(clientList => {
-          // If there's any open window, navigate it to the URL
-          for (const client of clientList) {
-            if ('navigate' in client && 'focus' in client) {
-              return client.navigate(finalUrl).then(client => client.focus());
+      // If the URL doesn't need processing or we can't process it, return as is
+      return urlString;
+    };
+    
+    // Make sure we have data
+    if (data) {
+      // Handle specific actions if clicked
+      if (action === 'view-profile' && data.type === 'follow') {
+        url = fixUrl(data.url);
+      } else if (action === 'view-post' && (data.type === 'reaction' || data.type === 'comment' || data.type === 'comment-reply')) {
+        url = fixUrl(data.url);
+      } else {
+        // Default click behavior based on notification type
+        switch (data.type) {
+          case 'follow':
+            url = fixUrl(data.url); // Format: /profile/${sender_name}
+            break;
+            
+          case 'reaction':
+            url = fixUrl(data.url); // Format: /posts/article/slug/${article.slug}
+            if (data.commentId) {
+              url += `#comment-${data.commentId}`;
             }
-          }
-          
-          // If no window is open or navigation failed, open a new one
-          return clients.openWindow(finalUrl);
-        }).catch(err => {
-          console.error('Error handling notification click:', err);
-          // Fallback: just try to open a new window
-          return clients.openWindow(finalUrl);
-        })
-      );
-    } else {
-      console.warn('Notification clicked but no URL was provided in the data');
-      
-      // If no URL in notification, at least focus on the app
-      event.waitUntil(
-        clients.matchAll({type: 'window'}).then(clientList => {
-          for (const client of clientList) {
-            if ('focus' in client) {
-              return client.focus();
+            break;
+            
+          case 'comment':
+            url = fixUrl(data.url); // Format: /posts/article/slug/${article.slug}
+            break;
+            
+          case 'comment-reply':
+            url = fixUrl(data.url); // Format: /posts/article/slug/${article.slug}
+            if (data.parentCommentId) {
+              url += `#comment-${data.parentCommentId}`;
             }
-          }
-          // If no client to focus, open the root of the app
-          return clients.openWindow(self.location.origin);
-        })
-      );
+            break;
+            
+          default:
+            // For new article posts or unspecified types
+            if (data.url) {
+              url = fixUrl(data.url);
+            } else if (data.articleSlug) {
+              url = `/posts/article/slug/${data.articleSlug}`;
+            }
+            break;
+        }
+      }
+
+      // If the URL was not properly processed or is missing, provide a fallback
+      if (!url || url === '/') {
+        if (data.articleSlug) {
+          url = `/posts/article/slug/${data.articleSlug}`;
+        }
+      }
     }
+    
+    // Ensure the URL starts with a slash for proper routing
+    if (url && !url.startsWith('/') && !url.startsWith('http')) {
+      url = `/${url}`;
+    }
+    
+    // Open the specific page when notification is clicked
+    event.waitUntil(
+      clients.matchAll({type: 'window'}).then(clientList => {
+        // Check if there's already a window/tab open with the target URL
+        for (const client of clientList) {
+          // Strip origin from client.url for comparison
+          const clientUrl = new URL(client.url).pathname;
+          // Remove leading slash for comparison if present
+          const normalizedClientUrl = clientUrl.startsWith('/') ? clientUrl.substring(1) : clientUrl;
+          const normalizedTargetUrl = url.startsWith('/') ? url.substring(1) : url;
+          
+          if (normalizedClientUrl.includes(normalizedTargetUrl) && 'focus' in client) {
+            return client.focus();
+          }
+        }
+        
+        // If no window/tab is open with the URL, open a new one
+        if (clients.openWindow) {
+          // Make sure the URL is valid and prepend origin if it's a relative path
+          if (url.startsWith('http')) {
+            return clients.openWindow(url);
+          } else {
+            // For relative URLs, we need to make them absolute
+            // Use self.registration.scope to get the base URL
+            const baseUrl = self.registration.scope;
+            // Remove leading slash if it exists to avoid double slashes
+            const relativeUrl = url.startsWith('/') ? url.substring(1) : url;
+            return clients.openWindow(`${baseUrl}${relativeUrl}`);
+          }
+        }
+      })
+    );
   } catch (error) {
-    console.error('Error in notification click handler:', error);
-    // Fallback - open the root app
-    event.waitUntil(clients.openWindow(self.location.origin));
+    console.error('Error handling notification click:', error);
+    // Fallback to opening the homepage
+    event.waitUntil(clients.openWindow('/'));
   }
+});
+
+// Handle notification action buttons (optional)
+self.addEventListener('notificationclose', event => {
+  // You could track notification close events here if desired
+  // console.log('Notification was closed', event.notification);
+});
+
+// Handle the installation of the service worker
+self.addEventListener('install', event => {
+  self.skipWaiting();
+});
+
+// Handle the activation of the service worker
+self.addEventListener('activate', event => {
+  event.waitUntil(clients.claim());
 });
