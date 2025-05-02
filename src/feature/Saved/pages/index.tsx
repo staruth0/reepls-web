@@ -6,7 +6,7 @@ import { useUser } from '../../../hooks/useUser';
 import { Follow } from '../../../models/datamodels';
 import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
 import { useGetFollowing } from '../../Follow/hooks';
-import { useGetSavedArticles } from '../../Saved/hooks';
+import { useGetReadingHistory, useGetSavedArticles } from '../../Saved/hooks';
 import AuthorComponent from '../Components/AuthorComponent';
 
 import AuthSkeletonComponent from '../../../components/atoms/AuthorComponentSkeleton';
@@ -14,6 +14,7 @@ import { toast } from 'react-toastify'; // Added for toast notifications
 import SavedPostsContainer from '../Components/SavedPostsContaniner';
 import SavedArticlesContainer from '../Components/SavedArticleContainer';
 import { useTranslation } from 'react-i18next';
+import ReadingHistoryContainer from '../Components/ReadingHistoryContainer';
 
 interface Article {
   id: string;
@@ -37,6 +38,7 @@ const Bookmarks: React.FC = () => {
   const [savedPosts, setSavedPosts] = useState<Article[]>([]);
   const [savedArticles, setSavedArticles] = useState<Article[]>([]);
   const [followings, setFollowings] = useState<Follow[]>([]);
+  const {data} = useGetReadingHistory(); 
 
   const {t} = useTranslation();
 
@@ -219,7 +221,11 @@ useEffect(() => {
                 <SavedArticlesContainer articles={savedArticles} />
               </div>
             )}
-            {activeTab === 'history' && <div>{t("saved.tabs.history")}</div>}
+            {activeTab === 'history' && (
+              <div className="pb-10">
+                <ReadingHistoryContainer articles={data.readArticles} />
+              </div>
+            )}
           </div>
         </div>
       </div>

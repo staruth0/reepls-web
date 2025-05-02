@@ -5,26 +5,158 @@ import useTheme from "../../../hooks/useTheme";
 import { VoiceLanguageContext } from "../../../context/VoiceLanguageContext/VoiceLanguageContext";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../hooks/useUser";
-// import { LuLoader } from "react-icons/lu";
+import { apiClient } from "../../../services/apiClient";
+import { toast } from "react-toastify";
+import { useFetchVapidPublicKey } from "../../../feature/Notifications/hooks/useNotification";
+
+// Type for subscription data
+interface SubscriptionData {
+  endpoint: string;
+  expirationTime: number | null;
+  keys: {
+    p256dh: string;
+    auth: string;
+  };
+  userId: string;
+}
+
+// Type for PushSubscription JSON result
+interface PushSubscriptionJSON {
+  endpoint: string;
+  expirationTime: number | null;
+  keys?: {
+    p256dh: string;
+    auth: string;
+  };
+}
 
 const ProfileConfigurations: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const [isVideoAutoPlay, setIsVideoAutoPlay] = useState<boolean>(false);
-  const [isExplicitContent, setIsExplicitContent] = useState<boolean>(false);
+  const [isNotificationsEnabled, setIsNotificationsEnabled] = useState<boolean>(false);
   const [showLanguageMenu, setShowLanguageMenu] = useState<boolean>(false);
   const [showLogoutPopup, setShowLogoutPopup] = useState<boolean>(false);
   const { t, i18n } = useTranslation();
-  const [voiceLanguages, setVoiceLanguages] = useState<SpeechSynthesisVoice[]>(
-    []
-  );
+  const [voiceLanguages, setVoiceLanguages] = useState<SpeechSynthesisVoice[]>([]);
   const { setVoiceLanguage } = useContext(VoiceLanguageContext);
   const navigate = useNavigate();
-  const { authUser,logout:manualLogout } = useUser();
+  const { authUser, logout: manualLogout } = useUser();
+  const { data: vapidData, isLoading: vapidLoading, error: vapidError } = useFetchVapidPublicKey();
+  const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null);
 
   const languages = [
     { code: "en", label: "English" },
     { code: "fr", label: "Français" },
   ];
+
+  // Convert base64 VAPID key to Uint8Array
+  const urlBase64ToUint8Array = (base64String: string): Uint8Array => {
+    if (!base64String) {
+      console.error('Invalid base64 string provided');
+      return new Uint8Array();
+    }
+    try {
+      const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+      const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+      const rawData = window.atob(base64);
+      return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+    } catch (error) {
+      console.error('Error converting base64 to Uint8Array:', error);
+      return new Uint8Array();
+    }
+  };
+
+  // Register service worker
+  useEffect(() => {
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      navigator.serviceWorker
+        .register('/sw.js')
+        .then((registration) => {
+          console.log('Service Worker Registered:', registration);
+          setSwRegistration(registration);
+        })
+        .catch((error) => {
+          console.error('Service Worker Registration Failed:', error);
+          toast.error(t('Failed to enable notifications. Please try again later.'));
+        });
+    } else {
+      console.warn('Push notifications not supported in this browser');
+    }
+  }, [t]);
+
+  // Check notification permission
+  useEffect(() => {
+    const checkPermission = async () => {
+      if ('Notification' in window) {
+        const permission = Notification.permission;
+        setIsNotificationsEnabled(permission === 'granted');
+        if (permission === 'denied') {
+          console.warn('Notification permission was denied');
+          toast.warn(t('Notifications are blocked. Please enable them in your browser settings.'));
+        }
+      }
+    };
+    checkPermission();
+  }, [t]);
+
+  // Handle notification toggle
+  const handleToggleNotifications = async () => {
+    if (!swRegistration || !vapidData?.publicVapid || !authUser?.id) {
+      toast.error(t('Cannot toggle notifications: Missing required data.'));
+      return;
+    }
+
+    if (isNotificationsEnabled) {
+      // Unsubscribe from notifications
+      try {
+        const subscription = await swRegistration.pushManager.getSubscription();
+        if (subscription) {
+          await subscription.unsubscribe();
+          await apiClient.post('/push-notification/unsubscribe', { endpoint: subscription.endpoint });
+          setIsNotificationsEnabled(false);
+          toast.success(t('Notifications disabled successfully!'));
+        }
+      } catch (error: any) {
+        console.error('Error unsubscribing from notifications:', error);
+        toast.error(t('Failed to disable notifications: ') + (error.message || 'Unknown error'));
+      }
+    } else {
+      // Subscribe to notifications
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+          console.log('Notification permission denied');
+          toast.warn(t('Notification permission denied.'));
+          return;
+        }
+
+        setIsNotificationsEnabled(true);
+        const applicationServerKey = urlBase64ToUint8Array(vapidData.publicVapid);
+        const subscription = await swRegistration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: applicationServerKey,
+        });
+
+        const subscriptionJSON = subscription.toJSON() as PushSubscriptionJSON;
+        const subscriptionData: SubscriptionData = {
+          endpoint: subscription.endpoint,
+          expirationTime: subscription.expirationTime || null,
+          keys: {
+            p256dh: subscriptionJSON.keys?.p256dh || '',
+            auth: subscriptionJSON.keys?.auth || '',
+          },
+          userId: `${authUser.id}`,
+        };
+
+        await apiClient.post('/push-notification/subscribe', subscriptionData);
+        console.log('Successfully subscribed to push notifications');
+        toast.success(t('Notifications enabled successfully!'));
+      } catch (error: any) {
+        console.error('Push subscription failed:', error);
+        toast.error(t('Failed to enable notifications: ') + (error.message || 'Unknown error'));
+      }
+    }
+  };
 
   const handleToggleTheme = () => {
     toggleTheme();
@@ -32,10 +164,6 @@ const ProfileConfigurations: React.FC = () => {
 
   const handleToggleAutoPlay = () => {
     setIsVideoAutoPlay(!isVideoAutoPlay);
-  };
-
-  const handleToggleExplicitContent = () => {
-    setIsExplicitContent(!isExplicitContent);
   };
 
   const handleLanguageChange = (language: string) => {
@@ -60,9 +188,9 @@ const ProfileConfigurations: React.FC = () => {
   };
 
   const handleConfirmLogout = () => {
-        manualLogout();
-        setShowLogoutPopup(false);
-        navigate('/auth');
+    manualLogout();
+    setShowLogoutPopup(false);
+    navigate('/auth');
   };
 
   const handleCancelLogout = () => {
@@ -114,6 +242,17 @@ const ProfileConfigurations: React.FC = () => {
       window.speechSynthesis.onvoiceschanged = null;
     };
   }, []);
+
+  // Handle VAPID key loading and errors
+  useEffect(() => {
+    if (vapidLoading) {
+      console.log('Loading VAPID key...');
+    }
+    if (vapidError) {
+      console.error('Error fetching VAPID key:', vapidError);
+      toast.error(t('Failed to load notification settings.'));
+    }
+  }, [vapidLoading, vapidError, t]);
 
   return (
     <div className="profile__configurations px-6 py-2 sticky top-0">
@@ -211,18 +350,18 @@ const ProfileConfigurations: React.FC = () => {
         </ConfigurationWrapper>
 
         <ConfigurationWrapper>
-          <div>{t(`profile.explicitContent`)}</div>
+          <div>{t(`profile.notifications`)}</div>
           <div className="flex gap-2 items-center">
-            {t(isExplicitContent ? "On" : "Off")}
+            {t(isNotificationsEnabled ? "On" : "Off")}
             <div
               className={`w-[40px] h-[20px] rounded-[2rem] flex items-center px-[2px] cursor-pointer transition-colors duration-300 ${
-                isExplicitContent ? "bg-primary-400" : "bg-gray-400"
+                isNotificationsEnabled ? "bg-primary-400" : "bg-gray-400"
               }`}
-              onClick={handleToggleExplicitContent}
+              onClick={handleToggleNotifications}
             >
               <div
                 className={`w-[18px] h-[18px] rounded-full bg-white shadow-md transform transition-transform duration-300 ${
-                  isExplicitContent ? "translate-x-[20px]" : "translate-x-0"
+                  isNotificationsEnabled ? "translate-x-[20px]" : "translate-x-0"
                 }`}
               ></div>
             </div>
@@ -295,18 +434,14 @@ const ProfileConfigurations: React.FC = () => {
               <button
                 className="px-8 py-2 bg-neutral-700 text-neutral-50 rounded-md hover:bg-neutral-600"
                 onClick={handleCancelLogout}
-          
               >
                 {t("No")}
               </button>
               <button
                 className="px-8 py-2 bg-red-500 text-neutral-50 rounded-md hover:bg-red-600"
                 onClick={handleConfirmLogout}
-       
               >
-                {
-                  t("Yes")
-                }
+                {t("Yes")}
               </button>
             </div>
           </div>
