@@ -1,4 +1,4 @@
-import { Bookmark, FilePen, MessageSquare, Share2, ThumbsUp } from 'lucide-react';
+import { Bookmark, FilePen, MessageSquare, Share2, ThumbsUp, ArrowLeft } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -74,6 +74,8 @@ const ArticleViewBySlug: React.FC = () => {
     setIsCommentSectionOpen(true);
   };
 
+  
+
   // Follow/Unfollow State Management
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   useEffect(() => {
@@ -138,6 +140,10 @@ const ArticleViewBySlug: React.FC = () => {
         onError: () => toast.error('Failed to save article'),
       });
     }
+  };
+
+  const handleGoBack = () => {
+    navigate(-1);
   };
 
   const handleShareClick = () => {
@@ -212,6 +218,13 @@ const ArticleViewBySlug: React.FC = () => {
           </div>
         ) : (
           <div className="max-w-4xl sm:px-10 mx-auto mt-10 flex flex-col justify-center items-left">
+            <button
+              onClick={handleGoBack}
+              className="flex items-center gap-2 text-neutral-100 md:hidden hover:text-neutral-200 mb-6 px-4 md:px-0"
+            >
+              <ArrowLeft className="size-5" />
+              <span>Back</span>
+            </button>
             {isPreview && (
               <div className="mb-4">
                 <span className="text-sm font-semibold px-4 py-1 bg-foreground text-primary-500 rounded-full flex gap-2 items-center">

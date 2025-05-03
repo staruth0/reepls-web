@@ -45,8 +45,8 @@ const ProfileConfigurations: React.FC = () => {
   const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null);
 
   const languages = [
-    { code: "en", label: "English" },
-    { code: "fr", label: "Français" },
+    { code: "en", label: t("English") },
+    { code: "fr", label: t("French") },
   ];
 
   // Convert base64 VAPID key to Uint8Array
