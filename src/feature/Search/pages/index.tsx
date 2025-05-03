@@ -98,6 +98,7 @@ const Search: React.FC = () => {
         <Topbar>
           <SearchTopBar />
         </Topbar>
+        
         <div className="px-5 md:px-10 lg:px-20 w-full flex flex-col">
           {!isSearchContainerOpen && (
             <div className="recent space-y-4 mt-8">
