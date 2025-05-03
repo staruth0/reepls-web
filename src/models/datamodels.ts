@@ -135,12 +135,12 @@ export interface Notification {
 }
 
 export interface Report {
-  report_id: string;
+  report_id?: string;
   article_id: string;
   reporter_id: string;
   reason: string;
-  status: 'Pending' | 'Resolved';
-  created_at: string;
+  status?: 'Pending' | 'Resolved';
+  created_at?: string;
 }
 
 export interface EmailCode {
