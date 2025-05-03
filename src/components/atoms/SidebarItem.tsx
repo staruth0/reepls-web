@@ -10,14 +10,16 @@ interface sidebarprops {
   name: string;
   isSidebarcollapsed: boolean;
   badgeContent?: number;
+  handleToggleSidebar: () => void;
 }
 
-const SidebarItem: React.FC<sidebarprops> = ({ NavItemIcon, name, link, isSidebarcollapsed, badgeContent }) => {
+const SidebarItem: React.FC<sidebarprops> = ({ NavItemIcon, name, link, isSidebarcollapsed, badgeContent, handleToggleSidebar }) => {
   const { t } = useTranslation();
 
   return (
     <NavLink
       to={link}
+      onClick={handleToggleSidebar}
       className={({ isActive }) =>
         cn('side__link', {
           active__link: isActive,

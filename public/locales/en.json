@@ -306,6 +306,8 @@
 
   "saved": {
     "title": "saved",
+    "noPosts": "No saved posts yet",
+    "noArticles": "No saved articles yet",
     "tabs": {
       "posts": "post",
       "articles": "articles",
@@ -360,6 +362,7 @@
     "noPosts": "We couldn't find any Posts.",
     "Cameroon": "Cameroon",
     "profile": "Profile",
+    "notifications": "Notifications",
     "name": "Name",
     "bio": "Bio",
     "enterName": "Enter your name",

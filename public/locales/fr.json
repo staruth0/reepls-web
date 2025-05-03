@@ -307,6 +307,8 @@
 
   "saved": {
     "title": "Enregistré",
+    "noPosts": "Aucun post enregistré",
+    "noArticles": "Aucun article enregistré",
     "tabs": {
       "posts": "Post",
       "articles": "Articles",
@@ -362,6 +364,7 @@
     "Cameroon": "Cameroun",
     "profile": "Profil",
     "name": "Nom",
+    "notifications": "Notifications",
     "bio": "Bio",
     "enterName": "Entrez votre nom",
     "changeUsername": "Changez votre nom d'utilisateur",
