@@ -1,10 +1,9 @@
-// SearchTopBar.tsx
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuSearch, LuX } from 'react-icons/lu';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useUser } from '../../../hooks/useUser';
-import { useGetSearchSuggestions } from '../hooks';
+import { useGetArticleTitles, useGetPostKeywords, useGetSearchSuggestions, useGetUserNames } from '../hooks';
 import SearchContainer from './SearchContainer';
 import { SearchContainerContext } from '../../../context/suggestionContainer/isSearchcontainer';
 
@@ -16,6 +15,9 @@ const SearchTopBar: React.FC<{ initialSearchTerm?: string }> = ({ initialSearchT
   const [searchTerm, setSearchTerm] = useState<string>(initialSearchTerm || query || '');
   const navigate = useNavigate();
   const { authUser } = useUser();
+  const { data: titlesData } = useGetArticleTitles();
+  const { data: keywordsData } = useGetPostKeywords();
+  const { data: userNames } = useGetUserNames();
   const { data } = useGetSearchSuggestions(authUser?.id || '');
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,11 +46,21 @@ const SearchTopBar: React.FC<{ initialSearchTerm?: string }> = ({ initialSearchT
     }
   };
 
-  const filteredSearchHistory = useMemo(() => {
-    if (!data?.searchHistory || !searchTerm.trim()) return [];
+  const filteredSuggestions = useMemo(() => {
+    if (!searchTerm.trim()) return [];
+
     const regex = new RegExp(searchTerm.trim(), 'i');
-    return data.searchHistory.filter((historyItem: string) => regex.test(historyItem));
-  }, [data?.searchHistory, searchTerm]);
+
+    // Combine search history, titles, and keywords
+    const allSuggestions = [
+      ...(data?.searchHistory || []),
+      ...(titlesData?.titles || []),
+      ...(keywordsData?.keywords || []),
+      ...(userNames?.name || [])
+    ];
+
+    return allSuggestions.filter((item: string) => regex.test(item));
+  }, [data?.searchHistory, titlesData?.titles, keywordsData?.keywords, searchTerm,userNames?.name]);
 
   useEffect(() => {
     if (initialSearchTerm) {
@@ -79,9 +91,9 @@ const SearchTopBar: React.FC<{ initialSearchTerm?: string }> = ({ initialSearchT
         />
       </div>
 
-      {isSearchContainerOpen && filteredSearchHistory.length > 0 && (
+      {isSearchContainerOpen && filteredSuggestions.length > 0 && (
         <div className="absolute top-14 left-0 w-full bg-neutral-600 rounded-lg shadow-lg z-50 max-h-[300px] overflow-y-auto">
-          <SearchContainer searches={filteredSearchHistory} />
+          <SearchContainer searches={filteredSuggestions} />
         </div>
       )}
     </div>

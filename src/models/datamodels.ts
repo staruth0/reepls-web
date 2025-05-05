@@ -90,6 +90,38 @@ export interface Article {
   author_profile_views_count?: number,
   
 }
+export interface ArticleDuplicate {
+  article_id?: string;
+  title?: string;
+  type?: 'ShortForm' | 'LongForm';
+  is_communiquer?: boolean;
+  subtitle?: string;
+  content?: string;
+  htmlContent?: string;
+  category?: string[];
+  keywords?: string[];
+  media?: MediaItem[];
+  text_to_speech?: string;
+  flagged?: boolean;
+  author_id?: User;
+  status?: 'Draft' | 'Published' | 'Archived';
+  createdAt?: string;
+  updatedAt?: string;
+  views_count?: number;
+  reports_count?: number;
+  slug?: string;
+  _id?: string;
+  isArticle?: boolean;
+  article:ArticleDuplicate;
+  shares_count?: number,
+  reaction_count?: number,
+  comment_count?: number,
+  impression_count?: number,
+  engagement_ount?: number,
+  author_follower_count?: number,
+  author_profile_views_count?: number,
+  
+}
 
 export interface Comment {
   content?: string;

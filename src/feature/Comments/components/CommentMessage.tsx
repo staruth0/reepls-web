@@ -10,6 +10,7 @@ import { useDeleteComment, useUpdateComment } from "../hooks";
 import { toast } from "react-toastify";
 import { t } from "i18next";
 import { useUpdateArticle } from "../../Blog/hooks/useArticleHook";
+import { useRoute } from "../../../hooks/useRoute";
 
 interface MessageComponentProps {
   content: string;
@@ -50,6 +51,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   const { mutate: updateComment, isPending: isUpdatePending } = useUpdateComment();
   const { authUser } = useUser();
    const { mutate } = useUpdateArticle();
+   const {goToProfile} = useRoute()
 
   useEffect(() => {
     if (reactions?.reactions && Array.isArray(reactions.reactions)) {
@@ -139,6 +141,9 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
       },
     });
   };
+  const handleProfileClick = () => {
+    if(author.username) goToProfile(author?.username)
+  };
 
   useEffect(() => {
     console.log("author comment", author?._id);
@@ -152,91 +157,103 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
         isSameAuthorAsPrevious ? "self-end" : ""
       }`}
     >
-      <div className="bg-neutral-700 p-3 relative rounded-xl shadow-sm inline-block w-full">
-        <div className="flex items-center gap-2">
-          <div className="size-6 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-[13px]">
-            {author?.username?.charAt(0)}
-          </div>
-          <div className="flex-1">
-            <div className="font-semibold flex items-center justify-between text-neutral-50 text-[14px]">
-              <div className="flex items-center gap-2">
-                {author?.username}
-                {author?.is_verified_writer && (
-                  <LuBadgeCheck
-                    className="text-primary-500 size-4"
-                    strokeWidth={2.5}
-                  />
-                )}
-                {isAuthor && (
-                  <div className="px-2 bg-secondary-400 text-[12px] text-plain-b rounded">
-                    Author
-                  </div>
-                )}
-              </div>
-              <div className="absolute right-2 text-[12px] font-light flex items-center gap-2">
-                {formatDate()}
-                {isAuthAuthor && (
-                  <EllipsisVertical
-                    className="size-6 rotate-90 cursor-pointer text-neutral-50 hover:text-primary-400"
-                    onClick={() => setShowMenu(!showMenu)}
-                  />
-                )}
-              </div>
-            </div>
-            <p className="text-[12px] text-gray-500">{author?.title}</p>
-          </div>
-        </div>
-        {isEditing ? (
-          <div className="mt-2 mb-1 flex items-center gap-2">
-            <input
-              type="text"
-              value={editedContent}
-              onChange={(e) => setEditedContent(e.target.value)}
-              className="w-full bg-transparent text-neutral-50 text-[13px] outline-none caret-neutral-50"
-              autoFocus
-            />
-            <button onClick={handleUpdateClick} disabled={isUpdatePending}>
-              {isUpdatePending ? (
-                <LuLoader className="animate-spin text-foreground inline-block size-4" />
-              ) : (
-                <Send size={18} className="text-neutral-50 hover:text-primary-400" />
-              )}
-            </button>
-          </div>
-        ) : (
-          <p className="mt-2 mb-1 text-neutral-50 text-[13px]">{content}</p>
-        )}
-
-        {/* Popup Menu */}
-        {showMenu && (
-          <>
-            <div
-              className="fixed inset-0 bg-black opacity-0 z-40"
-              onClick={() => setShowMenu(false)}
-            ></div>
-            <div className="absolute right-2 top-8 bg-neutral-800 shadow-md rounded-md p-2 w-40 text-neutral-50 z-50">
-              <div
-                className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-                onClick={handleEditClick}
-              >
-                <Edit size={18} className="text-neutral-500" />
-                <div>Edit</div>
-              </div>
-              <div
-                className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer text-red-500"
-                onClick={handleDeleteClick}
-              >
-                {isDeletePending ? (
-                  <LuLoader className="animate-spin text-foreground inline-block size-4" />
-                ) : (
-                  <Trash2 size={18} className="text-red-500" />
-                )}
-                <div>{isDeletePending ? "Deleting..." : "Delete"}</div>
-              </div>
-            </div>
-          </>
-        )}
+     <div className="bg-neutral-700 p-3 relative rounded-xl shadow-sm inline-block w-full">
+  <div className="flex items-center gap-2">
+    {author?.profile_picture ? (
+      <img 
+        src={author.profile_picture} 
+        alt={author.username}
+        className="size-6 rounded-full object-cover"
+        onClick={handleProfileClick}
+      />
+    ) : (
+      <div 
+        className="size-6 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-[13px]" 
+        onClick={handleProfileClick}
+      >
+        {author?.username?.charAt(0)}
       </div>
+    )}
+    <div className="flex-1">
+      <div className="font-semibold flex items-center justify-between text-neutral-50 text-[14px]">
+        <div className="flex items-center gap-2 cursor-pointer hover:underline" onClick={handleProfileClick}>
+          {author?.username}
+          {author?.is_verified_writer && (
+            <LuBadgeCheck
+              className="text-primary-500 size-4"
+              strokeWidth={2.5}
+            />
+          )}
+          {isAuthor && (
+            <div className="px-2 bg-secondary-400 text-[12px] text-plain-b rounded">
+              Author
+            </div>
+          )}
+        </div>
+        <div className="absolute right-2 text-[12px] font-light flex items-center gap-2">
+          {formatDate()}
+          {isAuthAuthor && (
+            <EllipsisVertical
+              className="size-6 rotate-90 cursor-pointer text-neutral-50 hover:text-primary-400"
+              onClick={() => setShowMenu(!showMenu)}
+            />
+          )}
+        </div>
+      </div>
+      <p className="text-[12px] text-gray-500">{author?.title}</p>
+    </div>
+  </div>
+  {isEditing ? (
+    <div className="mt-2 mb-1 flex items-center gap-2">
+      <input
+        type="text"
+        value={editedContent}
+        onChange={(e) => setEditedContent(e.target.value)}
+        className="w-full bg-transparent text-neutral-50 text-[13px] outline-none caret-neutral-50"
+        autoFocus
+      />
+      <button onClick={handleUpdateClick} disabled={isUpdatePending}>
+        {isUpdatePending ? (
+          <LuLoader className="animate-spin text-foreground inline-block size-4" />
+        ) : (
+          <Send size={18} className="text-neutral-50 hover:text-primary-400" />
+        )}
+      </button>
+    </div>
+  ) : (
+    <p className="mt-2 mb-1 text-neutral-50 text-[13px]">{content}</p>
+  )}
+
+  {/* Popup Menu */}
+  {showMenu && (
+    <>
+      <div
+        className="fixed inset-0 bg-black opacity-0 z-40"
+        onClick={() => setShowMenu(false)}
+      ></div>
+      <div className="absolute right-2 top-8 bg-neutral-800 shadow-md rounded-md p-2 w-40 text-neutral-50 z-50">
+        <div
+          className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+          onClick={handleEditClick}
+        >
+          <Edit size={18} className="text-neutral-500" />
+          <div>Edit</div>
+        </div>
+        <div
+          className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer text-red-500"
+          onClick={handleDeleteClick}
+        >
+          {isDeletePending ? (
+            <LuLoader className="animate-spin text-foreground inline-block size-4" />
+          ) : (
+            <Trash2 size={18} className="text-red-500" />
+          )}
+          <div>{isDeletePending ? "Deleting..." : "Delete"}</div>
+        </div>
+      </div>
+    </>
+  )}
+</div>
 
       <div className="flex gap-4 mt-2 text-gray-600 text-[11px] px-4">
         <div className="flex items-center gap-1">

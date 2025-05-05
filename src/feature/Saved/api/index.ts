@@ -21,6 +21,7 @@ const getSavedArticles = async () => {
   return data;
 };
 
+
 export const getSavedPosts = async ({ pageParam = 1 }) => {
   console.log(`Fetching saved posts for page ${pageParam}`);
   try {

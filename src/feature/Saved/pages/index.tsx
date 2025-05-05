@@ -223,7 +223,7 @@ useEffect(() => {
             )}
             {activeTab === 'history' && (
               <div className="pb-10">
-                <ReadingHistoryContainer articles={data.readArticles} />
+                <ReadingHistoryContainer articles={data?.readArticles || []} />
               </div>
             )}
           </div>

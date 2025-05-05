@@ -6,7 +6,10 @@ import {
   storeSearchSuggestion,
   getPostResults,
   getArticleResults,
-  getPeopleResults 
+  getPeopleResults, 
+  getArticleTitles,
+  getPostKeywords,
+  getUserNames
 } from '../api';
 
 export const useGetSearchResults = (query: string) => {
@@ -68,5 +71,31 @@ export const useGetPeopleResults = (query: string) => {
     queryKey: ['peopleResults', query],
     queryFn: () => getPeopleResults(query),
     enabled: !!query,
+  });
+};
+
+// Hook to fetch article titles
+export const useGetArticleTitles = () => {
+  return useQuery({
+    queryKey: ["articleTitles"],
+    queryFn: () => getArticleTitles(),
+  });
+};
+
+
+
+
+// Hook to fetch post keywords
+export const useGetPostKeywords = () => {
+  return useQuery({
+    queryKey: ["postKeywords"],
+    queryFn: () => getPostKeywords(),
+  });
+};
+// Hook to fetch post keywords
+export const useGetUserNames = () => {
+  return useQuery({
+    queryKey: ["UserNames"],
+    queryFn: () => getUserNames(),
   });
 };

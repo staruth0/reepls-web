@@ -30,6 +30,7 @@ self.addEventListener('push', event => {
     // You can customize notification appearance based on type
     if (data.data) {
       // Add actions based on notification type
+      
       switch (data.data.type) {
         case 'follow':
           options.actions = [
@@ -116,18 +117,41 @@ self.addEventListener('notificationclick', event => {
             break;
             
           case 'reaction':
-            url = fixUrl(data.url); // Format: /posts/article/slug/${article.slug}
+            // Handle the URL correctly based on whether it's an article or post
+            if (data.url) {
+              url = fixUrl(data.url); // URL could be either /posts/article/slug/${article.slug} or /posts/post/${article._id}
+            } else if (data.articleSlug) {
+              url = `/posts/article/slug/${data.articleSlug}`;
+            } else if (data.articleId) {
+              url = `/posts/post/${data.articleId}`;
+            }
+            
             if (data.commentId) {
               url += `#comment-${data.commentId}`;
             }
             break;
             
           case 'comment':
-            url = fixUrl(data.url); // Format: /posts/article/slug/${article.slug}
+            // Handle the URL correctly based on whether it's an article or post
+            if (data.url) {
+              url = fixUrl(data.url); // URL could be either /posts/article/slug/${article.slug} or /posts/post/${article._id}
+            } else if (data.articleSlug) {
+              url = `/posts/article/slug/${data.articleSlug}`;
+            } else if (data.articleId) {
+              url = `/posts/post/${data.articleId}`;
+            }
             break;
             
           case 'comment-reply':
-            url = fixUrl(data.url); // Format: /posts/article/slug/${article.slug}
+            // Handle the URL correctly based on whether it's an article or post
+            if (data.url) {
+              url = fixUrl(data.url); // URL could be either /posts/article/slug/${article.slug} or /posts/post/${article._id}
+            } else if (data.articleSlug) {
+              url = `/posts/article/slug/${data.articleSlug}`;
+            } else if (data.articleId) {
+              url = `/posts/post/${data.articleId}`;
+            }
+            
             if (data.parentCommentId) {
               url += `#comment-${data.parentCommentId}`;
             }
@@ -136,9 +160,11 @@ self.addEventListener('notificationclick', event => {
           default:
             // For new article posts or unspecified types
             if (data.url) {
-              url = fixUrl(data.url);
+              url = fixUrl(data.url); // URL could be either /posts/article/slug/${article.slug} or /posts/post/${article._id}
             } else if (data.articleSlug) {
               url = `/posts/article/slug/${data.articleSlug}`;
+            } else if (data.articleId) {
+              url = `/posts/post/${data.articleId}`;
             }
             break;
         }
@@ -148,6 +174,8 @@ self.addEventListener('notificationclick', event => {
       if (!url || url === '/') {
         if (data.articleSlug) {
           url = `/posts/article/slug/${data.articleSlug}`;
+        } else if (data.articleId) {
+          url = `/posts/post/${data.articleId}`;
         }
       }
     }
