@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { Bounce, ToastContainer, toast } from 'react-toastify';
+import { Bounce, ToastContainer} from 'react-toastify';
 import NotFound from './feature/NotFound';
 import useTheme from './hooks/useTheme';
 import './index.css';
@@ -76,7 +76,7 @@ function App() {
         })
         .catch((error) => {
           console.error('Service Worker Registration Failed:', error);
-          toast.error('Failed to enable notifications. Please try again later.');
+         
         });
     } else {
       console.warn('Push notifications not supported in this browser');
@@ -170,10 +170,10 @@ function App() {
         // Send subscription to backend
         await apiClient.post('/push-notification/subscribe', subscriptionData);
         console.log('Successfully subscribed to push notifications');
-        toast.success('Notifications enabled successfully!');
+      
       } catch (error: any) {
         console.error('Push subscription failed:', error);
-        toast.error('Failed to enable notifications: ' + (error.message || 'Unknown error'));
+        
       }
     };
     
