@@ -1,19 +1,17 @@
 import React, { useEffect } from 'react';
 import { Article } from '../../../models/datamodels';
-
 import { useTranslation } from 'react-i18next';
 import BlogPost from '../../Blog/components/BlogPost';
 
-// Saved Articles Container
-interface SavedArticlesContainerProps {
+interface ReadingHistoryContainerProps {
   articles: Article[];
 }
 
-const ReadingHistoryContainer: React.FC<SavedArticlesContainerProps> = ({ articles }) => {
+const ReadingHistoryContainer: React.FC<ReadingHistoryContainerProps> = ({ articles = [] }) => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    console.log('articles saved', articles);
+    console.log('articles in reading history', articles);
   }, [articles]);
 
   return (
@@ -24,7 +22,9 @@ const ReadingHistoryContainer: React.FC<SavedArticlesContainerProps> = ({ articl
         </p>
       ) : (
         articles.map((article) => (
-          <BlogPost key={article._id} article={article} />
+          article._id ? (
+            <BlogPost key={article._id} article={article} />
+          ) : null
         ))
       )}
     </div>
@@ -32,4 +32,3 @@ const ReadingHistoryContainer: React.FC<SavedArticlesContainerProps> = ({ articl
 };
 
 export default ReadingHistoryContainer;
-

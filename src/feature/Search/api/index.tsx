@@ -36,11 +36,46 @@ const getPeopleResults = async (query: string) => {
   return data;
 };
 
+// Fetch titles for all articles
+const getArticleTitles = async () => {
+  console.log("Fetching titles for all articles");
+  const { data } = await apiClient.get("/articles/metadata/article-titles", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return data;
+};
+// Fetch keywords for all posts
+const getPostKeywords = async () => {
+  console.log("Fetching keywords for all posts");
+  const { data } = await apiClient.get("/articles/metadata/post-keywords", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return data;
+};
+// Fetch keywords for all posts
+const getUserNames = async () => {
+  console.log("Fetching user names");
+  const { data } = await apiClient.get("/articles/metadata/user-name", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return data;
+};
+
+
 export { 
   getSearchResults, 
   storeSearchSuggestion, 
   fetchSearchSuggestions,
   getPostResults,
   getArticleResults,
-  getPeopleResults 
+  getPeopleResults ,
+  getArticleTitles,
+  getPostKeywords,
+  getUserNames
 };

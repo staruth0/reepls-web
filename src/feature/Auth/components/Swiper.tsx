@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { LuCircleArrowLeft, LuCircleArrowRight } from "react-icons/lu";
 import { Pics } from "../../../assets/images";
 import { t } from "i18next";
+import { useNavigate } from "react-router-dom";
 
 const slides = [
   {
@@ -33,6 +34,8 @@ function Swiper() {
     setActiveSlide(index);
   };
 
+  const navigate = useNavigate();
+
   // Auto-slide effect
   useEffect(() => {
     const interval = setInterval(handleNextSlide, 6000);
@@ -51,13 +54,14 @@ function Swiper() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background text-neutral-50 p-4 relative">
       {/* Logo */}
-      <div className="absolute top-5 left-5 self-start text-2xl flex gap-2 items-center font-semibold text-plain-a mb-4">
+      <div onClick={()=>navigate('/')} className="cursor-pointer absolute top-5 left-5 self-start text-2xl flex gap-2 items-center font-semibold text-plain-a mb-4">
         <img src={"/Logo.svg"} alt="" />
         REEPLS
       </div>
 
       {/* Main Content */}
       <div className="flex flex-col items-center w-[80%]">
+        
         {/* Image Container */}
         <div className="relative flex justify-center items-center w-full mb-5">
           {/* Navigation Buttons */}

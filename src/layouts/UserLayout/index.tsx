@@ -57,7 +57,7 @@ const UserLayout: React.FC = () => {
       <div
         className={`absolute -translate-x-96 sm:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-96'
-        } transition-all duration-700 ease-linear sm:relative bg-neutral-800 sm:bg-inherit top-0 bottom-0 z-[990] h-full w-[60%] sm:w-auto`}
+        } transition-all duration-700 ease-linear sm:relative bg-neutral-800 sm:bg-inherit top-0 bottom-0 z-[910] h-full w-[60%] sm:w-auto`}
       >
         <Sidebar />
       </div>

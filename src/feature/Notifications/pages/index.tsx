@@ -84,6 +84,7 @@ const Notifications: React.FC = () => {
                       id={_id}
                       slug={slug}
                       article_id={article_id!}
+                      type={type}
                     />
                   );
                 default:

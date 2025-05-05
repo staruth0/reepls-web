@@ -13,6 +13,7 @@ interface PostNotificationProps {
   id: string;
   slug: string;
   article_id: string;
+  type:string
 }
 
 const PostNotificationContainer: React.FC<PostNotificationProps> = ({
@@ -23,6 +24,7 @@ const PostNotificationContainer: React.FC<PostNotificationProps> = ({
   id,
   slug,
   article_id,
+  type
 }) => {
   const { user } = useGetUserById(username);
   const { mutate } = useUpdateNotificationReadStatus();
@@ -31,7 +33,7 @@ const PostNotificationContainer: React.FC<PostNotificationProps> = ({
 
   const updateStatus = () => {
     navigate(
-      `${slug ? `/posts/article/slug/${slug}` : `/posts/post/${article_id}`}`
+      `${type === 'article' ? `/posts/article/slug/${slug}` : `/posts/post/${article_id}`}`
     );
     mutate(
       { notificationId: id, isRead: true },

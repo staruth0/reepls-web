@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import SharePopup from "../../../../components/molecules/share/SharePopup";
 import { useRoute } from "../../../../hooks/useRoute";
 import { useUser } from "../../../../hooks/useUser";
-import { Article, User } from "../../../../models/datamodels";
+import { Article, ArticleDuplicate, User } from "../../../../models/datamodels";
 import { useUnfollowUser } from "../../../Follow/hooks";
 import { useKnowUserFollowings } from "../../../Follow/hooks/useKnowUserFollowings";
 import { useGetSavedArticles, useRemoveSavedArticle, useSaveArticle } from "../../../Saved/hooks";
@@ -168,6 +168,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
   };
 
   const handleEllipsisClick = () => {
+    check()
     if (!isLoggedIn) {
       setShowSignInPopup(true);
     } else {
@@ -189,9 +190,15 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
     setShowMenu(false);
   };
 
+  function check(){
+console.log('saved',saved)
+console.log('saved Article',savedArticles)
+console.log('id article',article_id)
+  }
+
   useEffect(() => {
-    const isSaved = savedArticles?.articles?.some((article: Article) => article._id === article_id);
-    setSaved(isSaved || false);
+    const isSaved = savedArticles?.articles?.some((article: ArticleDuplicate) => article?.article?._id === article_id);
+    setSaved(isSaved );
   }, [savedArticles, article_id]);
 
   const getFollowStatusText = (isMenu = false) => {

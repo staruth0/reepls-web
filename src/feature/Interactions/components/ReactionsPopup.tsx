@@ -102,7 +102,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
   // Handle loading and error states
   if (isLoadingAllReactions || isLoadingReactionsPerType) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-[910]">
+      <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-[2000]">
         <div className="bg-[var(--plain-b)] rounded-lg md:w-[50vw] max-w-full shadow-lg h-[80vh] p-4">
           <div className="">
             <div className="flex items-center justify-between p-4">

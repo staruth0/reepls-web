@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Editor } from 'reactjs-tiptap-editor';
-import { profileAvatar } from '../../../assets/icons';
 import { ArticleAudioControls } from '../../../components/atoms/ReadALoud/ArticleAudioControls';
 import SharePopup from '../../../components/molecules/share/SharePopup';
 import { PREVIEW_SLUG } from '../../../constants';
@@ -64,7 +63,7 @@ const ArticleViewBySlug: React.FC = () => {
     if (slug) {
       mutate(slug, {
         onError: () => {
-          toast.error('error adding article to reading history');
+          console.log('error adding article to reading history');
         },
       });
     }
@@ -237,29 +236,39 @@ const ArticleViewBySlug: React.FC = () => {
             <h1 className="md:text-4xl px-4 md:px-0 text-[26px] lg:text-5xl font-semibold leading-normal lg:leading-tight mb-2">{title}</h1>
             {subtitle && <h3 className="text-xl my-4 px-4 md:px-0">{subtitle}</h3>}
 
-            {/* Author Profile Section */}
-            <div className="flex my-4 items-center gap-4 mt-8 mb-4 px-3 md:px-0">
-              <div className='flex gap-2'>
-                <img src={profileAvatar} alt="Author" className="rounded-full w-10 h-10" />
-                <div>
-                  <p className="font-semibold text-[16px]">{article?.author_id?.username || 'Unknown'}</p>
-                  <p className="text-sm text-neutral-500">{article?.author_id?.bio}</p>
-                </div>
-              </div>
-              {!isPreview && (
-                <button
-                  onClick={handleFollowClick}
-                  className={`ml-auto px-4 py-2 rounded-full text-sm ${
-                    isFollowing
-                      ? 'bg-neutral-600 text-neutral-50 hover:bg-neutral-700'
-                      : 'bg-main-green text-white hover:bg-green-600'
-                  }`}
-                  disabled={!isLoggedIn || isFollowPending || isUnfollowPending}
-                >
-                  {getFollowStatusText()}
-                </button>
-              )}
-            </div>
+       {/* Author Profile Section */}
+<div className="flex my-4 items-center gap-4 mt-8 mb-4 px-3 md:px-0">
+  <div className='flex gap-2'>
+    {article?.author_id?.profile_picture ? (
+      <img 
+        src={article.author_id.profile_picture} 
+        alt={article.author_id.username || 'Author'} 
+        className="rounded-full w-10 h-10 object-cover"
+      />
+    ) : (
+      <div className="rounded-full w-10 h-10 bg-purple-500 flex items-center justify-center text-white font-bold">
+        {article?.author_id?.username?.charAt(0) || 'A'}
+      </div>
+    )}
+    <div>
+      <p className="font-semibold text-[16px]">{article?.author_id?.username || 'Unknown'}</p>
+      <p className="text-sm text-neutral-500">{article?.author_id?.bio}</p>
+    </div>
+  </div>
+  {!isPreview && (
+    <button
+      onClick={handleFollowClick}
+      className={`ml-auto px-4 py-2 rounded-full text-sm ${
+        isFollowing
+          ? 'bg-neutral-600 text-neutral-50 hover:bg-neutral-700'
+          : 'bg-main-green text-white hover:bg-green-600'
+      }`}
+      disabled={!isLoggedIn || isFollowPending || isUnfollowPending}
+    >
+      {getFollowStatusText()}
+    </button>
+  )}
+</div>
 
             {/* Audio Controls */}
             <div className="my-6 px-2 md:px-0">{article && <ArticleAudioControls article={article} />}</div>
@@ -295,37 +304,46 @@ const ArticleViewBySlug: React.FC = () => {
       {!isPreview && !isPending && (
         <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 bg-neutral-800 rounded-full shadow-lg p-2 flex gap-4 items-center justify-center md:bottom-6">
           {/* Reactions Button with Hover Popup */}
-          <div 
-            className="relative group"
-            onMouseEnter={() => isLoggedIn && setShowReactionsHoverPopup(true)}
-            onMouseLeave={() => setShowReactionsHoverPopup(false)}
-          >
-            <button
-              className={`p-2 rounded-full flex items-center ${
-                isLoggedIn ? 'text-neutral-50 hover:bg-neutral-700' : 'text-neutral-500 cursor-not-allowed'
-              }`}
-              title="React"
-            >
-              <ThumbsUp size={20} />
-              <span className="ml-1 text-sm">{allReactions?.reactions?.length || 0}</span>
-            </button>
+       {/* Reactions Button with Hover Popup */}
+<div className='flex items-center'>
+  <div 
+    className="relative group"
+    onMouseEnter={() => isLoggedIn && setShowReactionsHoverPopup(true)}
+    onMouseLeave={() => setShowReactionsHoverPopup(false)}
+  >
+    <button
+      className={`p-2 rounded-full flex items-center ${
+        isLoggedIn ? 'text-neutral-50 hover:bg-neutral-700' : 'text-neutral-500 cursor-not-allowed'
+      }`}
+      title="React"
+    >
+      <ThumbsUp size={20} />
+    </button>
 
-            {showReactionsHoverPopup && isLoggedIn && (
-              <>
-                <div 
-                  className="fixed inset-0 z-40"
-                  onClick={() => setShowReactionsHoverPopup(false)}
-                />
-                <div 
-                  className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-[999] rounded-lg p-2 min-w-[200px]"
-                >
-                  <div className="relative z-[9999]">
-                    <ReactionModal article_id={article?._id || ''} />
-                  </div>
-                </div>
-              </>
-            )}
+    {showReactionsHoverPopup && isLoggedIn && (
+      <>
+        <div 
+          className="fixed inset-0 z-40"
+          onClick={() => setShowReactionsHoverPopup(false)}
+        />
+        <div 
+          className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-[999] rounded-lg p-2 min-w-[200px]"
+        >
+          <div className="relative z-[9999]">
+            <ReactionModal article_id={article?._id || ''} />
           </div>
+        </div>
+      </>
+    )}
+  </div>
+  <span 
+    className="ml-1 text-sm hover:underline cursor-pointer"
+    onClick={() => setShowReactionsPopup(true)} // Add this to trigger the popup
+  >
+    {allReactions?.reactions?.length || 0}
+  </span>
+</div>
+        
 
           <button
             onClick={handleCommentClick}
