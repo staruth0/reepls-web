@@ -46,7 +46,7 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, article, isAr
           articleId: article._id || '',
           article: {
             views_count:article.views_count! +1,
-            engagement_ount: article.engagement_ount! + 1, 
+            engagement_count: article.engagement_count! + 1, 
           },
         });
         navigate(slug ? `/posts/article/slug/${slug}` : `/posts/article/${article_id}`);

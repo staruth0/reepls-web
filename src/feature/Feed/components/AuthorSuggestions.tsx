@@ -83,7 +83,7 @@ const AuthorSuggestions: React.FC = () => {
           key={`${user.id}-${index}`}
           name={user.name!}
           username={user.username!}
-          title={user.bio || `${t("no bio")}`}
+          title={user.bio || ``}
           id={user._id || ''}
           isverified={user.is_verified_writer!}
         />

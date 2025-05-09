@@ -1,4 +1,3 @@
-// SearchContainer.tsx
 import React from 'react';
 import SuggestionContainer from './SuggestionContainer';
 

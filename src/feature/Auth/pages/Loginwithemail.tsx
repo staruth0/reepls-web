@@ -4,7 +4,7 @@ import '../styles/authpages.scss';
 import { useTranslation } from 'react-i18next';
 import { LuLoader } from 'react-icons/lu';
 import { useSelector } from 'react-redux';
-import { google } from '../../../assets/icons';
+// import { google } from '../../../assets/icons';
 import { RootState } from '../../../store';
 import { validatePassword } from '../../../utils/validatePassword';
 import { useLoginUser } from '../hooks/AuthHooks';
@@ -93,15 +93,15 @@ function Loginwithemail() {
     });
   };
 
-  const handleGoogleLogin = () => {
-    // Construct the Google OAuth2 URL
-    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=${encodeURIComponent(
-      'http://localhost:5000/api-v1/googleAuth/google/callback'
-    )}&scope=profile%20email&client_id=276268262458-4j71v7s7krk3h4j47d49gp5q72msvdh3.apps.googleusercontent.com`;
+  // const handleGoogleLogin = () => {
+  //   // Construct the Google OAuth2 URL
+  //   const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=${encodeURIComponent(
+  //     'http://localhost:5000/api-v1/googleAuth/google/callback'
+  //   )}&scope=profile%20email&client_id=276268262458-4j71v7s7krk3h4j47d49gp5q72msvdh3.apps.googleusercontent.com`;
 
-    // Redirect the user to the Google OAuth2 URL
-    window.location.href = googleAuthUrl;
-  };
+  //   // Redirect the user to the Google OAuth2 URL
+  //   window.location.href = googleAuthUrl;
+  // };
 
   return (
     <div className="register__phone__container">
@@ -138,13 +138,13 @@ function Loginwithemail() {
         <div className="divider">
           <p>{t('OrDivider')}</p>
         </div>
-        <div
+        {/* <div
           className="flex items-center justify-center gap-2 bg-background rounded-full px-2 py-3 text-neutral-50 shadow-md hover:shadow-none cursor-pointer"
           onClick={handleGoogleLogin}
         >
           <img src={google} alt="google_image" className="size-6" />
           <span>{t("Login with google")}</span>
-        </div>
+        </div> */}
       </form>
       <div className="bottom__links">
         {/* Uncomment and implement if needed */}

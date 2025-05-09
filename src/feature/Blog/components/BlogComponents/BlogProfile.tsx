@@ -62,7 +62,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
       articleId:article._id || '',
       article:{
        author_profile_views_count:article.author_profile_views_count! +1,
-        engagement_ount:article.engagement_ount! +1
+        engagement_count:article.engagement_count! +1
       }
     })
     if (username) {
@@ -99,7 +99,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
       articleId:article._id || '',
       article:{
    
-        engagement_ount:article.engagement_ount! -1
+        engagement_count:article.engagement_count! -1
       }
     })
           setSaved(false);
@@ -115,7 +115,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
                mutate({
       articleId:article._id || '',
       article:{
-        engagement_ount:article.engagement_ount! +1
+        engagement_count:article.engagement_count! +1
       }
     })
         },
@@ -139,7 +139,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
       articleId:article._id || '',
       article:{
         author_follower_count:article.author_follower_count! -1,
-        engagement_ount:article.engagement_ount! -1
+        engagement_count:article.engagement_count! -1
       }
     })
         },
@@ -153,7 +153,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
       articleId:article._id || '',
       article:{
         author_follower_count:article.author_follower_count! + 1,
-        engagement_ount:article.engagement_ount! +1
+        engagement_count:article.engagement_count! +1
       }
     })
         },
@@ -202,6 +202,12 @@ console.log('id article',article_id)
   }, [savedArticles, article_id]);
 
   const getFollowStatusText = (isMenu = false) => {
+    if (!isLoggedIn) return t("follow");
+    if (isFollowPending) return `${t("following")}...`;
+    if (isUnfollowPending) return `${t("unfollowing")}...`;
+    return isFollowing(user?._id || "") ? t("") : isMenu ? t("blog.Followauthor") : t("follow");
+  };
+  const getFollowMenuStatusText = (isMenu = false) => {
     if (!isLoggedIn) return t("follow");
     if (isFollowPending) return `${t("following")}...`;
     if (isUnfollowPending) return `${t("unfollowing")}...`;
@@ -328,7 +334,7 @@ console.log('id article',article_id)
                     onClick={handleFollowClick}
                   >
                     <UserPlus size={18} className="text-neutral-500" />
-                    {getFollowStatusText(true)}
+                    {getFollowMenuStatusText(true)}
                   </div>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"

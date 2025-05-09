@@ -68,7 +68,7 @@ export const ReadingControls = ({ article_id, article_tts,article }: { article_i
       mutate({
         articleId: article._id || '',
         article: {
-          engagement_ount: (article.engagement_ount || 0) + 1, // Corrected typo from engagement_ount
+          engagement_count: (article.engagement_count || 0) + 1, // Corrected typo from engagement_ount
         },
       });
     }

@@ -85,7 +85,7 @@ export interface Article {
   reaction_count?: number,
   comment_count?: number,
   impression_count?: number,
-  engagement_ount?: number,
+  engagement_count?: number,
   author_follower_count?: number,
   author_profile_views_count?: number,
   
@@ -117,7 +117,7 @@ export interface ArticleDuplicate {
   reaction_count?: number,
   comment_count?: number,
   impression_count?: number,
-  engagement_ount?: number,
+  engagement_count?: number,
   author_follower_count?: number,
   author_profile_views_count?: number,
   
@@ -170,6 +170,7 @@ export interface Report {
   report_id?: string;
   article_id: string;
   reporter_id: string;
+  article_author_id:string
   reason: string;
   status?: 'Pending' | 'Resolved';
   created_at?: string;

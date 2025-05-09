@@ -16,7 +16,8 @@ interface CommentTabProps {
   setIsCommentSectionOpen: (isOpen: boolean) => void;
 }
 
-const CommentTab: React.FC<CommentTabProps> = ({
+const 
+CommentTab: React.FC<CommentTabProps> = ({
   article_id,
   setIsCommentSectionOpen,
 }) => {

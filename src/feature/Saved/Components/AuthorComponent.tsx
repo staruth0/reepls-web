@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LuBadgeCheck, LuEllipsisVertical } from 'react-icons/lu';
-import { UserPlus, EyeOff, Flag, X } from 'lucide-react';
+import { UserPlus, Flag, X } from 'lucide-react';
 import {  useUnfollowUser } from '../../Follow/hooks';
 import { useKnowUserFollowings } from '../../Follow/hooks/useKnowUserFollowings';
 import { useNavigate } from 'react-router-dom';
@@ -144,13 +144,13 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
               <UserPlus size={18} className="text-neutral-500" />
               <div className="text-neutral-50">{getFollowStatusText()}</div>
             </div>}
-            <div
+            {/* <div
               className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
               onClick={() => setShowBlockConfirm(true)}
             >
               <EyeOff size={18} className="text-neutral-500" />
               <div>{t("saved.authorActions.block")}</div>
-            </div>
+            </div> */}
             <div
               className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
               onClick={handleViewProfile}

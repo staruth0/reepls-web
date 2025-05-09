@@ -1,7 +1,7 @@
-// SuggestionContainer.tsx
-import React from 'react';
+import React, { useContext } from 'react';
 import { ArrowUpRight, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { SearchContainerContext } from '../../../context/suggestionContainer/isSearchcontainer';
 
 interface SuggestionContainerProps {
   text: string;
@@ -9,12 +9,14 @@ interface SuggestionContainerProps {
 
 const SuggestionContainer: React.FC<SuggestionContainerProps> = ({ text }) => {
   const navigate = useNavigate();
+  const { setSearchContainerOpen } = useContext(SearchContainerContext);
 
   const handleSearch = () => {
     const trimmedSearchTerm = text.trim();
     if (trimmedSearchTerm) {
       const query = encodeURIComponent(trimmedSearchTerm);
       navigate(`/search/results?query=${query}`);
+      setSearchContainerOpen(false); // Close container immediately when suggestion is clicked
     }
   };
 

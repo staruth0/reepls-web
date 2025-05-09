@@ -90,7 +90,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
          mutate({
           articleId: article._id || '',
           article: {
-            engagement_ount: article.engagement_ount! + 1, 
+            engagement_count: article.engagement_count! + 1, 
           },
         });
       }
