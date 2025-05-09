@@ -71,6 +71,7 @@ export interface Article {
   keywords?: string[];
   media?: MediaItem[];
   text_to_speech?: string;
+  thumbnail?: string;
   flagged?: boolean;
   author_id?: User;
   status?: 'Draft' | 'Published' | 'Archived';

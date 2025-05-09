@@ -4,26 +4,35 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { MediaItem, MediaType } from '../../../../models/datamodels';
+import { Article, MediaItem, MediaType } from '../../../../models/datamodels';
 
 interface BlogImageryProps {
   media: MediaItem[];
+  article: Article;
 }
 
-const BlogImagery: React.FC<BlogImageryProps> = ({ media }) => {
-  console.log('Verifying media', media);
+const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
+  // Create media array with thumbnail as first item if it exists
+  const displayMedia = article.thumbnail
+    ? [
+        { url: article.thumbnail, type: MediaType.Image },
+        ...media.filter(item => item.url !== article.thumbnail) // Avoid duplicates
+      ]
+    : media;
+
   return (
     <div className="relative w-full sm:max-w-[300px] md:max-w-[500px] lg:max-w-[700px] mx-auto transition-all duration-300">
-      <Swiper
-        modules={[Navigation, Pagination]}
-        navigation
-        pagination={{ clickable: true }}
-        loop={true}
-        spaceBetween={20}
-        slidesPerView={1}
-        className="rounded-sm absolute w-full z-0">
-        {media?.map((mediaItem, index) => {
-          return (
+      {displayMedia.length > 0 ? (
+        <Swiper
+          modules={[Navigation, Pagination]}
+          navigation
+          pagination={{ clickable: true }}
+          loop={true}
+          spaceBetween={20}
+          slidesPerView={1}
+          className="rounded-sm absolute w-full z-0"
+        >
+          {displayMedia.map((mediaItem, index) => (
             <SwiperSlide key={index} className="flex justify-center">
               {mediaItem.type === MediaType.Image ? (
                 <img
@@ -45,9 +54,11 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media }) => {
                 />
               )}
             </SwiperSlide>
-          );
-        })}
-      </Swiper>
+          ))}
+        </Swiper>
+      ) : (
+        <div></div>
+      )}
     </div>
   );
 };

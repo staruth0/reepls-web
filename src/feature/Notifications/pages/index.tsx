@@ -7,6 +7,7 @@ import PostNotificationContainer from '../components/NotificationContainer';
 import FollowNotificationContainer from '../components/FollowNotificationContainer';
 import CommentNotificationContainer from '../components/CommentNotificationContainer';
 import ReactionNotificationContainer from '../components/ReactionNotificationContainer';
+import { timeAgo } from '../../../utils/dateFormater';
 
 const Notifications: React.FC = () => {
   const { notifications } = useNotificationsValues();
@@ -16,11 +17,7 @@ const Notifications: React.FC = () => {
     console.log('notifications', notifications);
   }, [notifications]);
 
-  // Helper function to format the timestamp
-  const formatTimestamp = (createdAt: Date): string => {
-    const date = new Date(createdAt);
-    return `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`; // e.g., "13:50"
-  };
+ 
 
   return (
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
@@ -42,7 +39,7 @@ const Notifications: React.FC = () => {
                     <FollowNotificationContainer
                       key={index}
                       username={sender_id}
-                      timestamp={formatTimestamp(created_at)}
+                      timestamp={timeAgo(created_at)}
                       is_read={is_read}
                       id={_id}
                     />
@@ -52,7 +49,7 @@ const Notifications: React.FC = () => {
                     <CommentNotificationContainer
                       key={index}
                       username={sender_id}
-                      timestamp={formatTimestamp(created_at)} 
+                      timestamp={timeAgo(created_at)} 
                       comment={content}
                       is_read={is_read}
                       id={_id}
@@ -65,7 +62,7 @@ const Notifications: React.FC = () => {
                     <ReactionNotificationContainer
                       key={index}
                       username={sender_id}
-                      timestamp={formatTimestamp(created_at)} 
+                      timestamp={timeAgo(created_at)} 
                       postSnippet={content}
                       is_read={is_read}
                       id={_id}
@@ -78,7 +75,7 @@ const Notifications: React.FC = () => {
                     <PostNotificationContainer
                       key={index}
                       username={sender_id}
-                      timestamp={formatTimestamp(created_at)}
+                      timestamp={timeAgo(created_at)}
                       communique={content}
                       is_read={is_read}
                       id={_id}

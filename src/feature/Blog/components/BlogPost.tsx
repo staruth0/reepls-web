@@ -66,7 +66,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ article }) => {
         onError={(error, info) => {
           console.error('Error caught by ErrorBoundary:', error, info);
         }}>
-        {!isCognitiveMode && article?.media && <BlogImagery media={article.media} />}
+        {!isCognitiveMode && article?.media && <BlogImagery article={article} media={article.media} />}
       </ErrorBoundary>
 
       <BlogReactionStats
