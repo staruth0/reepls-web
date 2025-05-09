@@ -1,9 +1,7 @@
-// src/feature/Blog/components/PostArticleAnalytics.jsx
-import  { useEffect } from 'react';
+import { useEffect } from 'react';
 import ProfileConfigurations from '../../Profile/components/ProfileConfigurations';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import { Bookmark, MessageSquare, Heart, Eye, UserPlus, BarChart2 } from 'lucide-react';
-import { Pics } from '../../../assets/images';
 import { useParams } from 'react-router-dom';
 import { useGetArticleById } from '../hooks/useArticleHook';
 import { timeAgo } from '../../../utils/dateFormater';
@@ -11,35 +9,37 @@ import { useGetCommentsByArticleId } from '../../Comments/hooks';
 import { useGetArticleReactions } from '../../Interactions/hooks';
 import PostArticleAnalyticsSkeleton from '../components/AnalyticsSkleton';
 
-
 const PostArticleAnalytics = () => {
   const { id } = useParams();
   const { data, isLoading } = useGetArticleById(id!);
-  const { data: articleComments } = useGetCommentsByArticleId(id!)
+  const { data: articleComments } = useGetCommentsByArticleId(id!);
   const { data: allReactions } = useGetArticleReactions(id!);
 
   const totalComments = articleComments?.pages[0].data.totalComments;
+  const firstMedia = data?.media?.[0]; // Get the first media item, if it exists
 
   useEffect(() => {
-    console.log('stats', data, 'id', id);
+    console.log('stats', data?.media, 'id', id);
   }, [data, id]);
 
   if (isLoading) {
-    return  <div className="lg:grid grid-cols-[4fr_1.66fr]">
-      {/* Profile Section */}
-      <div className="flex flex-col lg:border-r-[1px] border-neutral-500 min-h-screen">
-        <Topbar>
-          <p>Post Analytics</p>
-        </Topbar>
+    return (
+      <div className="lg:grid grid-cols-[4fr_1.66fr]">
+        {/* Profile Section */}
+        <div className="flex flex-col lg:border-r-[1px] border-neutral-500 min-h-screen">
+          <Topbar>
+            <p>Post Analytics</p>
+          </Topbar>
 
-       <PostArticleAnalyticsSkeleton />
-      </div>
+          <PostArticleAnalyticsSkeleton />
+        </div>
 
-      {/* Configurations Section */}
-      <div className="profile__configurationz hidden lg:block">
-        <ProfileConfigurations />
+        {/* Configurations Section */}
+        <div className="profile__configurationz hidden lg:block">
+          <ProfileConfigurations />
+        </div>
       </div>
-    </div>
+    );
   }
 
   return (
@@ -56,14 +56,24 @@ const PostArticleAnalytics = () => {
           <div className="mb-8">
             {/* Flex container for lg+ screens */}
             <div className="lg:flex lg:gap-8">
-              {/* Image container - takes full width on mobile, 60% on lg+ */}
-              <div className="relative flex-1 w-full lg:w-[40%] h-44 md:h-auto lg:mb-0 rounded-lg overflow-hidden">
-                <img
-                  src={Pics.blogPic}
-                  alt="Article cover"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              {/* Image container - only render if firstMedia exists */}
+              {firstMedia && (
+                <div className="relative flex-1 w-full lg:w-[40%] h-44 md:h-auto lg:mb-0 rounded-lg overflow-hidden">
+                  {firstMedia.type === 'image' ? (
+                    <img
+                      src={firstMedia.url}
+                      alt="Article cover"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : firstMedia.type === 'video' ? (
+                    <video
+                      src={firstMedia.url}
+                      controls
+                      className="w-full h-full object-cover"
+                    />
+                  ) : null}
+                </div>
+              )}
 
               {/* Text content - takes full width on mobile, 40% on lg+ */}
               <div className="lg:flex flex-1 lg:flex-col lg:justify-between">

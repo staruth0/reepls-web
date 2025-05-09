@@ -23,7 +23,7 @@ const SearchTopBar: React.FC<{ initialSearchTerm?: string }> = ({ initialSearchT
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setSearchTerm(value);
-    setSearchContainerOpen(!!value.trim()); // Only open when there's meaningful input
+    setSearchContainerOpen(!!value.trim()); // Open container when there's input
   };
 
   const handleClearSearch = () => {
@@ -36,7 +36,7 @@ const SearchTopBar: React.FC<{ initialSearchTerm?: string }> = ({ initialSearchT
     if (trimmedSearchTerm) {
       const query = encodeURIComponent(trimmedSearchTerm);
       navigate(`/search/results?query=${query}`);
-      setSearchContainerOpen(false); // Close container after search
+      setSearchContainerOpen(false); // Close container immediately after search
     }
   };
 
@@ -60,7 +60,7 @@ const SearchTopBar: React.FC<{ initialSearchTerm?: string }> = ({ initialSearchT
     ];
 
     return allSuggestions.filter((item: string) => regex.test(item));
-  }, [data?.searchHistory, titlesData?.titles, keywordsData?.keywords, searchTerm,userNames?.name]);
+  }, [data?.searchHistory, titlesData?.titles, keywordsData?.keywords, searchTerm, userNames?.name]);
 
   useEffect(() => {
     if (initialSearchTerm) {
@@ -91,7 +91,7 @@ const SearchTopBar: React.FC<{ initialSearchTerm?: string }> = ({ initialSearchT
         />
       </div>
 
-      {isSearchContainerOpen && filteredSuggestions.length > 0 && (
+      {isSearchContainerOpen && (
         <div className="absolute top-14 left-0 w-full bg-neutral-600 rounded-lg shadow-lg z-50 max-h-[300px] overflow-y-auto">
           <SearchContainer searches={filteredSuggestions} />
         </div>

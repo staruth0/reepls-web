@@ -23,7 +23,7 @@ const MessageList: React.FC<MessageListProps> = ({
     <div className={`right__recent`}>
       {/* <p className="recent">{t("recent")}</p> */}
          {communiques.length !== 0?      <>
-           <div className="message-list">
+           <div className="message-list space-y-3">
         {communiques?.slice(0, 2).map(
           (communique, index ) => (
             <Message
@@ -32,6 +32,7 @@ const MessageList: React.FC<MessageListProps> = ({
               messageDate={formatDateWithMonth(communique.createdAt!)}
               messageText={communique.content!}
               postID={communique._id!}
+              slug={communique.slug!}
             
             />
           )

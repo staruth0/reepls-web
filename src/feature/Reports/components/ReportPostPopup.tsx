@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useCreateReport } from '../hooks';
 import { useUser } from '../../../hooks/useUser';
+import { useGetArticleById } from '../../Blog/hooks/useArticleHook';
 
 interface ReportArticlePopupProps {
   articleTitle: string;
@@ -18,6 +19,7 @@ const ReportArticlePopup: React.FC<ReportArticlePopupProps> = ({
 }) => {
   const [reportText, setReportText] = useState('');
   const [selectedReason, setSelectedReason] = useState('');
+  const {data} = useGetArticleById(articleId)
   const { t } = useTranslation();
   const { mutate, isPending } = useCreateReport();
   const { authUser } = useUser();
@@ -50,7 +52,9 @@ const ReportArticlePopup: React.FC<ReportArticlePopupProps> = ({
     mutate({
       article_id: articleId,
       reporter_id: authUser.id,
-      reason: fullReason
+      reason: fullReason,
+      article_author_id:data.author_id._id,
+      status:"Pending"
     }, {
       onSuccess: () => {
         toast.success(t('report.reportSuccess'));

@@ -60,6 +60,7 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
   const getFollowStatusText = () => {
     if (isFollowPending) return t("profile.alerts.following");
     if (isUnfollowPending) return t("profile.alerts.Unfollowing");
+    
     return isUserFollowing(userId) ? t("profile.alerts.following") : t("profile.alerts.follow");
   };
 

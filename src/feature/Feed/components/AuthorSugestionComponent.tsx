@@ -56,7 +56,7 @@ const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username,n
           <img
             src={user?.profile_picture}
             alt="avatar"
-            className="cursor-pointer w-10 h-10 rounded-full object-cover"
+            className="w-12 h-12 rounded-full object-cover border-2 border-neutral-600 shadow-md transition-transform duration-300 hover:scale-105"
             onClick={() => navigate(`/profile/${username}`)}
           />
         ) : (

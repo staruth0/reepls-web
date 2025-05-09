@@ -21,6 +21,7 @@ import '../styles/view.scss';
 import ArticleViewSkeleton from './ArticleViewSkeleton';
 import CommentSection from '../../Comments/components/CommentSection';
 import ReactionsPopup from '../../Interactions/components/ReactionsPopup';
+import { calculateReadTime } from '../../../utils/articles';
 
 const ArticleViewBySlug: React.FC = () => {
   const navigate = useNavigate();
@@ -210,7 +211,7 @@ const ArticleViewBySlug: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen relative">
-      <div className="max-w-full h-full mb-56 inline-block overflow-clip self-center flex-grow">
+      <div className="max-w-[800px] h-full mb-56 inline-block overflow-clip self-center flex-grow">
         {!isPreview && isPending ? (
           <div className="max-w-full md:mx-20 mt-10 flex flex-col justify-center items-right">
             <ArticleViewSkeleton />
@@ -252,7 +253,9 @@ const ArticleViewBySlug: React.FC = () => {
     )}
     <div>
       <p className="font-semibold text-[16px]">{article?.author_id?.username || 'Unknown'}</p>
-      <p className="text-sm text-neutral-500">{article?.author_id?.bio}</p>
+      <p className="text-sm text-neutral-100">{article?.author_id?.bio}</p>
+
+      
     </div>
   </div>
   {!isPreview && (
@@ -269,7 +272,7 @@ const ArticleViewBySlug: React.FC = () => {
     </button>
   )}
 </div>
-
+ <span className="text-sm ml-2 text-neutral-100">{calculateReadTime(article.content!, article.media || [])} mins Read</span>
             {/* Audio Controls */}
             <div className="my-6 px-2 md:px-0">{article && <ArticleAudioControls article={article} />}</div>
 
@@ -293,7 +296,7 @@ const ArticleViewBySlug: React.FC = () => {
             {/* Comments Section */}
             {!isPreview && !isPending && (
               <div ref={commentSectionRef} className="w-[100%] px-3 md:px-0 mx-auto mt-10">
-                <h2 className="text-2xl font-semibold mb-4">Comments</h2>
+                <h2 className="text-2xl font-semibold mb-4 px-2">Comments</h2>
                 {isCommentSectionOpen && <CommentSection article_id={article?._id || ''} article={article} setIsCommentSectionOpen={toggleCommentSection2} author_of_post={article?.author_id as User} />}
               </div>
             )}

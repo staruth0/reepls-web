@@ -404,7 +404,7 @@
       "unfollowFailed": "Échec du désabonnement de l'utilisateur",
       "followSuccess": "Utilisateur abonné avec succès",
       "followFailed": "Échec de l'abonnement à l'utilisateur",
-      "following": "Abonnement en cours...",
+      "following": "Abonnement en cours",
       "unfollowing": "Désabonnement en cours...",
       "follow": "Suivre",
       "unfollow": "Ne plus suivre",

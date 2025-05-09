@@ -11,6 +11,7 @@ import { apiClient } from './services/apiClient';
 import { useFetchVapidPublicKey } from './feature/Notifications/hooks/useNotification';
 import { useUser } from './hooks/useUser';
 
+
 // Setting up routes for your app
 const router = createBrowserRouter([WebRoutes, AuthRoutes, UserRoutes, { path: '*', element: <NotFound /> }]);
 
@@ -113,7 +114,6 @@ function App() {
         
         if (existingSubscription) {
           console.log('Already subscribed to push notifications');
-          
           // Get the subscription as JSON
           const subscriptionJSON = existingSubscription.toJSON() as PushSubscriptionJSON;
           
@@ -145,17 +145,13 @@ function App() {
         
         // Subscribe the user with properly converted VAPID key
         const applicationServerKey = urlBase64ToUint8Array(data.publicVapid);
-        
         console.log('Attempting to subscribe with key:', data.publicVapid);
-        
         const subscription = await swRegistration.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: applicationServerKey,
         });
-        
         // Get the subscription as JSON
         const subscriptionJSON = subscription.toJSON() as PushSubscriptionJSON;
-        
         // Prepare subscription data for backend
         const subscriptionData: SubscriptionData = {
           endpoint: subscription.endpoint,

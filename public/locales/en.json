@@ -309,8 +309,8 @@
     "noPosts": "No saved posts yet",
     "noArticles": "No saved articles yet",
     "tabs": {
-      "posts": "post",
-      "articles": "articles",
+      "posts": "Posts",
+      "articles": "Articles",
       "history": "Reading History"
     },
     "topSavedAuthors": "Your top saved Authors",
@@ -403,7 +403,7 @@
       "unfollowFailed": "Failed to unfollow user",
       "followSuccess": "User followed successfully",
       "followFailed": "Failed to follow user",
-      "following": "Following...",
+      "following": "Following",
       "unfollowing": "Unfollowing...",
       "follow": "Follow",
       "unfollow": "Unfollow",
