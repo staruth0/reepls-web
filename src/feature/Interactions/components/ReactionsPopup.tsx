@@ -37,7 +37,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="font-semibold text-[16px] space-x-1">
           <span>{t("interaction.all")}</span>
-          <span>{allReactions?.reactions.totalUsers || 0}</span>
+          <span>{allReactions?.totalReactions || 0}</span>
         </div>
       ),
     },

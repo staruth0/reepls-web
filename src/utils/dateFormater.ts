@@ -59,7 +59,7 @@ export const timeAgo = (isoString: string) => {
       return days === 1 ? "1 day ago" : `${days} days ago`;
     } else if (elapsed < msPerYear) {
       const months = Math.round(elapsed / msPerMonth);
-      return months === 1 ? "1 month ago" : `${months} m ago`;
+      return months === 1 ? "1 month ago" : `${months} mon ago`;
     } else {
       return formatDateWithMonth(isoString);
     }

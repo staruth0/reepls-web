@@ -423,28 +423,28 @@ const ProfileConfigurations: React.FC = () => {
       {showLogoutPopup && (
         <>
           <div
-            className="fixed inset-0 bg-black bg-opacity-5 z-[910]"
+            className="fixed inset-0 bg-black bg-opacity-5 z-[990]"
             onClick={handleCancelLogout}
           ></div>
-          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-800 rounded-md shadow-lg p-6 z-[910] w-[40%] flex flex-col items-center">
-            <h2 className="text-neutral-50 text-lg font-semibold mb-4">
-              {t("Are you sure you want to log out?")}
-            </h2>
-            <div className="flex justify-end gap-4">
-              <button
-                className="px-8 py-2 bg-neutral-700 text-neutral-50 rounded-md hover:bg-neutral-600"
-                onClick={handleCancelLogout}
-              >
-                {t("No")}
-              </button>
-              <button
-                className="px-8 py-2 bg-red-500 text-neutral-50 rounded-md hover:bg-red-600"
-                onClick={handleConfirmLogout}
-              >
-                {t("Yes")}
-              </button>
-            </div>
-          </div>
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-800 rounded-md shadow-lg p-4 sm:p-6 z-[990] w-[90%] sm:w-[70%] md:w-[50%] lg:w-[40%] flex flex-col items-center">
+  <h2 className="text-neutral-50 text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-center">
+    {t("Are you sure you want to log out?")}
+  </h2>
+  <div className="flex justify-end gap-3 sm:gap-4 w-full">
+    <button
+      className="px-4 sm:px-6 md:px-8 py-1 sm:py-2 bg-neutral-700 text-neutral-50 rounded-md hover:bg-neutral-600 text-sm sm:text-base"
+      onClick={handleCancelLogout}
+    >
+      {t("No")}
+    </button>
+    <button
+      className="px-4 sm:px-6 md:px-8 py-1 sm:py-2 bg-red-500 text-neutral-50 rounded-md hover:bg-red-600 text-sm sm:text-base"
+      onClick={handleConfirmLogout}
+    >
+      {t("Yes")}
+    </button>
+  </div>
+</div>
         </>
       )}
     </div>

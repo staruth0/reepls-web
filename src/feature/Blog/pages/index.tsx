@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { type Editor } from 'reactjs-tiptap-editor';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import { useUser } from '../../../hooks/useUser';
-import { Article, MediaItem, MediaType } from '../../../models/datamodels';
+import { Article, MediaItem} from '../../../models/datamodels';
 import { uploadArticleThumbnail } from '../../../utils/media';
 import AuthPromptPopup from '../../AnonymousUser/components/AuthPromtPopup';
 import CreatePostTopBar from '../components/CreatePostTopBar';
@@ -19,6 +19,7 @@ import { useSendNewArticleNotification } from '../../Notifications/hooks/useNoti
 const CreatePost: React.FC = () => {
   const { authUser, isLoggedIn } = useUser();
   const [thumbnail, setThumbnail] = useState<File | null>(null);
+  const [thumbnailImage, setThumbnailImage] = useState<string>('');
   const [title, setTitle] = useState<string>('');
   const [subtitle, setSubtitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
@@ -96,18 +97,27 @@ const CreatePost: React.FC = () => {
     },
   ];
 
-  const onPublish = async () => {
-    if (!isLoggedIn) return;
-    if (!title || !subtitle || !content) {
-      toast.error(t('Please provide a title, subtitle and content.'), {
-        autoClose: 1500,
-      });
-      return;
-    }
+const onPublish = async () => {
+  if (!isLoggedIn) return;
+  if (!title || !subtitle || !content) {
+    toast.error(t('Please provide a title, subtitle and content.'), {
+      autoClose: 1500,
+    });
+    return;
+  }
 
+  const toastId = toast.info(t('Publishing the article...'), {
+    isLoading: true,
+    autoClose: false,
+  });
+
+  try {
+    let thumbnailUrl = thumbnailImage;
+    
+   
     if (thumbnail && authUser?.id) {
-      const url = await uploadArticleThumbnail(authUser?.id, thumbnail);
-      setMedia([{ url, type: MediaType.Image }, ...media]);
+      thumbnailUrl = await uploadArticleThumbnail(authUser.id, thumbnail);
+      setThumbnailImage(thumbnailUrl);
     }
 
     const article: Article = {
@@ -115,16 +125,16 @@ const CreatePost: React.FC = () => {
       subtitle,
       content,
       htmlContent,
+      thumbnail: thumbnailUrl, 
       media,
       status: 'Published',
       type: 'LongForm',
       isArticle: true,
-      is_communiquer:isCommunique,
+      is_communiquer: isCommunique,
     };
-    const toastId = toast.info(t('Publishing the article...'), {
-      isLoading: true,
-      autoClose: false,
-    });
+
+    console.log('article thumbnail', thumbnailUrl); // Should now show the URL
+
     createArticle(article, {
       onSuccess: () => {
         toast.update(toastId, {
@@ -145,7 +155,15 @@ const CreatePost: React.FC = () => {
         });
       },
     });
-  };
+  } catch (error) {
+    toast.update(toastId, {
+      render: t('Error uploading thumbnail: ') + error,
+      type: 'error',
+      isLoading: false,
+      autoClose: 1500,
+    });
+  }
+};
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>, nextFocus: () => void) => {
     if (event.key === 'Enter') {

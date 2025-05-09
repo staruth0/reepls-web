@@ -17,6 +17,7 @@ import { useGetArticleById, useUpdateArticle } from '../hooks/useArticleHook';
 const EditPost: React.FC = () => {
   const { authUser, isLoggedIn } = useUser();
   const [thumbnail, setThumbnail] = useState<File | null>(null);
+   const [thumbnailImage, setThumbnailImage] = useState<string>('');
   const [title, setTitle] = useState<string>('');
   const [subtitle, setSubtitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
@@ -88,12 +89,12 @@ const EditPost: React.FC = () => {
       setHtmlContent(article.htmlContent || '');
       setMedia(article.media || []);
       setIsCommunique(article.is_communiquer || false);
-      // If there's a thumbnail in media, we could set it here (assuming first image is thumbnail)
-      const thumbnailMedia = article.media?.find((m:MediaItem) => m.type === MediaType.Image);
-      if (thumbnailMedia) {
-        // Note: We can't set a File directly from a URL; this would need a fetch if editable
-        // For now, we'll assume thumbnail editing starts fresh unless you have a File blob
-      }
+      
+      // Initialize thumbnail image from article data
+      if (article.thumbnail) {
+        setThumbnailImage(article.thumbnail);
+      } 
+      
       setIsLoading(false);
     }
   }, [article, isFetchingArticle]);
@@ -114,48 +115,73 @@ const EditPost: React.FC = () => {
       return;
     }
 
-    let updatedMedia = [...media];
-    if (thumbnail && authUser?.id) {
-      const url = await uploadArticleThumbnail(authUser.id, thumbnail);
-      updatedMedia = [{ url, type: MediaType.Image }, ...media];
-    }
+    const toastId = toast.info(t('Updating the article...'), { 
+      isLoading: true, 
+      autoClose: false 
+    });
 
-    const updatedArticleData: Article = {
-      _id: articleId,
-      title,
-      subtitle,
-      content,
-      htmlContent,
-      media: updatedMedia,
-      status: 'Published',
-      type: 'LongForm',
-      isArticle: true,
-      is_communiquer:isCommunique,
-    };
+    try {
+      let updatedThumbnail = thumbnailImage;
+      let updatedMedia = [...media];
 
-    const toastId = toast.info(t('Updating the article...'), { isLoading: true, autoClose: false });
-    updateArticle(
-      { articleId, article: updatedArticleData }, // Match the expected type
-      {
-        onSuccess: () => {
-          toast.update(toastId, {
-            render: t('Article updated successfully'),
-            type: 'success',
-            isLoading: false,
-            autoClose: 1500,
-          });
-          navigate(`/posts/article/slug/${article?.slug || articleId}`); // Navigate to article page
-        },
-        onError: (error: any) => {
-          toast.update(toastId, {
-            render: t('Error updating article: ') + (error?.response?.data?.message || error?.message),
-            type: 'error',
-            isLoading: false,
-            autoClose: 1500,
-          });
-        },
+      // Upload new thumbnail if provided
+      if (thumbnail && authUser?.id) {
+        updatedThumbnail = await uploadArticleThumbnail(authUser.id, thumbnail);
+        setThumbnailImage(updatedThumbnail);
+        
+        // Remove old thumbnail from media if it exists
+        updatedMedia = media.filter(item => item.url !== thumbnailImage);
+        // Add new thumbnail to media
+        updatedMedia.unshift({ 
+          url: updatedThumbnail, 
+          type: MediaType.Image 
+        });
       }
-    );
+
+      const updatedArticleData: Article = {
+        _id: articleId,
+        title,
+        subtitle,
+        content,
+        htmlContent,
+        thumbnail: updatedThumbnail, // Use the updated thumbnail URL
+        media: updatedMedia,
+        status: 'Published',
+        type: 'LongForm',
+        isArticle: true,
+        is_communiquer: isCommunique,
+      };
+
+      updateArticle(
+        { articleId, article: updatedArticleData },
+        {
+          onSuccess: () => {
+            toast.update(toastId, {
+              render: t('Article updated successfully'),
+              type: 'success',
+              isLoading: false,
+              autoClose: 1500,
+            });
+            navigate(`/posts/article/slug/${article?.slug || articleId}`);
+          },
+          onError: (error: any) => {
+            toast.update(toastId, {
+              render: t('Error updating article: ') + (error?.message || 'Unknown error'),
+              type: 'error',
+              isLoading: false,
+              autoClose: 1500,
+            });
+          },
+        }
+      );
+    } catch (error) {
+      toast.update(toastId, {
+        render: t('Error uploading thumbnail: ') + (error as Error).message,
+        type: 'error',
+        isLoading: false,
+        autoClose: 1500,
+      });
+    }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>, nextFocus: () => void) => {
@@ -187,7 +213,10 @@ const EditPost: React.FC = () => {
             <div className="text-center mt-10">Loading article...</div>
           ) : (
             <div className=" sm:max-w-xl md:max-w-4xl  m-auto md:px-4">
-              <ImageSection onImageChange={(image) => setThumbnail(image as File)} />
+                <ImageSection 
+      onImageChange={(image) => setThumbnail(image as File)} 
+      existingImageUrl={thumbnailImage}
+    />
               <div className=" mt-5">
                 <div className=" px-5 sm:px-0">
                   <textarea

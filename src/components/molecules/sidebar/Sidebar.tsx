@@ -23,7 +23,7 @@ import { Article, MediaItem, MediaType } from '../../../models/datamodels';
 import { cn } from '../../../utils';
 import { uploadPostImage, uploadPostVideo } from '../../../utils/media';
 import SidebarItem from '../../atoms/SidebarItem';
-import StarToggle from '../../../components/atoms/CommuniqueBtn';
+// import StarToggle from '../../../components/atoms/CommuniqueBtn';
 import './sidebar.scss';
 import { useNotificationsValues } from '../../../feature/Notifications/hooks';
 import { commuLeft } from '../../../assets/icons';
@@ -33,7 +33,7 @@ const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const { authUser, isLoggedIn } = useUser();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
-  const [isCommunique, setIsCommunique] = useState<boolean>(false);
+  // const [isCommunique, setIsCommunique] = useState<boolean>(false);
   const { t } = useTranslation();
   const { mutate: createPost, isPending } = useSendNewArticleNotification();
   const { isOpen, toggleSidebar } = useContext(SidebarContext);
@@ -238,7 +238,7 @@ const Sidebar: React.FC = () => {
       <div className="p-4 ">
       <div className='flex gap-2'>
         <img src={commuLeft} alt="star" />
-        <StarToggle isCommunique={isCommunique} onToggle={setIsCommunique} />
+        {/* <StarToggle isCommunique={isCommunique} onToggle={setIsCommunique} /> */}
       {isOpen &&  <div className='line-clamp-1'>{t(`Communiques`)}</div>}
       </div>
     </div>
