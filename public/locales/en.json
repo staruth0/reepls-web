@@ -184,6 +184,12 @@
   "Press '/' for commands": "Press '/' for commands",
   "New Article": "New Article",
   "Drop your thoughts and let them": "Drop your thoughts and let them",
+  "Inappropriate content": "Inappropriate content",
+  "False information": "False information",
+  "Spam or advertisement": "Spam or advertisement",
+  "Plagiarism": "Plagiarism",
+  "Hate speech": "Hate speech",
+  "Other": "Other",
   "header": {
     "signIn": "Sign In",
     "signUp": "Sign Up"
@@ -347,6 +353,15 @@
 
   "report": {
     "title": "Report \"{{username}}\"",
+    "articleTitle": "Article Title",
+    "articleSubtitle": "Article Subtitle",
+    "selectReason": "Select a reason",
+    "authenticationError": "You must be logged in to report a user",
+    "reporting": "Reporting...",
+    "additionalDetails": "Additional details",
+    "optionalButRecommended": "optional but recommended",
+    "characterLimit": "Character limit",
+    "detailsPlaceholder": "Please provide any additional details about the report",
     "characterNum": "500 characters",
     "clear": "Clear",
     "submit": "Submit",
@@ -449,11 +464,14 @@
     }
   },
 
+
+
   "blog": {
     "Continuereading": "Continue reading",
     "seeMore":"See more",
     "seeLess":"See less",
     "Followauthor":"Follow author",
+    "ReportPost":"Report post",
     "Unfollowauthor":"Unfollow author",
     "AddToSaved":"Add to saved",
     "Remove From Saved":"Remove from saved",

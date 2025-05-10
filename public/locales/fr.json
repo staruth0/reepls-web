@@ -189,6 +189,12 @@
   "Press '/' for commands": "Appuyez sur '/' pour les commandes",
   "New Article": "Nouvel Article",
   "Drop your thoughts and let them": "Exprimez vos pensées et laissez-les",
+  "Inappropriate content": "Contenu inapproprié",
+  "False information": "False information",
+  "Spam or advertisement": "Spam ou publicité",
+  "Plagiarism": "Plagiat",
+  "Hate speech": "Discours de haine",
+  "Other": "Autre",
   "header": {
     "signIn": "Se connecter",
     "signUp": "S'inscrire"
@@ -348,6 +354,15 @@
 
   "report": {
     "title": "Signaler \"{{username}}\"",
+    "articleTitle": "Titre de l'article",
+    "articleSubtitle": "Sous-titre de l'article",
+    "selectReason": "Sélectionnez une raison",
+    "authenticationError": "Vous devez être connecté pour signaler un utilisateur",
+    "reporting": "Signalement en cours...",
+    "additionalDetails": "Détails supplémentaires",
+    "optionalButRecommended": "Optionnel mais recommandé",
+    "characterLimit": "Limites de caractères",
+    "detailsPlaceholder": "Veuillez fournir des détails supplémentaires sur le rapport.",
     "characterNum": "500 caractères",
     "clear": "Effacer",
     "submit": "Soumettre",
@@ -465,6 +480,8 @@
     "EditPost": "Modifier le post",
     "Analytics": "Analytiques",
     "Share": "Partager",
+    "ReportPost": "Signaler le post",
+    "Report": "Signaler",
     "Delete": "Supprimer",
     "Hidepost": "Masquer le post",
     "React": "Réagir",

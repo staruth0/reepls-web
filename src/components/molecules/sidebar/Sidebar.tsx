@@ -1,7 +1,7 @@
-import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
-import React, { useContext, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { FaRegUserCircle } from 'react-icons/fa';
+import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
+import React, { useContext, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { FaRegUserCircle } from "react-icons/fa";
 import {
   LuBell,
   LuBookmark,
@@ -11,23 +11,23 @@ import {
   LuPencilLine,
   LuPlus,
   LuSearch,
-} from 'react-icons/lu';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { MAX_IMAGE_COUNT, MAX_VIDEO_COUNT } from '../../../constants';
-import { SidebarContext } from '../../../context/SidebarContext/SidebarContext';
-import PostModal from '../../../feature/Blog/components/PostModal';
+} from "react-icons/lu";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { MAX_IMAGE_COUNT, MAX_VIDEO_COUNT } from "../../../constants";
+import { SidebarContext } from "../../../context/SidebarContext/SidebarContext";
+import PostModal from "../../../feature/Blog/components/PostModal";
 
-import { useUser } from '../../../hooks/useUser';
-import { Article, MediaItem, MediaType } from '../../../models/datamodels';
-import { cn } from '../../../utils';
-import { uploadPostImage, uploadPostVideo } from '../../../utils/media';
-import SidebarItem from '../../atoms/SidebarItem';
+import { useUser } from "../../../hooks/useUser";
+import { Article, MediaItem, MediaType } from "../../../models/datamodels";
+import { cn } from "../../../utils";
+import { uploadPostImage, uploadPostVideo } from "../../../utils/media";
+import SidebarItem from "../../atoms/SidebarItem";
 // import StarToggle from '../../../components/atoms/CommuniqueBtn';
-import './sidebar.scss';
-import { useNotificationsValues } from '../../../feature/Notifications/hooks';
-import { commuLeft } from '../../../assets/icons';
-import { useSendNewArticleNotification } from '../../../feature/Notifications/hooks/useNotification';
+import "./sidebar.scss";
+import { useNotificationsValues } from "../../../feature/Notifications/hooks";
+import { commuLeft } from "../../../assets/icons";
+import { useSendNewArticleNotification } from "../../../feature/Notifications/hooks/useNotification";
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
@@ -38,64 +38,69 @@ const Sidebar: React.FC = () => {
   const { mutate: createPost, isPending } = useSendNewArticleNotification();
   const { isOpen, toggleSidebar } = useContext(SidebarContext);
 
-  const {notifications} = useNotificationsValues();
-  const unreadNotifications = notifications.filter(notif => !notif.is_read);
-   const screenWidth = window.innerWidth;
+  const { notifications } = useNotificationsValues();
+  const unreadNotifications = notifications.filter((notif) => !notif.is_read);
+  const screenWidth = window.innerWidth;
 
-  console.log('all Not',notifications)
-  console.log('uread Not',unreadNotifications)
+  console.log("all Not", notifications);
+  console.log("uread Not", unreadNotifications);
   const unreadCount = unreadNotifications.length;
 
   const handleToggleSidebar = () => {
-    console.log('Toggle sidebar', isOpen);
+    console.log("Toggle sidebar", isOpen);
     toggleSidebar();
   };
 
-  const handleGotoCommuniquePage = ()=>{
-    navigate('/posts/communiques')
+  const handleGotoCommuniquePage = () => {
+    navigate("/posts/communiques");
     handleToggleSidebar();
-  }
+  };
 
   const navLinks = [
     {
       icon: LuHouse,
-      name: 'Feed',
-      link: '/feed',
+      name: "Feed",
+      link: "/feed",
     },
     {
       icon: LuSearch,
-      name: 'Search',
-      link: '/search',
+      name: "Search",
+      link: "/search",
     },
     {
       icon: LuBookmark,
-      name: 'Bookmarks',
-      link: `${isLoggedIn ? '/bookmarks' : '/bookmarks/anonymous'}`,
+      name: "Bookmarks",
+      link: `${isLoggedIn ? "/bookmarks" : "/bookmarks/anonymous"}`,
     },
     {
       icon: LuBell,
-      name: 'Notifications',
-      link: `${isLoggedIn ? '/notifications' : '/notifications/anonymous'}`,
+      name: "Notifications",
+      link: `${isLoggedIn ? "/notifications" : "/notifications/anonymous"}`,
       badgeContent: unreadCount,
     },
     {
       icon: FaRegUserCircle,
-      name: 'Profile',
-      link: `${isLoggedIn ? `/profile/${authUser?.username}` : '/anonymous'}`,
+      name: "Profile",
+      link: `${isLoggedIn ? `/profile/${authUser?.username}` : "/anonymous"}`,
     },
   ];
 
-  const handlePost = async (postContent: string, postImages: File[], postVideos: File[], isCommunique: boolean) => {
+  const handlePost = async (
+    postContent: string,
+    postImages: File[],
+    postVideos: File[],
+    isCommunique: boolean
+  ) => {
     if (!authUser?.id) {
-      toast.error('You must be logged in to create a post');
+      toast.error("You must be logged in to create a post");
       return;
     }
     if (postImages.length > MAX_IMAGE_COUNT) {
-      toast.error('You must upload at most ' + MAX_IMAGE_COUNT + ' images');
+      toast.error("You must upload at most " + MAX_IMAGE_COUNT + " images");
       return;
     }
     if (postVideos.length > MAX_VIDEO_COUNT) {
-      toast.error('You must upload at most ' + MAX_VIDEO_COUNT + ' videos');
+      toast.error("You must upload at most " + MAX_VIDEO_COUNT + " videos");
       return;
     }
 
@@ -107,7 +112,9 @@ const Sidebar: React.FC = () => {
           const url = await uploadPostImage(authUser?.id, image);
           images.push({ url, type: MediaType.Image });
         } catch (error) {
-          toast.error('Your images could not be uploaded. Please try again later.');
+          toast.error(
+            "Your images could not be uploaded. Please try again later."
+          );
           return;
         }
       }
@@ -118,7 +125,9 @@ const Sidebar: React.FC = () => {
           const url = await uploadPostVideo(authUser?.id, video);
           videos.push({ url, type: MediaType.Video });
         } catch (error) {
-          toast.error('Your videos could not be uploaded. Please try again later.');
+          toast.error(
+            "Your videos could not be uploaded. Please try again later."
+          );
           return;
         }
       }
@@ -127,19 +136,22 @@ const Sidebar: React.FC = () => {
     const post: Article = {
       content: postContent,
       media: [...images, ...videos],
-      type: 'ShortForm',
-      status: 'Published',
+      type: "ShortForm",
+      status: "Published",
       isArticle: false,
-      is_communiquer:isCommunique,
+      is_communiquer: isCommunique,
     };
 
     createPost(post, {
       onSuccess: () => {
         setIsCreatingPost(false);
-        navigate('/feed');
+        navigate("/feed");
       },
       onError: (error: any) => {
-        toast.error('Error creating post: ' + error?.response?.data?.message || error?.message);
+        toast.error(
+          "Error creating post: " + error?.response?.data?.message ||
+            error?.message
+        );
       },
     });
   };
@@ -147,24 +159,34 @@ const Sidebar: React.FC = () => {
   const isTabletSmall = screenWidth >= 640 && screenWidth < 930;
 
   return (
-    < div className="side bg-background">
+    <div className="side bg-background">
       <LuCircleChevronRight
         className={cn(
-          'size-7 md:size-6 p-0 rounded-full cursor-pointer',
-          isOpen && 'rotate-180',
-          isTabletSmall && 'hidden',
-          'transition-all duration-300 ease-in-out',
-          'hover:text-primary-400',
-          'bg-background border-none absolute z-10 top-1/2 right-0 transform translate-x-1/2 text-neutral-400'
+          "size-7 md:size-6 p-0 rounded-full cursor-pointer",
+          isOpen && "rotate-180",
+          isTabletSmall && "hidden",
+          "transition-all duration-300 ease-in-out",
+          "hover:text-primary-400",
+          "bg-background border-none absolute z-10 top-1/2 right-0 transform translate-x-1/2 text-neutral-400"
         )}
         onClick={() => handleToggleSidebar()}
       />
       <div className="flex gap-5 items-center h-[80px]">
         <div
           className="text-roboto text-[24px] font-semibold flex gap-2 items-center cursor-pointer"
-          onClick={() => {navigate('/feed'); handleToggleSidebar();}}>
-          <img src={`/Logo.svg`} alt="reeplsicon" className={`${isOpen ? 'size-8' : 'size-9'}`} />
-          {isOpen && 'REEPLS'}
+          onClick={() => {
+            navigate("/feed");
+            if (window.innerWidth < 768) {
+              handleToggleSidebar();
+            }
+          }}
+        >
+          <img
+            src={`/Logo.svg`}
+            alt="reeplsicon"
+            className={`${isOpen ? "size-8" : "size-9"}`}
+          />
+          {isOpen && "REEPLS"}
         </div>
       </div>
 
@@ -195,55 +217,67 @@ const Sidebar: React.FC = () => {
         <Popover className="relative">
           <PopoverButton
             className={cn(
-              'create__post__button py-4',
-              'disabled:text-neutral-400 disabled:cursor-not-allowed',
-              isOpen ? 'px-6' : 'px-4'
+              "create__post__button py-4",
+              "disabled:text-neutral-400 disabled:cursor-not-allowed",
+              isOpen ? "px-6" : "px-4"
             )}
-            disabled={isCreatingPost}>
+            disabled={isCreatingPost}
+          >
             <LuCirclePlus className="create__post__icon" />
-            {isOpen && t('Create Post')}
+            {isOpen && t("Create Post")}
           </PopoverButton>
           <PopoverPanel
-  anchor="bottom"
-  className={cn('PopoverContent flex flex-col z-50 mt-2', isOpen ? 'w-40' : 'w-28')}>
-  {({ close }) => (
-    <div className="block text-center z-[999]">
-      <button
-        className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4 hover:text-primary-400"
-        onClick={() => {
-          setIsCreatingPost(true);
-          close();
-        }}>
-        <LuPlus className="size-4" />
-        <span className="text-sm">{!isOpen ? t('Post') : t('Create Post')}</span>
-      </button>
-      <hr className="border-neutral-400 w-3/4 mx-auto" />
-      <button
-        className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4 hover:text-primary-400"
-        onClick={() => {
-          navigate('/posts/create');
-          handleToggleSidebar();
-          close();
-        }}>
-        <LuPencilLine className="size-4" />
-        <span className="text-sm">{!isOpen ? t('Write') : t('Write Article')}</span>
-      </button>
-    </div>
-  )}
-</PopoverPanel>
+            anchor="bottom"
+            className={cn(
+              "PopoverContent flex flex-col z-50 mt-2",
+              isOpen ? "w-40" : "w-28"
+            )}
+          >
+            {({ close }) => (
+              <div className="block text-center z-[999]">
+                <button
+                  className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4 hover:text-primary-400"
+                  onClick={() => {
+                    setIsCreatingPost(true);
+                    close();
+                  }}
+                >
+                  <LuPlus className="size-4" />
+                  <span className="text-sm">
+                    {!isOpen ? t("Post") : t("Create Post")}
+                  </span>
+                </button>
+                <hr className="border-neutral-400 w-3/4 mx-auto" />
+                <button
+                  className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4 hover:text-primary-400"
+                  onClick={() => {
+                    navigate("/posts/create");
+                    if (window.innerWidth < 768) {
+                      handleToggleSidebar();
+                    }
+                    close();
+                  }}
+                >
+                  <LuPencilLine className="size-4" />
+                  <span className="text-sm">
+                    {!isOpen ? t("Write") : t("Write Article")}
+                  </span>
+                </button>
+              </div>
+            )}
+          </PopoverPanel>
         </Popover>
       </div>
 
-      <div className='md:hidden' onClick={handleGotoCommuniquePage}>
-      <div className="p-4 ">
-      <div className='flex gap-2'>
-        <img src={commuLeft} alt="star" />
-        {/* <StarToggle isCommunique={isCommunique} onToggle={setIsCommunique} /> */}
-      {isOpen &&  <div className='line-clamp-1'>{t(`Communiques`)}</div>}
+      <div className="md:hidden" onClick={handleGotoCommuniquePage}>
+        <div className="p-4 ">
+          <div className="flex gap-2">
+            <img src={commuLeft} alt="star" />
+            {/* <StarToggle isCommunique={isCommunique} onToggle={setIsCommunique} /> */}
+            {isOpen && <div className="line-clamp-1">{t(`Communiques`)}</div>}
+          </div>
+        </div>
       </div>
-    </div>
-      </div>
-      
     </div>
   );
 };

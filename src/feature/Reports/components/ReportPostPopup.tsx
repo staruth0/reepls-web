@@ -25,12 +25,12 @@ const ReportArticlePopup: React.FC<ReportArticlePopupProps> = ({
   const { authUser } = useUser();
 
   const reportReasons = [
-    'Inappropriate content',
-    'False information',
-    'Spam or advertisement',
-    'Plagiarism',
-    'Hate speech',
-    'Other'
+    t('Inappropriate content'),
+    t('False information'),
+    t('Spam or advertisement'),
+    t('Plagiarism'),
+    t('Hate speech'),
+    t('Other')
   ];
 
   const handleSubmit = async () => {
@@ -87,7 +87,7 @@ const ReportArticlePopup: React.FC<ReportArticlePopupProps> = ({
         <div className="flex justify-between items-start mb-4">
           <div>
             <h3 className="text-lg font-semibold mb-1">
-              {t("report.articleTitle", { title: articleTitle })}
+              {t("report.articleTitle")}
             </h3>
             <p className="text-sm text-neutral-400">
               {t("report.articleSubtitle")}
@@ -96,7 +96,7 @@ const ReportArticlePopup: React.FC<ReportArticlePopupProps> = ({
           <button
             className="p-1 rounded-full hover:bg-neutral-700 transition-colors"
             onClick={onClose}
-            aria-label={t("common.close")}
+            // aria-label={t("common.close")}
           >
             <X className="size-5" />
           </button>
