@@ -13,7 +13,7 @@ interface ReportArticlePopupProps {
 }
 
 const ReportArticlePopup: React.FC<ReportArticlePopupProps> = ({ 
-  articleTitle, 
+  // articleTitle, 
   articleId, 
   onClose 
 }) => {
