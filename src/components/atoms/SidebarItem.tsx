@@ -19,7 +19,7 @@ const SidebarItem: React.FC<sidebarprops> = ({ NavItemIcon, name, link, isSideba
   return (
     <NavLink
       to={link}
-      onClick={handleToggleSidebar}
+      onClick={()=> window.innerWidth < 768 ? handleToggleSidebar() : null}
       className={({ isActive }) =>
         cn('side__link', {
           active__link: isActive,
