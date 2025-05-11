@@ -187,6 +187,7 @@ const Profile: React.FC = () => {
                   name={user.name!}
                   town={user.address!}
                   role={user.role!}
+                  username={user.username!}
                   user_id={user.id!}
                   bio={user.bio!}
                   isverified={user.is_verified_writer!}

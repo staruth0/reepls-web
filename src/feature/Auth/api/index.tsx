@@ -1,7 +1,7 @@
 import { apiClient} from "../../../services/apiClient";
 import {CodeVerify,EmailCode,PhoneCode,PhoneVerify,User} from "../../../models/datamodels";
 import { jwtDecode } from "jwt-decode";
-import { ACCESS_TOKEN_KEY } from "../../../constants";
+import { getDecryptedAccessToken } from "./Encryption";
 
 // Register user
 const registerUser = async (user: User) => {
@@ -25,7 +25,7 @@ const logOutWithGoogle = async () => {
 
 // Register user
 const updateUser = async (user: User) => {
-  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+  const token = getDecryptedAccessToken();
 
   if (token) {
     const tokenDecoded = jwtDecode(token);

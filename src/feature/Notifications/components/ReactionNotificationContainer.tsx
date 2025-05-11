@@ -12,7 +12,8 @@ interface ReactionNotificationProps {
   is_read: boolean;
   id: string;
   slug:string;
-  article_id:string
+  article_id:string;
+  isArticle:boolean
 }
 
 const ReactionNotificationContainer: React.FC<ReactionNotificationProps> = ({ 
@@ -22,14 +23,15 @@ const ReactionNotificationContainer: React.FC<ReactionNotificationProps> = ({
   is_read, 
   id ,
   slug,
-  article_id
+  article_id,
+  isArticle
 }) => {
   const { user } = useGetUserById(username);
   const { mutate } = useUpdateNotificationReadStatus();
   const navigate = useNavigate();
 
   const updateStatus = () => {
-     navigate(`${slug?`/posts/article/slug/${slug}`:`/posts/post/${article_id}` }`)
+     navigate(`${isArticle?`/posts/article/slug/${slug}`:`/posts/post/${article_id}` }`)
     mutate({ notificationId: id, isRead: true }, {
       onSuccess: () => {
         console.log('success read');
