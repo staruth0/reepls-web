@@ -8,6 +8,7 @@ import {
 
 } from '../api/Encryption'; 
 import { User,  LoginResponse } from '../../../models/datamodels';
+import { STORAGE_KEY } from '../../../constants';
 
 export const useEncryptedAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -59,7 +60,7 @@ export const useEncryptedAuth = () => {
 
   // Function to clear all encrypted data (e.g., for logout)
   const clearAuthData = useCallback(() => {
-    localStorage.removeItem('encryptedLoginData');
+    localStorage.removeItem(STORAGE_KEY);
     setUser(null);
     setAccessToken(null);
     setRefreshToken(null);
