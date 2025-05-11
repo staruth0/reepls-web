@@ -23,7 +23,7 @@ function Welcome() {
       <div className="welcome__text">{t("WelcomeMessage")}</div>
 
       <div className="welcome__buttons p-8">
-        <button className="btn__sign-in shadow-md hover:shadow-sm" onClick={navigateToSignUp}>
+        <button className="btn__sign-in bg-transparent border border-primary-400 text-primary-400  hover:shadow-sm hover:bg-primary-400" onClick={navigateToSignUp}>
           {t("SignInButton")}
         </button>
         <div className="divider">

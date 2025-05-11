@@ -9,6 +9,7 @@ import { useGetFollowedArticles } from '../Blog/hooks/useArticleHook';
 import Communique from './components/Communique/Communique';
 import ToggleFeed from './components/ToogleFeed';
 import './feed.scss';
+import { t } from 'i18next';
 
 const FeedFollowing: React.FC = () => {
   const [isBrainActive, setIsBrainActive] = useState<boolean>(false);
@@ -102,7 +103,7 @@ const FeedFollowing: React.FC = () => {
         ) : hasNoArticles ? (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] text-neutral-50 text-center py-4">
             <p className="text-[16px] font-roboto">
-              this page is empty! Follow some users to see their posts or check back later for new content.
+              {t("this page is empty! Follow some users to see their posts or check back later for new content.")}
             </p>
           </div>
         ) : (

@@ -229,15 +229,19 @@ const Sidebar: React.FC = () => {
           <PopoverPanel
             anchor="bottom"
             className={cn(
-              "PopoverContent flex flex-col z-50 mt-2",
+              "PopoverContent bg-background flex flex-col z-[999] mt-2 ",
               isOpen ? "w-40" : "w-28"
             )}
           >
             {({ close }) => (
-              <div className="block text-center z-[999]">
+              <div className="block bg-background  text-center z-[999]">
                 <button
                   className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4 hover:text-primary-400"
                   onClick={() => {
+                    if (!isLoggedIn) {
+                      toast.error(t("Please login to create a post"));
+                      return;
+                    }
                     setIsCreatingPost(true);
                     close();
                   }}
@@ -251,6 +255,11 @@ const Sidebar: React.FC = () => {
                 <button
                   className="flex items-center justify-center gap-2 cursor-pointer py-3 px-4 hover:text-primary-400"
                   onClick={() => {
+                    if (!isLoggedIn) {
+                      toast.error(t("Please login to write an article"));
+                      return;
+                    }
+
                     navigate("/posts/create");
                     if (window.innerWidth < 768) {
                       handleToggleSidebar();
