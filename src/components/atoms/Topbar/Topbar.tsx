@@ -25,7 +25,7 @@ const Topbar: React.FC<TopbarProps> = ({ children }) => {
         <FaBars size={24} className="cursor-pointer" onClick={handleToggleSidebar}/>
       </div>
       <div className='flex px-4 items-center gap-2'>{children} <div>   { !isLoggedIn &&   <button type="button"
-                            className="flex items-center w-40 justify-center gap-2 py-1 text-neutral-50 rounded-md shadow-sm hover:bg-primary-700 transition-colors"
+                            className="md:flex hidden items-center w-40 justify-center gap-2 py-1 text-neutral-50 rounded-md shadow-sm hover:bg-primary-700 transition-colors"
                             onClick={() => navigate('/auth')} 
                           >
                             <FaRegUserCircle size={16} className="text-main-green" />

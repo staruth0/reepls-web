@@ -17,7 +17,7 @@ const Notifications: React.FC = () => {
     console.log('notifications', notifications);
   }, [notifications]);
 
- 
+  
 
   return (
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>

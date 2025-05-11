@@ -1,11 +1,12 @@
-import {  MessageCircle, ThumbsUp,  } from 'lucide-react';
+import { MessageCircle, ThumbsUp } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { ReadingControls } from '../../../../components/atoms/ReadALoud/ReadingControls';
 import { useUser } from '../../../../hooks/useUser';
-import { Article, User } from '../../../../models/datamodels';
+import { Article, User, ReactionReceived } from '../../../../models/datamodels';
 import SignInPopUp from '../../../AnonymousUser/components/SignInPopUp';
 import CommentSection from '../../../Comments/components/CommentSection';
 import ReactionModal from '../../../Interactions/components/ReactionModal';
+import { useGetArticleReactions } from '../../../Interactions/hooks';
 import { t } from 'i18next';
 
 interface BlogReactionSessionProps {
@@ -15,11 +16,10 @@ interface BlogReactionSessionProps {
   article_id: string;
   text_to_speech: string;
   author_of_post: User;
-  article:Article
+  article: Article;
 }
 
 const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
-
   isCommentSectionOpen,
   article_id,
   setIsCommentSectionOpen,
@@ -27,13 +27,30 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   text_to_speech,
   article
 }) => {
-
-  const { isLoggedIn } = useUser(); 
+  const { isLoggedIn, authUser } = useUser();
   const [isModalOpen, setModalOpen] = useState(false);
   const [commentTabState, setCommentTabState] = useState<boolean>(false);
   const [showReactPopup, setShowReactPopup] = useState(false);
   const [showCommentPopup, setShowCommentPopup] = useState(false);
+  const [userReaction, setUserReaction] = useState<string | null>(null);
   
+  // Get all reactions for this article
+  const { data: allReactions } = useGetArticleReactions(article_id);
+  
+  // Check if the current user has reacted
+  useEffect(() => {
+    if (isLoggedIn && authUser?.id && allReactions?.reactions) {
+      const userReact = allReactions.reactions.find(
+        (r: ReactionReceived) => r.user_id?.id === authUser.id
+      );
+      
+      if (userReact) {
+        setUserReaction(userReact.type);
+      } else {
+        setUserReaction(null);
+      }
+    }
+  }, [isLoggedIn, authUser, allReactions]);
 
   const toggleCommentTab = () => {
     if (!isLoggedIn) {
@@ -55,6 +72,10 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
     setModalOpen(true);
   };
 
+  const handleReactionComplete = (reaction: string) => {
+    setUserReaction(reaction);
+  };
+
   useEffect(() => {
     if (isCommentSectionOpen) {
       setCommentTabState(false);
@@ -69,13 +90,17 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
           <button
             onMouseEnter={() => isLoggedIn && setModalOpen(true)}
             onClick={handleReactClick}
-            className="flex items-center gap-2 hover:text-primary-400 cursor-pointer">
-            <ThumbsUp className="size-5" /> {t("blog.React")}
+            className={`flex items-center gap-2 hover:text-primary-400 cursor-pointer ${
+              userReaction ? 'text-primary-400' : ''
+            }`}
+          >
+            <ThumbsUp 
+              className={`size-5 ${userReaction ? 'fill-primary-400 text-primary-400' : ''}`} 
+            /> 
+            {userReaction? t("blog.Reacted") : t("blog.React")}
           </button>
           {showReactPopup && <SignInPopUp text={t("blog.React")} position="below" onClose={() => setShowReactPopup(false)} />}
         </div>
-
-     
 
         {/* Comment Button */}
         <div className="relative">
@@ -86,17 +111,17 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
             <SignInPopUp text={t("blog.Comment")} position="below" onClose={() => setShowCommentPopup(false)} />
           )}
         </div>
-           {/* Read Aloud Button */}
-           <div className="relative">
+        
+        {/* Read Aloud Button */}
+        <div className="relative">
           <ReadingControls article={article} article_id={article_id} article_tts={text_to_speech} />
         </div>
-
 
         {/* Reaction Modal */}
         <ReactionModal
           isOpen={isModalOpen}
           onClose={() => setModalOpen(false)}
-          onReact={(reaction) => console.log(`Reacted with ${reaction}`)}
+          onReact={handleReactionComplete}
           article_id={article_id}
           article={article}
         />
