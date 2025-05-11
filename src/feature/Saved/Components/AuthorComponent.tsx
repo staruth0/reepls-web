@@ -99,6 +99,7 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
             alt="avatar"
             className="cursor-pointer w-10 h-10 rounded-full object-cover"
             onClick={handleViewProfile}
+              loading="lazy"
           />
         ) : (
           <span

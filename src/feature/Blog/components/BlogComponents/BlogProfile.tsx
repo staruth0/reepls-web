@@ -233,6 +233,7 @@ console.log('id article',article_id)
           alt="avatar"
           onClick={() => handleProfileClick(user?.username || "")}
           className="cursor-pointer size-14 rounded-full object-cover"
+            loading="lazy"
         />
       ) : (
         <span
