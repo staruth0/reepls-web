@@ -7,6 +7,7 @@ import { useKnowUserFollowings } from "../../Follow/hooks/useKnowUserFollowings"
 import { toast } from "react-toastify";
 import SignInPopUp from "../../AnonymousUser/components/SignInPopUp";
 import { useSendFollowNotification } from "../../Notifications/hooks/useNotification";
+import { getDecryptedUser } from "../../Auth/api/Encryption";
 
 
 interface ProfileHeroButtonsProps {
@@ -20,7 +21,8 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
 }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { authUser, isLoggedIn } = useUser();
+  const  authUser = getDecryptedUser();
+  const { isLoggedIn } = useUser();
   const { isFollowing: isUserFollowing } = useKnowUserFollowings();
   const { mutate: unFollow, isPending: isUnfollowPending } = useUnfollowUser();
   const [showSignInPopup, setShowSignInPopup] = useState(false);
