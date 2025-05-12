@@ -73,7 +73,6 @@ const CreatePost: React.FC = () => {
       ActionIcon: LuShare,
       onClick: () => {
         if (!isLoggedIn) return;
-        console.log('Sharing the post...');
       },
     },
     {
@@ -82,7 +81,6 @@ const CreatePost: React.FC = () => {
       ActionIcon: LuSave,
       onClick: () => {
         if (!isLoggedIn) return;
-        console.log('Saving the draft...');
       },
     },
     {
@@ -133,7 +131,6 @@ const onPublish = async () => {
       is_communiquer: isCommunique,
     };
 
-    console.log('article thumbnail', thumbnailUrl); // Should now show the URL
 
     createArticle(article, {
       onSuccess: () => {

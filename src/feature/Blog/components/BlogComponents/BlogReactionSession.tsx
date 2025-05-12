@@ -59,9 +59,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
     }
     if (!isCommentSectionOpen) {
       setCommentTabState(!commentTabState);
-    } else {
-      console.log('Comment section is not opened');
-    }
+    } 
   };
 
   const handleReactClick = () => {

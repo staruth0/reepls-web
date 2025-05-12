@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import ProfileConfigurations from '../../Profile/components/ProfileConfigurations';
 import { useTranslation } from 'react-i18next';
@@ -13,9 +13,7 @@ const Notifications: React.FC = () => {
   const { notifications } = useNotificationsValues();
   const { t } = useTranslation();
 
-  useEffect(() => {
-    console.log('notifications', notifications);
-  }, [notifications]);
+ 
 
   
 

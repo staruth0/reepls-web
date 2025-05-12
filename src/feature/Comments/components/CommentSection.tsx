@@ -30,7 +30,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   const [activeLevelTwoCommentId, setActiveLevelTwoCommentId] = useState<string | null>(null); // Track active tab
 
   useEffect(() => {
-    console.log("comments", articleComments);
   }, [article_id, articleComments]);
 
   if (isLoading)

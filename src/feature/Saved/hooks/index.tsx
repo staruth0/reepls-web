@@ -6,8 +6,7 @@ export const useSaveArticle = () => {
 
   return useMutation({
     mutationFn: (articleId: string) => saveArticle(articleId),
-    onSuccess: (data) => {
-      console.log("Article saved:", data);
+    onSuccess: () => {
       // Invalidate saved articles query to refetch data in the background
       queryClient.invalidateQueries({ queryKey: ["savedArticles"] });
     },
@@ -22,8 +21,7 @@ export const useRemoveSavedArticle = () => {
 
   return useMutation({
     mutationFn: (articleId: string) => removeSavedArticle(articleId),
-    onSuccess: (data) => {
-      console.log("Article removed from saved:", data);
+    onSuccess: () => {
       // Invalidate saved articles query to refetch data in the background
       queryClient.invalidateQueries({ queryKey: ["savedArticles"] });
     },
@@ -47,8 +45,7 @@ export const useGetSavedPosts = () => {
     queryFn: ({ pageParam = 1 }) => getSavedPosts({ pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      console.log('saved lastpage posts', lastPage);
-      console.log('saved allpage posts', allPages);
+     
       const postsFetched = allPages.length * 10; // Assumes 10 posts per page
       if (lastPage?.totalPosts && postsFetched < lastPage.totalPosts) {
         return allPages.length + 1;
@@ -66,8 +63,7 @@ export const useGetSavedArticle = () => {
     queryFn: ({ pageParam = 1 }) => getSavedArticle({ pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      console.log('saved lastpage aricles', lastPage);
-      console.log('saved allpage articles', allPages);
+      
       const articlesFetched = allPages.length * 10; 
       if (lastPage?.totalArticles && articlesFetched < lastPage.totalArticles) {
         return allPages.length + 1;

@@ -28,7 +28,6 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       storeLoginData(loginData); 
       setUser(loginData.user);
       setIsLoggedIn(true);
-      console.log('Logged in user:', loginData.user);
     } catch (error) {
       console.error('Login error:', error);
     }
@@ -39,12 +38,10 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     clearAuthData();
     setUser(null);
     setIsLoggedIn(false);
-    console.log('Logged out');
   };
 
   // Log state changes for debugging
   useEffect(() => {
-    console.log('Auth state:', { user, isLoggedIn });
   }, [user, isLoggedIn]);
 
   const value: AuthContextProps = {

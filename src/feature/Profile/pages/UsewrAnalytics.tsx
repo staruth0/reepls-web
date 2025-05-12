@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import ProfileConfigurations from '../../Profile/components/ProfileConfigurations';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
@@ -61,9 +61,7 @@ const UserAnalytics: React.FC = () => {
     }
   };
 
-  useEffect(()=>{
-    console.log('statistics',statistics)
-  },[statistics])
+ 
 
   // Loading state
   if (isLoading) {

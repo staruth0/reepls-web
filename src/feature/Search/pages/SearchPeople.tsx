@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import AuthorComponent from '../../Saved/Components/AuthorComponent';
-import { useUser } from '../../../hooks/useUser';
+// import { useUser } from '../../../hooks/useUser';
 import { useGetPeopleResults } from '../hooks';
 import { toast } from 'react-toastify'; // Added for toast notifications
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,7 @@ interface SearchPeopleProps {
 }
 
 const SearchPeople: React.FC<SearchPeopleProps> = ({ query }) => {
-  const { authUser } = useUser();
+  // const { authUser } = useUser();
   const { data: searchResults, isLoading, error } = useGetPeopleResults(query);
   const {t} = useTranslation()
 
@@ -51,11 +51,7 @@ const SearchPeople: React.FC<SearchPeopleProps> = ({ query }) => {
     }
   }, [error]);
 
-  // Debug log
-  useEffect(() => {
-    console.log('user id', authUser?.id);
-    console.log('search results', searchResults);
-  }, [authUser, searchResults]);
+ 
 
   // Loading state
   if (isLoading) {

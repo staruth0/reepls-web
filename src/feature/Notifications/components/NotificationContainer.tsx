@@ -40,7 +40,6 @@ const PostNotificationContainer: React.FC<PostNotificationProps> = ({
       { notificationId: id, isRead: true },
       {
         onSuccess: () => {
-          console.log("success read");
         },
       }
     );

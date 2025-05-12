@@ -24,7 +24,6 @@ function Registerwithemail() {
     storeEmail(email);
     storeName(email)
 
-    console.log("Email submitted successfully!");
     navigateToPassword();
   };
 

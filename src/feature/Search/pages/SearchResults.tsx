@@ -36,9 +36,7 @@ const SearchResults: React.FC = () => {
         searchSuggestions: query,
       },
       {
-        onSuccess: () => {
-          console.log('Search suggestion saved successfully');
-        },
+       
         onError: (error) => {
           console.error('Failed to save search suggestion:', error);
         },

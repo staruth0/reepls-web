@@ -31,7 +31,6 @@ const FollowNotificationContainer: React.FC<FollowNotificationProps> = ({
       { notificationId: id, isRead: true },
       {
         onSuccess: () => {
-          console.log("success read");
         },
       }
     );

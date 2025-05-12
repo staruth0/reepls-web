@@ -46,10 +46,7 @@ const SearchPosts: React.FC<SearchPostsProps> = ({ query }) => {
     }
   }, [error, query]);
 
-  // Debug log
-  useEffect(() => {
-    console.log('post structure', posts);
-  }, [posts]);
+ 
 
   // Loading state
   if (isLoading) {

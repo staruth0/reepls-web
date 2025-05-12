@@ -43,10 +43,7 @@ const SearchArticles: React.FC<SearchArticlesProps> = ({ query }) => {
     }
   }, [error]);
 
-  // Debug log
-  useEffect(() => {
-    console.log('article structure', articles);
-  }, [articles]);
+ 
 
   // Loading state
   if (isLoading) {

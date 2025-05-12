@@ -38,7 +38,6 @@ const CommentNotificationContainer: React.FC<CommentNotificationProps> = ({
       { notificationId: id, isRead: true },
       {
         onSuccess: () => {
-          console.log("success read");
         },
       }
     );

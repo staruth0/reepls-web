@@ -88,7 +88,6 @@ function RegisterWithEmail1() {
       return;
     }
 
-    console.log('password stored', { email, password, name: username });
 
     mutate({ email, password, name: username });
   };

@@ -50,8 +50,6 @@ export const updateNotificationReadStatus = async (
 };
 
 export const fetchVapidPublicKey = async () => {
-  console.log("Fetching VAPID public key");
   const { data } = await apiClient.get('/push-notification/vapidPublicKey');
-  console.log('gottin data', data)
   return data;
 };

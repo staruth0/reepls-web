@@ -69,7 +69,6 @@ function Checkemail() {
 
   // Handle OTP completion
   const handleOtpComplete = async (otp: string) => {
-    console.log('Complete OTP:', otp);
     setOtp(otp);
   };
 
@@ -96,7 +95,6 @@ function Checkemail() {
   // Fetch initial code on mount
   useEffect(() => {
     if (email) {
-      console.log(email);
       handleCodeVerification();
     }
   }, [email]);

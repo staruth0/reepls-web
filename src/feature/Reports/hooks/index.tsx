@@ -5,8 +5,7 @@ import { Report } from "../../../models/datamodels";
 export const useCreateReport = () => {
   return useMutation({
     mutationFn: (report: Report) => createReport(report),
-    onSuccess: (data) => {
-      console.log("Report created:", data);
+    onSuccess: () => {
     },
     onError: (error) => {
       console.error("Error creating report:", error);
@@ -43,9 +42,6 @@ export const useUpdateReportStatus = () => {
   return useMutation({
     mutationFn: ({ reportId, status }: { reportId: string; status: string }) =>
       updateReportStatus(reportId, status),
-    onSuccess: (data) => {
-      console.log("Report status updated:", data);
-    },
     onError: (error) => {
       console.error("Error updating report status:", error);
     },
@@ -55,9 +51,7 @@ export const useUpdateReportStatus = () => {
 export const useDeleteReport = () => {
   return useMutation({
     mutationFn: (reportId: string) => deleteReport(reportId),
-    onSuccess: (data) => {
-      console.log("Report deleted:", data);
-    },
+    
     onError: (error) => {
       console.error("Error deleting report:", error);
     },

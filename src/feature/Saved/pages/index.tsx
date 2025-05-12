@@ -80,7 +80,6 @@ const Bookmarks: React.FC = () => {
   // Filter and separate saved articles into posts and articles
 useEffect(() => {
   if (!savedArticlesData) return;
-  console.log('saved articles', savedArticlesData);
 
   const articles = (savedArticlesData as SavedArticlesResponse)?.articles || [];
   setSavedPosts(

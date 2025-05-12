@@ -25,7 +25,6 @@
 //    const [isLevelTwoCommentOpen] = useState(false);
 
 //   useEffect(() => {
-//     console.log('comments', articleComments);
 //   }, [article_id, articleComments]);
 
 //   if (isLoading) return <LuLoader className="animate-spin text-primary-400 text-xl m-4" />;

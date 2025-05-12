@@ -124,7 +124,6 @@ export const ArticleAudioControls = ({ article }: { article: Article }) => {
 const generateTTS = async (articleId: string): Promise<string | null> => {
   try {
     const { data } = await apiClient.get(`/tts/${articleId}`);
-    console.log('tts',data?.ttsResult?.audioUrl)
     return data?.ttsResult?.audioUrl || null;
   } catch (error) {
     console.error('Error generating TTS:', error);

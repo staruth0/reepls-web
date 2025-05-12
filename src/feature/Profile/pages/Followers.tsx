@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import ProfileConfigurations from "../components/ProfileConfigurations";
 import Topbar from "../../../components/atoms/Topbar/Topbar";
 import { useTranslation } from "react-i18next";
@@ -26,10 +26,7 @@ const Followers: React.FC = () => {
   const followers = followersData?.data || [];
   const followings = followingsData?.data || [];
 
-  useEffect(() => {
-    if (followersData) console.log("followers", followersData);
-    if (followingsData) console.log("followings", followingsData);
-  }, [followersData, followingsData]);
+  
 
   return (
     <div className={`lg:grid grid-cols-[4fr_1.66fr] `}>

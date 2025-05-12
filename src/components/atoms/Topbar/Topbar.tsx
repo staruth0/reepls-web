@@ -10,13 +10,12 @@ interface TopbarProps {
 }
 
 const Topbar: React.FC<TopbarProps> = ({ children }) => {
-  const { isOpen, toggleSidebar } = useContext(SidebarContext);
+  const {  toggleSidebar } = useContext(SidebarContext);
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const {isLoggedIn} = useUser();
   const handleToggleSidebar = () => {
-    console.log("Toggle sidebar", isOpen);
     toggleSidebar();
   };
   return (

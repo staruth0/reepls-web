@@ -14,8 +14,7 @@ export const useCreateComment = () => {
 
   return useMutation({
     mutationFn: (comment: Comment) => createComment(comment),
-    onSuccess: (data) => {
-      console.log("Comment created:", data);
+    onSuccess: () => {
      
       queryClient.invalidateQueries({
         queryKey: ["comments"],
@@ -50,8 +49,7 @@ export const useUpdateComment = () => {
 
   return useMutation({
     mutationFn: ({commentId,content}: {  commentId: string;content: string;}) => updateComment(commentId, content),
-    onSuccess: (data) => {
-      console.log("Comment updated:", data);
+    onSuccess: () => {
   
       queryClient.invalidateQueries({
         queryKey: ["comments"],
@@ -73,8 +71,7 @@ export const useDeleteComment = () => {
 
   return useMutation({
     mutationFn: (commentId: string) => deleteComment(commentId),
-    onSuccess: (data) => {
-      console.log("Comment deleted:", data);
+    onSuccess: () => {
   
       queryClient.invalidateQueries({
         queryKey: ["comments"],

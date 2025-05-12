@@ -14,12 +14,10 @@
 //     : [...userData.following, id]; 
 
 //   setIsFollowing(!isFollowing); 
-// console.log('updatedFollowing',updatedFollowing);
 //   mutate(
 //     { following: updatedFollowing },
 //     {
 //       onSuccess: () => {
-//         console.log("Follow status updated successfully");
 //       },
 //       onError: () => {
 //         setIsFollowing(isFollowing); 

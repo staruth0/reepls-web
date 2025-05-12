@@ -82,10 +82,7 @@ function Loginwithemail() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({
-      enteredEmail,
-      enteredPassword,
-    });
+   
 
     Login.mutate({
       password: enteredPassword,

@@ -12,7 +12,6 @@ export const useAuth = () => {
     setLoading(true);
     setError(false);
     try {
-      console.log(credentials)
       const response = await registerUser(credentials);
       if (response) {
         setData(response);

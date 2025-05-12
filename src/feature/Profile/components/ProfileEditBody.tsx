@@ -1,5 +1,5 @@
 import { Camera } from 'lucide-react';
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import React, { ReactNode,  useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useUser } from '../../../hooks/useUser';
 import { uploadUserBanner, uploadUserProfile } from '../../../utils/media';
@@ -78,7 +78,7 @@ const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
       toast.error(t("profile.alerts.bannerLogin"));
       return;
     }
-    const url = await uploadUserBanner(authUser.id, file);
+    const url = await uploadUserBanner(file);
     setBannerImage(url);
     return url;
   };
@@ -88,16 +88,12 @@ const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
       toast.error(t("profile.alerts.profileImageLogin"));
       return;
     }
-    const url = await uploadUserProfile(authUser.id, file);
+    const url = await uploadUserProfile( file);
     setProfileImg(url);
     return url;
   };
 
-  useEffect(()=>{
-    console.log('profile',profileImg);
-    console.log('banner',bannerImage);
-
-  },[profileImg,bannerImage])
+ 
 
   return (
     <>

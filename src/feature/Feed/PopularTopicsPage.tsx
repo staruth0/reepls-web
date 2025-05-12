@@ -29,7 +29,6 @@ const PopularTopicsPage: React.FC = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-          console.log('Bottom reached, fetching next page!');
           fetchNextPage();
         }
       },
@@ -51,9 +50,7 @@ const PopularTopicsPage: React.FC = () => {
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  useEffect(() => {
-    if (data) console.log('followed data', data);
-  }, [data]);
+
 
   return (
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
