@@ -8,6 +8,7 @@ import ProfileEditBody from '../components/ProfileEditBody';
 import ProfileInput from '../components/ProfileInput';
 import { useGetUserByUsername, useUpdateUser } from '../hooks';
 import { useTranslation } from 'react-i18next';
+import { updateUsernameInStorage } from '../../Auth/api/Encryption';
 // import { profile } from '../../../assets/icons';
 
 // Define action types
@@ -79,9 +80,15 @@ const EditProfile: React.FC = () => {
     });
   }, [user]);
 
-  // Add effect to handle mutation status
   useEffect(() => {
     if (isSuccess) {
+    
+      const updateSuccess = updateUsernameInStorage(state.username);
+      if (!updateSuccess) {
+        console.error("Failed to update username in localStorage");
+     
+      }
+      
       toast.success(t("profile.alerts.profileSuccess"));
       navigate(`/profile/${state.username}`);
     }
@@ -89,7 +96,7 @@ const EditProfile: React.FC = () => {
       console.error('Update error:', error);
       toast.error(`${t("profile.alerts.profileFailed")}: ${error?.message}`);
     }
-  }, [isSuccess, isError, error, navigate, state.username]);
+  }, [isSuccess, isError, error, navigate, state.username, t]);
 
   const handleUpdateProfile = () => {
     console.log('Button clicked, updating with:', state);
@@ -100,6 +107,7 @@ const EditProfile: React.FC = () => {
       about: state.about,
       address: state.location,
     });
+    
   };
 
   return (

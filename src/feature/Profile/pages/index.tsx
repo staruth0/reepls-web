@@ -12,7 +12,7 @@ import ProfileHeroButtons from "../components/ProfileHeroButtons";
 import ProfileMedia from "../components/ProfileMedia";
 import ProfilePosts from "../components/ProfilePosts";
 import { useGetUserByUsername } from "../hooks";
-import { useUser } from "../../../hooks/useUser";
+
 import SimilarProfiles from "../components/SimilarProfiles";
 import { User } from "lucide-react";
 import ProfileSkeleton from "../components/ProfileSkeleton";
@@ -20,13 +20,14 @@ import ProfileSkeleton from "../components/ProfileSkeleton";
 import BlogSkeletonComponent from "../../Blog/components/BlogSkeleton"; // Adjust path
 import { useGetAuthorArticles, useGetAuthorPosts } from "../../Blog/hooks/useArticleHook";
 import ProfileRightSideSkeleton from "../components/ProfileRightSideSkeleton";
+import { getDecryptedUser } from "../../Auth/api/Encryption";
 
 
 const Profile: React.FC = () => {
   
   const { t } = useTranslation();
   const { username } = useParams<{ username?: string }>();
-  const { authUser } = useUser();
+  const  authUser  = getDecryptedUser()
   const bottomRef = useRef<HTMLDivElement>(null); // Ref for infinite scroll trigger
 
   const { user: userByUsername, isLoading: isLoadingUsername, error: errorUsername } = useGetUserByUsername(username || "");
