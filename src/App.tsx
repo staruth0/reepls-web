@@ -38,7 +38,7 @@ interface PushSubscriptionJSON {
 
 function App() {
   const { theme } = useTheme(); // Get the current theme (light/dark) of the app
-  const { data, isLoading, error } = useFetchVapidPublicKey();
+  const { data,  error } = useFetchVapidPublicKey();
   const { authUser } = useUser();
   const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null);
   const [permissionGranted, setPermissionGranted] = useState<boolean>(false);

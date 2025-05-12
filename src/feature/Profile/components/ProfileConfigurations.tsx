@@ -207,11 +207,11 @@ const ProfileConfigurations: React.FC = () => {
   };
 
 
-  const handleDraftsClick = () => {
-    if (authUser?.id) {
-      navigate(`/drafts/${authUser.id}`);
-    } 
-  };
+  // const handleDraftsClick = () => {
+  //   if (authUser?.id) {
+  //     navigate(`/drafts/${authUser.id}`);
+  //   } 
+  // };
 
 
   const handleTermsClick = () => {
