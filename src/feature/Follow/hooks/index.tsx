@@ -6,8 +6,7 @@ export const useFollowUser = () => {
 
   return useMutation({
     mutationFn: (followedId: string) => followUser(followedId),
-    onSuccess: (data) => {
-      console.log('User followed:', data);
+    onSuccess: () => {
       // Invalidate queries to refetch data in the background
       queryClient.invalidateQueries({ queryKey: ['followers'] });
       queryClient.invalidateQueries({
@@ -25,8 +24,7 @@ export const useUnfollowUser = () => {
 
   return useMutation({
     mutationFn: (followedId: string) => unfollowUser(followedId),
-    onSuccess: (data) => {
-      console.log('User unfollowed:', data);
+    onSuccess: () => {
       // Invalidate queries to refetch data in the background
       queryClient.invalidateQueries({ queryKey: ['followers'] });
       queryClient.invalidateQueries({

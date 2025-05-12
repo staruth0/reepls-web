@@ -99,7 +99,6 @@ const EditProfile: React.FC = () => {
   }, [isSuccess, isError, error, navigate, state.username, t]);
 
   const handleUpdateProfile = () => {
-    console.log('Button clicked, updating with:', state);
     mutate({
       username: state.username,
       name: state.name,

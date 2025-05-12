@@ -27,7 +27,6 @@ const SharePopup: React.FC<SharePopupProps> = ({ url, title, onClose }) => {
   };
 
   useEffect(() => {
-    console.log({ url, title });
   }, [url, title]);
 
   return (

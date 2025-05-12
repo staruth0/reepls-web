@@ -35,7 +35,6 @@ const Card: React.FC<CardProps> = ({ title, subtitle, media, date, user, slug })
   // Function to handle image cycling
   const handleNextImage = (e: React.MouseEvent<HTMLDivElement>): void => {
     e.stopPropagation(); // Prevent the card's click event from firing
-    console.log(currentImageIndex);
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % media.length);
   };
 

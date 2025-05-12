@@ -58,7 +58,7 @@ const EditPost: React.FC = () => {
       ActionIcon: LuShare,
       onClick: () => {
         if (!isLoggedIn) return;
-        console.log('Sharing the post...');
+        
       },
     },
     {

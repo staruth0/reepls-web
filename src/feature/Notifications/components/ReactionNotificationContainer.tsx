@@ -34,7 +34,6 @@ const ReactionNotificationContainer: React.FC<ReactionNotificationProps> = ({
      navigate(`${isArticle?`/posts/article/slug/${slug}`:`/posts/post/${article_id}` }`)
     mutate({ notificationId: id, isRead: true }, {
       onSuccess: () => {
-        console.log('success read');
       }
     });
   };

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Article } from '../../../models/datamodels';
 import BlogPost from '../../Blog/components/BlogPost';
 import { useTranslation } from 'react-i18next';
@@ -11,9 +11,7 @@ interface SavedArticlesContainerProps {
 const SavedArticlesContainer: React.FC<SavedArticlesContainerProps> = ({ articles }) => {
   const { t } = useTranslation();
 
-  useEffect(() => {
-    console.log('articles saved', articles);
-  }, [articles]);
+
 
   return (
     <div className="transition-all duration-300 ease-linear flex flex-col-reverse gap-7">

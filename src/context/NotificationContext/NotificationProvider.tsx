@@ -16,7 +16,6 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({ children })
   const { data, refetch } = useFetchUserNotifications();
 
   useEffect(() => {
-    console.log('fetched notification', data)
     if (data) {  
       setNotifications(data.notifications);
     }
@@ -43,25 +42,21 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({ children })
   //   const socket = io("https://reepls-api.onrender.com");
 
   //   socket.on("connect", () => {
-  //     console.log("Connected with socket ID:", socket.id);
   //     socket.emit("join", authUser.id);
   //   });
 
   //   // Listen for new notifications
   //   socket.on("notification", (notification: Notification) => {
-  //     console.log('received notification', notification);
   //     addNotification(notification);
   //   });
 
   //   // Listen for reaction updates
   //   socket.on("reactionUpdate", (data) => {
-  //     console.log("Reaction update received:", data);
   //     addNotification(data);
   //   });
 
   //   // Listen for comment updates
   //   socket.on("commentUpdate", (data) => {
-  //     console.log("Comment update received:", data);
   //     addNotification(data);
   //   });
 

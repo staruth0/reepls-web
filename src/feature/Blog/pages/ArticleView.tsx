@@ -101,7 +101,6 @@ const ArticleView: React.FC = () => {
       setHtmlArticleContent(draftArticle.htmlContent);
       setMedia(draftArticle.media);
       setIsCommunique(draftArticle.isCommunique || false);
-      console.log('draftArticle', draftArticle);
     }
   }, [articleUid]);
 

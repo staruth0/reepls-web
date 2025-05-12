@@ -3,7 +3,6 @@ import { apiClient } from "../../../services/apiClient";
 
 
 const getSearchResults = async (query: string) => {
-  console.log("query string:", query);
   const { data } = await apiClient.get(`/search/result?searchQuery=${query}`);
   return data;
 };
@@ -38,7 +37,6 @@ const getPeopleResults = async (query: string) => {
 
 // Fetch titles for all articles
 const getArticleTitles = async () => {
-  console.log("Fetching titles for all articles");
   const { data } = await apiClient.get("/articles/metadata/article-titles", {
     headers: {
       "Content-Type": "application/json",
@@ -48,7 +46,6 @@ const getArticleTitles = async () => {
 };
 // Fetch keywords for all posts
 const getPostKeywords = async () => {
-  console.log("Fetching keywords for all posts");
   const { data } = await apiClient.get("/articles/metadata/post-keywords", {
     headers: {
       "Content-Type": "application/json",
@@ -58,7 +55,6 @@ const getPostKeywords = async () => {
 };
 // Fetch keywords for all posts
 const getUserNames = async () => {
-  console.log("Fetching user names");
   const { data } = await apiClient.get("/articles/metadata/user-name", {
     headers: {
       "Content-Type": "application/json",

@@ -41,10 +41,7 @@ const Communique: React.FC = () => {
     }
   }, [error]);
 
-  // Debug log
-  useEffect(() => {
-    if (data) console.log('communiques', data);
-  }, [data]);
+  
 
   // Loading state
   if (isLoading) {

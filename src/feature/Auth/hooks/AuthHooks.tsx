@@ -32,7 +32,6 @@ export const useRegisterUser = () => {
   return useMutation({
     mutationFn: (user: User) => registerUser(user),
     onSuccess: (data: LoginResponse) => {
-      console.log('User registered:', data);
       login(data); // Pass the full LoginResponse to encrypt and store
       navigateToCheckMail({ email: data.user.email! });
     },
@@ -74,7 +73,6 @@ export const usePhoneRegisterUser = () => {
   return useMutation({
     mutationFn: (user: User) => registerUser(user),
     onSuccess: (data: LoginResponse) => {
-      console.log('User registered:', data);
       login(data); // Pass the full LoginResponse to encrypt and store
       navigateToCheckPhone({ phone: data.user.phone! });
     },
@@ -96,8 +94,7 @@ export const useLoginUser = () => {
   return useMutation({
     mutationFn: (user: User) => loginUser(user),
     onSuccess: (data: LoginResponse) => {
-      console.log('User logged in:', data);
-      console.log('Expired date:', data.tokens.access.expires);
+      
       login(data); // Pass the full LoginResponse to encrypt and store
       navigateToFeed();
     },
@@ -119,8 +116,7 @@ export const useLoginUserWithPhone = () => {
   return useMutation({
     mutationFn: (user: User) => loginUserWithPhone(user),
     onSuccess: (data: LoginResponse) => {
-      console.log('User logged in:', data);
-      console.log('Expired date:', data.tokens.access.expires);
+      
       login(data); // Pass the full LoginResponse to encrypt and store
       navigateToFeed();
     },
@@ -140,8 +136,7 @@ export const useUpdateUser = () => {
 
   return useMutation({
     mutationFn: (user: User) => updateUser(user),
-    onSuccess: (data) => {
-      console.log('User updated successfully:', data);
+    onSuccess: () => {
       navigateToUserProfile();
     },
     onError: (error) => {
@@ -154,9 +149,6 @@ export const useUpdateUser = () => {
 export const useGetEmailCode = () => {
   return useMutation({
     mutationFn: (emailCode: EmailCode) => getEmailVerificationCode(emailCode),
-    onSuccess: (data) => {
-      console.log('Email verification code sent:', data);
-    },
     onError: (error) => {
       console.error('Error getting email code:', error);
     },
@@ -174,9 +166,7 @@ export const useVerifyEmailCode = () => {
 
   return useMutation({
     mutationFn: (codeVerify: CodeVerify) => verifyEmailCode(codeVerify),
-    onSuccess: (data) => {
-      console.log('Email code verified:', data);
-
+    onSuccess: () => {
       navigateToName();
     },
     onError: (error) => {
@@ -189,9 +179,7 @@ export const useVerifyEmailCode = () => {
 export const useGetPhoneCode = () => {
   return useMutation({
     mutationFn: (phoneCode: PhoneCode) => getPhoneVerificationCode(phoneCode),
-    onSuccess: (data) => {
-      console.log('Phone verification code sent:', data);
-    },
+   
     onError: (error) => {
       console.error('Error getting phone code:', error);
     },
@@ -207,8 +195,7 @@ export const useVerifyPhoneCode = () => {
   };
   return useMutation({
     mutationFn: (phoneVerify: PhoneVerify) => verifyPhoneCode(phoneVerify),
-    onSuccess: (data) => {
-      console.log('Phone code verified:', data);
+    onSuccess: () => {
       navigateToName();
     },
     onError: (error) => {
@@ -223,8 +210,7 @@ export const useRefreshToken = () => {
 
   return useMutation({
     mutationFn: () => refreshAuthTokens(getRefreshToken()!),
-    onSuccess: (data) => {
-      console.log('Token refreshed:', data);
+    onSuccess: () => {
     },
     onError: (error) => {
       console.error(error);

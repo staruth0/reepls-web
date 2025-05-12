@@ -56,8 +56,7 @@ export const useUpdateUser = (): {
 
   const { mutate, isPending, error, isError, isSuccess } = useMutation({
     mutationFn: (user: User) => updateUser(user),
-    onSuccess: (data) => {
-      console.log("User updated successfully:", data);
+    onSuccess: () => {
     
       queryClient.invalidateQueries({ queryKey: ["user"] });
      
@@ -81,7 +80,6 @@ export const useDeleteUser = (): {
   const { mutate, isPending, error } = useMutation({
     mutationFn: (userId: string) => deleteUser(userId),
     onSuccess: () => {
-      console.log("User deleted");
       // Invalidate the users query to refetch the list of users
       queryClient.invalidateQueries({ queryKey: ["users"] });
       navigate("/users");

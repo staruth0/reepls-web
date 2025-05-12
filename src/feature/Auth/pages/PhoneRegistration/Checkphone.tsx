@@ -26,7 +26,6 @@ function Checkphone() {
   };
 
   const handleOtpComplete = (otp: string) => {
-    console.log('Complete OTP:', otp);
     setOtp(otp);
   };
 
@@ -41,7 +40,6 @@ function Checkphone() {
 
   useEffect(() => {
     if (phone) {
-      console.log('number for auth',phone);
       handleCodeVerification();
     }
   }, [phone]);

@@ -72,7 +72,6 @@ const ProfileConfigurations: React.FC = () => {
       navigator.serviceWorker
         .register('/sw.js')
         .then((registration) => {
-          console.log('Service Worker Registered:', registration);
           setSwRegistration(registration);
         })
         .catch((error) => {
@@ -125,7 +124,6 @@ const ProfileConfigurations: React.FC = () => {
       try {
         const permission = await Notification.requestPermission();
         if (permission !== 'granted') {
-          console.log('Notification permission denied');
           toast.warn(t('Notification permission denied.'));
           return;
         }
@@ -149,7 +147,6 @@ const ProfileConfigurations: React.FC = () => {
         };
 
         await apiClient.post('/push-notification/subscribe', subscriptionData);
-        console.log('Successfully subscribed to push notifications');
         toast.success(t('Notifications enabled successfully!'));
       } catch (error: any) {
         console.error('Push subscription failed:', error);
@@ -178,7 +175,6 @@ const ProfileConfigurations: React.FC = () => {
       (voice) => voice.name === event.target.value
     );
     if (selectedVoice) {
-      console.log(selectedVoice);
       setVoiceLanguage(selectedVoice);
     }
   };
@@ -194,7 +190,6 @@ const ProfileConfigurations: React.FC = () => {
   };
 
   const handleCancelLogout = () => {
-    console.log("Cancelled logout.");
     setShowLogoutPopup(false);
   };
 
@@ -202,26 +197,22 @@ const ProfileConfigurations: React.FC = () => {
   const handleProfileSettingsClick = () => {
     if (authUser?.id) {
       navigate(`/profile/settings/${authUser.username}`);
-    } else {
-      console.log("User ID not found, cannot navigate.");
-    }
+    } 
   };
 
   const handleViewAnalyticsClick = () => {
     if (authUser?.id) {
       navigate(`/profile/analytics/${authUser.id}`);
-    } else {
-      console.log("User ID not found, cannot navigate.");
-    }
+    } 
   };
 
-  // const handleDraftsClick = () => {
-  //   if (authUser?.id) {
-  //     navigate(`/drafts/${authUser.id}`);
-  //   } else {
-  //     console.log("User ID not found, cannot navigate.");
-  //   }
-  // };
+
+  const handleDraftsClick = () => {
+    if (authUser?.id) {
+      navigate(`/drafts/${authUser.id}`);
+    } 
+  };
+
 
   const handleTermsClick = () => {
     navigate(`/Terms&Policies`);
@@ -245,9 +236,6 @@ const ProfileConfigurations: React.FC = () => {
 
   // Handle VAPID key loading and errors
   useEffect(() => {
-    if (vapidLoading) {
-      console.log('Loading VAPID key...');
-    }
     if (vapidError) {
       console.error('Error fetching VAPID key:', vapidError);
       toast.error(t('Failed to load notification settings.'));

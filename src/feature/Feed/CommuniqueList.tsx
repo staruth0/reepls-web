@@ -20,7 +20,6 @@ const CommuniqueList: React.FC = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-          console.log('Bottom reached, fetching next page!');
           fetchNextPage();
         }
       },

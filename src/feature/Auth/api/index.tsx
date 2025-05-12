@@ -5,20 +5,17 @@ import { getDecryptedAccessToken } from "./Encryption";
 
 // Register user
 const registerUser = async (user: User) => {
-  console.log("second", user);
   const { data } = await apiClient.post("/auth/register", user);
   return data;
 };
 
 // Register user
 const registerWithGoogle = async () => {
-  console.log("registering with google");
   const { data } = await apiClient.get("/googleAuth/google");
   return data;
 };
 // Register user
 const logOutWithGoogle = async () => {
-  console.log("registering with google");
   const { data } = await apiClient.get("/googleAuth/logout");
   return data;
 };
@@ -29,7 +26,6 @@ const updateUser = async (user: User) => {
 
   if (token) {
     const tokenDecoded = jwtDecode(token);
-    console.log("second", tokenDecoded.sub, user);
     const { data } = await apiClient.patch(
       `/users/${tokenDecoded.sub}`,
       user
@@ -40,19 +36,16 @@ const updateUser = async (user: User) => {
 
 // Login user
 const loginUser = async (user: User) => {
-  console.log(user);
   const { data } = await apiClient.post("/auth/login-email", user);
   return data;
 };
 const loginUserWithPhone = async (user: User) => {
-  console.log(user);
   const { data } = await apiClient.post("/auth/login-phone", user);
   return data;
 };
 
 // Get email verification code
 const getEmailVerificationCode = async (user: EmailCode) => {
-  console.log(user);
   const { data } = await apiClient.post(
     "/auth/send-verification-email",
     user
@@ -62,14 +55,12 @@ const getEmailVerificationCode = async (user: EmailCode) => {
 
 // Verify email code
 const verifyEmailCode = async (user: CodeVerify) => {
-  console.log(user);
   const { data } = await apiClient.post("/auth/verify-email", user);
   return data;
 };
 
 // Get phone verification code
 const getPhoneVerificationCode = async (user: PhoneCode) => {
-  console.log(user);
   const { data } = await apiClient.post(
     "/auth/send-verification-sms",
     user
@@ -79,7 +70,6 @@ const getPhoneVerificationCode = async (user: PhoneCode) => {
 
 // Verify phone code
 const verifyPhoneCode = async (user: PhoneVerify) => {
-  console.log(user);
   const { data } = await apiClient.post("/auth/verify-phone", user);
   return data;
 };

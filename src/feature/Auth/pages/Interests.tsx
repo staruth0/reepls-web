@@ -30,7 +30,6 @@ function Interests() {
       window.alert('Please select at least one interest');
       return;
     }
-    console.log('submitting this', { interests: interest,name: username });
     updateUser.mutate({ interests: interest,name: username });
   };
 

@@ -146,9 +146,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   };
 
   useEffect(() => {
-    console.log("author comment", author?._id);
-    console.log("author post", author_of_post?._id);
-    console.log("isAuthor", isAuthor);
+    
   }, [isAuthor, author, author_of_post]);
 
   return (
