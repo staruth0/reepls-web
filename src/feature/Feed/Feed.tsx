@@ -5,7 +5,7 @@ import { CognitiveModeContext } from '../../context/CognitiveMode/CognitiveModeC
 import { Article } from '../../models/datamodels';
 import BlogPost from '../Blog/components/BlogPost';
 import BlogSkeletonComponent from '../Blog/components/BlogSkeleton';
-import { useGetAllArticles } from '../Blog/hooks/useArticleHook';
+import { useGetRecommendedArticles } from '../Blog/hooks/useArticleHook';
 import Communique from './components/Communique/Communique';
 import ToggleFeed from './components/ToogleFeed';
 import './feed.scss';
@@ -18,7 +18,7 @@ const UserFeed: React.FC = () => {
   const bottomRef = useRef<HTMLDivElement>(null); // Ref for the bottom
 
   // Fetch data
-  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetAllArticles();
+  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetRecommendedArticles();
 
 
   // Handle cognitive mode toggle

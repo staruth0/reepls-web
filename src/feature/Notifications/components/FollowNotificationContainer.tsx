@@ -11,6 +11,7 @@ interface FollowNotificationProps {
   timestamp: string;
   is_read: boolean;
   id: string;
+  
 }
 
 const FollowNotificationContainer: React.FC<FollowNotificationProps> = ({

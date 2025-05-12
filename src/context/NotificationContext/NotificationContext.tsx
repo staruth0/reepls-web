@@ -11,6 +11,7 @@ export interface Notification {
   slug:string;
   is_read:boolean;
   content: string; 
+  isArticle?:boolean;
   timestamp?: Date; 
 }
 

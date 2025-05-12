@@ -13,11 +13,13 @@ interface CommentNotificationProps {
   id: string;
   slug: string;
   article_id: string;
+isArticle:boolean
 }
 
 const CommentNotificationContainer: React.FC<CommentNotificationProps> = ({
   username,
   timestamp,
+  isArticle,
   comment,
   is_read,
   id,
@@ -30,7 +32,7 @@ const CommentNotificationContainer: React.FC<CommentNotificationProps> = ({
 
   const updateStatus = () => {
     navigate(
-      `${slug ? `/posts/article/slug/${slug}` : `/posts/post/${article_id}`}`
+      `${isArticle ? `/posts/article/slug/${slug}` : `/posts/post/${article_id}`}`
     );
     mutate(
       { notificationId: id, isRead: true },

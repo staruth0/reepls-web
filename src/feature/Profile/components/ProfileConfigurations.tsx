@@ -117,7 +117,7 @@ const ProfileConfigurations: React.FC = () => {
         }
       } catch (error: any) {
         console.error('Error unsubscribing from notifications:', error);
-        toast.error(t('Failed to disable notifications: ') + (error.message || 'Unknown error'));
+        toast.error(t('Failed to disable notifications: ') );
       }
     } else {
       // Subscribe to notifications
@@ -150,7 +150,7 @@ const ProfileConfigurations: React.FC = () => {
         toast.success(t('Notifications enabled successfully!'));
       } catch (error: any) {
         console.error('Push subscription failed:', error);
-        toast.error(t('Failed to enable notifications: ') + (error.message || 'Unknown error'));
+        toast.error(t('Failed to enable notifications: ') );
       }
     }
   };
@@ -206,11 +206,13 @@ const ProfileConfigurations: React.FC = () => {
     } 
   };
 
+
   const handleDraftsClick = () => {
     if (authUser?.id) {
       navigate(`/drafts/${authUser.id}`);
     } 
   };
+
 
   const handleTermsClick = () => {
     navigate(`/Terms&Policies`);
@@ -260,11 +262,11 @@ const ProfileConfigurations: React.FC = () => {
             {t(`View Analytics`)}
           </div>
         </ConfigurationWrapper>
-        <ConfigurationWrapper>
+        {/* <ConfigurationWrapper>
           <div className="cursor-pointer w-full" onClick={handleDraftsClick}>
             {t(`Drafts`)}
           </div>
-        </ConfigurationWrapper>
+        </ConfigurationWrapper> */}
 
         <ConfigurationWrapper>
           <div>{t(`Default Language`)}</div>
@@ -409,10 +411,10 @@ const ProfileConfigurations: React.FC = () => {
       {showLogoutPopup && (
         <>
           <div
-            className="fixed inset-0 bg-black bg-opacity-5 z-[990]"
+            className="fixed inset-0 bg-black bg-opacity-5 z-[9999]"
             onClick={handleCancelLogout}
           ></div>
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-800 rounded-md shadow-lg p-4 sm:p-6 z-[990] w-[90%] sm:w-[70%] md:w-[50%] lg:w-[40%] flex flex-col items-center">
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-800 rounded-md shadow-lg p-4 sm:p-6 z-[9999] w-[90%] sm:w-[70%] md:w-[50%] lg:w-[40%] flex flex-col items-center">
   <h2 className="text-neutral-50 text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-center">
     {t("Are you sure you want to log out?")}
   </h2>

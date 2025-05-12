@@ -60,6 +60,8 @@ export const getDecryptedRefreshToken = (): string | null => {
 };
 
 // 5. Decrypt and return only the user object
+
+
 export const getDecryptedUser = (): User | null => {
   const decryptedData = decryptLoginData();
   if (decryptedData && decryptedData.user) {
@@ -67,4 +69,55 @@ export const getDecryptedUser = (): User | null => {
   }
   console.warn('No user data found in decrypted data');
   return null;
+};
+
+
+
+/**
+ * Updates the username in the encrypted LoginResponse stored in localStorage.
+ * @param newUsername - The new username to set.
+ * @returns boolean - True if successful, false otherwise.
+ */
+export const updateUsernameInStorage = (newUsername: string): boolean => {
+  try {
+    // 1. Retrieve and decrypt the current login data
+    const encryptedData = localStorage.getItem(STORAGE_KEY);
+    if (!encryptedData) {
+      console.error('No login data found in localStorage');
+      return false;
+    }
+
+    const bytes = CryptoJS.AES.decrypt(encryptedData, SECRET_KEY);
+    const decryptedString = bytes.toString(CryptoJS.enc.Utf8);
+    if (!decryptedString) {
+      throw new Error('Decryption failed (invalid key or data)');
+    }
+
+    const loginData: LoginResponse = JSON.parse(decryptedString);
+
+    // 2. Update the username in the decrypted data
+    if (!loginData.user) {
+      throw new Error('User data not found in login response');
+    }
+
+    const updatedUser: User = {
+      ...loginData.user,
+      username: newUsername, // Override the username
+    };
+
+    const updatedLoginData: LoginResponse = {
+      ...loginData,
+      user: updatedUser,
+    };
+
+    // 3. Re-encrypt and save back to localStorage
+    const updatedDataString = JSON.stringify(updatedLoginData);
+    const reEncrypted = CryptoJS.AES.encrypt(updatedDataString, SECRET_KEY).toString();
+    localStorage.setItem(STORAGE_KEY, reEncrypted);
+
+    return true; // Success
+  } catch (error) {
+    console.error('Failed to update username:', error);
+    return false; // Failure
+  }
 };

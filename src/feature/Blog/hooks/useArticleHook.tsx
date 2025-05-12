@@ -28,6 +28,7 @@ export const useCreateArticle = () => {
     onSuccess: () => {
       // Invalidatx the "articles" query to refresh the list
       queryClient.invalidateQueries({ queryKey: ['articles'] });
+      queryClient.invalidateQueries({ queryKey: ['recommended-articles'] });
       navigate('/articles');
     },
     onError: (error) => {

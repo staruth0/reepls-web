@@ -1,6 +1,6 @@
 import React, {  useState } from 'react';
 import { LuBadgeCheck, LuEllipsisVertical } from 'react-icons/lu';
-import { UserPlus, Flag, X } from 'lucide-react';
+import { UserPlus,  X } from 'lucide-react';
 import {  useUnfollowUser } from '../../Follow/hooks';
 import { useKnowUserFollowings } from '../../Follow/hooks/useKnowUserFollowings';
 import { useNavigate } from 'react-router-dom';
@@ -72,11 +72,11 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
     setShowMenu(false);
   };
 
-  const handleReport = () => {
-    if (!user?.id) return;
-    setShowReportPopup(true);
-    setShowMenu(false);
-  };
+  // const handleReport = () => {
+  //   if (!user?.id) return;
+  //   setShowReportPopup(true);
+  //   setShowMenu(false);
+  // };
 
   const getFollowStatusText = () => {
     if (!user?.id) return 'Follow';
@@ -96,6 +96,7 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
             alt="avatar"
             className="cursor-pointer w-10 h-10 rounded-full object-cover"
             onClick={handleViewProfile}
+              loading="lazy"
           />
         ) : (
           <span
@@ -155,13 +156,13 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
               <UserPlus size={18} className="text-neutral-500" />
               <div>{t("saved.authorActions.viewProfile")}</div>
             </div>
-            <div
+            {/* <div
               className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
               onClick={handleReport}
             >
               <Flag size={18} className="text-neutral-500" />
               <div>{t("saved.authorActions.reportUser")}</div>
-            </div>
+            </div> */}
           </div>
         </>
       )}
