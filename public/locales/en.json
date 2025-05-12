@@ -121,6 +121,8 @@
   "Film": "Film",
   "Crime": "Crime",
   "Settings": "Settings",
+   "emptyTitle": "No notifications yet",
+      "emptyDescription": "When you get notifications, they'll appear here",
   "Phone Settings": "Phone Settings",
   "Drafts": "Drafts",
   "View Analytics": "View Analytics",
@@ -230,6 +232,9 @@
       "policy": "Privacy Policy"
     }
   },
+
+  
+  
 
   "authErrors": {
     "generic": "Something went wrong. Please try again.",

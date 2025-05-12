@@ -132,9 +132,9 @@ function Loginwithemail() {
           {Login.isPending && <LuLoader className="animate-spin text-foreground inline-block mx-4" />}
           {Login.isPending ? 'Logging in...' : t('ContinueButton')}
         </button>
-        <div className="divider">
+        {/* <div className="divider">
           <p>{t('OrDivider')}</p>
-        </div>
+        </div> */}
         {/* <div
           className="flex items-center justify-center gap-2 bg-background rounded-full px-2 py-3 text-neutral-50 shadow-md hover:shadow-none cursor-pointer"
           onClick={handleGoogleLogin}

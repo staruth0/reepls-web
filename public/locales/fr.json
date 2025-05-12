@@ -153,6 +153,8 @@
   "Are you sure you want to log out?": "Êtes-vous sûr de vouloir vous déconnecter ?",
   "Yes": "Oui",
   "No": "Non",
+   "emptyTitle": "Aucune notification pour l'instant",
+    "emptyDescription": "Lorsque vous recevrez des notifications, elles apparaîtront ici",
   "No media available.": "Aucun média disponible.",
   "Reading...": "En lisant...",
   "Generating...": "Génératrice...",

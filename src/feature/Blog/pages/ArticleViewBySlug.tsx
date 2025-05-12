@@ -237,6 +237,16 @@ const ArticleViewBySlug: React.FC = () => {
             <h1 className="md:text-4xl px-4 md:px-0 text-[26px] lg:text-5xl font-semibold leading-normal lg:leading-tight mb-2">{title}</h1>
             {subtitle && <h3 className="text-xl my-4 px-4 md:px-0">{subtitle}</h3>}
 
+            {article?.thumbnail && (
+        <div className="my-6 w-full max-w-4xl mx-auto px-4 md:px-0">
+          <img 
+            src={article.thumbnail} 
+            alt={`Thumbnail for ${title}`}
+            className="w-full h-auto rounded-lg object-cover max-h-[500px]"
+          />
+        </div>
+      )}
+
        {/* Author Profile Section */}
 <div className="flex my-4 items-center gap-4 mt-8 mb-4 px-3 md:px-0">
   <div className='flex gap-2'>

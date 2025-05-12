@@ -35,7 +35,7 @@ const Message = (props: MessageTypes) => {
             className="w-12 h-12 rounded-full object-cover border-2 border-neutral-600  transition-transform duration-300 hover:scale-105"
           />
         ) : (
-          <span className="flex justify-center items-center bg-purple-200 text-purple-800 text-lg font-semibold rounded-full w-12 h-12 shadow-md">
+          <span className="flex justify-center items-center bg-purple-200 text-purple-800 text-lg font-semibold rounded-full w-12 h-12 shadow-sm">
             {props.author?.username?.charAt(0).toUpperCase() || 'D'}
           </span>
         )}
