@@ -11,13 +11,11 @@ const cloudinaryResourceTypes = {
 };
 const baseUrl = `https://api.cloudinary.com/v1_1/${cloudName}/`;
 
-console.log({ config });
 const axiosStorageClient = axios.create({
   baseURL: baseUrl,
 });
 
-const uploadUserProfile = async (userId: string, file: File): Promise<string> => {
-  console.log('userid present in edit profile',userId)
+const uploadUserProfile = async ( file: File): Promise<string> => {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', uploadPreset as string);
@@ -29,8 +27,7 @@ const uploadUserProfile = async (userId: string, file: File): Promise<string> =>
   const response = await axiosStorageClient.post(`/${cloudinaryResourceTypes.image}/upload`, formData);
   return response.data.secure_url;
 };
-const uploadUserBanner = async (userId: string, file: File): Promise<string> => {
-  console.log('userid present in edit profile',userId)
+const uploadUserBanner = async ( file: File): Promise<string> => {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', uploadPreset as string);

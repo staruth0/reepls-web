@@ -191,9 +191,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
   };
 
   function check(){
-console.log('saved',saved)
-console.log('saved Article',savedArticles)
-console.log('id article',article_id)
+
   }
 
   useEffect(() => {

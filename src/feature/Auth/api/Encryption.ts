@@ -13,7 +13,6 @@ export const encryptAndStoreLoginData = (data: LoginResponse): void => {
     const dataString = JSON.stringify(data); // Convert object to string
     const encrypted = CryptoJS.AES.encrypt(dataString, SECRET_KEY).toString();
     localStorage.setItem(STORAGE_KEY, encrypted);
-    console.log('Encrypted and stored login data:', encrypted);
   } catch (error) {
     console.error('Error encrypting login data:', error);
   }

@@ -42,12 +42,10 @@ const Sidebar: React.FC = () => {
   const unreadNotifications = notifications.filter((notif) => !notif.is_read);
   const screenWidth = window.innerWidth;
 
-  console.log("all Not", notifications);
-  console.log("uread Not", unreadNotifications);
+ 
   const unreadCount = unreadNotifications.length;
 
   const handleToggleSidebar = () => {
-    console.log("Toggle sidebar", isOpen);
     toggleSidebar();
   };
 

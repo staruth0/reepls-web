@@ -93,8 +93,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
   );
 
   useEffect(() => {
-    console.log("allReactions", allReactions);
-    console.log('reactionspertype', reactionsPerType)
+   
   }, [allReactions,reactionsPerType]);
 
   if (!isOpen) return null;

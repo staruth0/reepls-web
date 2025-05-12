@@ -55,14 +55,7 @@ const Profile: React.FC = () => {
     isFetchingNextPage: isFetchingNextArticles,
   } = useGetAuthorArticles(authorId);
 
-  useEffect(() => {
-    if (user) {
-      console.log("Displayed username:", user?.username);
-      console.log("Username from params:", username);
-      console.log("authUser", authUser);
-      console.log(username?.trim() === authUser?.username?.trim());
-    }
-  }, [user, username, authUser]);
+  
 
   const isAuthUser = username?.trim() === authUser?.username?.trim();
 
@@ -87,10 +80,8 @@ const Profile: React.FC = () => {
       (entries) => {
         if (entries[0].isIntersecting) {
           if (activeTab === "posts" && hasNextPosts && !isFetchingNextPosts) {
-            console.log("Fetching next author posts...");
             fetchNextPosts();
           } else if (activeTab === "articles" && hasNextArticles && !isFetchingNextArticles) {
-            console.log("Fetching next author articles...");
             fetchNextArticles();
           }
         }
@@ -121,9 +112,7 @@ const Profile: React.FC = () => {
     isFetchingNextArticles,
   ]);
 
-  useEffect(()=>{
-    if(user)console.log('picture',user.profile_picture)
-  },[user])
+ 
 
   if (isLoading) {
     return (

@@ -19,7 +19,6 @@ const PostArticleAnalytics = () => {
   const firstMedia = data?.media?.[0]; // Get the first media item, if it exists
 
   useEffect(() => {
-    console.log('stats', data?.media, 'id', id);
   }, [data, id]);
 
   if (isLoading) {

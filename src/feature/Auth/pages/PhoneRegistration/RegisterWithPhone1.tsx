@@ -94,11 +94,7 @@ function RegisterWithPhone1() {
       return;
     }
 
-    console.log("password stored", {
-      phone: `+237${phone}`,
-      password,
-      name: username,
-    });
+   
 
     mutate({ phone: `+${phone}`, password, name: username });
   };

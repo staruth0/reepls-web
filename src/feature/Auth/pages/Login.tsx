@@ -99,10 +99,7 @@ function Login() {
       return;
     }
 
-    console.log({
-      password: enteredPassword,
-      phone: enteredPhone,
-    });
+   
 
     Login.mutate({
       password: enteredPassword,

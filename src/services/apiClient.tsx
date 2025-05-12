@@ -21,7 +21,6 @@ apiClient.interceptors.request.use(
   (config) => {
     const token = getDecryptedAccessToken(); // Use the decrypted access token
 
-    console.log('Testing token availability:', token);
     if (token && !config.url?.includes('/login') && !config.url?.includes('/register')) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -35,7 +34,6 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    console.log('Error details:', error.response, error.message);
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
@@ -43,7 +41,6 @@ apiClient.interceptors.response.use(
       const refreshToken = getDecryptedRefreshToken(); // Use the decrypted refresh token
       if (refreshToken) {
         try {
-          console.log('Refreshing token');
           const data = await refreshAuthTokens(refreshToken);
           if (!data.accessToken) throw new Error('No access token received');
 
@@ -62,7 +59,6 @@ apiClient.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
           return apiClient(originalRequest);
         } catch (e) {
-          console.log('Token refresh failed:', e);
           toast.info('Please login again', {
             autoClose: 3000,
           });

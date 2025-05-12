@@ -9,7 +9,7 @@ interface ReportUserPopupProps {
   onClose: () => void;
 }
 
-const ReportUserPopup: React.FC<ReportUserPopupProps> = ({ username, userId, onClose }) => {
+const ReportUserPopup: React.FC<ReportUserPopupProps> = ({ username, onClose }) => {
   const [reportText, setReportText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {t} = useTranslation()
@@ -22,13 +22,13 @@ const ReportUserPopup: React.FC<ReportUserPopupProps> = ({ username, userId, onC
 
     setIsSubmitting(true);
     try {
-      // Here you would typically make an API call to submit the report
-      console.log(`Reporting user ${userId} with reason: ${reportText}`);
+      
       toast.success(t('report.reportSuccess'));
       setReportText('');
       onClose();
     } catch (error) {
       toast.error(t('report.reportFailed'));
+      console.error('Error submitting report:', error);
     } finally {
       setIsSubmitting(false);
     }

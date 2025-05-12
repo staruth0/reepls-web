@@ -50,10 +50,7 @@ const SearchAll: React.FC<SearchAllProps> = ({ query }) => {
     }
   }, [error]);
 
-  // Debug log
-  useEffect(() => {
-    console.log('combined results structure', results);
-  }, [results]);
+
 
   // Function to determine the type of each result
   const getResultType = (item: any): SearchResultItem => {

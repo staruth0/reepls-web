@@ -30,7 +30,6 @@ const FeedFollowing: React.FC = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-          console.log('Bottom reached, fetching next page!');
           fetchNextPage();
         }
       },
@@ -52,9 +51,7 @@ const FeedFollowing: React.FC = () => {
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  useEffect(() => {
-    if (data) console.log('followed data', data);
-  }, [data]);
+ 
 
   // Function to get friendly error messages
   const getFriendlyErrorMessage = (error: any): string => {

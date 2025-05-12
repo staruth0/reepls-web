@@ -227,7 +227,6 @@ self.addEventListener('notificationclick', event => {
 // Handle notification action buttons (optional)
 self.addEventListener('notificationclose', event => {
   // You could track notification close events here if desired
-  // console.log('Notification was closed', event.notification);
 });
 
 // Handle the installation of the service worker

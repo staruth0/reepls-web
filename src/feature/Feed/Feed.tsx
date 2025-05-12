@@ -32,7 +32,6 @@ const UserFeed: React.FC = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-          console.log('Bottom reached, fetching next page!'); // Debug log
           fetchNextPage();
         }
       },
@@ -55,7 +54,6 @@ const UserFeed: React.FC = () => {
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   useEffect(() => {
-    console.log('dataArticles', data);
   }, [data]);
 
   // Function to get friendly error messages

@@ -25,8 +25,7 @@ export const useCreateArticle = () => {
 
   return useMutation({
     mutationFn: (article: Article) => createArticle(article),
-    onSuccess: (data) => {
-      console.log('Article created:', data);
+    onSuccess: () => {
       // Invalidatx the "articles" query to refresh the list
       queryClient.invalidateQueries({ queryKey: ['articles'] });
       navigate('/articles');
@@ -70,8 +69,6 @@ export const useGetAllArticles = () => {
     queryFn: getAllArticles,
     initialPageParam: 1, // Start fetching from page 1
     getNextPageParam: (lastPage, allPages) => {
-      console.log('lastpage', lastPage);
-      console.log('allpage', allPages);
       const articlesFetched = allPages.length * 10; // 10 articles per page
       if (articlesFetched < lastPage.totalArticles) {
         return allPages.length + 1; // Next page number
@@ -89,8 +86,7 @@ export const useGetRecommendedArticles = () => {
     queryFn: getRecommendedArticles,
     initialPageParam: 1, 
     getNextPageParam: (lastPage, allPages) => {
-      console.log('lastpage (recommended)', lastPage);
-      console.log('allpage (recommended)', allPages);
+      
       const articlesFetched = allPages.length * 10; 
       if (articlesFetched < lastPage.totalArticles) {
         return allPages.length + 1; // Next page number
@@ -108,8 +104,7 @@ export const useGetFollowedArticles = () => {
     queryFn: getFollowedArticles,
     initialPageParam: 1, 
     getNextPageParam: (lastPage, allPages) => {
-      console.log('lastPage', lastPage);
-      console.log('allPages', allPages);
+      
       const articlesFetched = allPages.length * 10; 
       if (articlesFetched < lastPage.totalArticles) {
         return allPages.length + 1; // Next page number
@@ -126,8 +121,7 @@ export const useGetCommuniquerArticles = () => {
     queryFn: getCommuniquerArticles,
     initialPageParam: 1, // Start with page 1
     getNextPageParam: (lastPage, allPages) => {
-      console.log('lastPage', lastPage);
-      console.log('allPages', allPages);
+     
       const articlesFetched = allPages.length * 10; 
       if (articlesFetched < lastPage.totalArticles) {
         return allPages.length + 1; 
@@ -197,8 +191,7 @@ export const useUpdateArticle = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ articleId, article }: { articleId: string; article: Article }) => updateArticle(articleId, article),
-    onSuccess: (data) => {
-      console.log('Article updated:', data);
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['articles'],
       });
@@ -218,7 +211,6 @@ export const useDeleteArticle = () => {
   return useMutation({
     mutationFn: (articleId: string) => deleteArticle(articleId),
     onSuccess: () => {
-      console.log('Article deleted');
       // Invalidatx the "articles" query to refresh the list
       queryClient.invalidateQueries({ queryKey: ['articles'] });
       

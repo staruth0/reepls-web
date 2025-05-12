@@ -19,8 +19,7 @@ export const useCreateReaction = () => {
 
   return useMutation({
     mutationFn: (reaction: Reaction) => createReaction(reaction),
-    onSuccess: (data) => {
-      console.log("Reaction created:", data);
+    onSuccess: () => {
       // Invalidate queries that might be affected by the creation of a reaction
       queryClient.invalidateQueries({
         queryKey: ["articleReactions"],
@@ -51,8 +50,7 @@ export const useUpdateReaction = () => {
   return useMutation({
     mutationFn: ({ reactionId, type }: { reactionId: string; type: string }) =>
       updateReaction(reactionId, type),
-    onSuccess: (data) => {
-      console.log("Reaction updated:", data);
+    onSuccess: () => {
       // Invalidate queries that might be affected by the update of a reaction
       queryClient.invalidateQueries({
         queryKey: ["reaction"],
@@ -79,7 +77,6 @@ export const useDeleteReaction = () => {
   return useMutation({
     mutationFn: (reactionId: string) => deleteReaction(reactionId),
     onSuccess: () => {
-      console.log("Reaction deleted:");
       // Invalidate queries that might be affected by the deletion of a reaction
       queryClient.invalidateQueries({ queryKey: ["reaction"] });
       queryClient.invalidateQueries({
@@ -134,8 +131,7 @@ export const useCreateCommentReaction = () => {
   return useMutation({
     mutationFn: (reaction: { type: string; user_id: string; comment_id: string }) =>
       createCommentReaction(reaction),
-    onSuccess: (data) => {
-      console.log("Comment reaction created:", data);
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["commentReactions"],
       });

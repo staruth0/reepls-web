@@ -72,7 +72,6 @@ function App() {
       navigator.serviceWorker
         .register('/sw.js')
         .then((registration) => {
-          console.log('Service Worker Registered:', registration);
           setSwRegistration(registration);
         })
         .catch((error) => {
@@ -113,7 +112,6 @@ function App() {
         const existingSubscription = await swRegistration.pushManager.getSubscription();
         
         if (existingSubscription) {
-          console.log('Already subscribed to push notifications');
           // Get the subscription as JSON
           const subscriptionJSON = existingSubscription.toJSON() as PushSubscriptionJSON;
           
@@ -129,7 +127,6 @@ function App() {
           };
           
           await apiClient.post('/push-notification/subscribe', subscriptionData);
-          console.log('Updated existing subscription with user ID');
           return;
         }
         
@@ -137,7 +134,6 @@ function App() {
         if (Notification.permission !== 'granted') {
           const permission = await Notification.requestPermission();
           if (permission !== 'granted') {
-            console.log('Notification permission denied');
             return;
           }
           setPermissionGranted(true);
@@ -145,7 +141,6 @@ function App() {
         
         // Subscribe the user with properly converted VAPID key
         const applicationServerKey = urlBase64ToUint8Array(data.publicVapid);
-        console.log('Attempting to subscribe with key:', data.publicVapid);
         const subscription = await swRegistration.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: applicationServerKey,
@@ -165,7 +160,6 @@ function App() {
         
         // Send subscription to backend
         await apiClient.post('/push-notification/subscribe', subscriptionData);
-        console.log('Successfully subscribed to push notifications');
       
       } catch (error: any) {
         console.error('Push subscription failed:', error);
@@ -177,9 +171,7 @@ function App() {
   }, [data, authUser?.id, swRegistration, permissionGranted]);
 
   // Show loading state or error if applicable
-  if (isLoading) {
-    console.log('Loading VAPID key...');
-  }
+  
   
   if (error) {
     console.error('Error fetching VAPID key:', error);
