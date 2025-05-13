@@ -45,7 +45,7 @@ export interface User {
   title?: string;
   interests?: string[];
   is_verified_writer?: boolean;
-  canMakeCommunique?:boolean;
+  CanMakecommuniquer?:boolean;
   is_email_verified?: boolean;
   is_phone_verified?: boolean;
   created_at?: Date | string;
