@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Topbar from "../../../components/atoms/Topbar/Topbar";
 import Tabs from "../../../components/molecules/Tabs/Tabs";
 import ProfileAbout from "../components/ProfileAbout";
@@ -12,29 +12,25 @@ import ProfileHeroButtons from "../components/ProfileHeroButtons";
 import ProfileMedia from "../components/ProfileMedia";
 import ProfilePosts from "../components/ProfilePosts";
 import { useGetUserByUsername } from "../hooks";
-
 import SimilarProfiles from "../components/SimilarProfiles";
 import { User } from "lucide-react";
 import ProfileSkeleton from "../components/ProfileSkeleton";
-
-import BlogSkeletonComponent from "../../Blog/components/BlogSkeleton"; // Adjust path
+import BlogSkeletonComponent from "../../Blog/components/BlogSkeleton";
 import { useGetAuthorArticles, useGetAuthorPosts } from "../../Blog/hooks/useArticleHook";
 import ProfileRightSideSkeleton from "../components/ProfileRightSideSkeleton";
 import { getDecryptedUser } from "../../Auth/api/Encryption";
 
-
 const Profile: React.FC = () => {
-  
   const { t } = useTranslation();
   const { username } = useParams<{ username?: string }>();
-  const  authUser  = getDecryptedUser()
-  const bottomRef = useRef<HTMLDivElement>(null); // Ref for infinite scroll trigger
+  const authUser = getDecryptedUser();
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
-  const { user: userByUsername, isLoading: isLoadingUsername, error: errorUsername } = useGetUserByUsername(username || "");
+  const { user: userByUsername, isLoading: isLoadingUsername } = useGetUserByUsername(username || "");
 
   const user = userByUsername;
   const isLoading = isLoadingUsername;
-  const error = errorUsername;
   const authorId = user?.id || "";
 
   // Infinite scrolling hooks
@@ -55,8 +51,6 @@ const Profile: React.FC = () => {
     hasNextPage: hasNextArticles,
     isFetchingNextPage: isFetchingNextArticles,
   } = useGetAuthorArticles(authorId);
-
-  
 
   const isAuthUser = username?.trim() === authUser?.username?.trim();
 
@@ -95,12 +89,12 @@ const Profile: React.FC = () => {
     );
 
     if (bottomRef.current) {
-      observer.observe(bottomRef.current); // Fixed to bottomRef
+      observer.observe(bottomRef.current);
     }
 
     return () => {
       if (bottomRef.current) {
-        observer.unobserve(bottomRef.current); // Fixed to bottomRef
+        observer.unobserve(bottomRef.current);
       }
     };
   }, [
@@ -113,8 +107,6 @@ const Profile: React.FC = () => {
     isFetchingNextArticles,
   ]);
 
- 
-
   if (isLoading) {
     return (
       <div className="lg:grid grid-cols-[4fr_1.65fr]">
@@ -122,27 +114,12 @@ const Profile: React.FC = () => {
           <Topbar>
             <p>{t("profile.profile")}</p>
           </Topbar>
-          <div className=" px-5 md:px-10 lg:px-20">
+          <div className="px-5 md:px-10 lg:px-20">
             <ProfileSkeleton />
           </div>
-          
         </div>
         <div className="hidden bg-background lg:block">
-        <ProfileRightSideSkeleton/>
-        </div>
-        
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="lg:grid grid-cols-[4fr_1.65fr]">
-        <div className="profile border-r-[1px] border-neutral-500 min-h-screen">
-          <Topbar>
-            <p>{t("profile.profile")}</p>
-          </Topbar>
-          <div>{error.message || t("profile.errors.profileError")}</div>
+          <ProfileRightSideSkeleton/>
         </div>
       </div>
     );
@@ -155,13 +132,28 @@ const Profile: React.FC = () => {
           <Topbar>
             <p>{t("profile.profile")}</p>
           </Topbar>
-          <div>{t("profile.alerts.noUser")}</div>
+          <div className="flex flex-col items-center justify-center h-[60vh] text-center px-4">
+            <div className="bg-neutral-800 p-6 rounded-lg max-w-md w-full">
+              <User className="w-12 h-12 mx-auto text-neutral-400 mb-4" />
+              <h3 className="text-xl font-medium text-neutral-100 mb-2">
+                {t("title", "User Not Found")}
+              </h3>
+              <p className="text-neutral-300 mb-4">
+                {t("description", "The profile you are looking for does not exist.")}
+              </p>
+              <button
+                onClick={() => navigate('/auth/login/phone')}
+                className="px-4 py-2 bg-main-green text-white rounded-md hover:bg-green-600 transition-colors"
+              >
+                {t("proceedToLogin", "Proceed to Login")}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
-  
   return (
     <div className="lg:grid grid-cols-[4fr_1.65fr]">
       <div className="profile border-r-[1px] min-h-screen border-neutral-500">
@@ -169,9 +161,9 @@ const Profile: React.FC = () => {
           <p>{t("profile.profile")}</p>
         </Topbar>
 
-        <div className="profile__content sm:px-5 md:px-10 lg:px-20  min-h-screen">
+        <div className="profile__content sm:px-5 md:px-10 lg:px-20 min-h-screen">
           <ProfileBody user={user}>
-            <div className=" sm:flex items-center">
+            <div className="sm:flex items-center">
               <div className="flex-1">
                 <ProfileDetails
                   name={user.name!}
@@ -201,7 +193,7 @@ const Profile: React.FC = () => {
           </div>
 
           <div className="mt-6">
-            {activeTab === "about" && <ProfileAbout about={user?.about || "Default About"} />}
+            {activeTab === "about" && <ProfileAbout about={user?.about || ""} />}
             {activeTab === "posts" && (
               <>
                 <div className="pb-10">
