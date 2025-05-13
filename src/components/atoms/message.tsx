@@ -8,6 +8,7 @@ interface MessageTypes {
   messageText: string;
   postID: string;
   slug:string;
+  isArticle:boolean;
 }
 
 const Message = (props: MessageTypes) => {
@@ -15,7 +16,7 @@ const Message = (props: MessageTypes) => {
 
   const handleClick = () => {
       navigate(
-      `${props.slug ? `/posts/article/slug/${props.slug}` : `/posts/post/${props.postID}`}`
+      `${props.isArticle ? `/posts/article/slug/${props.slug}` : `/posts/post/${props.postID}`}`
     );
   };
 

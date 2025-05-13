@@ -33,6 +33,7 @@ const MessageList: React.FC<MessageListProps> = ({
               messageText={communique.content!}
               postID={communique._id!}
               slug={communique.slug!}
+              isArticle={communique.isArticle!}
             
             />
           )
