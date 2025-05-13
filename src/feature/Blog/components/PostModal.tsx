@@ -268,7 +268,7 @@ const PostModal = ({
                     </span>
                     /{SHORT_POST_LENGTH}
                   </span>
-                 {authUser.canMakeCommunique && <StarToggle isCommunique={isCommunique} onToggle={setIsCommunique} />}
+                 {authUser.CanMakecommuniquer && <StarToggle isCommunique={isCommunique} onToggle={setIsCommunique} />}
                   <Button
                     className={cn(
                       'flex items-center gap-2 hover:text-primary-400 cursor-pointer',
