@@ -50,7 +50,7 @@ const Message = (props: MessageTypes) => {
               <LuBadgeCheck className="text-primary-400 size-5" strokeWidth={2.5} />
             )}
           </div>
-          <p className="text-neutral-300 text-xs font-medium whitespace-nowrap overflow-hidden text-ellipsis line-clamp-1">
+          <p className="text-neutral-300 text-xs font-medium  overflow-hidden text-ellipsis line-clamp-1">
             {props.author?.title || props.author.bio}
           </p>
           <span className="text-neutral-300 text-xs font-normal">

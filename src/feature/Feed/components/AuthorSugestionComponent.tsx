@@ -84,9 +84,9 @@ const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username,n
               {getFollowStatusText()}
             </div>}
           </div>
-          <p className="text-neutral-100 text-xs whitespace-nowrap overflow-hidden text-ellipsis line-clamp-1">
-            {title}
-          </p>
+          <p className="text-neutral-100 text-xs overflow-hidden text-ellipsis line-clamp-1">
+  {title}
+</p>
         </div>
       </header>
     </div>
