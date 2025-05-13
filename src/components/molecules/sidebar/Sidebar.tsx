@@ -28,10 +28,12 @@ import "./sidebar.scss";
 import { useNotificationsValues } from "../../../feature/Notifications/hooks";
 import { commuLeft } from "../../../assets/icons";
 import { useSendNewArticleNotification } from "../../../feature/Notifications/hooks/useNotification";
+import { getDecryptedUser } from "../../../feature/Auth/api/Encryption";
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
-  const { authUser, isLoggedIn } = useUser();
+  const {  isLoggedIn } = useUser();
+  const authUser  = getDecryptedUser();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
   // const [isCommunique, setIsCommunique] = useState<boolean>(false);
   const { t } = useTranslation();
