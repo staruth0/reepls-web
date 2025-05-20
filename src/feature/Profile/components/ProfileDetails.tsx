@@ -60,11 +60,11 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town,role,user_id
       </div>
       <div className="flex text-[13px] gap-3 mt-1 items-center">
         <div className="flex gap-1 cursor-pointer" onClick={handleFollowingsClick}>
-          <p className="font-bold hover:underline">{ followingData?.data?.length || 0 }</p> {t(`Following`)}
+          <p className="font-bold hover:underline">{ followingData?.data?.length }</p> {t(`Following`)}
         </div>
         <div className="w-[5px] h-[5px] rounded-full bg-neutral-50 "></div>
         <div className="flex gap-1 cursor-pointer" onClick={handleFollowingsClick}>
-          <p className="font-bold hover:underline">{ followersData?.data?.length || 0 }</p> {t(`Followers`)}
+          <p className="font-bold hover:underline">{ followersData?.data?.length  }</p> {t(`Followers`)}
         </div>
       </div>
     </div>
