@@ -73,6 +73,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ article }) => {
         toggleCommentSection={toggleCommentSection}
         date={article.createdAt || ''}
         article_id={article._id || ''}
+        article={article}
       />
       <BlogReactionSession
         isCommentSectionOpen={isCommentSectionOpen}

@@ -135,7 +135,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
   if (isErrorAllReactions || isErrorReactionsPerType) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-[910]">
-        <div className="bg-[var(--plain-b)] rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh] p-4 flex items-center justify-center">
+        <div className="bg-[var(--plain-b)] rounded-lg w-[50vw] max-w-full shadow-lg h-[80vh] p-4 items-center justify-center">
           <p className="text-[var(--text-color)]">
             {t("interaction.errors.reactionerror")}
           </p>
@@ -143,7 +143,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
             onClick={onClose}
             className=""
           >
-            {t("interaction.cancel")}
+            {t("cancel")}
           </button>
         </div>
       </div>

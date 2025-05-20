@@ -17,8 +17,8 @@ import { useDeleteArticle, useUpdateArticle } from "../../hooks/useArticleHook";
 import ConfirmationModal from "../ConfirmationModal";
 import PostEditModal from "../PostEditModal";
 import { t } from "i18next";
-import { calculateReadTime } from "../../../../utils/articles";
 import ReportArticlePopup from "../../../Reports/components/ReportPostPopup";
+import { timeAgo } from "../../../../utils/dateFormater";
 
 interface BlogProfileProps {
   date: string;
@@ -266,7 +266,8 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
           )}
         </div>
         <p className="text-sm text-neutral-100">{user?.bio}</p>
-        <span className="text-sm text-neutral-100">{calculateReadTime(article.content!, article.media || [])} mins Read</span>
+        <span className="text-sm text-neutral-100">{timeAgo(article?.createdAt || '')}</span>
+       
       </div>
       <div className="relative">
         {showMenu ? (

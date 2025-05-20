@@ -200,7 +200,7 @@ const ArticleView: React.FC = () => {
         {!isPreview && !isPending && (
           <div className="stats mx-auto">
             <div className="flex justify-center">
-              <BlogReactionStats article_id={articleUid!} date={new Date().toISOString()} />
+              <BlogReactionStats article_id={articleUid!} article={article} date={new Date().toISOString()} />
             </div>
           </div>
         )}

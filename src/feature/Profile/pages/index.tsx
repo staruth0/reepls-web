@@ -54,18 +54,26 @@ const Profile: React.FC = () => {
 
   const isAuthUser = username?.trim() === authUser?.username?.trim();
 
-  const tabs = [
-    { id: "about", title: "About" },
-    {
-      id: "posts",
-      title: `Posts (${authorPostsData?.pages[0]?.totalPosts || 0})`,
-    },
-    {
-      id: "articles",
-      title: `Articles (${authorArticlesData?.pages[0]?.totalArticles || 0})`,
-    },
-    { id: "media", title: "Media" },
-  ];
+ const tabs = [
+  { id: "about", title: "About" },
+  {
+    id: "posts",
+    title: `Posts${
+      authorPostsData?.pages[0]?.totalPosts > 0 
+        ? ` (${authorPostsData?.pages[0].totalPosts})` 
+        : ""
+    }`,
+  },
+  {
+    id: "articles",
+    title: `Articles${
+      authorArticlesData?.pages[0]?.totalArticles > 0 
+        ? ` (${authorArticlesData?.pages[0].totalArticles})` 
+        : ""
+    }`,
+  },
+  { id: "media", title: "Media" },
+];
   
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
 
