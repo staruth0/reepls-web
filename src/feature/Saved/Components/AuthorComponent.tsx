@@ -135,7 +135,7 @@ const AuthorComponent: React.FC<AuthorComponentProps> = ({ username }) => {
             onClick={() => setShowMenu(false)}
           ></div>
           <div className="absolute right-0 top-10 bg-neutral-800 shadow-md rounded-md p-2 w-52 text-neutral-50 z-50">
-        { user?._id === authUser?.id ? '':   <div
+        { user?.id === authUser?.id ? '':   <div
               className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
               onClick={handleFollowClick}
             >

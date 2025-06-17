@@ -39,6 +39,7 @@ const loginUser = async (user: User) => {
   const { data } = await apiClient.post("/auth/login-email", user);
   return data;
 };
+
 const loginUserWithPhone = async (user: User) => {
   const { data } = await apiClient.post("/auth/login-phone", user);
   return data;
