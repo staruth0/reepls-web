@@ -26,9 +26,10 @@ import SidebarItem from "../../atoms/SidebarItem";
 // import StarToggle from '../../../components/atoms/CommuniqueBtn';
 import "./sidebar.scss";
 import { useNotificationsValues } from "../../../feature/Notifications/hooks";
-import { commuLeft } from "../../../assets/icons";
+import { commuLeft, logoOnDark, logoOnWhite ,favicon} from "../../../assets/icons";
 import { useSendNewArticleNotification } from "../../../feature/Notifications/hooks/useNotification";
 import { getDecryptedUser } from "../../../feature/Auth/api/Encryption";
+import useTheme from "../../../hooks/useTheme";
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
@@ -43,6 +44,7 @@ const Sidebar: React.FC = () => {
   const { notifications } = useNotificationsValues();
   const unreadNotifications = notifications.filter((notif) => !notif.is_read);
   const screenWidth = window.innerWidth;
+  const { theme } = useTheme(); 
 
  
   const unreadCount = unreadNotifications.length;
@@ -133,6 +135,8 @@ const Sidebar: React.FC = () => {
       }
     }
 
+
+
     const post: Article = {
       content: postContent,
       media: [...images, ...videos],
@@ -158,6 +162,15 @@ const Sidebar: React.FC = () => {
 
   const isTabletSmall = screenWidth >= 640 && screenWidth < 930;
 
+
+  const getImageSource = () => {
+    if (isOpen) {
+      return theme === 'dark' ? logoOnWhite:logoOnDark ;
+    } else {
+      return favicon;
+    }
+  };
+
   return (
     <div className="side bg-background">
       <LuCircleChevronRight
@@ -171,24 +184,29 @@ const Sidebar: React.FC = () => {
         )}
         onClick={() => handleToggleSidebar()}
       />
-      <div className="flex gap-5 items-center h-[80px]">
-        <div
-          className="text-roboto text-[24px] font-semibold flex gap-2 items-center cursor-pointer"
-          onClick={() => {
-            navigate("/feed");
-            if (window.innerWidth < 768) {
-              handleToggleSidebar();
-            }
-          }}
-        >
-          <img
-            src={`/Logo.svg`}
-            alt="reeplsicon"
-            className={`${isOpen ? "size-8" : "size-9"}`}
-          />
-          {isOpen && "REEPLS"}
-        </div>
-      </div>
+  <div className="flex gap-5 items-center h-[80px]">
+  <div
+    className="text-roboto text-[24px] font-semibold flex gap-2 items-center cursor-pointer"
+    onClick={() => {
+      navigate("/feed");
+      if (window.innerWidth < 768) {
+        handleToggleSidebar();
+      }
+    }}
+  >
+   <img
+  src={getImageSource()} 
+  alt="reeplsicon"
+  className={cn(
+    "object-contain",
+    "h-full",
+    isOpen ? "w-28" : "w-7",
+    ""
+  )}
+/>
+    {/* {isOpen && "REEPLS"} */}
+  </div>
+</div>
 
       <div className="sidebar__links">
         {navLinks.map((navItem, index) => (

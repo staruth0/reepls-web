@@ -31,9 +31,13 @@ import briefcase from './briefcase__business.svg'
 import mapPin from './map__pin.svg'
 import reeplsIcon from './reepls.svg'
 
+import logoOnDark from './primary_logo_onblack.png'
+import logoOnWhite from './primary_logo_onwhite.png'
+import favicon from './favicon.png'
 
 
-export {mapPin, reeplsIcon,back_arrow,briefcase,clap, cm,VerifiedIcon,hand5,heart,smile,sadface,thumb, thumb_2,tooltip,readAloudIcon,ellipsisVertical,chevrondown,profileAvatar, google, home1, notification, profile, search, bookmark ,postIcon,commuLeft,arrowLeftRight}
+
+export {mapPin,reeplsIcon,back_arrow,favicon,briefcase,clap,logoOnDark,logoOnWhite, cm,VerifiedIcon,hand5,heart,smile,sadface,thumb, thumb_2,tooltip,readAloudIcon,ellipsisVertical,chevrondown,profileAvatar, google, home1, notification, profile, search, bookmark ,postIcon,commuLeft,arrowLeftRight}
 
 export const Icons = {
     NotificationIcon,
