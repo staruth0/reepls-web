@@ -4,6 +4,8 @@ import { LuCircleArrowLeft, LuCircleArrowRight } from "react-icons/lu";
 import { Pics } from "../../../assets/images";
 import { t } from "i18next";
 import { useNavigate } from "react-router-dom";
+import { logoOnDark, logoOnWhite } from "../../../assets/icons";
+import useTheme from "../../../hooks/useTheme";
 
 const slides = [
   {
@@ -50,13 +52,13 @@ function Swiper() {
     // exitLeft: { opacity: 0, x: -100 },
     exitRight: { opacity: 0, x: 100 },
   };
-
+const {theme} = useTheme()
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background text-neutral-50 p-4 relative">
       {/* Logo */}
       <div onClick={()=>navigate('/')} className="cursor-pointer absolute top-5 left-5 self-start text-2xl flex gap-2 items-center font-semibold text-plain-a mb-4">
-        <img src={"/Logo.svg"} alt="" />
-        REEPLS
+        <img src={`${theme === 'dark' ? logoOnWhite:logoOnDark }`} alt="" className="w-36" />
+      
       </div>
 
       {/* Main Content */}
