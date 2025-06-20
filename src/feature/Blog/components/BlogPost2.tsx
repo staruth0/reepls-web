@@ -66,7 +66,7 @@ const BlogPost2: React.FC<BlogPostProps> = ({ article, isModalView = false }) =>
       <ErrorBoundary
         FallbackComponent={ErrorFallback}
         onError={(error, info) => {
-          console.error('Error caught by ErrorBoundary:', error, info);
+          void {error, info};
         }}>
         {!isCognitiveMode && article?.media && <BlogImagery article={article} media={article.media} />}
       </ErrorBoundary>

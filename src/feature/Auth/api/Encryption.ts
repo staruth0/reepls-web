@@ -14,7 +14,7 @@ export const encryptAndStoreLoginData = (data: LoginResponse): void => {
     const encrypted = CryptoJS.AES.encrypt(dataString, SECRET_KEY).toString();
     localStorage.setItem(STORAGE_KEY, encrypted);
   } catch (error) {
-    console.error('Error encrypting login data:', error);
+    void error;
   }
 };
 
@@ -23,7 +23,6 @@ export const decryptLoginData = (): LoginResponse | null => {
   try {
     const encrypted = localStorage.getItem(STORAGE_KEY);
     if (!encrypted) {
-      console.warn('No encrypted login data found in localStorage');
       return null;
     }
     const bytes = CryptoJS.AES.decrypt(encrypted, SECRET_KEY);
@@ -34,7 +33,7 @@ export const decryptLoginData = (): LoginResponse | null => {
     const decryptedData: LoginResponse = JSON.parse(decryptedString);
     return decryptedData;
   } catch (error) {
-    console.error('Error decrypting login data:', error);
+    void error;
     return null;
   }
 };
@@ -45,7 +44,6 @@ export const getDecryptedAccessToken = (): string | null => {
   if (decryptedData && decryptedData.tokens.access.token) {
     return decryptedData.tokens.access.token;
   }
-  console.warn('No access token found in decrypted data');
   return null;
 };
 
@@ -55,7 +53,6 @@ export const getDecryptedRefreshToken = (): string | null => {
   if (decryptedData && decryptedData.tokens.refresh.token) {
     return decryptedData.tokens.refresh.token;
   }
-  console.warn('No refresh token found in decrypted data');
   return null;
 };
 
@@ -67,7 +64,6 @@ export const getDecryptedUser = (): User | null => {
   if (decryptedData && decryptedData.user) {
     return decryptedData.user;
   }
-  console.warn('No user data found in decrypted data');
   return null;
 };
 
@@ -83,7 +79,6 @@ export const updateUsernameInStorage = (newUsername: string): boolean => {
     // 1. Retrieve and decrypt the current login data
     const encryptedData = localStorage.getItem(STORAGE_KEY);
     if (!encryptedData) {
-      console.error('No login data found in localStorage');
       return false;
     }
 
@@ -117,7 +112,7 @@ export const updateUsernameInStorage = (newUsername: string): boolean => {
 
     return true; // Success
   } catch (error) {
-    console.error('Failed to update username:', error);
+    void error;
     return false; // Failure
   }
 };

@@ -46,7 +46,7 @@ createRoot(document.getElementById('root')!).render(
                       <ErrorBoundary
                         FallbackComponent={ErrorFallback}
                         onError={(error, info) => {
-                          console.error('Error caught by ErrorBoundary:', error, info);
+                          void {error, info};
                         }}>
                        <NotificationProvider> 
                         <AudioPlayerProvider>

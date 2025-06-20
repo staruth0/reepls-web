@@ -32,7 +32,7 @@ export const useCreateArticle = () => {
       navigate('/articles');
     },
     onError: (error) => {
-      console.error('Error creating article:', error);
+      void error;
     },
   });
 };
@@ -200,7 +200,7 @@ export const useUpdateArticle = () => {
      
     },
     onError: (error) => {
-      console.error('Error updating article:', error);
+      void error;
     },
   });
 };
@@ -217,7 +217,7 @@ export const useDeleteArticle = () => {
       
     },
     onError: (error) => {
-      console.error('Error deleting article:', error);
+      void error;
     },
   });
 };

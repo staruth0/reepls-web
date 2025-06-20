@@ -24,7 +24,7 @@ export const getSavedPosts = async ({ pageParam = 1 }) => {
     const { data } = await apiClient.get(`/articles/saved-user-posts?page=${pageParam}&limit=10`);
     return data || { articles: [], totalPosts: 0, totalPages: 1 }; // Fallback
   } catch (error) {
-    console.error("Error fetching saved posts:", error);
+    void error;
     return { articles: [], totalPosts: 0, totalPages: 1 }; 
   }
 };
@@ -34,7 +34,7 @@ export const getSavedArticle = async ({ pageParam = 1 }) => {
     const { data } = await apiClient.get(`/articles/saved-user-articles?page=${pageParam}&limit=10`);
     return data || { articles: [], totalArticles: 0, totalPages: 1 }; 
   } catch (error) {
-    console.error("Error fetching saved articles:", error);
+    void error;
     return { articles: [], totalArticles: 0, totalPages: 1 }; 
   }
 };

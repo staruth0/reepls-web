@@ -11,7 +11,7 @@ export const useSaveArticle = () => {
       queryClient.invalidateQueries({ queryKey: ["savedArticles"] });
     },
     onError: (error) => {
-      console.error("Error saving article:", error);
+      void error;
     },
   });
 };
@@ -26,7 +26,7 @@ export const useRemoveSavedArticle = () => {
       queryClient.invalidateQueries({ queryKey: ["savedArticles"] });
     },
     onError: (error) => {
-      console.error("Error removing saved article:", error);
+      void error;
     },
   });
 };

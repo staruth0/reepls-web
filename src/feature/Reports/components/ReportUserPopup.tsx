@@ -28,7 +28,7 @@ const ReportUserPopup: React.FC<ReportUserPopupProps> = ({ username, onClose }) 
       onClose();
     } catch (error) {
       toast.error(t('report.reportFailed'));
-      console.error('Error submitting report:', error);
+      void error;
     } finally {
       setIsSubmitting(false);
     }

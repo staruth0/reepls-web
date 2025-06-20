@@ -72,7 +72,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
       }
       return timeAgo(createdAt.toISOString());
     } catch (error) {
-      console.error("Error formatting date:", error);
+      void error;
     }
   };
 

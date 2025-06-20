@@ -32,7 +32,7 @@ export const useCreateReaction = () => {
       });
     },
     onError: (error) => {
-      console.error("Error creating reaction:", error);
+      void error;
     },
   });
 };
@@ -66,7 +66,7 @@ export const useUpdateReaction = () => {
       });
     },
     onError: (error) => {
-      console.error("Error updating reaction:", error);
+      void error;
     },
   });
 };
@@ -90,7 +90,7 @@ export const useDeleteReaction = () => {
       });
     },
     onError: (error) => {
-      console.error("Error deleting reaction:", error);
+      void error;
     },
   });
 };
@@ -137,7 +137,7 @@ export const useCreateCommentReaction = () => {
       });
     },
     onError: (error) => {
-      console.error("Error creating comment reaction:", error);
+      void error;
     },
   });
 };

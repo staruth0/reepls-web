@@ -29,7 +29,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(loginData.user);
       setIsLoggedIn(true);
     } catch (error) {
-      console.error('Login error:', error);
+      void error;
     }
   };
 

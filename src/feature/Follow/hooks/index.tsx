@@ -14,7 +14,7 @@ export const useFollowUser = () => {
       });
     },
     onError: (error) => {
-      console.error('Error following user:', error);
+      void error;
     },
   });
 };
@@ -32,7 +32,7 @@ export const useUnfollowUser = () => {
       });
     },
     onError: (error) => {
-      console.error('Error unfollowing user:', error);
+      void error;
     },
   });
 };

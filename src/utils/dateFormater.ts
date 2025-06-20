@@ -16,7 +16,7 @@ export const formatDateWithMonth = (isoString: string) => {
 
     return date.toLocaleDateString("en-US", options);
   } catch (error) {
-    console.error("Error formatting date:", error);
+    void error;
     return "Invalid date";
   }
 };
@@ -64,7 +64,7 @@ export const timeAgo = (isoString: string) => {
       return formatDateWithMonth(isoString);
     }
   } catch (error) {
-    console.error("Error parsing date:", error);
+    void error;
     return "Invalid date";
   }
 };

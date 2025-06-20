@@ -92,6 +92,7 @@ export const ReadingControls = ({ article_id, article_tts,article }: { article_i
           toast.error('Failed to generate audio');
         }
       } catch (error) {
+        void error;
         setAudioState('error');
         toast.error('Failed to generate audio');
       }
@@ -192,7 +193,7 @@ const generateTTS = async (articleId: string): Promise<string | null> => {
     const { data } = await apiClient.get(`/tts/${articleId}`);
        return data?.ttsResult?.audioUrl || null;
   } catch (error) {
-    console.error('Error generating TTS:', error);
+    void error;
     return null;
   }
 };

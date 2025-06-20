@@ -52,7 +52,7 @@ const ProfileConfigurations: React.FC = () => {
   // Convert base64 VAPID key to Uint8Array
   const urlBase64ToUint8Array = (base64String: string): Uint8Array => {
     if (!base64String) {
-      console.error('Invalid base64 string provided');
+      void base64String;
       return new Uint8Array();
     }
     try {
@@ -61,7 +61,7 @@ const ProfileConfigurations: React.FC = () => {
       const rawData = window.atob(base64);
       return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
     } catch (error) {
-      console.error('Error converting base64 to Uint8Array:', error);
+      void error;
       return new Uint8Array();
     }
   };
@@ -75,11 +75,11 @@ const ProfileConfigurations: React.FC = () => {
           setSwRegistration(registration);
         })
         .catch((error) => {
-          console.error('Service Worker Registration Failed:', error);
+          void error;
           toast.error(t('Failed to enable notifications. Please try again later.'));
         });
     } else {
-      console.warn('Push notifications not supported in this browser');
+      return
     }
   }, [t]);
 
@@ -90,7 +90,6 @@ const ProfileConfigurations: React.FC = () => {
         const permission = Notification.permission;
         setIsNotificationsEnabled(permission === 'granted');
         if (permission === 'denied') {
-          console.warn('Notification permission was denied');
           toast.warn(t('Notifications are blocked. Please enable them in your browser settings.'));
         }
       }
@@ -116,7 +115,7 @@ const ProfileConfigurations: React.FC = () => {
           toast.success(t('Notifications disabled successfully!'));
         }
       } catch (error: any) {
-        console.error('Error unsubscribing from notifications:', error);
+        void error;
         toast.error(t('Failed to disable notifications: ') );
       }
     } else {
@@ -149,7 +148,7 @@ const ProfileConfigurations: React.FC = () => {
         await apiClient.post('/push-notification/subscribe', subscriptionData);
         toast.success(t('Notifications enabled successfully!'));
       } catch (error: any) {
-        console.error('Push subscription failed:', error);
+        void error;
         toast.error(t('Failed to enable notifications: ') );
       }
     }
@@ -237,7 +236,7 @@ const ProfileConfigurations: React.FC = () => {
   // Handle VAPID key loading and errors
   useEffect(() => {
     if (vapidError) {
-      console.error('Error fetching VAPID key:', vapidError);
+      void vapidError;
       toast.error(t('Failed to load notification settings.'));
     }
   }, [vapidLoading, vapidError, t]);
