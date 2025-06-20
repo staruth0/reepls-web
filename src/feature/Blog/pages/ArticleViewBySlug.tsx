@@ -64,7 +64,7 @@ const ArticleViewBySlug: React.FC = () => {
     if (slug) {
       mutate(slug, {
         onError: () => {
-          console.log('error adding article to reading history');
+          return;
         },
       });
     }

@@ -58,7 +58,7 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
       }
       return timeAgo(createdAt.toISOString());
     } catch (error) {
-      console.error("Error formatting date:", error);
+      void error;
     }
   };
 

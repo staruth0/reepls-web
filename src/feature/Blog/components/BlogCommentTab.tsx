@@ -31,15 +31,12 @@ const CommentTab: React.FC<CommentTabProps> = ({ article_id }) => {
 
   const validateCommentData = (commentData: Comment): boolean => {
     if (!commentData.article_id) {
-      console.error("Article ID is required");
       return false;
     }
     if (!commentData.author_id) {
-      console.error("Author ID is required");
       return false;
     }
     if (!commentData.content?.trim()) {
-      console.error("Comment cannot be empty");
       return false;
     }
     return true;
@@ -65,7 +62,6 @@ const CommentTab: React.FC<CommentTabProps> = ({ article_id }) => {
         setComment("");
       },
       onError: () => {
-        console.error("Failed to post comment");
         toast.error(t("blog.alerts.commentFailed"));
       },
     });

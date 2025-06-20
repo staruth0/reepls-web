@@ -18,7 +18,7 @@ export const useAuth = () => {
       }
       return response;
     } catch (error) {
-      console.error(error);
+      void error;
       setError(true);
     } finally {
       setLoading(false);
@@ -36,7 +36,7 @@ export const useAuth = () => {
       }
       return response;
     } catch (error) {
-      console.error(error);
+      void error;
       setError(true);
     } finally {
       setLoading(false);
@@ -54,7 +54,7 @@ export const useAuth = () => {
       }
       return response;
     } catch (error) {
-      console.error(error);
+      void error;
       setError(true);
     } finally {
       setLoading(false);
@@ -72,7 +72,7 @@ export const useAuth = () => {
       }
       return response;
     } catch (error) {
-      console.error(error);
+      void error;
       setError(true);
     } finally {
       setLoading(false);
@@ -90,7 +90,7 @@ export const useAuth = () => {
       }
       return response;
     } catch (error) {
-      console.error(error);
+      void error;
       setError(true);
     } finally {
       setLoading(false);
@@ -108,7 +108,7 @@ export const useAuth = () => {
       }
       return response;
     } catch (error) {
-      console.error(error);
+      void error;
       setError(true);
     } finally {
       setLoading(false);

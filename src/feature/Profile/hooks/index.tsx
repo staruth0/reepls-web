@@ -62,7 +62,7 @@ export const useUpdateUser = (): {
      
     },
     onError: (error) => {
-      console.error("Error updating user:", error);
+      void error;
     },
   });
   return { mutate, isPending, error, isError, isSuccess };
@@ -85,7 +85,7 @@ export const useDeleteUser = (): {
       navigate("/users");
     },
     onError: (error) => {
-      console.error("Error deleting user:", error);
+      void error;
     },
   });
   return { mutate, isPending, error };

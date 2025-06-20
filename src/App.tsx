@@ -45,7 +45,6 @@ function App() {
   // Convert the base64 VAPID key to UInt8Array format
   function urlBase64ToUint8Array(base64String: string): Uint8Array {
     if (!base64String) {
-      console.error('Invalid base64 string provided');
       return new Uint8Array();
     }
     
@@ -55,7 +54,7 @@ function App() {
       const rawData = window.atob(base64);
       return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
     } catch (error) {
-      console.error('Error converting base64 to Uint8Array:', error);
+      void error;
       return new Uint8Array();
     }
   }
@@ -74,11 +73,11 @@ function App() {
           setSwRegistration(registration);
         })
         .catch((error) => {
-          console.error('Service Worker Registration Failed:', error);
+          void error;
          
         });
     } else {
-      console.warn('Push notifications not supported in this browser');
+      return
     }
   }, []);
 
@@ -90,7 +89,7 @@ function App() {
         setPermissionGranted(permission === 'granted');
         
         if (permission === 'denied') {
-          console.warn('Notification permission was denied');
+          return
         }
       }
     };
@@ -161,7 +160,7 @@ function App() {
         await apiClient.post('/push-notification/subscribe', subscriptionData);
       
       } catch (error: any) {
-        console.error('Push subscription failed:', error);
+        void error;
         
       }
     };
@@ -173,7 +172,7 @@ function App() {
   
   
   if (error) {
-    console.error('Error fetching VAPID key:', error);
+    void error;
   }
 
   return (

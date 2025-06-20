@@ -21,7 +21,7 @@ export const useCreateComment = () => {
       });
     },
     onError: (error) => {
-      console.error("Error creating comment:", error);
+      void error;
     },
   });
 };
@@ -60,7 +60,7 @@ export const useUpdateComment = () => {
       });
     },
     onError: (error) => {
-      console.error("Error updating comment:", error);
+      void error;
     },
   });
 };
@@ -82,7 +82,7 @@ export const useDeleteComment = () => {
       });
     },
     onError: (error) => {
-      console.error("Error deleting comment:", error);
+      void error;
     },
   });
 };

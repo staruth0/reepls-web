@@ -38,7 +38,7 @@ const SearchResults: React.FC = () => {
       {
        
         onError: (error) => {
-          console.error('Failed to save search suggestion:', error);
+          void error;
         },
       }
     );

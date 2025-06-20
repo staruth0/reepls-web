@@ -36,7 +36,7 @@ export const useStoreSearchSuggestion = () => {
       });
     },
     onError: (error) => {
-      console.error('Error storing search suggestion:', error);
+      void error;
     },
   });
 };

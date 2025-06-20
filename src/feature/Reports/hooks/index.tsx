@@ -8,7 +8,7 @@ export const useCreateReport = () => {
     onSuccess: () => {
     },
     onError: (error) => {
-      console.error("Error creating report:", error);
+      void error;
     },
   });
 };
@@ -43,7 +43,7 @@ export const useUpdateReportStatus = () => {
     mutationFn: ({ reportId, status }: { reportId: string; status: string }) =>
       updateReportStatus(reportId, status),
     onError: (error) => {
-      console.error("Error updating report status:", error);
+      void error;
     },
   });
 };
@@ -53,7 +53,7 @@ export const useDeleteReport = () => {
     mutationFn: (reportId: string) => deleteReport(reportId),
     
     onError: (error) => {
-      console.error("Error deleting report:", error);
+      void error;
     },
   });
 };

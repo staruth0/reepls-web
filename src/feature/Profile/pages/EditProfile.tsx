@@ -85,7 +85,7 @@ const EditProfile: React.FC = () => {
     
       const updateSuccess = updateUsernameInStorage(state.username);
       if (!updateSuccess) {
-        console.error("Failed to update username in localStorage");
+        void error;
      
       }
       
@@ -93,7 +93,7 @@ const EditProfile: React.FC = () => {
       navigate(`/profile/${state.username}`);
     }
     if (isError) {
-      console.error('Update error:', error);
+      void error;
       toast.error(`${t("profile.alerts.profileFailed")}: ${error?.message}`);
     }
   }, [isSuccess, isError, error, navigate, state.username, t]);

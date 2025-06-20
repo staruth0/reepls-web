@@ -36,7 +36,7 @@ export const useRegisterUser = () => {
       navigateToCheckMail({ email: data.user.email! });
     },
     onError: (error) => {
-      console.error('Error registering user:', error);
+      void error;
       return 'Error registering user';
     },
   });
@@ -77,7 +77,7 @@ export const usePhoneRegisterUser = () => {
       navigateToCheckPhone({ phone: data.user.phone! });
     },
     onError: (error) => {
-      console.error('Error registering user:', error);
+      void error;
     },
   });
 };
@@ -99,7 +99,7 @@ export const useLoginUser = () => {
       navigateToFeed();
     },
     onError: (error) => {
-      console.error('Error logging in:', error);
+     void error;
     },
   });
 };
@@ -121,7 +121,7 @@ export const useLoginUserWithPhone = () => {
       navigateToFeed();
     },
     onError: (error) => {
-      console.error('Error logging in:', error);
+      void error;
     },
   });
 };
@@ -140,7 +140,7 @@ export const useUpdateUser = () => {
       navigateToUserProfile();
     },
     onError: (error) => {
-      console.error('Error updating user:', error);
+      void error;
     },
   });
 };
@@ -150,7 +150,7 @@ export const useGetEmailCode = () => {
   return useMutation({
     mutationFn: (emailCode: EmailCode) => getEmailVerificationCode(emailCode),
     onError: (error) => {
-      console.error('Error getting email code:', error);
+      void error;
     },
   });
 };
@@ -170,7 +170,7 @@ export const useVerifyEmailCode = () => {
       navigateToName();
     },
     onError: (error) => {
-      console.error('Error verifying email code:', error);
+      void error;
     },
   });
 };
@@ -181,7 +181,7 @@ export const useGetPhoneCode = () => {
     mutationFn: (phoneCode: PhoneCode) => getPhoneVerificationCode(phoneCode),
    
     onError: (error) => {
-      console.error('Error getting phone code:', error);
+      void error;
     },
   });
 };
@@ -199,7 +199,7 @@ export const useVerifyPhoneCode = () => {
       navigateToName();
     },
     onError: (error) => {
-      console.error('Error verifying phone code:', error);
+      void error;
     },
   });
 };
@@ -213,7 +213,7 @@ export const useRefreshToken = () => {
     onSuccess: () => {
     },
     onError: (error) => {
-      console.error(error);
+     void error;
     },
   });
 };
@@ -224,7 +224,7 @@ export const useLogoutUser = (token: string) => {
   return useMutation({
     mutationFn: () => logoutUser(token), 
     onError: (error) => {
-      console.error("Error logging out:", error); 
+      void error;
     },
   });
 };
