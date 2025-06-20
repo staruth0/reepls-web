@@ -10,7 +10,6 @@ import { Article } from '../../../../models/datamodels';
 import { motion } from 'framer-motion';
 import { cn } from '../../../../utils';
 
-
 interface BlogReactionStatsProps {
   date: string;
   toggleCommentSection?: () => void;
@@ -28,7 +27,7 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   
   const { data: articleComments, isLoading: commentsLoading } = useGetCommentsByArticleId(article_id);
-  const { data: allReactions } = useGetArticleReactions(article_id);
+  const { data: allReactions, isLoading: reactionsLoading } = useGetArticleReactions(article_id);
 
   // Safely get total comments (undefined while loading)
   const totalComments = articleComments?.pages?.[0]?.data?.totalComments;
@@ -50,7 +49,7 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
   };
 
   const handleReactionClick = () => {
-    if (reactionCount === 0) {
+    if (reactionCount === 0 && !reactionsLoading) {
       setShowNoReactionsPopup(true);
       setTimeout(() => setShowNoReactionsPopup(false), 3000); // Auto-close after 3 seconds
     } else {
@@ -71,25 +70,39 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
         {/* Reaction Icons */}
         <div className="flex gap-0 items-center group" onClick={handleReactionClick}>
           <div className="flex relative">
-            <img
-              src={heart}
-              alt="heart"
-              className="w-5 h-5 rounded-full shadow-md transform transition-transform relative z-50 -ml-1"
-            />
-            <img
-              src={thumb}
-              alt="thumb"
-              className="w-5 h-5 rounded-full shadow-md transform transition-transform relative z-30 -ml-2"
-            />
-            <img
-              src={hand5}
-              alt="hand"
-              className="w-5 h-5 rounded-full shadow-md transform transition-transform relative z-20 -ml-2"
-            />
+            {reactionsLoading ? (
+              <div className="flex gap-1 -ml-1">
+                <div className="w-5 h-5 bg-neutral-500 rounded-full animate-pulse" />
+                <div className="w-5 h-5 bg-neutral-500 rounded-full animate-pulse -ml-2" />
+                <div className="w-5 h-5 bg-neutral-500 rounded-full animate-pulse -ml-2" />
+              </div>
+            ) : (
+              <>
+                <img
+                  src={heart}
+                  alt="heart"
+                  className="w-5 h-5 rounded-full shadow-md transform transition-transform relative z-50 -ml-1"
+                />
+                <img
+                  src={thumb}
+                  alt="thumb"
+                  className="w-5 h-5 rounded-full shadow-md transform transition-transform relative z-30 -ml-2"
+                />
+                <img
+                  src={hand5}
+                  alt="hand"
+                  className="w-5 h-5 rounded-full shadow-md transform transition-transform relative z-20 -ml-2"
+                />
+              </>
+            )}
           </div>
           {/* Reaction Count */}
           <div className="ml-1 group-hover:underline group-hover:text-primary-500 underline-offset-1">
-            {reactionCount}
+            {reactionsLoading ? (
+              <div className="w-6 h-4 bg-neutral-500 rounded-md animate-pulse" />
+            ) : (
+              reactionCount
+            )}
           </div>
         </div>
 

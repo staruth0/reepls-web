@@ -11,7 +11,6 @@ import { apiClient } from './services/apiClient';
 import { useFetchVapidPublicKey } from './feature/Notifications/hooks/useNotification';
 import { useUser } from './hooks/useUser';
 
-
 // Setting up routes for your app
 const router = createBrowserRouter([WebRoutes, AuthRoutes, UserRoutes, { path: '*', element: <NotFound /> }]);
 
