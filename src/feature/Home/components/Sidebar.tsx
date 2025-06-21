@@ -12,7 +12,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen , toggleSidebar}) => {
 
     const { t } = useTranslation();
-    const authState = useUser()
+    const {authUser }= useUser()
   
 
   return (
@@ -40,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen , toggleSidebar}) => {
 
         <ul className="space-y-4 px-6">
           <li onClick={toggleSidebar}>
-            <a href={`${authState ? 'feed' : 'auth/login/phone'}`} className="text-neutral-50 hover:text-primary-400">
+            <a href={`${authUser ? 'feed' : 'auth/login/phone'}`} className="text-neutral-50 hover:text-primary-400">
             {t("header.signIn")}
             </a>
           </li>
