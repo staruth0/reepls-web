@@ -2,16 +2,13 @@ import Interestbtn from '../components/Interestbtn';
 import '../styles/interest.scss';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { interests } from '../../../data';
-import { RootState } from '../../../store';
 import { cn } from '../../../utils';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useUpdateUser } from '../../Profile/hooks';
 
 function Interests() {
   const { t } = useTranslation();
-  const { username } = useSelector((state: RootState) => state.user);
   const updateUser = useUpdateUser();
   const location = useLocation();
   const navigate = useNavigate();
@@ -30,11 +27,11 @@ function Interests() {
       window.alert('Please select at least one interest');
       return;
     }
-    updateUser.mutate({ interests: interest,name: username });
+    updateUser.mutate({ interests: interest});
   };
 
   const handleSkip = () => {
-    updateUser.mutate({ interests: interest, name:username });
+    updateUser.mutate({ interests: interest});
   };
 
   // Show popup on successful update and redirect logic
