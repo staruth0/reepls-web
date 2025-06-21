@@ -10,7 +10,7 @@ function Registerwithemail() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { storeEmail, storeName } = useStoreCredential()
+  const { storeEmail } = useStoreCredential()
   
 
   //states
@@ -22,15 +22,11 @@ function Registerwithemail() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     storeEmail(email);
-    storeName(email)
-
-    navigateToPassword();
+    navigate("/auth/register/email/two"); // Changed to navigate to name input
   };
 
 
- const navigateToPassword = () => {
-   navigate("/auth/register/email/one");
-  };
+
   
   // const handleGoogleRegister = async () => { 
   //  navigate('/googleAuth/register')

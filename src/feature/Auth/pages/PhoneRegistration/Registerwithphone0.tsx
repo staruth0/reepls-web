@@ -7,7 +7,7 @@ import { useStoreCredential } from "../../hooks/useStoreCredential";
 
 function RegisterWithPhone0() {
   const { t } = useTranslation();
-  const { storePhone, storeName } = useStoreCredential();
+  const { storePhone} = useStoreCredential();
   const navigate = useNavigate();
 
   // states
@@ -21,7 +21,7 @@ function RegisterWithPhone0() {
   ) => {
     setPhone(value);
     storePhone(value);
-    storeName(value);
+ 
 
     // Validate phone number (minimum 8 digits after country code)
     const digitsOnly = value.replace(/\D/g, '');
@@ -45,7 +45,7 @@ function RegisterWithPhone0() {
     }
      
     storePhone(phone);
-    navigateToPassword();
+    navigate("/auth/register/phone/two");
   };
 
   // functions to navigate
@@ -53,9 +53,6 @@ function RegisterWithPhone0() {
     navigate("/auth/register/email");
   };
   
-  const navigateToPassword = () => {
-    navigate("/auth/register/phone/one");
-  };
 
   return (
     <div className="register__phone__container">

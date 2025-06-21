@@ -9,12 +9,14 @@ import InputField from '../../components/InputField';
 import { useRegisterUser } from '../../hooks/AuthHooks';
 import { useStoreCredential } from '../../hooks/useStoreCredential';
 import '../../styles/authpages.scss';
+import { useNavigate } from 'react-router-dom';
 
 function RegisterWithEmail1() {
   const { t } = useTranslation();
   const { mutate, isPending, error } = useRegisterUser();
+  const navigate = useNavigate();
 
-  const { email, password, username } = useSelector((state: RootState) => state.user);
+  const { email, username } = useSelector((state: RootState) => state.user);
 
   // Custom hooks
   const { storePassword } = useStoreCredential();
@@ -88,8 +90,18 @@ function RegisterWithEmail1() {
       return;
     }
 
+    storePassword(passwords);
 
-    mutate({ email, password, name: username });
+    console.log( { email, password: passwords, name: username })
+    
+    mutate(
+      { email, password: passwords, name: username },
+      {
+        onSuccess: () => {
+          navigate("/auth/register/checkemail", { state: { email } });
+        }
+      }
+    );
   };
 
   return (

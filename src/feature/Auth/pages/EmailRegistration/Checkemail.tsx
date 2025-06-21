@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuLoader } from 'react-icons/lu';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import OTPInput from '../../components/OTPInput';
 import { useGetEmailCode, useVerifyEmailCode } from '../../hooks/AuthHooks';
 import '../../styles/authpages.scss';
@@ -15,7 +15,7 @@ function Checkemail() {
 
   const CodeFetch = useGetEmailCode();
   const CodeVerify = useVerifyEmailCode();
-
+  const navigate = useNavigate()
   // Define the type for defaultMessages
   interface ErrorMessages {
     fetch: { [key: number]: string };
@@ -78,6 +78,10 @@ function Checkemail() {
     CodeVerify.mutate({
       email,
       code: otp,
+    },{
+      onSuccess: () => {
+        navigate("/auth/interests");
+      }
     });
   };
 

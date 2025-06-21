@@ -26,13 +26,10 @@ function RegisterWithPhone2() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-     navigateToInterests()  
+    storeName(name)
+    navigate("/auth/register/phone/one");
   };
-    
-  // functions to navigate
-  const navigateToInterests = () => {
-     navigate("/auth/interests",{state:name});
-  };
+
   
 
   return (
@@ -53,11 +50,7 @@ function RegisterWithPhone2() {
         </div>
         <button type="submit">{t("ContinueButton")}</button>
       </form>
-      <div className="bottom__links">
-        <div className="alternate__email" onClick={navigateToInterests}>
-         {t("Create Account with Email instead")}
-        </div>
-      </div>
+     
     </div>
   );
 }

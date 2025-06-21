@@ -22,18 +22,13 @@ import { useTokenStorage } from './useTokenStorage';
 
 // Hook for registering a user with email
 export const useRegisterUser = () => {
-  const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
-  const navigateToCheckMail = (userEmail: EmailCode) => {
-    navigate('/auth/register/checkemail', { state: userEmail });
-  };
 
   return useMutation({
     mutationFn: (user: User) => registerUser(user),
     onSuccess: (data: LoginResponse) => {
       login(data); // Pass the full LoginResponse to encrypt and store
-      navigateToCheckMail({ email: data.user.email! });
     },
     onError: (error) => {
       void error;
@@ -63,18 +58,12 @@ export const useLogOutUserWithGoogle = () => {
 
 // Hook for registering a user with phone number
 export const usePhoneRegisterUser = () => {
-  const navigate = useNavigate();
   const { login } = useContext(AuthContext);
-
-  const navigateToCheckPhone = (phonecode: PhoneCode) => {
-    navigate('/auth/register/checkphone', { state: phonecode });
-  };
 
   return useMutation({
     mutationFn: (user: User) => registerUser(user),
     onSuccess: (data: LoginResponse) => {
       login(data); // Pass the full LoginResponse to encrypt and store
-      navigateToCheckPhone({ phone: data.user.phone! });
     },
     onError: (error) => {
       void error;
@@ -158,17 +147,8 @@ export const useGetEmailCode = () => {
 // Hook for verifying email code
 export const useVerifyEmailCode = () => {
   //   const { storeAccessToken, storeRefreshToken } = useTokenStorage();
-  const navigate = useNavigate();
-
-  const navigateToName = () => {
-    navigate('/auth/register/email/two');
-  };
-
   return useMutation({
     mutationFn: (codeVerify: CodeVerify) => verifyEmailCode(codeVerify),
-    onSuccess: () => {
-      navigateToName();
-    },
     onError: (error) => {
       void error;
     },
@@ -188,16 +168,9 @@ export const useGetPhoneCode = () => {
 
 // Hook for verifying phone code
 export const useVerifyPhoneCode = () => {
-  const navigate = useNavigate();
 
-  const navigateToName = () => {
-    navigate('/auth/register/phone/two');
-  };
   return useMutation({
     mutationFn: (phoneVerify: PhoneVerify) => verifyPhoneCode(phoneVerify),
-    onSuccess: () => {
-      navigateToName();
-    },
     onError: (error) => {
       void error;
     },

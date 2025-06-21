@@ -4,11 +4,13 @@ import LeftHeader from "./LeftHeader";
 import Sidebar from "../Sidebar";
 import LanguageSwitcher from "../LanguageSwitcher";
 import { useNavigate } from "react-router-dom";
+import useTheme from "../../../../hooks/useTheme";
+import { logoOnDark, logoOnWhite, favicon } from "../../../../assets/icons";
 
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [navState, setNavstate] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -26,9 +28,11 @@ const Header = () => {
     };
   }, []);
 
+  const { theme } = useTheme();
+
   return (
     <>
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar}/>
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
       {isSidebarOpen && (
         <div
@@ -38,12 +42,25 @@ const Header = () => {
       )}
 
       <div
-        className={`${navState ? "fixed top-0 left-0 right-0 w-screen shadow-sm" : "sticky top-0"
-          } navbar flex border-b-neutral-600 border-b items-center justify-between px-5 md:px-16 lg:px-[128px] md:mb-16 py-4 w-full  bg-background z-20 max-w-screen-2xl mx-auto`}
+        className={`${
+          navState
+            ? "fixed top-0 left-0 right-0 w-screen shadow-sm"
+            : "sticky top-0"
+        } navbar flex border-b-neutral-600 border-b items-center justify-between px-5 md:px-16 lg:px-[128px] md:mb-16 py-4 w-full bg-background z-20 max-w-screen-2xl mx-auto`}
       >
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-          <img src="/Logo.svg" alt="Reepl Logo" className="h-8 w-8" />
-          <span className="text-xl font-semibold text-neutral-50">Reepls</span>
+        <div
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={() => navigate("/")}
+        >
+          {/* Image for larger screens (sm and up) */}
+          <img
+            src={`${theme === "dark" ? logoOnWhite : logoOnDark}`}
+            alt="Logo"
+            className="hidden sm:block w-36"
+          />
+          {/* Favicon for smaller screens (below sm) */}
+          <img src={favicon} alt="Favicon" className="block sm:hidden w-8 h-8"/> 
+       
         </div>
 
         <div className="hidden md:block">

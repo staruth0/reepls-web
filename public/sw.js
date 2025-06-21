@@ -5,7 +5,7 @@ self.addEventListener('push', event => {
     
     const options = {
       body: data.body,
-      icon: `/Logo.svg`, // Add your app icon
+      icon: `/favicon.png`, // Add your app icon
       data: data.data || {} // Pass through all the data from the payload
     };
 

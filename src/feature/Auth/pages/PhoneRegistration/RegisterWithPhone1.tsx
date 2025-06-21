@@ -9,6 +9,7 @@ import { usePhoneRegisterUser } from "../../hooks/AuthHooks";
 import { useStoreCredential } from "../../hooks/useStoreCredential";
 import "../../styles/authpages.scss";
 import { toast } from "react-toastify"; // Added for toast notifications
+import { useNavigate } from "react-router-dom";
 
 function RegisterWithPhone1() {
   const { t } = useTranslation();
@@ -23,6 +24,7 @@ function RegisterWithPhone1() {
   // States
   const [passwords, setPassword] = useState<string>("");
   const [passwordInputError, setPasswordInputError] = useState<boolean>(false);
+  const navigate = useNavigate()
 
   // Function to get friendly error messages specific to phone registration
   const getFriendlyErrorMessage = (error: any): string => {
@@ -96,7 +98,13 @@ function RegisterWithPhone1() {
 
    
 
-    mutate({ phone: `+${phone}`, password, name: username });
+    mutate({ phone: `+${phone}`, password, name: username },{
+      
+        onSuccess: () => {
+          navigate("/auth/register/checkphone", { state: { phone } });
+        }
+      
+    });
   };
 
   return (
