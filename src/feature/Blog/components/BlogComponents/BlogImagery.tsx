@@ -130,12 +130,12 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
                 >
                   {displayMedia.map((mediaItem, index) => (
                     <SwiperSlide key={index} className="flex items-center justify-center h-full">
-                      <div className="relative w-full h-full flex items-center justify-center">
+                      <div className="relative w-full h-30 flex items-center justify-center">
                         {mediaItem.type === MediaType.Image ? (
                           <img
                             src={mediaItem.url}
                             alt={`Blog Visual ${index}`}
-                            className="max-w-full max-h-[80vh] object-contain"
+                            className="max-w-full h-40 object-contain"
                           />
                         ) : (
                           <video

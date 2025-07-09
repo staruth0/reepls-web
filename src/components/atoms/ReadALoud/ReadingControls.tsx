@@ -1,4 +1,4 @@
-import { AudioLines, Loader2, PauseCircle, PlayCircle, Volume2, VolumeX } from 'lucide-react';
+import {  Loader2, PauseCircle, PlayCircle, Volume2, VolumeX ,Mic} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useUser } from '../../../hooks/useUser';
@@ -140,7 +140,7 @@ export const ReadingControls = ({ article_id, article_tts,article }: { article_i
     switch (audioState) {
       case 'idle':
       case 'ready':
-        return <AudioLines className="size-5" />;
+        return <Mic className="size-4" />;
       case 'generating':
         return <Loader2 className="size-5 animate-spin" />;
       case 'playing':
@@ -176,13 +176,13 @@ export const ReadingControls = ({ article_id, article_tts,article }: { article_i
       onClick={getControlButtonAction(audioState)}
       disabled={audioState === 'generating'}
       className={cn(
-        'hover:text-primary-400 disabled:opacity-50 cursor-pointer flex items-center gap-2',
+        'text-primary-400 disabled:opacity-50 cursor-pointer flex items-center gap-2',
         audioState === 'playing' && 'text-primary-400',
         audioState === 'error' && 'text-red-500',
         (audioState === 'generating' || audioState === 'playing') && 'animate-pulse'
       )}>
       {getReadingStatusIcon(audioState)}
-      {getReadingStatusText(audioState)}
+      {article.isArticle? null:getReadingStatusText(audioState)}
     </button>
   );
 };

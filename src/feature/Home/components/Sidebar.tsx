@@ -29,7 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen , toggleSidebar}) => {
       <div className="">
         <div className="flex items-center gap-2 mb-8 border-b border-b-neutral-700 pb-3 p-6">
           <img
-            src="/Logo.svg"
+            src="/favicon.png"
             alt="Reepl Logo"
             className="h-8 w-8"
           />

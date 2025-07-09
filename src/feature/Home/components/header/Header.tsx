@@ -20,9 +20,7 @@ const Header = () => {
     const handleScroll = () => {
       setNavstate(window.scrollY > 100);
     };
-
     window.addEventListener("scroll", handleScroll);
-
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
