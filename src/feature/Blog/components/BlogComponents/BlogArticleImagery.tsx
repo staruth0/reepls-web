@@ -12,7 +12,7 @@ interface BlogImageryProps {
   article: Article;
 }
 
-const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
+const BlogArticleImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -162,4 +162,4 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
   );
 };
 
-export default BlogImagery;
+export default BlogArticleImagery;
