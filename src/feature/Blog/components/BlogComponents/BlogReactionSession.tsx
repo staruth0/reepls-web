@@ -1,6 +1,5 @@
-import { MessageCircle, ThumbsUp } from 'lucide-react';
+import { MessageCircle, ThumbsUp, Radio } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { ReadingControls } from '../../../../components/atoms/ReadALoud/ReadingControls';
 import { useUser } from '../../../../hooks/useUser';
 import { Article, User, ReactionReceived } from '../../../../models/datamodels';
 import SignInPopUp from '../../../AnonymousUser/components/SignInPopUp';
@@ -24,7 +23,6 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   article_id,
   setIsCommentSectionOpen,
   author_of_post,
-  text_to_speech,
   article
 }) => {
   const { isLoggedIn, authUser } = useUser();
@@ -33,17 +31,17 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   const [showReactPopup, setShowReactPopup] = useState(false);
   const [showCommentPopup, setShowCommentPopup] = useState(false);
   const [userReaction, setUserReaction] = useState<string | null>(null);
-  
+
   // Get all reactions for this article
   const { data: allReactions } = useGetArticleReactions(article_id);
-  
+
   // Check if the current user has reacted
   useEffect(() => {
     if (isLoggedIn && authUser?.id && allReactions?.reactions) {
       const userReact = allReactions.reactions.find(
         (r: ReactionReceived) => r.user_id?.id === authUser.id
       );
-      
+
       if (userReact) {
         setUserReaction(userReact.type);
       } else {
@@ -59,7 +57,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
     }
     if (!isCommentSectionOpen) {
       setCommentTabState(!commentTabState);
-    } 
+    }
   };
 
   const handleReactClick = () => {
@@ -88,31 +86,38 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
           <button
             onMouseEnter={() => isLoggedIn && setModalOpen(true)}
             onClick={handleReactClick}
-            className={`flex items-center gap-2 hover:text-primary-400 cursor-pointer ${
-              userReaction ? 'text-primary-400' : ''
-            }`}
+     
+            className={`flex items-center gap-2 cursor-pointer group
+              ${userReaction ? 'text-primary-500' : 'text-neutral-50'} `}
           >
-            <ThumbsUp 
-              className={`size-5 ${userReaction ? 'fill-primary-400 text-primary-400' : ''}`} 
-            /> 
-            {userReaction? t("blog.Reacted") : t("blog.React")}
+            <ThumbsUp
+         
+              className={`size-5
+                ${userReaction ? 'fill-primary-500 text-primary-500' : 'text-neutral-50'} group-hover:text-green-500 group-hover:fill-green-500`}
+            />
+            <span className="group-hover:text-green-500">
+              {userReaction ? t("blog.Reacted") : t("blog.React")}
+            </span>
           </button>
           {showReactPopup && <SignInPopUp text={t("blog.React")} position="below" onClose={() => setShowReactPopup(false)} />}
         </div>
 
         {/* Comment Button */}
         <div className="relative">
-          <button className="hover:text-primary-400 cursor-pointer flex items-center gap-2" onClick={toggleCommentTab}>
-            <MessageCircle className="size-5" /> {t("blog.Comment")}
+      
+          <button className="text-neutral-50 cursor-pointer flex items-center gap-2 group" onClick={toggleCommentTab}>
+            <MessageCircle className="size-5 text-neutral-50 group-hover:text-green-500" />
+            <span className="group-hover:text-green-500"> {t("blog.Comment")} </span> 
           </button>
           {showCommentPopup && (
             <SignInPopUp text={t("blog.Comment")} position="below" onClose={() => setShowCommentPopup(false)} />
           )}
         </div>
-        
-        {/* Read Aloud Button */}
-        <div className="relative">
-          <ReadingControls article={article} article_id={article_id} article_tts={text_to_speech} />
+
+     
+        <div className="relative flex gap-1 items-center text-neutral-50 cursor-pointer group">
+          <Radio className='size-5 text-neutral-50 group-hover:text-green-500' /> 
+          <span className='text-[14px] text-neutral-50 group-hover:text-green-500'>Repost</span> 
         </div>
 
         {/* Reaction Modal */}
