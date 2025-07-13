@@ -132,7 +132,7 @@ const PostEditModal = ({
 
     const updatedMedia = [...existingMedia, ...images, ...videos];
 
-  
+   
     const updatedPostData = {
       articleId,
       article: {

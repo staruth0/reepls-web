@@ -11,6 +11,8 @@ import { cn } from '../../../../utils';
 import { useUser } from '../../../../hooks/useUser';
 import SignInPopUp from '../../../AnonymousUser/components/SignInPopUp';
 import CommentSection from '../../../Comments/components/CommentSection'; // Import CommentSection
+import BlogRepostModal from './BlogRepostModal';
+
 
 interface BlogReactionStatsProps {
   date: string;
@@ -30,7 +32,8 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
   const [showReactions, setShowReactions] = useState(false);
   const [showNoReactionsPopup, setShowNoReactionsPopup] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-
+   const [showRepostModal, setShowRepostModal] = useState(false);
+   const [isRepostModalOpen, setIsRepostModalOpen] = useState(false);
   // Reaction-related states
   const [isReactionModalOpen, setIsReactionModalOpen] = useState(false);
   const [showReactSignInPopup, setShowReactSignInPopup] = useState(false);
@@ -109,6 +112,24 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
     }
   };
 
+  const handleRepostClick = () => {
+    if (!isLoggedIn) {
+      // You can add a sign-in popup here if needed
+      return;
+    }
+    setShowRepostModal(!showRepostModal);
+  };
+
+  const handleRepostOnly = () => {
+    // Handle repost only logic here
+    console.log('Repost only');
+    setShowRepostModal(false);
+  };
+
+  const handleRepostWithThought = () => {
+    setIsRepostModalOpen(true);
+    setShowRepostModal(false);
+  };
 
 
   const popupVariants = {
@@ -243,11 +264,40 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
       <div className="flex items-center gap-12 text-neutral-70 text-xs mx-1">
        
 
-      <div className="flex items-center gap-1 text-neutral-50 hover:text-primary-500 cursor-pointer"
+          <div className=" relative flex items-center gap-1 text-neutral-50  cursor-pointer"
                >
-            <Radio className='size-4' />
+           <button onClick={handleRepostClick} className="flex hover:text-primary-500 items-center gap-1">
+             <Radio className='size-4' /> Repost
+           </button>
 
+          {/* Repost Modal */}
+          {showRepostModal && (
+            <div className="absolute bg-background bottom-full right-0 mt- border border-neutral-700 rounded-md shadow-lg z-50 min-w-[190px] p-2">
+              <div className="py-1">
+                <button
+                  onClick={handleRepostOnly}
+                  className="py-2 text-s hover:text-primary-400 transition-colors"
+                >
+                  Repost only
+                </button>
+                <div className='w-full h-[.5px] bg-neutral-500'></div>
+                <button
+                  onClick={handleRepostWithThought}
+                  className="  py-2 text-s hover:text-primary-400 transition-colors"
+                >
+                  Repost with your thought
+                </button>
+              </div>
+            </div>
+          )}
           </div>
+
+          <BlogRepostModal
+          isOpen={isRepostModalOpen}
+          onClose={() => setIsRepostModalOpen(false)}
+          article_id={article_id}
+          author_of_post={author_of_post}
+          />
 
           {/* Bookmark Icon */}
           <div className="flex items-center text-neutral-50 hover:text-primary-500 cursor-pointer"
