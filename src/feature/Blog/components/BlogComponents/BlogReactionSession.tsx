@@ -6,6 +6,7 @@ import SignInPopUp from '../../../AnonymousUser/components/SignInPopUp';
 import CommentSection from '../../../Comments/components/CommentSection';
 import ReactionModal from '../../../Interactions/components/ReactionModal';
 import { useGetArticleReactions } from '../../../Interactions/hooks';
+import BlogRepostModal from './BlogRepostModal';
 import { t } from 'i18next';
 
 interface BlogReactionSessionProps {
@@ -33,6 +34,8 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   const [showRepostModal, setShowRepostModal] = useState(false);
   const [userReaction, setUserReaction] = useState<string | null>(null);
   const repostRef = useRef<HTMLDivElement>(null);
+
+    const [isRepostModalOpen, setIsRepostModalOpen] = useState(false);
 
   // Get all reactions for this article
   const { data: allReactions } = useGetArticleReactions(article_id);
@@ -106,8 +109,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   };
 
   const handleRepostWithThought = () => {
-    // Handle repost with thought logic here
-    console.log('Repost with thought');
+    setIsRepostModalOpen(true);
     setShowRepostModal(false);
   };
 
@@ -185,6 +187,13 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
           )}
         </div>
 
+        <BlogRepostModal
+          isOpen={isRepostModalOpen}
+          onClose={() => setIsRepostModalOpen(false)}
+          article_id={article_id}
+          author_of_post={author_of_post}
+          />
+
         {/* Reaction Modal */}
         <ReactionModal
           isOpen={isModalOpen}
@@ -200,8 +209,8 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
         <CommentSection
           article_id={article_id}
           setIsCommentSectionOpen={setIsCommentSectionOpen}
-          author_of_post={author_of_post}
           article={article}
+          author_of_post={author_of_post}
         />
       )}
       {isCommentSectionOpen && (

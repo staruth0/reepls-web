@@ -49,7 +49,7 @@ const ArticleNormal:React.FC<articleprobs> = ({article}) => {
         article={article}
 
       />
-      <div className='m-4 border-[1px] rounded-sm'>
+      <div className='m-4 rounded-sm'>
       <ErrorBoundary
         FallbackComponent={ErrorFallback}
         onError={(error, info) => {
