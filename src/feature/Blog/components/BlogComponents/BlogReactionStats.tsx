@@ -10,6 +10,7 @@ import { Article } from "../../../../models/datamodels";
 import { motion } from "framer-motion";
 import { cn } from "../../../../utils";
 
+
 interface BlogReactionStatsProps {
   date: string;
   toggleCommentSection?: () => void;
@@ -154,6 +155,8 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
           article_id={article_id}
         />
       )}
+
+
 
       
       <div className="flex items-center text-neutral-50 text-sm space-x-1">
