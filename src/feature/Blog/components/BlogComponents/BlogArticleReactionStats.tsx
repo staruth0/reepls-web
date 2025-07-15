@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PenLine, MessageSquare, ThumbsUp,Bookmark, Radio } from 'lucide-react';
 import { useGetCommentsByArticleId } from '../../../Comments/hooks';
 import ReactionsPopup from '../../../Interactions/components/ReactionsPopup';
@@ -34,6 +34,7 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
   const [isSmallScreen, setIsSmallScreen] = useState(false);
    const [showRepostModal, setShowRepostModal] = useState(false);
    const [isRepostModalOpen, setIsRepostModalOpen] = useState(false);
+   const repostRef = useRef<HTMLDivElement>(null);
   // Reaction-related states
   const [isReactionModalOpen, setIsReactionModalOpen] = useState(false);
   const [showReactSignInPopup, setShowReactSignInPopup] = useState(false);
@@ -130,6 +131,23 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
     setIsRepostModalOpen(true);
     setShowRepostModal(false);
   };
+
+  // Close repost modal when clicking outside
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (repostRef.current && !repostRef.current.contains(event.target as Node)) {
+          setShowRepostModal(false);
+        }
+      };
+  
+      if (showRepostModal) {
+        document.addEventListener('mousedown', handleClickOutside);
+      }
+  
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [showRepostModal]);
 
 
   const popupVariants = {
@@ -265,6 +283,8 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
        
 
           <div className=" relative flex items-center gap-1 text-neutral-50  cursor-pointer"
+               
+               ref={repostRef} 
                >
            <button onClick={handleRepostClick} className="flex hover:text-primary-500 items-center gap-1">
              <Radio className='size-4' /> Repost
