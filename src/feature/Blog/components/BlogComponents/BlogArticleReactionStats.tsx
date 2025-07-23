@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PenLine, MessageSquare, ThumbsUp, Bookmark, Radio } from 'lucide-react';
 import { useGetCommentsByArticleId } from '../../../Comments/hooks';
 import ReactionsPopup from '../../../Interactions/components/ReactionsPopup';
@@ -36,6 +36,7 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [showRepostModal, setShowRepostModal] = useState(false);
   const [isRepostModalOpen, setIsRepostModalOpen] = useState(false);
+  const repostRef = useRef<HTMLDivElement>(null); // Keep the ref for click outside logic
   // Reaction-related states
   const [isReactionModalOpen, setIsReactionModalOpen] = useState(false);
   const [showReactSignInPopup, setShowReactSignInPopup] = useState(false);
@@ -145,21 +146,21 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
   };
 
   // Close repost modal when clicking outside
-    useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        if (repostRef.current && !repostRef.current.contains(event.target as Node)) {
-          setShowRepostModal(false);
-        }
-      };
-  
-      if (showRepostModal) {
-        document.addEventListener('mousedown', handleClickOutside);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (repostRef.current && !repostRef.current.contains(event.target as Node)) {
+        setShowRepostModal(false);
       }
-  
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }, [showRepostModal]);
+    };
+
+    if (showRepostModal) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showRepostModal]);
 
 
   const popupVariants = {
@@ -174,9 +175,7 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
         {/* Reaction and Comment controls */}
         <div className="flex items-center gap-5 h-[30px] relative cursor-pointer">
           {/* Reaction Icons and Count */}
-          <div className="flex gap-0 items-center group"
-
-          >
+          <div className="flex gap-0 items-center group">
             <div className="flex relative">
               {reactionsLoading ? (
                 <div className="flex gap-1 -ml-1">
@@ -295,11 +294,12 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
 
 
           <div className=" relative flex items-center gap-1 text-neutral-50  cursor-pointer"
+            ref={repostRef}
           >
             <button
               onClick={handleRepostClick}
               className="flex hover:text-primary-500 items-center gap-1"
-              disabled={isReposting} // Disable button if a repost is in progress
+              disabled={isReposting}
             >
               {isReposting ? (
                 <>
@@ -318,8 +318,8 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
                 <div className="py-1">
                   <button
                     onClick={handleRepostOnly}
-                    className="py-2 text-s hover:text-primary-400 transition-colors w-full text-left" // Added w-full text-left for better click area
-                    disabled={isReposting} // Disable button if a repost is in progress
+                    className="py-2 text-s hover:text-primary-400 transition-colors w-full text-left"
+                    disabled={isReposting}
                   >
                     {isReposting ? (
                       <>
@@ -332,7 +332,7 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
                   <div className='w-full h-[.5px] bg-neutral-500'></div>
                   <button
                     onClick={handleRepostWithThought}
-                    className="py-2 text-s hover:text-primary-400 transition-colors w-full text-left" // Added w-full text-left for better click area
+                    className="py-2 text-s hover:text-primary-400 transition-colors w-full text-left"
                   >
                     Repost with your thought
                   </button>
@@ -349,8 +349,7 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
           />
 
           {/* Bookmark Icon */}
-          <div className="flex items-center text-neutral-50 hover:text-primary-500 cursor-pointer"
-          >
+          <div className="flex items-center text-neutral-50 hover:text-primary-500 cursor-pointer">
             <Bookmark className='size-4' />
           </div>
 
