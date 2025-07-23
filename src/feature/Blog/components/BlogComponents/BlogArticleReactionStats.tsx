@@ -144,6 +144,23 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
     setShowRepostModal(false);
   };
 
+  // Close repost modal when clicking outside
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (repostRef.current && !repostRef.current.contains(event.target as Node)) {
+          setShowRepostModal(false);
+        }
+      };
+  
+      if (showRepostModal) {
+        document.addEventListener('mousedown', handleClickOutside);
+      }
+  
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [showRepostModal]);
+
 
   const popupVariants = {
     hidden: { opacity: 0, y: 10 },
