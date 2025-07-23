@@ -165,7 +165,7 @@ const Sidebar: React.FC = () => {
 
   const getImageSource = () => {
     if (isOpen) {
-      return theme === 'dark' ? logoOnWhite:logoOnDark ;
+      return theme === 'dark' ? logoOnWhite : logoOnDark ;
     } else {
       return favicon;
     }
@@ -204,6 +204,16 @@ const Sidebar: React.FC = () => {
     ""
   )}
 />
+
+{/* <img
+  src={getImageSource()} 
+  alt="reeplsicon"
+  className={cn(
+    "object-contain",
+    isOpen ? "h-[40px] w-[120px]" : "h-[28px] w-[28px]",
+    "transition-all duration-300 ease-in-out"
+  )}
+/> */}
     {/* {isOpen && "REEPLS"} */}
   </div>
 </div>

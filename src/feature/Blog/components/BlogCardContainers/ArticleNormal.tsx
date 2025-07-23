@@ -77,9 +77,6 @@ const ArticleNormal:React.FC<articleprobs> = ({article}) => {
       </div>
        
       </div>
-   
-     
-
       <BlogArticleReactionStats
         toggleCommentSection={toggleCommentSection}
         date={article.createdAt || ''}

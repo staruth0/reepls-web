@@ -4,6 +4,10 @@ import { Article } from '../../../models/datamodels';
 import { useUpdateArticle } from '../hooks/useArticleHook';
 import ArticleNormal from './BlogCardContainers/ArticleNormal';
 import PostNormal from './BlogCardContainers/PostNormal';
+import ArticleNormalCommentary from './BlogCardContainers/ArticleRepostCommentary';
+import ArticleNormalNoCommentary from './BlogCardContainers/ArticleRepostNoCommentary';
+import PostNormalCommentary from './BlogCardContainers/PostNormalCommentary';
+import PostNormalNoCommentary from './BlogCardContainers/PostNormalNoCommentary';
 
 interface BlogPostProps {
   article: Article;
@@ -26,6 +30,9 @@ const BlogPost2: React.FC<BlogPostProps> = ({ article, isModalView = false }) =>
     });
   }, [article, mutate]);
 
+    const isRepost = article.type === 'Repost';
+  const hasCommentary = isRepost && !!article.repost?.repost_comment;
+
   if (!article) {
     return <div>Empty Article</div>;
   }
@@ -36,13 +43,31 @@ const BlogPost2: React.FC<BlogPostProps> = ({ article, isModalView = false }) =>
      <></>
       )}
       
-      {article.isArticle ?<>
-      <ArticleNormal article={article}/>
-      </>: <>
-      
-       <PostNormal article={article}/>
-
-      </>}
+      {article.isArticle ? (
+        <>
+          {isRepost ? (
+            hasCommentary ? (
+              <ArticleNormalCommentary article={article} />
+            ) : (
+              <ArticleNormalNoCommentary article={article} />
+            )
+          ) : (
+            <ArticleNormal article={article} />
+          )}
+        </>
+      ) : (
+        <>
+          {isRepost ? (
+            hasCommentary ? (
+              <PostNormalCommentary article={article} />
+            ) : (
+              <PostNormalNoCommentary article={article} />
+            )
+          ) : (
+            <PostNormal article={article} />
+          )}
+        </>
+      )}
     </div>
   );
 };

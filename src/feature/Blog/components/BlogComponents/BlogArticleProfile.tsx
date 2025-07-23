@@ -27,10 +27,11 @@ interface BlogProfileProps {
   content?: string;
   title?: string;
   isArticle: boolean;
-  article:Article
+  article: Article;
+  isRepostedView?: boolean;
 }
 
-const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, title, content, isArticle }) => {
+const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user, article_id, article, title, content, isArticle, isRepostedView = false }) => { 
   const { authUser, isLoggedIn } = useUser();
   const { goToProfile } = useRoute();
   const [showMenu, setShowMenu] = useState(false);
@@ -49,20 +50,20 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user,article_id,articl
   const [saved, setSaved] = useState(false);
   const { mutate: followUser, isPending: isFollowPending } = useSendFollowNotification();
   const { mutate: deleteArticle, isPending: isDeletePending } = useDeleteArticle();
-    const [showReportPopup, setShowReportPopup] = useState(false);
+  const [showReportPopup, setShowReportPopup] = useState(false);
 
   const articleTitle = title || (content ? content.split(" ").slice(0, 10).join(" ") + "..." : "Untitled Post");
-  const articleUrl = `${window.location.origin}/posts/${isArticle ? "article" : "post"}/${isArticle?'slug/'+article.slug: article_id}`;
-     const {mutate} = useUpdateArticle()
+  const articleUrl = `${window.location.origin}/posts/${isArticle ? "article" : "post"}/${isArticle ? 'slug/' + article.slug : article_id}`;
+  const { mutate } = useUpdateArticle()
 
   const isCurrentAuthorArticle = user?._id === authUser?.id;
 
   const handleProfileClick = (username: string) => {
-         mutate({
-      articleId:article._id || '',
-      article:{
-       author_profile_views_count:article.author_profile_views_count! +1,
-        engagement_count:article.engagement_count! +1
+    mutate({
+      articleId: article._id || '',
+      article: {
+        author_profile_views_count: article.author_profile_views_count! + 1,
+        engagement_count: article.engagement_count! + 1
       }
     })
     if (username) {
@@ -95,15 +96,14 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user,article_id,articl
       removeSavedArticle(article_id, {
         onSuccess: () => {
           toast.success(t("blog.alerts.articleRemoved"));
-               mutate({
-      articleId:article._id || '',
-      article:{
-   
-        engagement_count:article.engagement_count! -1
-      }
-    })
+          mutate({
+            articleId: article._id || '',
+            article: {
+              engagement_count: article.engagement_count! - 1
+            }
+          })
           setSaved(false);
-          
+
         },
         onError: () => toast.error(t("blog.alerts.articleRemoveFailed")),
       });
@@ -112,12 +112,12 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user,article_id,articl
         onSuccess: () => {
           toast.success(t("blog.alerts.articleSaved"));
           setSaved(true);
-               mutate({
-      articleId:article._id || '',
-      article:{
-        engagement_count:article.engagement_count! +1
-      }
-    })
+          mutate({
+            articleId: article._id || '',
+            article: {
+              engagement_count: article.engagement_count! + 1
+            }
+          })
         },
         onError: () => toast.error(t("blog.alerts.articleSaveFailed")),
       });
@@ -135,13 +135,13 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user,article_id,articl
       unfollowUser(user?._id, {
         onSuccess: () => {
           toast.success(t("blog.alerts.userUnfollowed"));
-            mutate({
-      articleId:article._id || '',
-      article:{
-        author_follower_count:article.author_follower_count! -1,
-        engagement_count:article.engagement_count! -1
-      }
-    })
+          mutate({
+            articleId: article._id || '',
+            article: {
+              author_follower_count: article.author_follower_count! - 1,
+              engagement_count: article.engagement_count! - 1
+            }
+          })
         },
         onError: () => toast.error(t("blog.alerts.userUnfollowFailed")),
       });
@@ -149,13 +149,13 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user,article_id,articl
       followUser({ receiver_id: user?._id }, {
         onSuccess: () => {
           toast.success(t("blog.alerts.userFollowed"));
-                mutate({
-      articleId:article._id || '',
-      article:{
-        author_follower_count:article.author_follower_count! + 1,
-        engagement_count:article.engagement_count! +1
-      }
-    })
+          mutate({
+            articleId: article._id || '',
+            article: {
+              author_follower_count: article.author_follower_count! + 1,
+              engagement_count: article.engagement_count! + 1
+            }
+          })
         },
         onError: () => toast.error(t("blog.alerts.userFollowFailed")),
       });
@@ -168,7 +168,7 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user,article_id,articl
   };
 
   const handleEllipsisClick = () => {
-    check()
+    // check() // This function is empty, no need to call it.
     if (!isLoggedIn) {
       setShowSignInPopup(true);
     } else {
@@ -190,13 +190,13 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user,article_id,articl
     setShowMenu(false);
   };
 
-  function check(){
-
-  }
+  // function check() {
+  //   // This function remains empty as per your request
+  // }
 
   useEffect(() => {
     const isSaved = savedArticles?.articles?.some((article: ArticleDuplicate) => article?.article?._id === article_id);
-    setSaved(isSaved );
+    setSaved(isSaved);
   }, [savedArticles, article_id]);
 
   const getFollowStatusText = (isMenu = false) => {
@@ -224,51 +224,71 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user,article_id,articl
   }
 
   return (
-    <div className="blog-profile relative flex items-center gap-3">
-      {user?.profile_picture && user?.profile_picture !== 'https://example.com/default-profile.png' && user?.profile_picture !== '' ? (
-        <img
-          src={user?.profile_picture}
-          alt="avatar"
-          onClick={() => handleProfileClick(user?.username || "")}
-          className="cursor-pointer size-14 rounded-full object-cover"
-            loading="lazy"
-        />
-      ) : (
-        <span
-          className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-14 h-14 text-center"
-          onClick={() => handleProfileClick(user?.username || "")}
-        >
-          {user?.name?.charAt(0).toUpperCase() || 'D'}
-        </span>
-      )}
-      <div className="profile-info flex-1">
-        <div className="profile-name flex items-center gap-1">
-          <p
-            className="hover:underline cursor-pointer text-base font-semibold"
-            onClick={() => handleProfileClick(user?.username || "")}
-          >
-            {user?.name || "no name"}
+    <div className="blog-profile relative flex items-center justify-between"> {/* Changed back to justify-between */}
+      {isRepostedView ? (
+        // Simplified view for reposted content
+        <div className="flex items-center gap-2">
+          <p className="font-semibold cursor-pointer" onClick={() => goToProfile(user?.username || "")}>
+            {user?.username || (
+              <div className="w-20 h-4 bg-neutral-500 rounded-md animate-pulse" />
+            )}
           </p>
-          {user?.is_verified_writer && <LuBadgeCheck className="size-4 text-primary-400" />}
-          {!location.pathname.includes("/feed/following") && (
-            <div>
-              {!isCurrentAuthorArticle && (
-                <span
-                  className={`cursor-pointer text-primary-400 hover:underline ml-2 text-sm ${
-                    !isLoggedIn ? "pointer-events-none opacity-50" : ""
-                  }`}
-                  onClick={handleFollowClick}
-                >
-                  {getFollowStatusText()}
-                </span>
+          <span className="text-neutral-300 text-sm">Reposted</span>
+        </div>
+      ) : (
+        // Original detailed view
+        <>
+          {user?.profile_picture && user?.profile_picture !== 'https://example.com/default-profile.png' && user?.profile_picture !== '' ? (
+            <img
+              src={user?.profile_picture}
+              alt="avatar"
+              onClick={() => handleProfileClick(user?.username || "")}
+              className="cursor-pointer size-14 rounded-full object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <span
+              className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-14 h-14 text-center"
+              onClick={() => handleProfileClick(user?.username || "")}
+            >
+              {user?.name?.charAt(0).toUpperCase() || 'D'}
+            </span>
+          )}
+          <div className="profile-info flex-1 ml-3"> {/* Added ml-3 for consistent gap */}
+            <div className="profile-name flex items-center gap-1">
+              <p
+                className="hover:underline cursor-pointer text-base font-semibold"
+                onClick={() => handleProfileClick(user?.username || "")}
+              >
+                {user?.name ? user?.name : <div className="w-20 h-4 bg-neutral-500 rounded-md animate-pulse" />}
+              </p>
+              {user?.is_verified_writer && <LuBadgeCheck className="size-4 text-primary-400" />}
+              {!location.pathname.includes("/feed/following") && (
+                <div>
+                  {!isCurrentAuthorArticle && (
+                    <span
+                      className={`cursor-pointer text-primary-400 hover:underline ml-2 text-sm ${
+                        !isLoggedIn ? "pointer-events-none opacity-50" : ""
+                      }`}
+                      onClick={handleFollowClick}
+                    >
+                      {getFollowStatusText()}
+                    </span>
+                  )}
+                </div>
               )}
             </div>
-          )}
-        </div>
-        <p className="text-sm text-neutral-100">{user?.bio}</p>
-        <span className="text-sm text-neutral-100">{timeAgo(article?.createdAt || '')}</span>
-       
-      </div>
+            <p className="text-sm text-neutral-100">
+              {user?.bio }
+            </p>
+            <span className="text-sm text-neutral-100">
+              {article?.createdAt ? timeAgo(article?.createdAt || '') : <div className="w-24 h-3 bg-neutral-600 rounded-md animate-pulse mt-1" />}
+            </span>
+          </div>
+        </>
+      )}
+
+      {/* Ellipsis menu remains common to both views */}
       <div className="relative">
         {showMenu ? (
           <X className="size-4 cursor-pointer" onClick={() => setShowMenu(!showMenu)} />
@@ -322,13 +342,13 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user,article_id,articl
                     <Bookmark size={18} className="text-neutral-500" />
                     <div>{getSaveStatusText()}</div>
                   </div>
-                 <div
-                  className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-                  onClick={() => setShowReportPopup(true)}
-                >
-                  <Flag size={18} className="text-neutral-500" />
-                  {t("blog.ReportPost")}
-                </div>
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                    onClick={() => setShowReportPopup(true)}
+                  >
+                    <Flag size={18} className="text-neutral-500" />
+                    {t("blog.ReportPost")}
+                  </div>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                     onClick={handleFollowClick}
@@ -358,7 +378,7 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user,article_id,articl
       {showSharePopup && (
         <SharePopup url={articleUrl} title={articleTitle} onClose={() => setShowSharePopup(false)} />
       )}
-          {showReportPopup && (
+      {showReportPopup && (
         <ReportArticlePopup
           articleTitle={articleTitle}
           articleId={article_id}

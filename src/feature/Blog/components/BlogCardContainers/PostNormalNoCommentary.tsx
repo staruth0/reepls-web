@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Article } from '../../../../models/datamodels';
-import BlogProfile from '../BlogComponents/BlogProfile';
+// import BlogProfile from '../BlogComponents/BlogProfile';
 import { ErrorBoundary } from 'react-error-boundary';
 import BlogImagery from '../BlogComponents/BlogImagery';
 import BlogMessage from '../BlogComponents/BlogMessage';
@@ -9,6 +9,9 @@ import BlogReactionSession from '../BlogComponents/BlogReactionSession';
 import { useUpdateArticle } from '../../hooks/useArticleHook';
 import { CognitiveModeContext } from '../../../../context/CognitiveMode/CognitiveModeContext';
 import ErrorFallback from '../../../../components/molecules/ErrorFallback/ErrorFallback';
+import BlogArticleProfileRepost from '../BlogComponents/BlogArticleProfileRepost';
+import BlogArticleProfileNoComment from '../BlogComponents/BlogArticleProfileNocommentary';
+import { useGetUserByUsername } from '../../../Profile/hooks';
 
 interface articleprobs {
     article:Article;
@@ -18,6 +21,7 @@ const PostNormalNoCommentary:React.FC<articleprobs> = ({article}) => {
   const { isCognitiveMode } = useContext(CognitiveModeContext);
   const [isCommentSectionOpen, setIsCommentSectionOpen] = useState<boolean>(false);
     const {mutate} = useUpdateArticle()
+     const {user} = useGetUserByUsername(article.repost?.repost_user.username || '')
 
   const toggleCommentSection = () => {
     setIsCommentSectionOpen(!isCommentSectionOpen);
@@ -38,40 +42,50 @@ const PostNormalNoCommentary:React.FC<articleprobs> = ({article}) => {
 
   return (
     <>
-    <div className="flex items-center gap-2 text-sm text-neutral-50 mb-2 border-b-2 border-[#E1E1E1] mx-3 py-2">
-          
-          <span className='font-bold text-md'>{"Lamine Yamal"} </span><span>Reposted</span>
+     <div className=" mb-2 mx-2  py-4">
+      
+          <BlogArticleProfileNoComment           title={article.title || ""}
+            user={user || {}}
+            content={article.content || ""}
+            date={article.createdAt || ""}
+            article_id={article._id || ""}
+            isArticle={article.isArticle || false}
+            article={article}
+          />
         </div>
-        <BlogProfile
-        title={article.title || ''}
-        user={article.author_id || {}}
-        content={article.content || ''}
-        date={article.createdAt || ''}
-        article_id={article._id || ''}
-        isArticle={article.isArticle || false}
-        article={article}
+       
+       <div className="m-2 border-[1px] border-neutral-500 rounded-sm">
+        <BlogArticleProfileRepost
+          title={article.title || ""}
+          user={article.author_id || {}}
+          content={article.content || ""}
+          date={article.createdAt || ""}
+          article_id={article._id || ""}
+          isArticle={article.isArticle || false}
+          article={article}
+        />
 
-      />
-    
-     
-      <BlogMessage
-        title={article.title || ''}
-        content={article.content || ''}
-        article_id={article._id || ''}
-        isArticle={article.isArticle || false}
-        slug={article.slug || ''}
-        article={article}
-      />
+        <BlogMessage
+          title={article.title || ""}
+          content={article.content || ""}
+          article_id={article._id || ""}
+          isArticle={article.isArticle || false}
+          slug={article.slug || ""}
+          article={article}
+        />
 
-     
-    <ErrorBoundary
-        FallbackComponent={ErrorFallback}
-        onError={(error, info) => {
-          void error;
-          void info;
-        }}>
-        {!isCognitiveMode && article?.media && <BlogImagery article={article} media={article.media} />}
-      </ErrorBoundary>
+        <ErrorBoundary
+          FallbackComponent={ErrorFallback}
+          onError={(error, info) => {
+            void error;
+            void info;
+          }}
+        >
+          {!isCognitiveMode && article?.media && (
+            <BlogImagery article={article} media={article.media} />
+          )}
+        </ErrorBoundary>
+      </div>
      
 
       <BlogReactionStats

@@ -1,13 +1,15 @@
-import { MessageCircle, ThumbsUp, Radio } from 'lucide-react';
-import React, { useEffect, useState, useRef } from 'react';
-import { useUser } from '../../../../hooks/useUser';
-import { Article, User, ReactionReceived } from '../../../../models/datamodels';
-import SignInPopUp from '../../../AnonymousUser/components/SignInPopUp';
-import CommentSection from '../../../Comments/components/CommentSection';
-import ReactionModal from '../../../Interactions/components/ReactionModal';
-import { useGetArticleReactions } from '../../../Interactions/hooks';
-import BlogRepostModal from './BlogRepostModal';
-import { t } from 'i18next';
+import { MessageCircle, ThumbsUp, Radio } from "lucide-react";
+import React, { useEffect, useState, useRef } from "react";
+import { useUser } from "../../../../hooks/useUser";
+import { Article, User, ReactionReceived } from "../../../../models/datamodels";
+import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
+import CommentSection from "../../../Comments/components/CommentSection";
+import ReactionModal from "../../../Interactions/components/ReactionModal";
+import { useGetArticleReactions } from "../../../Interactions/hooks";
+import BlogRepostModal from "./BlogRepostModal";
+import { t } from "i18next";
+import { useRepostArticle } from "../../../Repost/hooks/useRepost";
+import { LuLoader } from "react-icons/lu";
 
 interface BlogReactionSessionProps {
   message?: string;
@@ -19,12 +21,61 @@ interface BlogReactionSessionProps {
   article: Article;
 }
 
+interface RepostStatusModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  isSuccess: boolean;
+  onRetry?: () => void;
+}
+
+const RepostStatusModal: React.FC<RepostStatusModalProps> = ({
+  isOpen,
+  onClose,
+  isSuccess,
+  onRetry,
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9000]">
+      <div className="bg-background p-6 rounded-lg max-w-md w-full mx-4">
+        <div className="text-center">
+          <h3 className="text-lg font-medium mb-4">
+            {isSuccess ? "Repost Successful!" : "Repost Failed"}
+          </h3>
+          <p className="mb-6">
+            {isSuccess
+              ? "Your repost has been shared successfully."
+              : "There was an error reposting. Please try again."}
+          </p>
+          <div className="flex justify-center gap-4">
+            {!isSuccess && onRetry && (
+              <button
+                onClick={onRetry}
+                className="px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600 transition"
+              >
+                Try Again
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="px-4 py-2 border border-neutral-500 rounded hover:bg-neutral-800 transition"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   isCommentSectionOpen,
   article_id,
   setIsCommentSectionOpen,
   author_of_post,
-  article
+  article,
 }) => {
   const { isLoggedIn, authUser } = useUser();
   const [isModalOpen, setModalOpen] = useState(false);
@@ -33,9 +84,14 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   const [showCommentPopup, setShowCommentPopup] = useState(false);
   const [showRepostModal, setShowRepostModal] = useState(false);
   const [userReaction, setUserReaction] = useState<string | null>(null);
+  const [repostStatus, setRepostStatus] = useState<{
+    show: boolean;
+    isSuccess: boolean;
+  }>({ show: false, isSuccess: false });
   const repostRef = useRef<HTMLDivElement>(null);
 
-    const [isRepostModalOpen, setIsRepostModalOpen] = useState(false);
+  const [isRepostModalOpen, setIsRepostModalOpen] = useState(false);
+  const { mutate: repost, isPending: isReposting } = useRepostArticle();
 
   // Get all reactions for this article
   const { data: allReactions } = useGetArticleReactions(article_id);
@@ -58,17 +114,20 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   // Close repost modal when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (repostRef.current && !repostRef.current.contains(event.target as Node)) {
+      if (
+        repostRef.current &&
+        !repostRef.current.contains(event.target as Node)
+      ) {
         setShowRepostModal(false);
       }
     };
 
     if (showRepostModal) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showRepostModal]);
 
@@ -103,14 +162,33 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   };
 
   const handleRepostOnly = () => {
-    // Handle repost only logic here
-    console.log('Repost only');
-    setShowRepostModal(false);
+    repost(
+      { articleId: article_id, comment: "" },
+      {
+        onSuccess: () => {
+          setShowRepostModal(false);
+          setRepostStatus({ show: true, isSuccess: true });
+        },
+        onError: () => {
+          setShowRepostModal(false);
+          setRepostStatus({ show: true, isSuccess: false });
+        },
+      }
+    );
   };
 
   const handleRepostWithThought = () => {
     setIsRepostModalOpen(true);
     setShowRepostModal(false);
+  };
+
+  const handleRetryRepost = () => {
+    setRepostStatus({ show: false, isSuccess: false });
+    handleRepostOnly();
+  };
+
+  const closeRepostStatusModal = () => {
+    setRepostStatus({ show: false, isSuccess: false });
   };
 
   useEffect(() => {
@@ -121,64 +199,98 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
 
   return (
     <div className="relative">
+      <RepostStatusModal
+        isOpen={repostStatus.show}
+        onClose={closeRepostStatusModal}
+        isSuccess={repostStatus.isSuccess}
+        onRetry={handleRetryRepost}
+      />
+
       <div className="blog-reaction-session border-t border-neutral-500 flex gap-4">
         {/* React Button */}
         <div className="relative">
           <button
             onMouseEnter={() => isLoggedIn && setModalOpen(true)}
             onClick={handleReactClick}
-     
             className={`flex items-center gap-2 cursor-pointer group
-              ${userReaction ? 'text-primary-500' : 'text-neutral-50'} `}
+              ${userReaction ? "text-primary-500" : "text-neutral-50"} `}
           >
             <ThumbsUp
-         
               className={`size-5
-                ${userReaction ? 'fill-primary-500 text-primary-500' : 'text-neutral-50'} group-hover:text-primary-500 group-hover:fill-primary-500`}
+                ${
+                  userReaction
+                    ? "fill-primary-500 text-primary-500"
+                    : "text-neutral-50"
+                } group-hover:text-primary-500 group-hover:fill-primary-500`}
             />
             <span className="group-hover:text-primary-500">
               {userReaction ? t("blog.Reacted") : t("blog.React")}
             </span>
           </button>
-          {showReactPopup && <SignInPopUp text={t("blog.React")} position="below" onClose={() => setShowReactPopup(false)} />}
+          {showReactPopup && (
+            <SignInPopUp
+              text={t("blog.React")}
+              position="below"
+              onClose={() => setShowReactPopup(false)}
+            />
+          )}
         </div>
 
         {/* Comment Button */}
         <div className="relative">
-      
-          <button className="text-neutral-50 cursor-pointer flex items-center gap-2 group" onClick={toggleCommentTab}>
+          <button
+            className="text-neutral-50 cursor-pointer flex items-center gap-2 group"
+            onClick={toggleCommentTab}
+          >
             <MessageCircle className="size-5 text-neutral-50 group-hover:text-primary-500" />
-            <span className="group-hover:text-primary-500"> {t("blog.Comment")} </span> 
+            <span className="group-hover:text-primary-500">
+              {" "}
+              {t("blog.Comment")}{" "}
+            </span>
           </button>
           {showCommentPopup && (
-            <SignInPopUp text={t("blog.Comment")} position="below" onClose={() => setShowCommentPopup(false)} />
+            <SignInPopUp
+              text={t("blog.Comment")}
+              position="below"
+              onClose={() => setShowCommentPopup(false)}
+            />
           )}
         </div>
 
         {/* Repost Button */}
         <div className="relative" ref={repostRef}>
-          <button 
+          <button
             className="flex gap-1 items-center text-neutral-50 cursor-pointer group"
             onClick={handleRepostClick}
           >
-            <Radio className='size-5 text-neutral-50 group-hover:text-primary-500' /> 
-            <span className='text-[14px] text-neutral-50 group-hover:text-primary-500'>Repost</span> 
+            <Radio className="size-5 text-neutral-50 group-hover:text-primary-500" />
+            <span className="text-[14px] text-neutral-50 group-hover:text-primary-500">
+              Repost
+            </span>
           </button>
-          
+
           {/* Repost Modal */}
           {showRepostModal && (
             <div className="absolute bg-background bottom-full right-0 mt- border border-neutral-700 rounded-md shadow-lg z-50 min-w-[190px] p-2">
               <div className="py-1">
                 <button
                   onClick={handleRepostOnly}
-                  className="py-2 text-s hover:text-primary-400 transition-colors"
+                  className="py-2 text-s hover:text-primary-400 transition-colors w-full text-left"
+                  disabled={isReposting}
                 >
-                  Repost only
+                  {isReposting ? (
+                    <>
+                      <LuLoader className="animate-spin inline-block mr-1" />{" "}
+                      Reposting...
+                    </>
+                  ) : (
+                    "Repost only"
+                  )}
                 </button>
-                <div className='w-full h-[.5px] bg-neutral-500'></div>
+                <div className="w-full h-[.5px] bg-neutral-500"></div>
                 <button
                   onClick={handleRepostWithThought}
-                  className="  py-2 text-s hover:text-primary-400 transition-colors"
+                  className="py-2 text-s hover:text-primary-400 transition-colors"
                 >
                   Repost with your thought
                 </button>
@@ -192,7 +304,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
           onClose={() => setIsRepostModalOpen(false)}
           article_id={article_id}
           author_of_post={author_of_post}
-          />
+        />
 
         {/* Reaction Modal */}
         <ReactionModal

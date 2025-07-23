@@ -75,6 +75,11 @@ function Checkemail() {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    console.log('codeveirfy',{
+      email,
+      code: otp,
+    })
     CodeVerify.mutate({
       email,
       code: otp,

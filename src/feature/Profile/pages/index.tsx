@@ -54,26 +54,28 @@ const Profile: React.FC = () => {
 
   const isAuthUser = username?.trim() === authUser?.username?.trim();
 
- const tabs = [
-  { id: "about", title: "About" },
-  {
-    id: "posts",
-    title: `Posts${
-      authorPostsData?.pages[0]?.totalPosts > 0 
-        ? ` (${authorPostsData?.pages[0].totalPosts})` 
-        : ""
-    }`,
-  },
-  {
-    id: "articles",
-    title: `Articles${
-      authorArticlesData?.pages[0]?.totalArticles > 0 
-        ? ` (${authorArticlesData?.pages[0].totalArticles})` 
-        : ""
-    }`,
-  },
-  { id: "media", title: "Media" },
-];
+  const tabs = [
+    { id: "about", title: "About" },
+    {
+      id: "posts",
+      title: `Posts${
+        authorPostsData?.pages[0]?.totalPosts > 0 
+          ? ` (${authorPostsData?.pages[0].totalPosts})` 
+          : ""
+      }`,
+    },
+    {
+      id: "articles",
+      title: `Articles${
+        authorArticlesData?.pages[0]?.totalArticles > 0 
+          ? ` (${authorArticlesData?.pages[0].totalArticles})` 
+          : ""
+      }`,
+    },
+    { id: "media", title: "Media" },
+    { id: "reposts", title: "Reposts" },
+    { id: "podcasts", title: "Podcasts" },
+  ];
   
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
 
@@ -253,6 +255,8 @@ const Profile: React.FC = () => {
               </>
             )}
             {activeTab === "media" && <ProfileMedia userId={user.id!} />}
+            {activeTab === "reposts" && <ProfileMedia userId={user.id!} />}
+            {activeTab === "podcasts" && <ProfileMedia userId={user.id!} />}
             <div ref={bottomRef} style={{ height: "100px" }} />
           </div>
         </div>

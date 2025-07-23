@@ -25,6 +25,26 @@ export interface AuthTokens {
   };
 }
 
+
+interface RepostUser {
+  _id: string;
+  username: string;
+  name: string;
+  profile_picture: string | null; 
+  is_verified_writer: boolean;
+}
+
+interface Repost {
+  repost_user: RepostUser;
+  repost_comment:string;
+
+}
+
+interface RepostHistory {
+  reposted_articles: string[];
+  reposted_posts: string[];   
+}
+
 export interface User {
   id?: string;
   _id?: string;
@@ -57,12 +77,13 @@ export interface User {
     viewedArticles: string[];
   };
   tokens?: AuthTokens;
+ repostHistory?:RepostHistory
 }
 
 export interface Article {
   article_id?: string;
   title?: string;
-  type?: 'ShortForm' | 'LongForm';
+  type?: 'ShortForm' | 'LongForm' | 'Repost';
   is_communiquer?: boolean;
   subtitle?: string;
   content?: string;
@@ -75,6 +96,7 @@ export interface Article {
   flagged?: boolean;
   author_id?: User;
   status?: 'Draft' | 'Published' | 'Archived';
+   repost?:Repost
   createdAt?: string;
   updatedAt?: string;
   views_count?: number;
@@ -94,7 +116,7 @@ export interface Article {
 export interface ArticleDuplicate {
   article_id?: string;
   title?: string;
-  type?: 'ShortForm' | 'LongForm';
+  type?: 'ShortForm' | 'LongForm' | 'Repost';
   is_communiquer?: boolean;
   subtitle?: string;
   content?: string;
@@ -106,6 +128,7 @@ export interface ArticleDuplicate {
   flagged?: boolean;
   author_id?: User;
   status?: 'Draft' | 'Published' | 'Archived';
+   repost?:Repost
   createdAt?: string;
   updatedAt?: string;
   views_count?: number;
