@@ -85,6 +85,7 @@ export interface Article {
   title?: string;
   type?: 'ShortForm' | 'LongForm' | 'Repost';
   is_communiquer?: boolean;
+  has_podcast?:boolean;
   subtitle?: string;
   content?: string;
   htmlContent?: string;
@@ -121,6 +122,7 @@ export interface ArticleDuplicate {
   subtitle?: string;
   content?: string;
   htmlContent?: string;
+  has_podcast?:boolean;
   category?: string[];
   keywords?: string[];
   media?: MediaItem[];

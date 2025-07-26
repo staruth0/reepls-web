@@ -241,13 +241,13 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
           {user?.name?.charAt(0).toUpperCase() || 'D'}
         </span>
       )}
-      <div className="profile-info flex-1">
+      <div className=" flex-1">
         <div className="profile-name flex items-center gap-1">
           <p
             className="hover:underline cursor-pointer text-base font-semibold"
             onClick={() => handleProfileClick(user?.username || "")}
           >
-            {user?.name || "no name"}
+            {user?.name || " "}
           </p>
           {user?.is_verified_writer && <LuBadgeCheck className="size-4 text-primary-400" />}
           {!location.pathname.includes("/feed/following") && (

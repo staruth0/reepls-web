@@ -97,14 +97,19 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
               article={article}
             />
             <div className="flex p-3 gap-1 items-center">
-              <div className="relative ">
-                <ReadingControls
-                  article={article}
-                  article_id={article.article_id || ""}
-                  article_tts={article.text_to_speech || ""}
-                />
-              </div>
-              <div className="size-1 rounded-full bg-primary-400"> </div>
+              {article.has_podcast && (
+                <>
+                  {" "}
+                  <div className="relative ">
+                    <ReadingControls
+                      article={article}
+                      article_id={article.article_id || ""}
+                      article_tts={article.text_to_speech || ""}
+                    />
+                  </div>
+                  <div className="size-1 rounded-full bg-primary-400"> </div>
+                </>
+              )}
               <div className="text-neutral-70 text-xs mx-1">
                 {calculateReadTime(article.content!, article.media || [])} mins
                 Read

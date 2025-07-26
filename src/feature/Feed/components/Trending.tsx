@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowRight, TrendingUp } from "lucide-react";
+import { ArrowRight, TrendingUp, Users } from "lucide-react"; // Import Users icon
 import TrendingLink from "./TrendingLink";
 import AuthorSuggestions from "./AuthorSuggestions";
 import { useGetTrendingTopics } from "../hooks";
@@ -18,14 +18,20 @@ const Trending: React.FC = () => {
   // Check if there are trending topics
   const hasTrendingTopics = data?.data?.length > 0;
 
+  // Determine if the "See More/See Less" button should be visible
+  // This is a heuristic. You might need to adjust the 'threshold' based on your layout and average topic length.
+  // For simplicity, let's assume if there are more than 6 topics, it's likely to overflow.
+  // A more robust solution might involve measuring the actual height.
+  const showSeeMoreButton = data && data.data && data.data.length > 6; // Adjust this number as needed
+
   return (
     <div className="w-full flex flex-col gap-3 px-6 py-1 sticky top-0">
       {/* Trending Section - Only shown if there are trending topics or loading */}
       {(isLoading || hasTrendingTopics) && (
         <>
-          <div className="text-neutral-100 text-md font-semibold my-2 flex items-center gap-2">
+          <div className="text-neutral-100 text-[15px] font-semibold my-2 flex items-center gap-2">
             <TrendingUp size={20} className="text-yellow-500" />
-            <span>{t("feed.trending")}</span>
+            <span>{t("TRENDING ON REEPLS")}</span>
           </div>
 
           {isLoading ? (
@@ -42,27 +48,32 @@ const Trending: React.FC = () => {
                 ))}
               </div>
 
-              <div
-                className="flex justify-center items-center text-[14px] py-2 text-neutral-50 gap-1 cursor-pointer hover:text-primary-400 transition-colors duration-200"
-                onClick={toggleExpand}
-              >
-                <span>{isExpanded ? t("feed.seeLess") : t("feed.seeMore")}</span>
-                <ArrowRight
-                  size={18}
-                  className={`transition-transform duration-300 ${
-                    isExpanded ? "rotate-90" : ""
-                  }`}
-                />
-              </div>
+              {/* Only show "See More/See Less" button if there are enough topics to warrant it */}
+              {showSeeMoreButton && (
+                <div
+                  className="flex justify-center items-center text-[14px] py-2 text-neutral-50 gap-1 cursor-pointer hover:text-primary-400 transition-colors duration-200"
+                  onClick={toggleExpand}
+                >
+                  <span>{isExpanded ? t("feed.seeLess") : t("feed.seeMore")}</span>
+                  <ArrowRight
+                    size={18}
+                    className={`transition-transform duration-300 ${
+                      isExpanded ? "rotate-90" : ""
+                    }`}
+                  />
+                </div>
+              )}
             </>
           )}
         </>
       )}
 
-      {/* Suggestions Section - Always shown */}
-      <div>
-        <div className="text-neutral-50 mt-1 font-semibold text-[15px]">
-          {t("REEPLS SUGGESTIONS")}
+     
+      <div className="mt-2">
+        {/* Added Users icon with matching styling */}
+        <div className="text-neutral-100 text-[15px] font-semibold mt-1 p-1 flex items-center gap-2">
+          <Users size={20} className="text-yellow-500" />
+          <span>{t("REEPLS SUGGESTIONS")}</span>
         </div>
         <AuthorSuggestions />
       </div>
