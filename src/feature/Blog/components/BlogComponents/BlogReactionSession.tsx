@@ -15,7 +15,7 @@ interface BlogReactionSessionProps {
   message?: string;
   isCommentSectionOpen: boolean;
   setIsCommentSectionOpen: (isOpen: boolean) => void;
-  article_id: string;
+  article_id: string; // This is the ID of the currently displayed article
   text_to_speech: string;
   author_of_post: User;
   article: Article;
@@ -89,6 +89,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
     isSuccess: boolean;
   }>({ show: false, isSuccess: false });
   const repostRef = useRef<HTMLDivElement>(null);
+  const [showRepostTooltip, setShowRepostTooltip] = useState(false);
 
   const [isRepostModalOpen, setIsRepostModalOpen] = useState(false);
   const { mutate: repost, isPending: isReposting } = useRepostArticle();
@@ -158,12 +159,13 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
       // You can add a sign-in popup here if needed
       return;
     }
+    // Always show the repost modal options when clicking the button
     setShowRepostModal(!showRepostModal);
   };
 
   const handleRepostOnly = () => {
     repost(
-      { articleId: article_id, comment: "" },
+      { articleId: article_id, comment: "" }, // Always use the current article_id
       {
         onSuccess: () => {
           setShowRepostModal(false);
@@ -258,7 +260,12 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
         </div>
 
         {/* Repost Button */}
-        <div className="relative" ref={repostRef}>
+        <div
+          className="relative"
+          ref={repostRef}
+          onMouseEnter={() => setShowRepostTooltip(true)}
+          onMouseLeave={() => setShowRepostTooltip(false)}
+        >
           <button
             className="flex gap-1 items-center text-neutral-50 cursor-pointer group"
             onClick={handleRepostClick}
@@ -268,6 +275,15 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
               Repost
             </span>
           </button>
+
+          {/* Repost Tooltip (for reposted articles) */}
+          {article.type === "Repost" && showRepostTooltip && (
+            <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-background border border-neutral-500 text-neutral-50 text-xs rounded-md py-1.5 px-2.5 whitespace-nowrap z-50 shadow-lg">
+              Note: Reposting this article will share its original content
+              {/* Tooltip arrow */}
+              <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-0 border-t-4 border-l-transparent border-r-transparent border-t-background" />
+            </div>
+          )}
 
           {/* Repost Modal */}
           {showRepostModal && (
@@ -302,7 +318,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
         <BlogRepostModal
           isOpen={isRepostModalOpen}
           onClose={() => setIsRepostModalOpen(false)}
-          article_id={article_id}
+          article_id={article_id} // Always pass the current article_id
           author_of_post={author_of_post}
         />
 

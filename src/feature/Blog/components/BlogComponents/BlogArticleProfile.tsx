@@ -1,4 +1,14 @@
-import { Bookmark, EllipsisVertical, Share2, UserPlus, X, Trash2, Edit, BarChart2, Flag } from "lucide-react";
+import {
+  Bookmark,
+  EllipsisVertical,
+  Share2,
+  UserPlus,
+  X,
+  Trash2,
+  Edit,
+  BarChart2,
+  Flag,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { LuBadgeCheck, LuLoader } from "react-icons/lu";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -9,7 +19,11 @@ import { useUser } from "../../../../hooks/useUser";
 import { Article, ArticleDuplicate, User } from "../../../../models/datamodels";
 import { useUnfollowUser } from "../../../Follow/hooks";
 import { useKnowUserFollowings } from "../../../Follow/hooks/useKnowUserFollowings";
-import { useGetSavedArticles, useRemoveSavedArticle, useSaveArticle } from "../../../Saved/hooks";
+import {
+  useGetSavedArticles,
+  useRemoveSavedArticle,
+  useSaveArticle,
+} from "../../../Saved/hooks";
 import "./Blog.scss";
 import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
 import { useSendFollowNotification } from "../../../Notifications/hooks/useNotification";
@@ -31,7 +45,15 @@ interface BlogProfileProps {
   isRepostedView?: boolean;
 }
 
-const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user, article_id, article, title, content, isArticle, isRepostedView = false }) => { 
+const BlogArticleProfile: React.FC<BlogProfileProps> = ({
+  user,
+  article_id,
+  article,
+  title,
+  content,
+  isArticle,
+  isRepostedView = false,
+}) => {
   const { authUser, isLoggedIn } = useUser();
   const { goToProfile } = useRoute();
   const [showMenu, setShowMenu] = useState(false);
@@ -42,30 +64,40 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user, article_id, arti
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
+  const { mutate: unfollowUser, isPending: isUnfollowPending } =
+    useUnfollowUser();
   const { isFollowing } = useKnowUserFollowings();
   const { mutate: saveArticle, isPending: isSavePending } = useSaveArticle();
-  const { mutate: removeSavedArticle, isPending: isRemovePending } = useRemoveSavedArticle();
+  const { mutate: removeSavedArticle, isPending: isRemovePending } =
+    useRemoveSavedArticle();
   const { data: savedArticles } = useGetSavedArticles();
   const [saved, setSaved] = useState(false);
-  const { mutate: followUser, isPending: isFollowPending } = useSendFollowNotification();
-  const { mutate: deleteArticle, isPending: isDeletePending } = useDeleteArticle();
+  const { mutate: followUser, isPending: isFollowPending } =
+    useSendFollowNotification();
+  const { mutate: deleteArticle, isPending: isDeletePending } =
+    useDeleteArticle();
   const [showReportPopup, setShowReportPopup] = useState(false);
 
-  const articleTitle = title || (content ? content.split(" ").slice(0, 10).join(" ") + "..." : "Untitled Post");
-  const articleUrl = `${window.location.origin}/posts/${isArticle ? "article" : "post"}/${isArticle ? 'slug/' + article.slug : article_id}`;
-  const { mutate } = useUpdateArticle()
+  const articleTitle =
+    title ||
+    (content
+      ? content.split(" ").slice(0, 10).join(" ") + "..."
+      : "Untitled Post");
+  const articleUrl = `${window.location.origin}/posts/${
+    isArticle ? "article" : "post"
+  }/${isArticle ? "slug/" + article.slug : article_id}`;
+  const { mutate } = useUpdateArticle();
 
   const isCurrentAuthorArticle = user?._id === authUser?.id;
 
   const handleProfileClick = (username: string) => {
     mutate({
-      articleId: article._id || '',
+      articleId: article._id || "",
       article: {
         author_profile_views_count: article.author_profile_views_count! + 1,
-        engagement_count: article.engagement_count! + 1
-      }
-    })
+        engagement_count: article.engagement_count! + 1,
+      },
+    });
     if (username) {
       goToProfile(username);
     }
@@ -74,12 +106,12 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user, article_id, arti
   const handleDeleteArticle = () => {
     deleteArticle(article_id, {
       onSuccess: () => {
-        toast.success('Article deleted successfully');
+        toast.success("Article deleted successfully");
         setShowDeleteConfirmation(false);
-        navigate('/feed');
+        navigate("/feed");
       },
       onError: () => {
-        toast.error('An error occurred while trying to delete article');
+        toast.error("An error occurred while trying to delete article");
         setShowDeleteConfirmation(false);
       },
     });
@@ -97,13 +129,12 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user, article_id, arti
         onSuccess: () => {
           toast.success(t("blog.alerts.articleRemoved"));
           mutate({
-            articleId: article._id || '',
+            articleId: article._id || "",
             article: {
-              engagement_count: article.engagement_count! - 1
-            }
-          })
+              engagement_count: article.engagement_count! - 1,
+            },
+          });
           setSaved(false);
-
         },
         onError: () => toast.error(t("blog.alerts.articleRemoveFailed")),
       });
@@ -113,11 +144,11 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user, article_id, arti
           toast.success(t("blog.alerts.articleSaved"));
           setSaved(true);
           mutate({
-            articleId: article._id || '',
+            articleId: article._id || "",
             article: {
-              engagement_count: article.engagement_count! + 1
-            }
-          })
+              engagement_count: article.engagement_count! + 1,
+            },
+          });
         },
         onError: () => toast.error(t("blog.alerts.articleSaveFailed")),
       });
@@ -136,29 +167,32 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user, article_id, arti
         onSuccess: () => {
           toast.success(t("blog.alerts.userUnfollowed"));
           mutate({
-            articleId: article._id || '',
+            articleId: article._id || "",
             article: {
               author_follower_count: article.author_follower_count! - 1,
-              engagement_count: article.engagement_count! - 1
-            }
-          })
+              engagement_count: article.engagement_count! - 1,
+            },
+          });
         },
         onError: () => toast.error(t("blog.alerts.userUnfollowFailed")),
       });
     } else {
-      followUser({ receiver_id: user?._id }, {
-        onSuccess: () => {
-          toast.success(t("blog.alerts.userFollowed"));
-          mutate({
-            articleId: article._id || '',
-            article: {
-              author_follower_count: article.author_follower_count! + 1,
-              engagement_count: article.engagement_count! + 1
-            }
-          })
-        },
-        onError: () => toast.error(t("blog.alerts.userFollowFailed")),
-      });
+      followUser(
+        { receiver_id: user?._id },
+        {
+          onSuccess: () => {
+            toast.success(t("blog.alerts.userFollowed"));
+            mutate({
+              articleId: article._id || "",
+              article: {
+                author_follower_count: article.author_follower_count! + 1,
+                engagement_count: article.engagement_count! + 1,
+              },
+            });
+          },
+          onError: () => toast.error(t("blog.alerts.userFollowFailed")),
+        }
+      );
     }
   };
 
@@ -195,7 +229,9 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user, article_id, arti
   // }
 
   useEffect(() => {
-    const isSaved = savedArticles?.articles?.some((article: ArticleDuplicate) => article?.article?._id === article_id);
+    const isSaved = savedArticles?.articles?.some(
+      (article: ArticleDuplicate) => article?.article?._id === article_id
+    );
     setSaved(isSaved);
   }, [savedArticles, article_id]);
 
@@ -203,13 +239,21 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user, article_id, arti
     if (!isLoggedIn) return t("follow");
     if (isFollowPending) return `${t("following")}...`;
     if (isUnfollowPending) return `${t("unfollowing")}...`;
-    return isFollowing(user?._id || "") ? t("") : isMenu ? t("blog.Followauthor") : t("follow");
+    return isFollowing(user?._id || "")
+      ? t("")
+      : isMenu
+      ? t("blog.Followauthor")
+      : t("follow");
   };
   const getFollowMenuStatusText = (isMenu = false) => {
     if (!isLoggedIn) return t("follow");
     if (isFollowPending) return `${t("following")}...`;
     if (isUnfollowPending) return `${t("unfollowing")}...`;
-    return isFollowing(user?._id || "") ? t("following") : isMenu ? t("blog.Followauthor") : t("follow");
+    return isFollowing(user?._id || "")
+      ? t("following")
+      : isMenu
+      ? t("blog.Followauthor")
+      : t("follow");
   };
 
   const getSaveStatusText = () => {
@@ -224,11 +268,16 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user, article_id, arti
   }
 
   return (
-    <div className="blog-profile relative flex items-center justify-between"> {/* Changed back to justify-between */}
+    <div className="blog-profile relative flex items-center justify-between">
+      {" "}
+      {/* Changed back to justify-between */}
       {isRepostedView ? (
         // Simplified view for reposted content
         <div className="flex items-center gap-2">
-          <p className="font-semibold cursor-pointer" onClick={() => goToProfile(user?.username || "")}>
+          <p
+            className="font-semibold cursor-pointer"
+            onClick={() => goToProfile(user?.username || "")}
+          >
             {user?.username || (
               <div className="w-20 h-4 bg-neutral-500 rounded-md animate-pulse" />
             )}
@@ -238,7 +287,9 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user, article_id, arti
       ) : (
         // Original detailed view
         <>
-          {user?.profile_picture && user?.profile_picture !== 'https://example.com/default-profile.png' && user?.profile_picture !== '' ? (
+          {user?.profile_picture &&
+          user?.profile_picture !== "https://example.com/default-profile.png" &&
+          user?.profile_picture !== "" ? (
             <img
               src={user?.profile_picture}
               alt="avatar"
@@ -251,18 +302,26 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user, article_id, arti
               className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-14 h-14 text-center"
               onClick={() => handleProfileClick(user?.username || "")}
             >
-              {user?.name?.charAt(0).toUpperCase() || 'D'}
+              {user?.name?.charAt(0).toUpperCase() || "D"}
             </span>
           )}
-          <div className="profile-info flex-1 ml-3"> {/* Added ml-3 for consistent gap */}
+          <div className="profile-info flex-1 ml-3">
+            {" "}
+            {/* Added ml-3 for consistent gap */}
             <div className="profile-name flex items-center gap-1">
               <p
                 className="hover:underline cursor-pointer text-base font-semibold"
                 onClick={() => handleProfileClick(user?.username || "")}
               >
-                {user?.name ? user?.name : <div className="w-20 h-4 bg-neutral-500 rounded-md animate-pulse" />}
+                {user?.name ? (
+                  user?.name
+                ) : (
+                  <div className="w-20 h-4 bg-neutral-500 rounded-md animate-pulse" />
+                )}
               </p>
-              {user?.is_verified_writer && <LuBadgeCheck className="size-4 text-primary-400" />}
+              {user?.is_verified_writer && (
+                <LuBadgeCheck className="size-4 text-primary-400" />
+              )}
               {!location.pathname.includes("/feed/following") && (
                 <div>
                   {!isCurrentAuthorArticle && (
@@ -278,22 +337,29 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user, article_id, arti
                 </div>
               )}
             </div>
-            <p className="text-sm text-neutral-100">
-              {user?.bio }
-            </p>
+            <p className="text-sm text-neutral-100">{user?.bio}</p>
             <span className="text-sm text-neutral-100">
-              {article?.createdAt ? timeAgo(article?.createdAt || '') : <div className="w-24 h-3 bg-neutral-600 rounded-md animate-pulse mt-1" />}
+              {article?.createdAt ? (
+                timeAgo(article?.createdAt || "")
+              ) : (
+                <div className="w-24 h-3 bg-neutral-600 rounded-md animate-pulse mt-1" />
+              )}
             </span>
           </div>
         </>
       )}
-
       {/* Ellipsis menu remains common to both views */}
       <div className="relative">
         {showMenu ? (
-          <X className="size-4 cursor-pointer" onClick={() => setShowMenu(!showMenu)} />
+          <X
+            className="size-4 cursor-pointer"
+            onClick={() => setShowMenu(!showMenu)}
+          />
         ) : (
-          <EllipsisVertical className="size-3 cursor-pointer" onClick={handleEllipsisClick} />
+          <EllipsisVertical
+            className="size-3 cursor-pointer"
+            onClick={handleEllipsisClick}
+          />
         )}
         {showMenu && isLoggedIn && (
           <>
@@ -335,13 +401,16 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user, article_id, arti
                 </>
               ) : (
                 <>
-                  <div
-                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-                    onClick={handleSavedArticle}
-                  >
-                    <Bookmark size={18} className="text-neutral-500" />
-                    <div>{getSaveStatusText()}</div>
-                  </div>
+                  {(!isArticle ||
+                    (isArticle && article?.type === "Repost")) && (
+                    <div
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                      onClick={handleSavedArticle}
+                    >
+                      <Bookmark size={18} className="text-neutral-500" />
+                      <div>{getSaveStatusText()}</div>
+                    </div>
+                  )}
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                     onClick={() => setShowReportPopup(true)}
@@ -360,7 +429,8 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user, article_id, arti
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                     onClick={handleShareClick}
                   >
-                    <Share2 size={18} className="text-neutral-500" /> {t("blog.Share")}
+                    <Share2 size={18} className="text-neutral-500" />{" "}
+                    {t("blog.Share")}
                   </div>
                 </>
               )}
@@ -376,7 +446,11 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({ user, article_id, arti
         )}
       </div>
       {showSharePopup && (
-        <SharePopup url={articleUrl} title={articleTitle} onClose={() => setShowSharePopup(false)} />
+        <SharePopup
+          url={articleUrl}
+          title={articleTitle}
+          onClose={() => setShowSharePopup(false)}
+        />
       )}
       {showReportPopup && (
         <ReportArticlePopup

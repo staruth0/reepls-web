@@ -4,16 +4,14 @@ import RightRecentComponent from "../../../../components/molecules/RightRecentCo
 import { useGetCommuniquerArticles } from "../../../Blog/hooks/useArticleHook";
 import Trending from "../Trending";
 import CommuniqueSkeleton from "../CommuniqueSkeleton";
-import { toast } from "react-toastify"; // Added for toast notifications
+import { toast } from "react-toastify";
 
 const Communique: React.FC = () => {
   const { data, isLoading, error } = useGetCommuniquerArticles();
 
-  // Function to get friendly error messages specific to communique articles
   const getFriendlyErrorMessage = (error: any): string => {
     if (!error) return "Something went wrong while fetching recent updates.";
 
-    // Handle common error cases
     if (error.message.includes("Network Error")) {
       return "Oops! You might be offline. Check your connection and try again.";
     }
@@ -29,21 +27,15 @@ const Communique: React.FC = () => {
         return "Too many requests! Give us a moment to catch up.";
       }
     }
-
-    // Default fallback for unhandled errors
     return "Something unexpected happened while loading updates. We’re on it!";
   };
 
-  // Toast error notification
   useEffect(() => {
     if (error) {
       toast.error(getFriendlyErrorMessage(error));
     }
   }, [error]);
 
-  
-
-  // Loading state
   if (isLoading) {
     return (
       <>
@@ -57,7 +49,6 @@ const Communique: React.FC = () => {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <>
@@ -65,16 +56,22 @@ const Communique: React.FC = () => {
         <div className="flex flex-col gap-4 mt-5 text-neutral-50 text-center">
           {getFriendlyErrorMessage(error)}
         </div>
-       
       </>
     );
   }
 
-  // Success state
+  // Check if there are communiques to display
+  const hasCommuniques = data?.pages[0]?.articles && data.pages[0].articles.length > 0;
+
   return (
     <>
-      <TopRightComponent />
-      <RightRecentComponent communiqueList={data?.pages[0].articles} />
+      {/* Only render TopRightComponent and RightRecentComponent if there are communiques */}
+      {hasCommuniques && (
+        <>
+          <TopRightComponent />
+          <RightRecentComponent communiqueList={data.pages[0].articles} />
+        </>
+      )}
       <Trending />
     </>
   );

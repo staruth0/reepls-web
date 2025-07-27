@@ -15,7 +15,6 @@ import BlogArticleProfileRepost from "../BlogComponents/BlogArticleProfileRepost
 import BlogArticleProfileNoComment from "../BlogComponents/BlogArticleProfileNocommentary";
 import { useGetUserByUsername } from "../../../Profile/hooks";
 
-
 interface articleprobs {
   article: Article;
 }
@@ -25,7 +24,9 @@ const ArticleNormalNoCommentary: React.FC<articleprobs> = ({ article }) => {
   const [isCommentSectionOpen, setIsCommentSectionOpen] =
     useState<boolean>(false);
   const { mutate } = useUpdateArticle();
-    const {user} = useGetUserByUsername(article.repost?.repost_user.username || '')
+  const { user } = useGetUserByUsername(
+    article.repost?.repost_user.username || ""
+  );
 
   const toggleCommentSection = () => {
     setIsCommentSectionOpen(!isCommentSectionOpen);
@@ -47,17 +48,17 @@ const ArticleNormalNoCommentary: React.FC<articleprobs> = ({ article }) => {
   return (
     <>
       <div className=" mb-2 mx-2 border-b-2 border-[#E1E1E1] py-2">
-      
-          <BlogArticleProfileNoComment           title={article.title || ""}
-            user={user || {}}
-            content={article.content || ""}
-            date={article.createdAt || ""}
-            article_id={article._id || ""}
-            isArticle={article.isArticle || false}
-            article={article}
-          />
-        </div>
-      
+        <BlogArticleProfileNoComment
+          title={article.title || ""}
+          user={user || {}}
+          content={article.content || ""}
+          date={article.createdAt || ""}
+          article_id={article._id || ""}
+          isArticle={article.isArticle || false}
+          article={article}
+        />
+      </div>
+
       <BlogArticleProfileRepost
         title={article.title || ""}
         user={article.author_id || {}}
@@ -88,14 +89,19 @@ const ArticleNormalNoCommentary: React.FC<articleprobs> = ({ article }) => {
           article={article}
         />
         <div className="flex p-3 gap-1 items-center">
-          <div className="relative ">
-            <ReadingControls
-              article={article}
-              article_id={article.article_id || ""}
-              article_tts={article.text_to_speech || ""}
-            />
-          </div>
-          <div className="size-1 rounded-full bg-primary-400"> </div>
+          {article.has_podcast && (
+            <>
+              {" "}
+              <div className="relative ">
+                <ReadingControls
+                  article={article}
+                  article_id={article.article_id || ""}
+                  article_tts={article.text_to_speech || ""}
+                />
+              </div>
+              <div className="size-1 rounded-full bg-primary-400"> </div>
+            </>
+          )}
           <div className="text-neutral-70 text-xs mx-1">
             {calculateReadTime(article.content!, article.media || [])} mins Read
           </div>
