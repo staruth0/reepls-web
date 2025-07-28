@@ -11,6 +11,7 @@ import {
   LuPencilLine,
   LuPlus,
   LuSearch,
+  LuMic, // Import the microphone icon
 } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -26,15 +27,15 @@ import SidebarItem from "../../atoms/SidebarItem";
 // import StarToggle from '../../../components/atoms/CommuniqueBtn';
 import "./sidebar.scss";
 import { useNotificationsValues } from "../../../feature/Notifications/hooks";
-import { commuLeft, logoOnDark, logoOnWhite ,favicon} from "../../../assets/icons";
+import { commuLeft, favicon } from "../../../assets/icons";
 import { useSendNewArticleNotification } from "../../../feature/Notifications/hooks/useNotification";
 import { getDecryptedUser } from "../../../feature/Auth/api/Encryption";
 import useTheme from "../../../hooks/useTheme";
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
-  const {  isLoggedIn } = useUser();
-  const authUser  = getDecryptedUser();
+  const { isLoggedIn } = useUser();
+  const authUser = getDecryptedUser();
   const [isCreatingPost, setIsCreatingPost] = useState<boolean>(false);
   // const [isCommunique, setIsCommunique] = useState<boolean>(false);
   const { t } = useTranslation();
@@ -44,9 +45,8 @@ const Sidebar: React.FC = () => {
   const { notifications } = useNotificationsValues();
   const unreadNotifications = notifications.filter((notif) => !notif.is_read);
   const screenWidth = window.innerWidth;
-  const { theme } = useTheme(); 
+  const { theme } = useTheme();
 
- 
   const unreadCount = unreadNotifications.length;
 
   const handleToggleSidebar = () => {
@@ -135,8 +135,6 @@ const Sidebar: React.FC = () => {
       }
     }
 
-
-
     const post: Article = {
       content: postContent,
       media: [...images, ...videos],
@@ -163,13 +161,6 @@ const Sidebar: React.FC = () => {
   const isTabletSmall = screenWidth >= 640 && screenWidth < 930;
 
 
-  const getImageSource = () => {
-    if (isOpen) {
-      return theme === 'dark' ? logoOnWhite : logoOnDark ;
-    } else {
-      return favicon;
-    }
-  };
 
   return (
     <div className="side bg-background">
@@ -184,39 +175,33 @@ const Sidebar: React.FC = () => {
         )}
         onClick={() => handleToggleSidebar()}
       />
-  <div className="flex gap-5 items-center h-[80px]">
-  <div
-    className="text-roboto text-[24px] font-semibold flex gap-2 items-center cursor-pointer"
-    onClick={() => {
-      navigate("/feed");
-      if (window.innerWidth < 768) {
-        handleToggleSidebar();
-      }
-    }}
-  >
-   <img
-  src={getImageSource()} 
-  alt="reeplsicon"
-  className={cn(
-    "object-contain",
-    "h-full",
-    isOpen ? "w-28" : "w-7",
-    ""
-  )}
-/>
-
-{/* <img
-  src={getImageSource()} 
-  alt="reeplsicon"
-  className={cn(
-    "object-contain",
-    isOpen ? "h-[40px] w-[120px]" : "h-[28px] w-[28px]",
-    "transition-all duration-300 ease-in-out"
-  )}
-/> */}
-    {/* {isOpen && "REEPLS"} */}
-  </div>
-</div>
+      <div className="flex gap-5 items-center h-[80px]">
+        <div
+          className="flex gap-1 items-center h-[80px] px-4 cursor-pointer"
+          onClick={() => {
+            navigate("/feed");
+            if (window.innerWidth < 768) {
+              handleToggleSidebar();
+            }
+          }}
+        >
+          <img
+            src={favicon}
+            alt="favicon"
+            className="object-contain h-full w-7"
+          />
+          {isOpen && (
+            <span
+              className={cn(
+                "text-2xl font-semibold transition-colors duration-300",
+                theme === "dark" ? "text-white" : "text-neutral-50"
+              )}
+            >
+              Reepls
+            </span>
+          )}
+        </div>
+      </div>
 
       <div className="sidebar__links">
         {navLinks.map((navItem, index) => (
@@ -298,6 +283,28 @@ const Sidebar: React.FC = () => {
                   <LuPencilLine className="size-4" />
                   <span className="text-sm">
                     {!isOpen ? t("Write") : t("Write Article")}
+                  </span>
+                </button>
+      
+                <hr className="border-neutral-400 w-3/4 mx-auto" />
+                <button
+                  className="flex items-center justify-center gap-2 cursor-pointer py-3 px-3 hover:text-primary-400"
+                  onClick={() => {
+                    if (!isLoggedIn) {
+                      toast.error(t("Please login to create a podcast"));
+                      return;
+                    }
+
+                    navigate("/podcast/create");
+                    if (window.innerWidth < 768) {
+                      handleToggleSidebar();
+                    }
+                    close();
+                  }}
+                >
+                  <LuMic className="size-4" /> 
+                  <span className="text-sm">
+                    {!isOpen ? t("Podcast") : t("Create Podcast")}
                   </span>
                 </button>
               </div>

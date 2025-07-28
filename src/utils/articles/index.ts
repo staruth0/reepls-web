@@ -39,3 +39,8 @@ const calculateReadTime = (content: string, images: MediaItem[]): number => {
 };
 
 export {calculateReadTime};
+
+
+
+
+

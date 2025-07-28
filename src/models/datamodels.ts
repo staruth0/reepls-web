@@ -30,14 +30,16 @@ interface RepostUser {
   _id: string;
   username: string;
   name: string;
-  profile_picture: string | null; 
+  profile_picture: string | null;
   is_verified_writer: boolean;
 }
 
+// **UPDATE THIS INTERFACE**
 interface Repost {
   repost_user: RepostUser;
-  repost_comment:string;
-
+  repost_comment: string;
+  repost_date: string; 
+  repost_id: string;   
 }
 
 interface RepostHistory {
@@ -114,6 +116,7 @@ export interface Article {
   author_profile_views_count?: number,
   
 }
+
 export interface ArticleDuplicate {
   article_id?: string;
   title?: string;

@@ -320,6 +320,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
           onClose={() => setIsRepostModalOpen(false)}
           article_id={article_id} // Always pass the current article_id
           author_of_post={author_of_post}
+          article={article}
         />
 
         {/* Reaction Modal */}
