@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { X, Loader2 } from 'lucide-react';
+import { useGetCommentsTreeForArticle } from '../../Comments/hooks';
+import { CommentNode } from '../../Comments/api';
 
 interface RepostsCommentarySidebarProps {
   isOpen: boolean;
@@ -10,8 +12,22 @@ interface RepostsCommentarySidebarProps {
 const RepostsCommentarySidebar: React.FC<RepostsCommentarySidebarProps> = ({
   isOpen,
   onClose,
+  articleId,
 }) => {
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
+
+  // Use the new hook to fetch comments
+  const { 
+    data: commentsData, 
+    isLoading, 
+    error, 
+    isError 
+  } = useGetCommentsTreeForArticle(articleId, 1, 10, isOpen);
+
+  useEffect(() => {
+    console.log("article",articleId);
+    console.log(commentsData);
+  }, [commentsData,articleId]);
 
   const toggleExpand = (id: string) => {
     setExpandedComments(prev => {
@@ -25,46 +41,26 @@ const RepostsCommentarySidebar: React.FC<RepostsCommentarySidebarProps> = ({
     });
   };
 
-  const dummyReposts = [
-    {
-      id: '1',
-      author: 'Jane Doe',
-      bio: 'Enthusiast of new technologies.',
-      comment: 'Loved this article! Shared it with my network because the insights on future trends were incredibly well-researched and presented. A truly comprehensive piece that provides a clear roadmap for anyone looking to understand the evolving landscape of digital innovation.',
-      timestamp: '2 hours ago',
-      profile_picture: ''
-    },
-    {
-      id: '2',
-      author: 'John Smith',
-      bio: 'Tech entrepreneur and blogger.',
-      comment: 'Very insightful points about the future of tech. Great read! It really makes you think about the broader implications of AI and blockchain on society. Highly recommend it to anyone interested in cutting-edge advancements.',
-      timestamp: '5 hours ago',
-      profile_picture: 'https://via.placeholder.com/40/FF5733/FFFFFF?text=JS'
-    },
-    {
-      id: '3',
-      author: 'Alice Wonderland',
-      bio: 'Freelance writer.',
-      comment: 'Reposting this for everyone to see. Excellent work! The clarity of the arguments is superb, and the examples provided make complex ideas easy to grasp. This is definitely going into my personal knowledge base.',
-      timestamp: '1 day ago',
-      profile_picture: ''
-    },
-    {
-      id: '4',
-      author: 'Bob Charles',
-      bio: 'Digital marketing specialist.',
-      comment: 'A must-read for anyone interested in this topic. The depth of analysis is impressive, and it challenges conventional wisdom in a very constructive way. I especially appreciated the section on sustainable practices in the tech industry. This piece will be a valuable reference for a long time.',
-      timestamp: '2 days ago',
-      profile_picture: 'https://via.placeholder.com/40/33FF57/FFFFFF?text=BC'
-    },
-  ];
-
   const MAX_COMMENT_LINES = 2;
 
   const needsTruncation = (text: string, maxLines: number, charLimit: number = 100) => {
     const lineBreaks = (text.match(/\n/g) || []).length;
     return lineBreaks >= maxLines || text.length > charLimit;
+  };
+
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) {
+      return 'Just now';
+    } else if (diffInHours < 24) {
+      return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    } else {
+      const diffInDays = Math.floor(diffInHours / 24);
+      return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+    }
   };
 
   return (
@@ -85,22 +81,46 @@ const RepostsCommentarySidebar: React.FC<RepostsCommentarySidebarProps> = ({
 
       <div className="p-4 overflow-y-auto h-[calc(100%-60px)] 
         [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-        {dummyReposts.length > 0 ? (
-          dummyReposts.map((repost) => {
-            const isExpanded = expandedComments.has(repost.id);
-            const firstNameInitial = repost.author.split(' ')[0].charAt(0).toUpperCase();
-            const shouldTruncate = needsTruncation(repost.comment, MAX_COMMENT_LINES, 100);
+        
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center h-full">
+            <Loader2 className="w-8 h-8 animate-spin text-[var(--primary-400)] mb-4" />
+            <p className="text-[var(--neutral-300)] text-center">
+              Loading commentaries...
+            </p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {isError && (
+          <div className="flex flex-col items-center justify-center h-full">
+            <p className="text-red-400 text-center mb-2">
+              Failed to load commentaries
+            </p>
+            <p className="text-[var(--neutral-400)] text-sm text-center">
+              {error?.message || 'Please try again later'}
+            </p>
+          </div>
+        )}
+
+        {/* Data State */}
+        {!isLoading && !isError && commentsData?.data?.commentsTree && commentsData.data.commentsTree.length > 0 ? (
+          commentsData.data.commentsTree.map((comment: CommentNode) => {
+            const isExpanded = expandedComments.has(comment._id);
+            const firstNameInitial = comment.author.name.split(' ')[0].charAt(0).toUpperCase();
+            const shouldTruncate = needsTruncation(comment.content, MAX_COMMENT_LINES, 100);
 
             return (
               <div 
-                key={repost.id} 
+                key={comment._id} 
                 className="mb-4 p-3 bg-[var(--background)] shadow-md rounded-lg border border-[var(--neutral-700)]"
               >
                 <div className="flex items-center gap-3 mb-2">
-                  {repost.profile_picture ? (
+                  {comment.author.profile_picture ? (
                     <img
-                      src={repost.profile_picture}
-                      alt={repost.author}
+                      src={comment.author.profile_picture}
+                      alt={comment.author.name}
                       className="w-10 h-10 rounded-full object-cover"
                       loading="lazy"
                     />
@@ -110,9 +130,9 @@ const RepostsCommentarySidebar: React.FC<RepostsCommentarySidebarProps> = ({
                     </div>
                   )}
                   <div>
-                    <p className="font-bold text-[var(--plain-a)]">{repost.author}</p>
-                    {repost.bio && (
-                      <p className="text-[var(--neutral-200)] text-xs">{repost.bio}</p>
+                    <p className="font-bold text-[var(--plain-a)]">{comment.author.name}</p>
+                    {comment.author.role && (
+                      <p className="text-[var(--neutral-200)] text-xs capitalize">{comment.author.role}</p>
                     )}
                   </div>
                 </div>
@@ -123,11 +143,11 @@ const RepostsCommentarySidebar: React.FC<RepostsCommentarySidebarProps> = ({
                       !isExpanded && shouldTruncate ? 'line-clamp-2' : ''
                     }`}
                   >
-                    {repost.comment}
+                    {comment.content}
                   </p>
                   {shouldTruncate && (
                     <button
-                      onClick={() => toggleExpand(repost.id)}
+                      onClick={() => toggleExpand(comment._id)}
                       className="text-[var(--primary-400)] text-sm mt-1 hover:underline focus:outline-none"
                       aria-label={isExpanded ? 'Show less comment' : 'Show more comment'}
                     >
@@ -137,18 +157,27 @@ const RepostsCommentarySidebar: React.FC<RepostsCommentarySidebarProps> = ({
                 </div>
 
                 <p className="text-[var(--neutral-400)] text-xs mt-2">
-                  {repost.timestamp}
+                  {formatTimestamp(comment.createdAt)}
                 </p>
+
+                {/* Show replies count if there are any */}
+                {comment.replies && comment.replies.length > 0 && (
+                  <div className="mt-2 pt-2 border-t border-[var(--neutral-700)]">
+                    <p className="text-[var(--neutral-400)] text-xs">
+                      {comment.replies.length} repl{comment.replies.length === 1 ? 'y' : 'ies'}
+                    </p>
+                  </div>
+                )}
               </div>
             );
           })
-        ) : (
+        ) : !isLoading && !isError ? (
           <div className="flex flex-col items-center justify-center h-full">
             <p className="text-[var(--neutral-300)] text-center">
               No repost commentaries yet for this article.
             </p>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

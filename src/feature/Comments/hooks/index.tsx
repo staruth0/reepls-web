@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient,useInfiniteQuery } from "@tanstac
 import {
   createComment,
   getCommentsByArticleId,
+  getCommentsTreeForArticle,
   updateComment,
   deleteComment,
   getRepliesForComment,
@@ -42,6 +43,20 @@ export const useGetCommentsByArticleId = (articleId: string) => {
   });
 };
 
+// Hook to fetch comments tree for an article (new API)
+export const useGetCommentsTreeForArticle = (
+  articleId: string,
+  page: number = 1,
+  limit: number = 10,
+  enabled: boolean = true
+) => {
+  return useQuery({
+    queryKey: ["comments-tree", articleId, page, limit],
+    queryFn: () => getCommentsTreeForArticle(articleId, page, limit),
+    enabled: enabled && !!articleId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
 
 // Hook to update an existing comment
 export const useUpdateComment = () => {

@@ -257,3 +257,61 @@ export interface MediaResponse {
   currentPage: number;
   itemsPerPage: number;
 }
+
+
+export interface Podcast {
+  _id: string;
+  title: string;
+  description?: string;
+  postId?: string; // Optional - for podcasts attached to articles
+  authorId: string;
+
+  // Audio properties
+  audio: {
+    url: string;
+    storageKey: string; // Cloudinary public_id for deletion
+    duration?: number; // in seconds
+    fileSize: number; // in bytes
+    mimeType: string;
+    fileHash?: string; // SHA-256 hash for duplicate detection
+    bitrate?: number;
+    sampleRate?: number;
+    channels?: number;
+    format?: string;
+  };
+
+  // Podcast metadata
+  tags?: string[];
+  category?: string;
+  isPublic: boolean;
+
+  // Engagement and analytics
+  downloadCount: number;
+  playCount: number;
+  uniqueListeners: string[]; // Array of user IDs who played this podcast
+  commentsCount: number; // Cache for performance
+  savesCount: number; // Number of users who saved this podcast
+  sharesCount: number; // Track sharing analytics
+  averageRating: number; // Average user rating
+  totalRatings: number; // Total number of ratings
+
+  // Advanced metadata
+  subtitle?: string; // Short subtitle/summary
+  thumbnailUrl?: string; // Custom thumbnail if provided
+
+  status: PodcastStatus;
+
+  // Optional processing metadata
+  originalFileName?: string;
+  processingNotes?: string;
+
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export enum PodcastStatus {
+  PROCESSING = 'processing',
+  READY = 'ready',
+  FAILED = 'failed',
+  ARCHIVED = 'archived'
+}

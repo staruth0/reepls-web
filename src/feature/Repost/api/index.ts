@@ -6,6 +6,10 @@ interface RepostArticlePayload {
   comment?: string; 
 }
 
+export interface UpdateRepostPayload {
+  comment: string;
+}
+
 /**
  * Repost an article for the user.
  * @param articleId The ID of the article to repost.
@@ -15,6 +19,27 @@ interface RepostArticlePayload {
 
 export const repostArticle = async (articleId: string, payload: RepostArticlePayload) => {
   const { data } = await apiClient.post(`/reposts/article/${articleId}`, payload);
+  return data;
+};
+
+/**
+ * Update a repost commentary.
+ * @param repostId The ID of the repost to update.
+ * @param payload An object containing the new comment.
+ * @returns The response data from the API.
+ */
+export const updateRepost = async (repostId: string, payload: UpdateRepostPayload) => {
+  const { data } = await apiClient.put(`/reposts/${repostId}`, payload);
+  return data;
+};
+
+/**
+ * Delete a repost.
+ * @param repostId The ID of the repost to delete.
+ * @returns The response data from the API.
+ */
+export const deleteRepost = async (repostId: string) => {
+  const { data } = await apiClient.delete(`/reposts/${repostId}`);
   return data;
 };
 

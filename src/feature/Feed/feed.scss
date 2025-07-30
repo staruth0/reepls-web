@@ -8,3 +8,28 @@
   align-items: center;
   font-family: var(--roboto-font);
 }
+
+/* For Webkit browsers (Chrome, Safari) */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 8px; // Height of the horizontal scrollbar
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #333; // Dark background for the track
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #555; // Color of the scrollbar thumb
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #777; // Color on hover
+}
+
+/* For Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin; // "auto" or "thin"
+  scrollbar-color: #555 #333; // thumb and track color
+}

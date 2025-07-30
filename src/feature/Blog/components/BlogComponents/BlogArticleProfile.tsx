@@ -8,6 +8,7 @@ import {
   Edit,
   BarChart2,
   Flag,
+  MessageSquare,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { LuBadgeCheck, LuLoader } from "react-icons/lu";
@@ -34,6 +35,8 @@ import { t } from "i18next";
 import ReportArticlePopup from "../../../Reports/components/ReportPostPopup";
 import { timeAgo } from "../../../../utils/dateFormater";
 import { cn } from "../../../../utils"; // Make sure cn utility is imported if you use it
+import BlogRepostModal from "../BlogRepostModal";
+import { useDeleteRepost } from "../../../Repost/hooks/useRepost";
 
 interface BlogProfileProps {
   date: string;
@@ -62,6 +65,8 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   const [showSignInPopup, setShowSignInPopup] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showRepostModal, setShowRepostModal] = useState(false);
+  const [showRepostDeleteConfirmation, setShowRepostDeleteConfirmation] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -77,7 +82,12 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
     useSendFollowNotification();
   const { mutate: deleteArticle, isPending: isDeletePending } =
     useDeleteArticle();
+  const { mutate: deleteRepost, isPending: isDeleteRepostPending } =
+    useDeleteRepost();
   const [showReportPopup, setShowReportPopup] = useState(false);
+
+  // Check if current user is the reposted user
+  const isCurrentUserReposted = article?.repost?.repost_user?._id === authUser?.id;
 
   const articleTitle =
     title ||
@@ -119,6 +129,27 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
         setShowDeleteConfirmation(false);
       },
     });
+  };
+
+  const handleEditRepostCommentary = () => {
+    setShowRepostModal(true);
+    setShowMenu(false);
+  };
+
+  const handleDeleteRepost = () => {
+    if (article?.repost?.repost_id) {
+      deleteRepost(article.repost.repost_id, {
+        onSuccess: () => {
+          toast.success("Repost deleted successfully");
+          setShowRepostDeleteConfirmation(false);
+          navigate("/feed");
+        },
+        onError: () => {
+          toast.error("An error occurred while trying to delete repost");
+          setShowRepostDeleteConfirmation(false);
+        },
+      });
+    }
   };
 
   const handleSavedArticle = () => {
@@ -413,6 +444,30 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
                     <div>{t("blog.Delete")}</div>
                   </div>
                 </>
+              ) : isCurrentUserReposted ? (
+                <>
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                    onClick={handleEditRepostCommentary}
+                  >
+                    <MessageSquare size={18} className="text-neutral-500" />
+                    <div>Edit Commentary</div>
+                  </div>
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                    onClick={handleShareClick}
+                  >
+                    <Share2 size={18} className="text-neutral-500" />
+                    <div>{t("blog.Share")}</div>
+                  </div>
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer text-red-500"
+                    onClick={() => setShowRepostDeleteConfirmation(true)}
+                  >
+                    <Trash2 size={18} className="text-red-500" />
+                    <div>Delete Repost</div>
+                  </div>
+                </>
               ) : (
                 <>
                   {(!isArticle ||
@@ -427,9 +482,9 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
                       <Bookmark
                         size={18}
                         className={cn(
-                          "text-neutral-500", // Default color
+                          "text-neutral-500",
                           saved ? "fill-primary-500 text-primary-500" : "", // Filled/colored if saved (optimistic)
-                          // No opacity here, it's applied to the parent div
+                       
                         )}
                       />
                       <div>
@@ -508,6 +563,28 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
           isModalOpen={showEditModal}
           setIsModalOpen={setShowEditModal}
           articleId={article_id}
+        />
+      )}
+      {showRepostModal && (
+        <BlogRepostModal
+          isOpen={showRepostModal}
+          onClose={() => setShowRepostModal(false)}
+          article_id={article_id}
+          article={article}
+          author_of_post={user}
+          isEditMode={true}
+          repostId={article?.repost?.repost_id}
+          initialComment={article?.repost?.repost_comment}
+        />
+      )}
+      {showRepostDeleteConfirmation && (
+        <ConfirmationModal
+          title="Delete Repost"
+          message="Are you sure you want to delete this repost? This action cannot be undone."
+          onConfirm={handleDeleteRepost}
+          onCancel={() => setShowRepostDeleteConfirmation(false)}
+          confirmText={isDeleteRepostPending ? "Deleting..." : "Delete"}
+          confirmColor="red"
         />
       )}
     </div>

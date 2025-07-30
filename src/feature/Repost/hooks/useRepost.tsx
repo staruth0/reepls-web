@@ -13,6 +13,8 @@ import {
   getAllReactionsForTarget,
   getReactionsGroupedByType,
   shareTarget,
+  updateRepost,
+  deleteRepost,
   ReactionType,
   TargetType,
   ShareTargetType,
@@ -280,6 +282,45 @@ export const useShareTarget = () => {
     },
     onError: (error) => {
       console.error("Failed to share target:", error);
+      // TODO: Implement user-facing error handling
+    },
+  });
+};
+
+/**
+ * React Query hook to update a repost commentary.
+ */
+export const useUpdateRepost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ repostId, comment }: { repostId: string; comment: string }) =>
+      updateRepost(repostId, { comment }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-reposts"] });
+      queryClient.invalidateQueries({ queryKey: ["recommended-articles"] });
+    },
+    onError: (error) => {
+      console.error("Failed to update repost:", error);
+      // TODO: Implement user-facing error handling
+    },
+  });
+};
+
+/**
+ * React Query hook to delete a repost.
+ */
+export const useDeleteRepost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (repostId: string) => deleteRepost(repostId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-reposts"] });
+      queryClient.invalidateQueries({ queryKey: ["recommended-articles"] });
+    },
+    onError: (error) => {
+      console.error("Failed to delete repost:", error);
       // TODO: Implement user-facing error handling
     },
   });
