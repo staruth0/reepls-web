@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { X, Loader2 } from 'lucide-react';
-import { useGetCommentsTreeForArticle } from '../../Comments/hooks';
-import { CommentNode } from '../../Comments/api';
 import { useAllRepostComments } from '../../Repost/hooks/useRepost';
 
 interface RepostsCommentarySidebarProps {
@@ -10,27 +8,20 @@ interface RepostsCommentarySidebarProps {
   articleId: string;
 }
 
-const RepostsCommentarySidebar: React.FC<RepostsCommentarySidebarProps> = ({
-  isOpen,
-  onClose,
-  articleId,
-}) => {
+const RepostsCommentarySidebar: React.FC<RepostsCommentarySidebarProps> = ({ isOpen, onClose, articleId }) => {
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
-    const  {data} = useAllRepostComments()
 
-  // Use the new hook to fetch comments
-  const { 
-    data: commentsData, 
-    isLoading, 
-    error, 
-    isError 
-  } = useGetCommentsTreeForArticle(articleId, 1, 10, isOpen);
-
+  const {
+    data: commentsData,
+    isLoading,
+    error,
+    isError,
+  } = useAllRepostComments();
 
   useEffect(() => {
-    console.log("article",articleId);
-    console.log(data);
-  }, [data,articleId]);
+    console.log("article", articleId);
+    console.log(commentsData);
+  }, [commentsData, articleId]);
 
   const toggleExpand = (id: string) => {
     setExpandedComments(prev => {
@@ -44,18 +35,20 @@ const RepostsCommentarySidebar: React.FC<RepostsCommentarySidebarProps> = ({
     });
   };
 
-  const MAX_COMMENT_LINES = 2;
+  const MAX_COMMENT_LINES = 3;
 
-  const needsTruncation = (text: string, maxLines: number, charLimit: number = 100) => {
+  // Determines if comment needs truncation based on line breaks or length
+  const needsTruncation = (text: string, maxLines: number, charLimit: number = 150) => {
     const lineBreaks = (text.match(/\n/g) || []).length;
     return lineBreaks >= maxLines || text.length > charLimit;
   };
 
+  // Formats timestamp to relative time string
   const formatTimestamp = (timestamp: string) => {
     const date = new Date(timestamp);
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
+
     if (diffInHours < 1) {
       return 'Just now';
     } else if (diffInHours < 24) {
@@ -66,15 +59,20 @@ const RepostsCommentarySidebar: React.FC<RepostsCommentarySidebarProps> = ({
     }
   };
 
+  // Filter repost comments for the current articleId
+  const filteredReposts = commentsData?.data?.filter(
+    (repost: any) => repost.article._id === articleId
+  ) || [];
+
   return (
     <div
       className={`fixed top-0 right-0 h-full w-full md:w-96 bg-[var(--background)] shadow-lg transform transition-transform duration-300 ease-in-out z-50
-        ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
+      ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
     >
       <div className="p-4 border-b border-[var(--neutral-700)] flex items-center justify-between">
         <h2 className="text-xl font-semibold text-[var(--plain-a)]">Repost Commentaries</h2>
-        <button 
-          onClick={onClose} 
+        <button
+          onClick={onClose}
           className="text-[var(--neutral-300)] hover:text-[var(--plain-a)] focus:outline-none"
           aria-label="Close sidebar"
         >
@@ -84,7 +82,7 @@ const RepostsCommentarySidebar: React.FC<RepostsCommentarySidebarProps> = ({
 
       <div className="p-4 overflow-y-auto h-[calc(100%-60px)] 
         [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-        
+
         {/* Loading State */}
         {isLoading && (
           <div className="flex flex-col items-center justify-center h-full">
@@ -108,22 +106,26 @@ const RepostsCommentarySidebar: React.FC<RepostsCommentarySidebarProps> = ({
         )}
 
         {/* Data State */}
-        {!isLoading && !isError && commentsData?.data?.commentsTree && commentsData.data.commentsTree.length > 0 ? (
-          commentsData.data.commentsTree.map((comment: CommentNode) => {
-            const isExpanded = expandedComments.has(comment._id);
-            const firstNameInitial = comment.author.name.split(' ')[0].charAt(0).toUpperCase();
-            const shouldTruncate = needsTruncation(comment.content, MAX_COMMENT_LINES, 100);
+        {!isLoading && !isError && filteredReposts.length > 0 ? (
+          filteredReposts.map((repost: any) => {
+            const isExpanded = expandedComments.has(repost.repost_id);
+            const user = repost.user;
+            const firstNameInitial = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+            const commentText = repost.comment || '';
+            const shouldTruncate = needsTruncation(commentText, MAX_COMMENT_LINES, 150);
+            const bio = user.bio || '';
 
             return (
-              <div 
-                key={comment._id} 
+              <div
+                key={repost.repost_id}
                 className="mb-4 p-3 bg-[var(--background)] shadow-md rounded-lg border border-[var(--neutral-700)]"
               >
+                {/* User profile section */}
                 <div className="flex items-center gap-3 mb-2">
-                  {comment.author.profile_picture ? (
+                  {user.profile_picture ? (
                     <img
-                      src={comment.author.profile_picture}
-                      alt={comment.author.name}
+                      src={user.profile_picture}
+                      alt={user.name}
                       className="w-10 h-10 rounded-full object-cover"
                       loading="lazy"
                     />
@@ -132,25 +134,33 @@ const RepostsCommentarySidebar: React.FC<RepostsCommentarySidebarProps> = ({
                       {firstNameInitial}
                     </div>
                   )}
+
                   <div>
-                    <p className="font-bold text-[var(--plain-a)]">{comment.author.name}</p>
-                    {comment.author.role && (
-                      <p className="text-[var(--neutral-200)] text-xs capitalize">{comment.author.role}</p>
+                    <a
+                      href={`/profile/${user.username}`}
+                      className="font-bold text-[var(--plain-a)] hover:underline cursor-pointer"
+                      title={`Visit ${user.name}'s profile`}
+                    >
+                      {user.name}
+                    </a>
+                    {bio && (
+                      <p className="text-[var(--neutral-400)] text-xs mt-0.5">{bio}</p>
                     )}
                   </div>
                 </div>
 
+                {/* Comment content */}
                 <div className="relative">
                   <p
-                    className={`text-[var(--neutral-100)] text-sm ${
-                      !isExpanded && shouldTruncate ? 'line-clamp-2' : ''
+                    className={`text-[var(--neutral-100)] text-sm whitespace-pre-line ${
+                      !isExpanded && shouldTruncate ? 'line-clamp-3' : ''
                     }`}
                   >
-                    {comment.content}
+                    {commentText}
                   </p>
                   {shouldTruncate && (
                     <button
-                      onClick={() => toggleExpand(comment._id)}
+                      onClick={() => toggleExpand(repost.repost_id)}
                       className="text-[var(--primary-400)] text-sm mt-1 hover:underline focus:outline-none"
                       aria-label={isExpanded ? 'Show less comment' : 'Show more comment'}
                     >
@@ -159,18 +169,10 @@ const RepostsCommentarySidebar: React.FC<RepostsCommentarySidebarProps> = ({
                   )}
                 </div>
 
+                {/* Repost time */}
                 <p className="text-[var(--neutral-400)] text-xs mt-2">
-                  {formatTimestamp(comment.createdAt)}
+                  {formatTimestamp(repost.repostedAt)}
                 </p>
-
-                {/* Show replies count if there are any */}
-                {comment.replies && comment.replies.length > 0 && (
-                  <div className="mt-2 pt-2 border-t border-[var(--neutral-700)]">
-                    <p className="text-[var(--neutral-400)] text-xs">
-                      {comment.replies.length} repl{comment.replies.length === 1 ? 'y' : 'ies'}
-                    </p>
-                  </div>
-                )}
               </div>
             );
           })

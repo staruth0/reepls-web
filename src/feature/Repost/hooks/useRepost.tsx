@@ -55,9 +55,9 @@ export const useAddCommentToRepost = () => {
       repostId: string;
       content: string;
     }) => addCommentToRepost(repostId, { content }),
-    onSuccess: (data, variables) => {
+    onSuccess: ( ) => {
       queryClient.invalidateQueries({
-        queryKey: ["repost-comments-tree", variables.repostId],
+        queryKey: ["repost-comments-tree"],
       });
       // Optionally, invalidate general reposts if comments affect their display
       queryClient.invalidateQueries({ queryKey: ["my-reposts"] });
@@ -115,7 +115,7 @@ export const useCreateUpdateReaction = () => {
       target_type: TargetType;
       type: ReactionType;
     }) => createUpdateReaction(variables),
-    onSuccess: (data, variables) => {
+    onSuccess: ( variables) => {
       queryClient.invalidateQueries({
         queryKey: ["reactions-by-target", variables.target_type, variables.target_id],
       });
@@ -179,8 +179,8 @@ export const useUpdateReaction = () => {
   return useMutation({
     mutationFn: (variables: { reactionId: string; type: ReactionType }) =>
       updateReaction(variables.reactionId, { type: variables.type }),
-    onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["reaction", variables.reactionId] });
+    onSuccess: ( ) => {
+      queryClient.invalidateQueries({ queryKey: ["reaction"] });
       // Depending on how you display reactions, you might need to invalidate broader queries.
       // E.g., queryClient.invalidateQueries({ queryKey: ["reactions-by-target"] });
     },
@@ -199,7 +199,7 @@ export const useDeleteReaction = () => {
 
   return useMutation({
     mutationFn: (reactionId: string) => deleteReaction(reactionId),
-    onSuccess: (data, variables) => {
+    onSuccess: ( variables) => {
       queryClient.invalidateQueries({ queryKey: ["reaction", variables] });
       // Invalidate queries that might display this reaction or reaction counts
       // E.g., queryClient.invalidateQueries({ queryKey: ["reactions-by-target"] });
@@ -261,20 +261,12 @@ export const useGetReactionsGroupedByType = (
  * React Query hook to update the share_count when an article or repost is shared.
  */
 export const useShareTarget = () => {
-  const queryClient = useQueryClient();
+ 
 
   return useMutation({
     mutationFn: ({ target_type, id }: { target_type: ShareTargetType; id: string }) =>
       shareTarget(target_type, id),
-    onSuccess: (data, variables) => {
-      if (variables.target_type === "Article") {
-        queryClient.invalidateQueries({ queryKey: ["article", variables.id] });
-        queryClient.invalidateQueries({ queryKey: ["recommended-articles"] });
-      } else if (variables.target_type === "Repost") {
-        queryClient.invalidateQueries({ queryKey: ["repost", variables.id] });
-        queryClient.invalidateQueries({ queryKey: ["my-reposts"] });
-      }
-    },
+  
     onError: (error) => {
       console.error("Failed to share target:", error);
       // TODO: Implement user-facing error handling
@@ -315,7 +307,7 @@ export const useDeleteRepost = () => {
       queryClient.invalidateQueries({ queryKey: ["recommended-articles"] });
     },
     onError: (error) => {
-      console.error("Failed to delete repost:", error);
+      console.error("Failed to delete repost:", error.message);
       // TODO: Implement user-facing error handling
     },
   });

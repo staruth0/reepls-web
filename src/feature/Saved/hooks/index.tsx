@@ -81,15 +81,9 @@ export const useSaveArticle = () => {
 
     // onError is called if the mutation (saveArticle) fails.
     // This is where we implement the rollback logic using the context from onMutate.
-    onError: (error, variables, context) => {
+    onError: (error) => {
       console.error("Failed to save article:", error);
-      // Optional: Display a toast error message here, or let the component handle it.
-      // toast.error("Failed to save article.");
-
-      // If we have the previous data from onMutate, roll back the cache to that state.
-      if (context?.previousSavedArticles) {
-        queryClient.setQueryData(["savedArticles"], context.previousSavedArticles);
-      }
+     
     },
     // onSettled is called regardless of success or failure.
     // It's often used for final invalidation or cleanup.
@@ -138,15 +132,9 @@ export const useRemoveSavedArticle = () => {
     },
 
     // onError for failed removal, implement rollback.
-    onError: (error, variables, context) => {
+    onError: (error) => {
       console.error("Failed to remove saved article:", error);
-      // Optional: Display a toast error message here.
-      // toast.error("Failed to remove article.");
-
-      // Roll back to the previous state if the mutation failed.
-      if (context?.previousSavedArticles) {
-        queryClient.setQueryData(["savedArticles"], context.previousSavedArticles);
-      }
+   
     },
   });
 };

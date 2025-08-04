@@ -75,6 +75,11 @@ export const updateRepost = async (repostId: string, payload: UpdateRepostPayloa
  * @returns The response data from the API.
  */
 export const deleteRepost = async (repostId: string): Promise<DeleteRepostResponse> => {
+  console.log("Deleting repost with ID:", repostId);
+  // Ensure the repostId is valid before making the API call
+  if (!repostId) {
+    throw new Error("Repost ID is required for deletion");
+  }
   const { data } = await apiClient.delete(`/reposts/${repostId}`);
   return data;
 };

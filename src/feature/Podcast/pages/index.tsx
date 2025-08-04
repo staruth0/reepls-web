@@ -1,4 +1,3 @@
-// src/pages/Podcast/Podcast.tsx
 import React, { useState, useRef } from 'react';
 import { LuImagePlus, LuMic, LuX } from 'react-icons/lu';
 import { toast } from 'react-toastify';
@@ -113,12 +112,21 @@ const Podcast: React.FC = () => {
       formData.append('subtitle', subtitle.trim());
     }
     formData.append('description', description);
-    // tags.forEach((tag) => formData.append('tags', tag)); // Append each tag as a separate entry
-    formData.append('category', category);
-
+    
+    // Append tags as JSON array string if tags exist
+    if (tags.length > 0) {
+      formData.append('tags', JSON.stringify(tags));
+    }
+    
+    // Append category only if it has a value
+    if (category.trim()) {
+      formData.append('category', category.trim());
+    }
+    
+    // Append isPublic field as string (backend expects string representation)
+    // formData.append('isPublic', isPublic.toString());
 
     console.log('audiofile', audioFile )
-
 
     if (audioFile) {
       formData.append('audio', audioFile);
@@ -130,6 +138,11 @@ const Podcast: React.FC = () => {
     console.log('--- FormData Contents ---');
     const formDataObject = Object.fromEntries(formData.entries());
     console.log(formDataObject);
+    
+    // Debug: Log each form field
+    for (const [key, value] of formData.entries()) {
+      console.log(`Form field: ${key} = ${value}`);
+    }
 
     uploadPodcast(formData, {
       onSuccess: () => {

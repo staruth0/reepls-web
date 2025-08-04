@@ -10,6 +10,7 @@ import { WebRoutes } from './Routes/WebRoutes';
 import { apiClient } from './services/apiClient';
 import { useFetchVapidPublicKey } from './feature/Notifications/hooks/useNotification';
 import { useUser } from './hooks/useUser';
+import { AudioPlayer } from './components/molecules/AudioPlayer';
 
 // Setting up routes for your app
 const router = createBrowserRouter([WebRoutes, AuthRoutes, UserRoutes, { path: '*', element: <NotFound /> }]);
@@ -178,6 +179,9 @@ function App() {
   return (
     <>
       <RouterProvider router={router} />
+      
+      {/* Global Audio Player - persists across navigation */}
+      <AudioPlayer />
       
       <ToastContainer
         position="top-right" 

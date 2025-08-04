@@ -3,7 +3,7 @@ import { useGetMyReposts } from '../../Repost/hooks/useRepost';
 import BlogPost from '../../Blog/components/BlogPost';
 import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
 
-const ProfileReposts = () => {
+const ProfileReposts:React.FC = () => {
   const { data, isLoading, error } = useGetMyReposts();
 
   useEffect(() => {

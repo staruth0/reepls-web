@@ -31,12 +31,13 @@ import { useSendFollowNotification } from "../../../Notifications/hooks/useNotif
 import { useDeleteArticle, useUpdateArticle } from "../../hooks/useArticleHook";
 import ConfirmationModal from "../ConfirmationModal";
 import PostEditModal from "../PostEditModal";
-import { t } from "i18next";
+import { t} from "i18next";
 import ReportArticlePopup from "../../../Reports/components/ReportPostPopup";
 import { timeAgo } from "../../../../utils/dateFormater";
 import { cn } from "../../../../utils"; // Make sure cn utility is imported if you use it
 import BlogRepostModal from "../BlogRepostModal";
 import { useDeleteRepost } from "../../../Repost/hooks/useRepost";
+
 
 interface BlogProfileProps {
   date: string;
@@ -85,6 +86,9 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   const { mutate: deleteRepost, isPending: isDeleteRepostPending } =
     useDeleteRepost();
   const [showReportPopup, setShowReportPopup] = useState(false);
+
+
+
 
   // Check if current user is the reposted user
   const isCurrentUserReposted = article?.repost?.repost_user?._id === authUser?.id;
@@ -137,15 +141,17 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   };
 
   const handleDeleteRepost = () => {
-    if (article?.repost?.repost_id) {
-      deleteRepost(article.repost.repost_id, {
+    if (article?._id) {
+   
+      deleteRepost(article._id, {
         onSuccess: () => {
           toast.success("Repost deleted successfully");
           setShowRepostDeleteConfirmation(false);
           navigate("/feed");
         },
-        onError: () => {
+        onError: (error) => {
           toast.error("An error occurred while trying to delete repost");
+          console.error("Failed to delete repost:", error.message);
           setShowRepostDeleteConfirmation(false);
         },
       });
