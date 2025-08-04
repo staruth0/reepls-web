@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { X, Loader2 } from 'lucide-react';
 import { useGetCommentsTreeForArticle } from '../../Comments/hooks';
 import { CommentNode } from '../../Comments/api';
+import { useAllRepostComments } from '../../Repost/hooks/useRepost';
 
 interface RepostsCommentarySidebarProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ const RepostsCommentarySidebar: React.FC<RepostsCommentarySidebarProps> = ({
   articleId,
 }) => {
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
+    const  {data} = useAllRepostComments()
 
   // Use the new hook to fetch comments
   const { 
@@ -24,10 +26,11 @@ const RepostsCommentarySidebar: React.FC<RepostsCommentarySidebarProps> = ({
     isError 
   } = useGetCommentsTreeForArticle(articleId, 1, 10, isOpen);
 
+
   useEffect(() => {
     console.log("article",articleId);
-    console.log(commentsData);
-  }, [commentsData,articleId]);
+    console.log(data);
+  }, [data,articleId]);
 
   const toggleExpand = (id: string) => {
     setExpandedComments(prev => {

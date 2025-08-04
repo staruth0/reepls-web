@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MessageCircle, Heart, Share, User2 } from 'lucide-react';
 import { FaSpinner } from 'react-icons/fa';
 import { User, Article, MediaItem as ArticleMediaItem } from '../../../../models/datamodels';
-import { useRepostArticle } from '../../../Repost/hooks/useRepost';
+
 import { LuLoader } from 'react-icons/lu';
+import { useRepostArticle, useUpdateRepost } from '../../../Repost/hooks/useRepost';
 
 interface RepostModalProps {
   isOpen: boolean;
@@ -12,6 +13,9 @@ interface RepostModalProps {
   article_id: string;
   article: Article;
   author_of_post: User;
+  isEditMode?: boolean;
+  repostId?: string;
+  initialComment?: string;
 }
 
 interface RepostStatusModalProps {
@@ -19,6 +23,7 @@ interface RepostStatusModalProps {
   onClose: () => void;
   isSuccess: boolean;
   onRetry?: () => void;
+  isEdit?: boolean;
 }
 
 const RepostStatusModal: React.FC<RepostStatusModalProps> = ({
@@ -26,6 +31,7 @@ const RepostStatusModal: React.FC<RepostStatusModalProps> = ({
   onClose,
   isSuccess,
   onRetry,
+  isEdit = false,
 }) => {
   if (!isOpen) return null;
 
@@ -34,12 +40,14 @@ const RepostStatusModal: React.FC<RepostStatusModalProps> = ({
       <div className="bg-background p-6 rounded-lg max-w-md w-full mx-4">
         <div className="text-center">
           <h3 className="text-lg font-medium mb-4">
-            {isSuccess ? "Repost Successful!" : "Repost Failed"}
+            {isSuccess ? (isEdit ? "Commentary Updated!" : "Repost Successful!") : (isEdit ? "Update Failed" : "Repost Failed")}
           </h3>
           <p className="mb-6">
             {isSuccess
-              ? "Your repost with thoughts has been shared successfully."
-              : "There was an error reposting. Please try again."}
+              ? (isEdit 
+                  ? "Your commentary has been updated successfully."
+                  : "Your repost with thoughts has been shared successfully.")
+              : "There was an error. Please try again."}
           </p>
           <div className="flex justify-center gap-4">
             {!isSuccess && onRetry && (
@@ -69,6 +77,9 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
   article_id,
   article,
   author_of_post,
+  isEditMode = false,
+  repostId,
+  initialComment = '',
 }) => {
   const [thoughts, setThoughts] = useState('');
   const [repostStatus, setRepostStatus] = useState<{
@@ -77,6 +88,16 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
   }>({ show: false, isSuccess: false });
 
   const { mutate: repost, isPending: isReposting } = useRepostArticle();
+  const { mutate: updateRepost, isPending: isUpdating } = useUpdateRepost();
+
+  // Set initial comment when in edit mode
+  useEffect(() => {
+    if (isEditMode && initialComment) {
+      setThoughts(initialComment);
+    } else if (!isEditMode) {
+      setThoughts('');
+    }
+  }, [isEditMode, initialComment, isOpen]);
 
   const overlayVariants = {
     hidden: { opacity: 0 },
@@ -116,22 +137,41 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
   };
 
   const handleRepost = () => {
-    if (!article_id) {
-      setRepostStatus({ show: true, isSuccess: false });
-      return;
-    }
-    repost(
-      { articleId: article_id, comment: thoughts },
-      {
-        onSuccess: () => {
-          onClose();
-          setRepostStatus({ show: true, isSuccess: true });
-        },
-        onError: () => {
-          setRepostStatus({ show: true, isSuccess: false });
-        },
+    if (isEditMode) {
+      if (!repostId) {
+        setRepostStatus({ show: true, isSuccess: false });
+        return;
       }
-    );
+      updateRepost(
+        { repostId, comment: thoughts },
+        {
+          onSuccess: () => {
+            onClose();
+            setRepostStatus({ show: true, isSuccess: true });
+          },
+          onError: () => {
+            setRepostStatus({ show: true, isSuccess: false });
+          },
+        }
+      );
+    } else {
+      if (!article_id) {
+        setRepostStatus({ show: true, isSuccess: false });
+        return;
+      }
+      repost(
+        { articleId: article_id, comment: thoughts },
+        {
+          onSuccess: () => {
+            onClose();
+            setRepostStatus({ show: true, isSuccess: true });
+          },
+          onError: () => {
+            setRepostStatus({ show: true, isSuccess: false });
+          },
+        }
+      );
+    }
   };
 
   const handleRetryRepost = () => {
@@ -142,6 +182,8 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
   const closeRepostStatusModal = () => {
     setRepostStatus({ show: false, isSuccess: false });
   };
+
+  const isPending = isReposting || isUpdating;
 
   const renderImageGrid = (images: ArticleMediaItem[]) => {
     const imageCount = images.length;
@@ -245,6 +287,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
         onClose={closeRepostStatusModal}
         isSuccess={repostStatus.isSuccess}
         onRetry={handleRetryRepost}
+        isEdit={isEditMode}
       />
 
       <AnimatePresence>
@@ -273,7 +316,9 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
             >
               {/* Header */}
               <div className="flex items-center justify-between p-4 border-b border-[var(--neutral-500)]">
-                <h2 className="text-lg font-semibold text-[var(--foreground)]">Repost</h2>
+                <h2 className="text-lg font-semibold text-[var(--foreground)]">
+                  {isEditMode ? 'Edit Commentary' : 'Repost'}
+                </h2>
                 <button
                   onClick={onClose}
                   className="p-2 hover:bg-[var(--neutral-600)] rounded-full transition-colors"
@@ -287,13 +332,13 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
                 {/* Thoughts Section */}
                 <div className="p-4">
                   <label htmlFor="thoughts" className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                    Add your thoughts
+                    {isEditMode ? 'Edit your thoughts' : 'Add your thoughts'}
                   </label>
                   <textarea
                     id="thoughts"
                     value={thoughts}
                     onChange={(e) => setThoughts(e.target.value)}
-                    placeholder="What do you think about this post?"
+                    placeholder={isEditMode ? "Update your thoughts about this post..." : "What do you think about this post?"}
                     className="w-full p-3 border border-[var(--neutral-500)] rounded-md resize-none focus:ring-1 focus:ring-[var(--primary-400)] focus:border-transparent transition-all bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--neutral-300)]"
                     rows={3}
                   />
@@ -352,6 +397,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
                             <Heart size={18} />
                             <span className="text-sm">{article.reaction_count || 0}</span>
                           </div>
+                          
 
                           <div className="flex items-center space-x-2 text-[var(--neutral-200)]">
                             <MessageCircle size={18} />
@@ -362,6 +408,24 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
                             <Share size={18} />
                             <span className="text-sm">{article.shares_count || 0}</span>
                           </div>
+                          <div className="p-4 border-t border-[var(--neutral-500)] bg-[var(--background)]">
+                <div className="flex items-center justify-end space-x-3">
+                  <button
+                    onClick={handleRepost}
+                    className="px-8 py-3 !bg-[var(--primary-400)] !text-[var(--plain-b)] rounded-full !hover:bg-[var(--primary-500)] transition-colors font-medium"
+                    disabled={isPending}
+                  >
+                    {isPending ? (
+                      <>
+                        <LuLoader className="animate-spin inline-block mr-2" /> 
+                        {isEditMode ? 'Updating...' : 'Reposting...'}
+                      </>
+                    ) : (
+                      isEditMode ? 'Update commentary' : 'Repost now'
+                    )}
+                  </button>
+                </div>
+              </div>
                         </div>
                       </div>
                     </div>
@@ -370,23 +434,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
               </div>
 
               {/* Footer */}
-              <div className="p-4 border-t border-[var(--neutral-500)] bg-[var(--background)]">
-                <div className="flex items-center justify-end space-x-3">
-                  <button
-                    onClick={handleRepost}
-                    className="px-8 py-3 !bg-[var(--primary-400)] !text-[var(--plain-b)] rounded-full !hover:bg-[var(--primary-500)] transition-colors font-medium"
-                    disabled={isReposting}
-                  >
-                    {isReposting ? (
-                      <>
-                        <LuLoader className="animate-spin inline-block mr-2" /> Reposting...
-                      </>
-                    ) : (
-                      'Repost now'
-                    )}
-                  </button>
-                </div>
-              </div>
+         
             </motion.div>
           </motion.div>
         )}
@@ -395,4 +443,4 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
   );
 };
 
-export default BlogRepostModal;
+export default BlogRepostModal; 

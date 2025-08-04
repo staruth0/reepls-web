@@ -1,4 +1,4 @@
-import { MediaItem, User } from "../../../models/datamodels";
+import { Article, MediaItem, User } from "../../../models/datamodels";
 import { apiClient } from "../../../services/apiClient";
 
 
@@ -10,36 +10,92 @@ export interface UpdateRepostPayload {
   comment: string;
 }
 
+// Response interfaces for the actual API
+export interface RepostResponse {
+  id: string;
+  user: string | User;
+  article: string | RepostArticleDetail;
+  comment: string;
+  repostedAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateRepostResponse {
+  message: string;
+  reposted: boolean;
+  repost: RepostResponse;
+}
+
+export interface GetMyRepostsResponse {
+  reposts: Article[];
+  totalReposts: number;
+  totalPages: number;
+}
+
+export interface UpdateRepostResponse {
+  message: string;
+  repost: RepostResponse;
+}
+
+export interface DeleteRepostResponse {
+  message: string;
+}
+
+export interface CleanupOrphanedResponse {
+  message: string;
+  deletedCount: number;
+}
+
 /**
- * Repost an article for the user.
+ * Creates a new repost for a specific article.
  * @param articleId The ID of the article to repost.
  * @param payload An object containing the optional comment.
  * @returns The response data from the API.
  */
-
-export const repostArticle = async (articleId: string, payload: RepostArticlePayload) => {
+export const repostArticle = async (articleId: string, payload: RepostArticlePayload): Promise<CreateRepostResponse> => {
   const { data } = await apiClient.post(`/reposts/article/${articleId}`, payload);
   return data;
 };
 
 /**
- * Update a repost commentary.
+ * Updates the comment on a specific repost.
  * @param repostId The ID of the repost to update.
  * @param payload An object containing the new comment.
  * @returns The response data from the API.
  */
-export const updateRepost = async (repostId: string, payload: UpdateRepostPayload) => {
-  const { data } = await apiClient.put(`/reposts/${repostId}`, payload);
+export const updateRepost = async (repostId: string, payload: UpdateRepostPayload): Promise<UpdateRepostResponse> => {
+  const { data } = await apiClient.put(`/reposts/${repostId}/comment`, payload);
   return data;
 };
 
 /**
- * Delete a repost.
+ * Deletes a specific repost.
  * @param repostId The ID of the repost to delete.
  * @returns The response data from the API.
  */
-export const deleteRepost = async (repostId: string) => {
+export const deleteRepost = async (repostId: string): Promise<DeleteRepostResponse> => {
   const { data } = await apiClient.delete(`/reposts/${repostId}`);
+  return data;
+};
+
+/**
+ * Retrieves paginated list of reposts created by the authenticated user.
+ * @param page The page number for pagination (default: 1).
+ * @param limit The number of reposts per page (default: 10).
+ * @returns The paginated reposts data.
+ */
+export const getMyReposts = async (page: number = 1, limit: number = 10): Promise<GetMyRepostsResponse> => {
+  const { data } = await apiClient.get(`/reposts/my?page=${page}&limit=${limit}`);
+  return data;
+};
+
+/**
+ * Administrative endpoint to clean up orphaned reposts.
+ * @returns The cleanup response data.
+ */
+export const cleanupOrphanedReposts = async (): Promise<CleanupOrphanedResponse> => {
+  const { data } = await apiClient.post('/reposts/cleanup-orphaned');
   return data;
 };
 
@@ -118,8 +174,6 @@ export interface GetCommentsTreeResponse {
   };
 }
 
-
-
 export interface RepostArticleDetail {
   _id: string;
   title: string;
@@ -165,7 +219,7 @@ export interface MyRepost {
 }
 
 export interface GetMyRepostsResponse {
-  reposts: MyRepost[];
+  reposts: Article[];
 }
 
 // Interfaces for Reactions APIs
@@ -256,14 +310,7 @@ export const getCommentsTreeForRepost = async (
 
 
 
-/**
- * Returns all articles reposted by the authenticated user.
- * @returns An array of the user's reposts.
- */
-export const getMyReposts = async (): Promise<MyRepost[]> => {
-  const { data } = await apiClient.get("/reposts/my");
-  return data.reposts;
-};
+
 
 
 
@@ -395,4 +442,19 @@ export const shareTarget = async (
 ): Promise<ShareResponse> => {
   const { data } = await apiClient.post(`/share/${target_type}/${id}`);
   return data;
+};
+
+
+// Get all repost comments
+export const getAllRepostComments = async ({ page = 1, limit = 10 }) => {
+  const res = await apiClient.get(`/reposts/comments/all`, {
+    params: { page, limit },
+  });
+  return res.data;
+};
+
+// Get comments by repost ID
+export const getCommentsByRepostId = async (repostId:string) => {
+  const res = await apiClient.get(`/reposts/${repostId}/comment/by-repost`);
+  return res.data;
 };

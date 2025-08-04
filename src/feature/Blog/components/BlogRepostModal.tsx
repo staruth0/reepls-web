@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MessageCircle, Heart, Share, User2 } from 'lucide-react';
 import { FaSpinner } from 'react-icons/fa';
-import { User, Article, MediaItem as ArticleMediaItem } from '../../../../models/datamodels';
-import { useRepostArticle, useUpdateRepost } from '../../../Repost/hooks/useRepost';
+import { User, Article, MediaItem as ArticleMediaItem } from '../../../models/datamodels';
+
 import { LuLoader } from 'react-icons/lu';
+import { useRepostArticle, useUpdateRepost } from '../../Repost/hooks/useRepost';
 
 interface RepostModalProps {
   isOpen: boolean;
@@ -396,6 +397,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
                             <Heart size={18} />
                             <span className="text-sm">{article.reaction_count || 0}</span>
                           </div>
+                          
 
                           <div className="flex items-center space-x-2 text-[var(--neutral-200)]">
                             <MessageCircle size={18} />
@@ -406,15 +408,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
                             <Share size={18} />
                             <span className="text-sm">{article.shares_count || 0}</span>
                           </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Footer */}
-              <div className="p-4 border-t border-[var(--neutral-500)] bg-[var(--background)]">
+                          <div className="p-4 border-t border-[var(--neutral-500)] bg-[var(--background)]">
                 <div className="flex items-center justify-end space-x-3">
                   <button
                     onClick={handleRepost}
@@ -432,6 +426,15 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
                   </button>
                 </div>
               </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+         
             </motion.div>
           </motion.div>
         )}

@@ -15,13 +15,14 @@ import {
   shareTarget,
   updateRepost,
   deleteRepost,
+  cleanupOrphanedReposts,
   ReactionType,
   TargetType,
   ShareTargetType,
+  getAllRepostComments,
+  getCommentsByRepostId,
 
-} from "../api/"; 
-
-
+} from "../api/";
 
 export const useRepostArticle = () => {
   const queryClient = useQueryClient();
@@ -30,19 +31,15 @@ export const useRepostArticle = () => {
     mutationFn: ({ articleId, comment }: { articleId: string; comment?: string }) =>
       repostArticle(articleId, { comment }),
     onSuccess: () => {
-    
       queryClient.invalidateQueries({ queryKey: ["recommended-articles"] });
+      queryClient.invalidateQueries({ queryKey: ["articles"] });
+     
     },
     onError: (error) => {
       void error;
     },
   });
 };
-
-
-
-
-
 
 /**
  * React Query hook to add a comment to a specific repost.
@@ -93,20 +90,18 @@ export const useGetCommentsTreeForRepost = (
   });
 };
 
-
-
 /**
- * React Query hook to get all articles reposted by the authenticated user.
+ * React Query hook to get paginated reposts created by the authenticated user.
+ * @param page The page number for pagination (default: 1).
+ * @param limit The number of reposts per page (default: 10).
  */
-export const useGetMyReposts = () => {
+export const useGetMyReposts = (page: number = 1, limit: number = 10) => {
   return useQuery({
-    queryKey: ["my-reposts"],
-    queryFn: getMyReposts,
+    queryKey: ["my-reposts", page, limit],
+    queryFn: () => getMyReposts(page, limit),
     staleTime: 10 * 60 * 1000,
   });
 };
-
-
 
 /**
  * React Query hook to create a new reaction or update an existing one.
@@ -316,7 +311,7 @@ export const useDeleteRepost = () => {
   return useMutation({
     mutationFn: (repostId: string) => deleteRepost(repostId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["my-reposts"] });
+      queryClient.invalidateQueries({ queryKey: ["articles"] });
       queryClient.invalidateQueries({ queryKey: ["recommended-articles"] });
     },
     onError: (error) => {
@@ -325,3 +320,38 @@ export const useDeleteRepost = () => {
     },
   });
 };
+
+/**
+ * React Query hook to clean up orphaned reposts (Admin only).
+ */
+export const useCleanupOrphanedReposts = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => cleanupOrphanedReposts(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-reposts"] });
+      queryClient.invalidateQueries({ queryKey: ["recommended-articles"] });
+    },
+    onError: (error) => {
+      console.error("Failed to cleanup orphaned reposts:", error);
+      // TODO: Implement user-facing error handling
+    },
+  });
+};
+
+export function useAllRepostComments(page = 1, limit = 10) {
+  return useQuery({
+    queryKey: ['repost-comments', page, limit],
+    queryFn: () => getAllRepostComments({ page, limit }),
+  });
+}
+
+// Hook for comments by repost ID
+export function useCommentsByRepostId(repostId: string) {
+  return useQuery({
+    queryKey: ['repost-comments-by-id', repostId],
+    queryFn: () => getCommentsByRepostId(repostId),
+    enabled: !!repostId,
+  });
+}

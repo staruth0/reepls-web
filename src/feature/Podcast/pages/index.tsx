@@ -131,25 +131,25 @@ const Podcast: React.FC = () => {
     const formDataObject = Object.fromEntries(formData.entries());
     console.log(formDataObject);
 
-    // uploadPodcast(formData, {
-    //   onSuccess: () => {
-    //     toast.success('Podcast posted successfully!');
-    //     // Reset form fields
-    //     setTitle('');
-    //     setSubtitle('');
-    //     setDescription('');
-    //     setThumbnailFile(null);
-    //     setThumbnailPreview('');
-    //     setAudioFile(null);
-    //     setAudioPreview('');
-    //     setTags([]);
-    //     setCategory('');
-    //     setIsPublic(true);
-    //   },
-    //   onError: (error: any) => { // Use 'any' for error type if you don't have a specific error interface
-    //     toast.error(`Failed to post podcast: ${error.message || 'Unknown error'}`);
-    //   },
-    // });
+    uploadPodcast(formData, {
+      onSuccess: () => {
+        toast.success('Podcast posted successfully!');
+        // Reset form fields
+        setTitle('');
+        setSubtitle('');
+        setDescription('');
+        setThumbnailFile(null);
+        setThumbnailPreview('');
+        setAudioFile(null);
+        setAudioPreview('');
+        setTags([]);
+        setCategory('');
+        setIsPublic(true);
+      },
+      onError: (error: any) => { // Use 'any' for error type if you don't have a specific error interface
+        toast.error(`Failed to post podcast: ${error.message || 'Unknown error'}`);
+      },
+    });
   };
 
   const handleSaveTags = (newTags: string[]) => {
