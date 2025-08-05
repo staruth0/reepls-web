@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { PenLine } from "lucide-react"; // Removed Dot import
+import { PenLine } from "lucide-react";
 import { hand5, heart, thumb } from "../../../../assets/icons";
 import { useGetCommentsByArticleId } from "../../../Comments/hooks";
 import ReactionsPopup from "../../../Interactions/components/ReactionsPopup";
 import { useGetArticleReactions } from "../../../Interactions/hooks";
 import { t } from "i18next";
-// import { calculateReadTime } from "../../../../utils/articles";
 import { Article } from "../../../../models/datamodels";
 import { motion } from "framer-motion";
 import { cn } from "../../../../utils";
+import { useGetCommentsTreeForRepost } from "../../../Repost/hooks/useRepost";
 
 
 interface BlogReactionStatsProps {
@@ -21,8 +21,7 @@ interface BlogReactionStatsProps {
 const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
   toggleCommentSection,
   article_id,
-  // date, 
-  // article 
+  article,
 }) => {
   const [showReactions, setShowReactions] = useState(false);
   const [showNoReactionsPopup, setShowNoReactionsPopup] = useState(false);
@@ -33,19 +32,23 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
   const { data: allReactions, isLoading: reactionsLoading } =
     useGetArticleReactions(article_id);
 
-  // Safely get total comments 
-  const totalComments = articleComments?.pages?.[0]?.data?.totalComments || 0; // Default to 0 if undefined
+  const {
+    data: repostComments,
+
+  } = useGetCommentsTreeForRepost(article.repost?.repost_id || "");
+
+  // Use repost total comments if article is a repost, else regular
+  const totalComments = article.type === "Repost"
+    ? repostComments?.parentCommentsCount ?? 0
+    : articleComments?.pages?.[0]?.data?.totalComments ?? 0;
+
   const reactionCount = allReactions?.reactions?.length || 0;
+  // const repostCount = 0; // Keep your existing logic or update as necessary
 
-
-  const repostCount = 0;
-
-  // Handle screen width detection
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth < 400);
     };
-
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -58,7 +61,7 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
   const handleReactionClick = () => {
     if (reactionCount === 0 && !reactionsLoading) {
       setShowNoReactionsPopup(true);
-      setTimeout(() => setShowNoReactionsPopup(false), 3000); // Auto-close after 3 seconds
+      setTimeout(() => setShowNoReactionsPopup(false), 3000);
     } else {
       setShowReactions(true);
     }
@@ -87,7 +90,6 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
               </div>
             ) : (
               <>
-                {/* Display reactions only if there are any */}
                 {reactionCount >= 0 && (
                   <>
                     <img
@@ -110,13 +112,15 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
               </>
             )}
           </div>
-          {/* Reaction Count */}
           {reactionsLoading ? (
             <div className='w-6 h-4 bg-neutral-500 rounded-md animate-pulse ml-1' />
           ) : (
-            // Always show 0 if no reactions, otherwise formatted count
             <div className='ml-1 text-neutral-50 group-hover:text-primary-500 group-hover:underline underline-offset-1'>
-              {reactionCount === 0 ? "0" : reactionCount >= 1000 ? `${(reactionCount / 1000).toFixed(1)}k` : reactionCount}
+              {reactionCount === 0
+                ? "0"
+                : reactionCount >= 1000
+                ? `${(reactionCount / 1000).toFixed(1)}k`
+                : reactionCount}
             </div>
           )}
         </div>
@@ -147,7 +151,6 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
         )}
       </div>
 
-      
       {showReactions && reactionCount > 0 && (
         <ReactionsPopup
           isOpen={showReactions}
@@ -156,9 +159,6 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
         />
       )}
 
-
-
-      
       <div className="flex items-center text-neutral-50 text-sm space-x-1">
         {/* Comments Section */}
         <div
@@ -186,19 +186,7 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
           )}
         </div>
 
-        {/* Separator */}
-        {(totalComments > 0 || reactionCount > 0) && repostCount > 0 && (
-          <span className="text-neutral-300">•</span> 
-        )}
-
-        {/* Reposts Section */}
-        {repostCount > 0 && (
-          <div className="flex gap-1 items-center group cursor-pointer">
-            <span className='text-neutral-50 group-hover:text-primary-500 group-hover:underline underline-offset-1'>
-              {repostCount} {t("reposts", { count: repostCount })} 
-            </span>
-          </div>
-        )}
+        {/* Separator and repost count - add logic as needed */}
       </div>
     </div>
   );

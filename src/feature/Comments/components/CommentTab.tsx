@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "../../../hooks/useUser";
-import { Comment } from "../../../models/datamodels";
+import { Article, Comment } from "../../../models/datamodels";
 import { LuLoader, LuSend } from "react-icons/lu";
 import { FaRegUserCircle } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -10,25 +10,29 @@ import EmojiPicker, { Theme } from "emoji-picker-react";
 import useTheme from "../../../hooks/useTheme";
 import { smile } from "../../../assets/icons";
 import { useSendCommentNotification } from "../../Notifications/hooks/useNotification";
+import { useAddCommentToRepost } from "../../Repost/hooks/useRepost";
 
 interface CommentTabProps {
   article_id: string;
   setIsCommentSectionOpen: (isOpen: boolean) => void;
+  article: Article;
 }
 
-const 
-CommentTab: React.FC<CommentTabProps> = ({
+const CommentTab: React.FC<CommentTabProps> = ({
   article_id,
   setIsCommentSectionOpen,
+  article,
 }) => {
-  const {  isLoggedIn } = useUser();
+  const { isLoggedIn } = useUser();
   const [comment, setComment] = useState<string>("");
   const [isEmojiPickerVisible, setEmojiPickerVisible] = useState(false);
+  const [isPendingRepost, setIsPendingRepost] = useState(false);
   const CommentTabRef = useRef<HTMLInputElement | null>(null);
   const emojiPickerRef = useRef<HTMLDivElement | null>(null);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { mutate: addCommentToRepost } = useAddCommentToRepost();
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && isLoggedIn) {
@@ -36,8 +40,7 @@ CommentTab: React.FC<CommentTabProps> = ({
     }
   };
 
-  // const { mutate, isPending } = useCreateComment();
-  const {mutate,isPending} = useSendCommentNotification();
+  const { mutate, isPending } = useSendCommentNotification();
 
   const validateCommentData = (commentData: Comment): boolean => {
     if (!commentData.article_id) {
@@ -49,28 +52,66 @@ CommentTab: React.FC<CommentTabProps> = ({
     return true;
   };
 
+  const validateRepostCommentData = (commentData: { repostId: string; content: string }): boolean => {
+    if (!commentData.repostId) {
+      return false;
+    }
+    if (!commentData.content?.trim()) {
+      return false;
+    }
+    return true;
+  };
+
   const handleCommentSubmit = () => {
     if (!isLoggedIn) return;
 
-    const commentValues = {
-      article_id,
-      content: comment,
-    };
+    if (article.type === "Repost") {
+      const repostId = article.repost?.repost_id;
+      if (!repostId) return;
 
-    if (!validateCommentData(commentValues)) {
-      return;
+      const commentValuesRepost = {
+        repostId,
+        content: comment,
+      };
+
+      if (!validateRepostCommentData(commentValuesRepost)) {
+        return;
+      }
+
+      setIsPendingRepost(true);
+      addCommentToRepost(commentValuesRepost, {
+        onSuccess: () => {
+          setIsCommentSectionOpen(true);
+          toast.success(t("You added 1 comment."));
+          setComment("");
+          setIsPendingRepost(false);
+        },
+        onError: () => {
+          toast.error(t("Failed to post comment. Please try again later."));
+          setIsPendingRepost(false);
+        },
+      });
+    } else {
+      const commentValues = {
+        article_id,
+        content: comment,
+      };
+
+      if (!validateCommentData(commentValues)) {
+        return;
+      }
+
+      mutate(commentValues, {
+        onSuccess: () => {
+          setIsCommentSectionOpen(true);
+          toast.success(t("You added 1 comment."));
+          setComment("");
+        },
+        onError: () => {
+          toast.error(t("Failed to post comment. Please try again later."));
+        },
+      });
     }
-
-    mutate(commentValues, {
-      onSuccess: () => {
-        setIsCommentSectionOpen(true);
-        toast.success(t("You added 1 comment."));
-        setComment("");
-      },
-      onError: () => {
-        toast.error(t("Failed to post comment. Please try again later."));
-      },
-    });
   };
 
   const handleEmojiClick = (emojiObject: { emoji: string }) => {
@@ -94,13 +135,15 @@ CommentTab: React.FC<CommentTabProps> = ({
     };
   }, []);
 
-const location = useLocation(); // Get current URL path
+  const location = useLocation();
 
-useEffect(() => {
-  if (CommentTabRef.current && isLoggedIn && !location.pathname.includes("/posts/article/")) {
-    CommentTabRef.current.focus();
-  }
-}, [isLoggedIn, location.pathname]);
+  useEffect(() => {
+    if (CommentTabRef.current && isLoggedIn && !location.pathname.includes("/posts/article/")) {
+      CommentTabRef.current.focus();
+    }
+  }, [isLoggedIn, location.pathname]);
+
+  const isSending = isPending || isPendingRepost;
 
   return (
     <div className="px-4">
@@ -143,9 +186,9 @@ useEffect(() => {
             <button
               onClick={handleCommentSubmit}
               className="ml-2 p-1 text-neutral-100 hover:text-primary-400 transition-colors"
-              disabled={isPending || comment.trim() === ""}
+              disabled={isSending || comment.trim() === ""}
             >
-              {isPending ? (
+              {isSending ? (
                 <LuLoader className="animate-spin inline-block mx-1" />
               ) : (
                 <LuSend size={20} />
