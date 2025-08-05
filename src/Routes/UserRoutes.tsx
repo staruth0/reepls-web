@@ -11,8 +11,10 @@ import CommuniqueDetail from '../feature/Feed/CommuniqueDetail';
 import CommuniqueList from '../feature/Feed/CommuniqueList';
 import UserFeed from '../feature/Feed/Feed';
 import FeedFollowing from '../feature/Feed/FeedFollowings';
+import FeedPodcasts from '../feature/Feed/FeedPodcasts';
 import PostView from '../feature/Feed/PostView';
 import Notifications from '../feature/Notifications/pages';
+import Podcast from '../feature/Podcast/pages';
 import Profile from '../feature/Profile/pages';
 import EditProfile from '../feature/Profile/pages/EditProfile';
 import Followers from '../feature/Profile/pages/Followers';
@@ -109,6 +111,14 @@ const UserRoutes = {
     {
       path: '/posts/create',
       element: <CreatePost />,
+    },
+    {
+      path: '/podcast/create',
+      element: <Podcast />,
+    },
+    {
+      path: '/feed/podcasts',
+      element: <FeedPodcasts />,
     },
     {
       path: '/posts/article/:articleUid',

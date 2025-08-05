@@ -4,33 +4,47 @@ import { Article, Comment, User } from "../../../models/datamodels";
 import { useGetCommentsByArticleId } from "../hooks";
 import CommentMessage from "./CommentMessage";
 import CommentTab from "./CommentTab";
+import { useGetCommentsTreeForRepost } from "../../Repost/hooks/useRepost";
 
 interface CommentSectionProps {
   article_id: string;
   setIsCommentSectionOpen: (isOpen: boolean) => void;
   author_of_post: User;
-  article:Article
+  article: Article;
 }
 
 const CommentSection: React.FC<CommentSectionProps> = ({
   article_id,
   setIsCommentSectionOpen,
   author_of_post,
-  article
+  article,
 }) => {
   const {
     data: articleComments,
-    isLoading,
-    isError,
+    isLoading: isArticleCommentsLoading,
+    isError: isArticleCommentsError,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
   } = useGetCommentsByArticleId(article_id);
-  const [hasOpenLevelTwo, setHasOpenLevelTwo] = useState(false); // Any level-two open
-  const [activeLevelTwoCommentId, setActiveLevelTwoCommentId] = useState<string | null>(null); // Track active tab
+
+  const {
+    data: repostComments,
+    isLoading: isRepostCommentsLoading,
+    isError: isRepostCommentsError,
+  } = useGetCommentsTreeForRepost(article.repost?.repost_id || "");
+
+  // Determine which loading and error states to use based on article type
+  const isLoading =
+    article.type === "Repost" ? isRepostCommentsLoading : isArticleCommentsLoading;
+  const isError = article.type === "Repost" ? isRepostCommentsError : isArticleCommentsError;
+
+  const [hasOpenLevelTwo, setHasOpenLevelTwo] = useState(false);
+  const [activeLevelTwoCommentId, setActiveLevelTwoCommentId] = useState<string | null>(null);
 
   useEffect(() => {
-  }, [article_id, articleComments]);
+    console.log("Repost comments:", repostComments);
+  }, [article_id, articleComments, repostComments]);
 
   if (isLoading)
     return <LuLoader className="animate-spin text-primary-400 text-xl m-4" />;
@@ -42,17 +56,20 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     );
 
   const handleLevelTwoToggle = (commentId: string, isOpen: boolean) => {
-    setHasOpenLevelTwo(() => {
-      if (isOpen) return true;
-  
-      return false;
-    });
+    setHasOpenLevelTwo(isOpen);
     if (isOpen) {
       setActiveLevelTwoCommentId(commentId);
     } else if (activeLevelTwoCommentId === commentId) {
-      setActiveLevelTwoCommentId(null); 
+      setActiveLevelTwoCommentId(null);
     }
   };
+
+  // Use repost comments directly as array (no pagination)
+  const commentsToRender =
+    article.type === "Repost" && repostComments
+      ? repostComments.commentsTree
+      : articleComments?.pages
+          ?.flatMap((page) => page.data.commentsTree) || [];
 
   return (
     <div className="flex flex-col gap-2">
@@ -67,37 +84,36 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         <CommentTab
           article_id={article_id}
           setIsCommentSectionOpen={setIsCommentSectionOpen}
+          article={article}
         />
       )}
 
       {/* Render comments */}
-      {articleComments?.pages.map((page, pageIndex) =>
-        page.data.commentsTree.map((comment: Comment, index: number) => {
-          const isSameAuthorAsPrevious =
-            index > 0 &&
-            comment.author_id === page.data.commentsTree[index - 1].author_id;
+      {commentsToRender.map((comment: Comment, index: number) => {
+        const isSameAuthorAsPrevious =
+          index > 0 && comment.author_id === commentsToRender[index - 1].author_id;
 
-          return (
-            <CommentMessage
-              key={`${comment._id}-${pageIndex}-${index}`}
-              content={comment.content!}
-              createdAt={comment.createdAt!}
-              author_id={comment.author_id!}
-              isSameAuthorAsPrevious={isSameAuthorAsPrevious}
-              article_id={article_id}
-              comment_id={comment._id!}
-              replies={comment.replies!}
-              author={comment.author!}
-              author_of_post={author_of_post}
-              onLevelTwoToggle={(isOpen) => handleLevelTwoToggle(comment._id!, isOpen)}
-              activeLevelTwoCommentId={activeLevelTwoCommentId} // Pass active ID
-              article={article}
-            />
-          );
-        })
-      )}
+        return (
+          <CommentMessage
+            key={comment._id}
+            content={comment.content!}
+            createdAt={comment.createdAt!}
+            author_id={comment.author_id!}
+            isSameAuthorAsPrevious={isSameAuthorAsPrevious}
+            article_id={article_id}
+            comment_id={comment._id!}
+            replies={comment.replies!}
+            author={comment.author!}
+            author_of_post={author_of_post}
+            onLevelTwoToggle={(isOpen) => handleLevelTwoToggle(comment._id!, isOpen)}
+            activeLevelTwoCommentId={activeLevelTwoCommentId}
+            article={article}
+          />
+        );
+      })}
 
-      {hasNextPage && (
+      {/* Show pagination button only for regular article comments, not repost */}
+      {article.type !== "Repost" && hasNextPage && (
         <button
           onClick={() => fetchNextPage()}
           disabled={isFetchingNextPage}

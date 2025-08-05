@@ -17,7 +17,7 @@ import SideBarProvider from './context/SidebarContext/SideBarProvider.tsx';
 import { ThemeProvider } from './context/Theme/themeProvider.tsx';
 import VoiceLanguageProvider from './context/VoiceLanguageContext/VoiceLanguageProvider.tsx';
 import SearchContainerProvider from './context/suggestionContainer/isSearchProvider.tsx';
-import { AudioPlayerProvider } from './providers/AudioProvider.tsx';
+import { AudioPlayerProvider } from './components/molecules/AudioPlayer/AudioPlayerProvider.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {

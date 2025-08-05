@@ -1,31 +1,25 @@
-// src/layouts/UserLayout.tsx (adjust path as needed)
 import React, { useContext, useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from '../../components/molecules/sidebar/Sidebar';
 import { SidebarContext } from '../../context/SidebarContext/SidebarContext';
-import { useUser } from '../../hooks/useUser'; // Assuming this is your user hook
+import { useUser } from '../../hooks/useUser'; 
 import AuthReminderPopup from '../../feature/AnonymousUser/components/AuthReminderComponent';
-import './index.scss';
+import './index.scss'; 
 
 const UserLayout: React.FC = () => {
-  const { isOpen } = useContext(SidebarContext);
+  const { isOpen, toggleSidebar } = useContext(SidebarContext); 
   const { isLoggedIn } = useUser();
   const [showPopup, setShowPopup] = useState(false);
-  const location = useLocation(); // Get current route
+  const location = useLocation(); 
 
   useEffect(() => {
-    // Don't show popup if user is logged in or route contains "/anonymous"
     if (isLoggedIn || location.pathname.includes('/anonymous')) return;
 
-    // Show popup immediately on mount
     setShowPopup(true);
-
-    // Set up interval for every 5 minutes (300,000 ms)
     const interval = setInterval(() => {
       setShowPopup(true);
     }, 300000);
 
-    // Set up timeout to close popup after 15 seconds
     const timeout = setTimeout(() => {
       setShowPopup(false);
     }, 15000);
@@ -35,22 +29,30 @@ const UserLayout: React.FC = () => {
       clearInterval(interval);
       clearTimeout(timeout);
     };
-  }, [isLoggedIn, location.pathname]); // Add location.pathname to dependencies
+  }, [isLoggedIn, location.pathname]);
 
-  // Handle closing popup and setting new timeout
+
   const handleClosePopup = () => {
     setShowPopup(false);
   };
 
-  // Reset timeout when popup state changes
+
   useEffect(() => {
     if (showPopup) {
       const timeout = setTimeout(() => {
         setShowPopup(false);
-      }, 4000); // Note: You had 4000ms here instead of 15000ms from original
+      }, 4000); 
       return () => clearTimeout(timeout);
     }
   }, [showPopup]);
+
+  // New handler for closing sidebar on smaller screens
+  const handleContentClick = () => {
+
+    if (isOpen && window.innerWidth < 768) {
+      toggleSidebar();
+    }
+  };
 
   return (
     <div className={`relative sm:grid ${!isOpen ? 'grid-cols-[.5fr_5.5fr]' : 'grid-cols-[1fr_5fr]'}`}>
@@ -62,7 +64,15 @@ const UserLayout: React.FC = () => {
         <Sidebar />
       </div>
 
-      <div className="user__content relative">
+   
+      {isOpen && window.innerWidth < 768 && (
+        <div
+          className="fixed inset-0 bg-black/30 z-[900]" 
+          onClick={handleContentClick}
+        ></div>
+      )}
+
+      <div className="user__content relative" onClick={handleContentClick}> 
         <Outlet />
         <AuthReminderPopup isOpen={showPopup} onClose={handleClosePopup} />
       </div>

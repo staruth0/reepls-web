@@ -55,7 +55,7 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
             title={article.title || ""}
             user={user || {}}
             content={article.content || ""}
-            date={article.createdAt || ""}
+            date={article.repost?.repost_date || ""}
             article_id={article._id || ""}
             isArticle={article.isArticle || false}
             article={article}

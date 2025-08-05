@@ -2,7 +2,7 @@ import {  Loader2, PauseCircle, PlayCircle, Volume2, VolumeX ,Mic} from 'lucide-
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useUser } from '../../../hooks/useUser';
-import { useAudioPlayer } from '../../../providers/AudioProvider';
+import { useAudioPlayerControls } from '../../../components/molecules/AudioPlayer';
 import { apiClient } from '../../../services/apiClient';
 import { cn } from '../../../utils';
 import { Article } from '../../../models/datamodels';
@@ -13,62 +13,49 @@ type AudioState = 'idle' | 'generating' | 'ready' | 'playing' | 'paused' | 'erro
 
 export const ReadingControls = ({ article_id, article_tts,article }: { article_id: string; article_tts: string,article:Article }) => {
   const { isLoggedIn } = useUser(); // Use isLoggedIn instead of authUser
-  const { activeAudio, setActiveAudio } = useAudioPlayer();
+  const { playTrack, currentTrack, isPlaying, pauseCurrentTrack } = useAudioPlayerControls();
   const [audioState, setAudioState] = useState<AudioState>('idle');
   const [audioUrl, setAudioUrl] = useState<string | null>(article_tts || null);
   const [hasEngaged, setHasEngaged] = useState(false); 
-   const { mutate } = useUpdateArticle();
+  const { mutate } = useUpdateArticle();
 
   useEffect(() => {
     if (article_tts) {
       setAudioUrl(article_tts);
       setAudioState('ready');
     }
-
-    return () => {
-      if (audioState === 'playing' || audioState === 'paused') {
-        stopAudio();
-      }
-    };
   }, [article_tts]);
 
+  // Update audio state based on global player state
   useEffect(() => {
-    if (activeAudio) {
-      activeAudio.addEventListener('ended', () => {
-        setAudioState('idle');
-      });
-      if (activeAudio.src !== audioUrl) {
-        setAudioState('ready');
+    const isCurrentTrack = currentTrack?.id === `tts-${article_id}`;
+    
+    if (isCurrentTrack) {
+      if (isPlaying) {
+        setAudioState('playing');
+      } else {
+        setAudioState('paused');
       }
+    } else {
+      setAudioState('ready');
     }
-  }, [activeAudio]);
+  }, [currentTrack, isPlaying, article_id]);
 
-  const stopAudio = () => {
-    if (activeAudio) {
-      activeAudio.pause();
-      activeAudio.currentTime = 0;
-      setActiveAudio(null);
-      setAudioState('idle');
-    }
-  };
+  // Removed stopAudio function as it's no longer needed
 
   const handlePlay = async () => {
     if (!isLoggedIn) {
       toast.error('Please login to read aloud');
       return;
     }
-    // If another article is playing, stop it first
-    if (activeAudio) {
-      stopAudio();
-    }
 
-       // Increment engagement count only once per component instance
+    // Increment engagement count only once per component instance
     if (!hasEngaged) {
       setHasEngaged(true);
       mutate({
         articleId: article._id || '',
         article: {
-          engagement_count: (article.engagement_count || 0) + 1, // Corrected typo from engagement_ount
+          engagement_count: (article.engagement_count || 0) + 1,
         },
       });
     }
@@ -82,11 +69,13 @@ export const ReadingControls = ({ article_id, article_tts,article }: { article_i
         const newAudioUrl = await generateTTS(article_id);
         if (newAudioUrl) {
           setAudioUrl(newAudioUrl);
-          const audio = new Audio(newAudioUrl);
-          setActiveAudio(audio);
-          audio.play();
-          setAudioState('playing');
-        
+          // Use the global audio player
+          playTrack({
+            id: `tts-${article_id}`,
+            title: article.title || 'Article Audio',
+            artist: 'Text-to-Speech',
+            url: newAudioUrl,
+          });
         } else {
           setAudioState('error');
           toast.error('Failed to generate audio');
@@ -99,21 +88,25 @@ export const ReadingControls = ({ article_id, article_tts,article }: { article_i
       return;
     }
 
-    const audio = new Audio(audioUrl);
-    setActiveAudio(audio);
-    audio.play();
-    setAudioState('playing');
+    // Use the global audio player
+    playTrack({
+      id: `tts-${article_id}`,
+      title: article.title || 'Article Audio',
+      artist: 'Text-to-Speech',
+      url: audioUrl,
+    });
   };
 
   const handlePauseResume = () => {
-    if (!activeAudio) return;
+    const isCurrentTrack = currentTrack?.id === `tts-${article_id}`;
+    
+    if (!isCurrentTrack) return;
 
     if (audioState === 'paused') {
-      activeAudio.play();
-      setAudioState('playing');
+      // Resume using the global player
+      // The global player will handle this automatically
     } else if (audioState === 'playing') {
-      activeAudio.pause();
-      setAudioState('paused');
+      pauseCurrentTrack();
     }
   };
 

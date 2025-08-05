@@ -25,7 +25,7 @@ interface MessageComponentProps {
   onLevelTwoToggle?: (isOpen: boolean) => void;
   activeLevelTwoCommentId?: string | null;
   article:Article
-}
+}    
 
 const CommentMessage: React.FC<MessageComponentProps> = ({
   content,
@@ -52,6 +52,8 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   const { authUser } = useUser();
    const { mutate } = useUpdateArticle();
    const {goToProfile} = useRoute()
+
+  
 
   useEffect(() => {
     if (reactions?.reactions && Array.isArray(reactions.reactions)) {

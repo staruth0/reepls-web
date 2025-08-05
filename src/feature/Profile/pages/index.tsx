@@ -19,6 +19,8 @@ import BlogSkeletonComponent from "../../Blog/components/BlogSkeleton";
 import { useGetAuthorArticles, useGetAuthorPosts } from "../../Blog/hooks/useArticleHook";
 import ProfileRightSideSkeleton from "../components/ProfileRightSideSkeleton";
 import { getDecryptedUser } from "../../Auth/api/Encryption";
+import ProfileReposts from "../components/ProfileReposts";
+// import { useGetMyReposts } from "../../Repost/hooks/useRepost";
 
 const Profile: React.FC = () => {
   const { t } = useTranslation();
@@ -28,6 +30,8 @@ const Profile: React.FC = () => {
   const navigate = useNavigate();
 
   const { user: userByUsername, isLoading: isLoadingUsername } = useGetUserByUsername(username || "");
+
+
 
   const user = userByUsername;
   const isLoading = isLoadingUsername;
@@ -255,7 +259,7 @@ const Profile: React.FC = () => {
               </>
             )}
             {activeTab === "media" && <ProfileMedia userId={user.id!} />}
-            {activeTab === "reposts" && <ProfileMedia userId={user.id!} />}
+            {activeTab === "reposts" && <ProfileReposts/>}
             {activeTab === "podcasts" && <ProfileMedia userId={user.id!} />}
             <div ref={bottomRef} style={{ height: "100px" }} />
           </div>

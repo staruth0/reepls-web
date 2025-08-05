@@ -6,7 +6,8 @@ import {
   Bookmark,
   Radio,
 } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query"; // Import useQueryClient
+// Removed useQueryClient import as it's no longer directly used in this component's logic
+// import { useQueryClient } from "@tanstack/react-query";
 import { useGetCommentsByArticleId } from "../../../Comments/hooks";
 import ReactionsPopup from "../../../Interactions/components/ReactionsPopup";
 import ReactionModal from "../../../Interactions/components/ReactionModal";
@@ -85,7 +86,8 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
   author_of_post,
 }) => {
   const { isLoggedIn, authUser } = useUser();
-  const queryClient = useQueryClient(); // Initialize queryClient
+  // Removed useQueryClient from here as its direct usage for cache manipulation is now in the hooks
+  // const queryClient = useQueryClient();
 
   // Save article states
   const { mutate: saveArticle, isPending: isSavePending } = useSaveArticle();
@@ -125,12 +127,17 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
   const totalComments = articleComments?.pages?.[0]?.data?.totalComments;
   const reactionCount = allReactions?.reactions?.length || 0;
 
+  // This useEffect is crucial. It will automatically update the `saved` state
+  // whenever `savedArticles` (the React Query cache data) changes,
+  // which includes changes from our optimistic updates and subsequent refetches.
   useEffect(() => {
+    // Check if `savedArticles` data is available and if the current article_id exists within it.
+    // Assuming `savedArticles.articles` is an array where each item has an `article` object with an `_id`.
     const isSaved = savedArticles?.articles?.some(
-      (item: any) => item?.article?._id === article_id // Ensure you're checking the correct property if Article is wrapped
+      (item: any) => item?.article?._id === article_id
     );
     setSaved(isSaved);
-  }, [savedArticles, article_id]);
+  }, [savedArticles, article_id]); // Depend on savedArticles data and article_id
 
   useEffect(() => {
     if (isLoggedIn && authUser?.id && allReactions?.reactions) {
@@ -155,34 +162,38 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
       setShowSaveSignInPopup(true);
       return;
     }
+    // Prevent multiple rapid clicks while a save/remove operation is ongoing
     if (isSavePending || isRemovePending) return;
 
     if (saved) {
+      // If currently saved, call the remove mutation
       removeSavedArticle(article_id, {
-        onSuccess: () => {
-          toast.success(t("blog.alerts.articleRemoved"));
-          // Invalidate and refetch the saved articles query
-          queryClient.invalidateQueries({ queryKey: ["savedArticles"] });
-        },
+        // onSuccess: () => {
+        //   // Success toast is shown here for immediate user feedback
+        //   toast.success(t("blog.alerts.articleRemoved"));
+        //   // No need to setSaved(false) here. The optimistic update in the hook
+        //   // already changed the cache, and the useEffect will react to it.
+        //   // The invalidateQueries in the hook's onSuccess will ensure final consistency.
+        // },
         onError: () => {
+          // Error toast is shown here. The hook's onError will handle the rollback.
           toast.error(t("blog.alerts.articleRemoveFailed"));
-          setSaved(true); // Revert to saved on error
-          // Optional: Roll back to previous data
-          // queryClient.setQueryData(['savedArticles'], context?.previousSavedArticles);
+          // No need to setSaved(true) here for rollback. The hook's onError
+          // already reverted the cache, and the useEffect will react to it.
         },
       });
     } else {
+      // If not saved, call the save mutation
       saveArticle(article_id, {
-        onSuccess: () => {
-          toast.success(t("blog.alerts.articleSaved"));
-          // Invalidate and refetch the saved articles query
-          queryClient.invalidateQueries({ queryKey: ["savedArticles"] });
-        },
+        // onSuccess: () => {
+        //   // Success toast for immediate feedback
+        //   toast.success(t("blog.alerts.articleSaved"));
+        //   // No need to setSaved(true) here. Optimistic update in hook + useEffect handles it.
+        // },
         onError: () => {
+          // Error toast for immediate feedback. Hook's onError handles rollback.
           toast.error(t("blog.alerts.articleSaveFailed"));
-          setSaved(false); // Revert to unsaved on error
-          // Optional: Roll back to previous data
-          // queryClient.setQueryData(['savedArticles'], context?.previousSavedArticles);
+          // No need to setSaved(false) here for rollback.
         },
       });
     }
@@ -469,23 +480,46 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
             onClose={() => setIsRepostModalOpen(false)}
             article_id={article_id}
             author_of_post={author_of_post}
+            article={article}
           />
+
+     
 
           <div
             className="flex items-center hover:text-primary-500 cursor-pointer"
             onClick={handleSavedArticle}
+            // Optional: Disable the button while pending to prevent rapid multiple clicks
+            // disabled={isSavePending || isRemovePending}
           >
-            {!(isSavePending || isRemovePending) && (
-              <Bookmark
-                className={cn(
-                  "size-4",
-                  saved ? "fill-primary-500 text-primary-500" : ""
-                )}
-              />
-            )}
-            {(isSavePending || isRemovePending) && (
-              <LuLoader className="animate-spin size-4" />
-            )}
+            {/* This is the key change for optimistic update display.
+              We primarily rely on the `saved` state for the icon's appearance (filled or not).
+              The loader `LuLoader` should only be a very brief indicator, or even omitted
+              if the optimistic update is truly instantaneous.
+              
+              If the `saved` state changes immediately due to the optimistic cache update,
+              the icon will flip instantly.
+            */}
+            <Bookmark
+              className={cn(
+                "size-4",
+                saved ? "fill-primary-500 text-primary-500" : "", // Icon color determined by 'saved' state
+                (isSavePending || isRemovePending) ? "opacity-50" : "" // Optional: Dim icon slightly while pending
+              )}
+            />
+            {/* If you still want a loading spinner, consider it as an overlay 
+              or a very small indicator next to the icon, not replacing it,
+              as the icon itself reflects the immediate optimistic state.
+              
+              For now, I'll remove the explicit LuLoader in favor of the icon changing state.
+              If the `isPending` still takes too long, it indicates the `useEffect`
+              is not reacting fast enough to the `queryClient.setQueryData`
+              or your network is very fast, making the pending state noticeable anyway.
+            */}
+            {/* // If you still want a loader, make it less intrusive or only for very long ops:
+              {(isSavePending || isRemovePending) && (
+                <LuLoader className="animate-spin size-3 ml-1" /> 
+              )}
+            */}
           </div>
         </div>
 

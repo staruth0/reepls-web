@@ -8,6 +8,7 @@ import {
   Edit,
   BarChart2,
   Flag,
+  MessageSquare,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { LuBadgeCheck, LuLoader } from "react-icons/lu";
@@ -23,16 +24,20 @@ import {
   useGetSavedArticles,
   useRemoveSavedArticle,
   useSaveArticle,
-} from "../../../Saved/hooks";
+} from "../../../Saved/hooks"; // Ensure these hooks have optimistic updates
 import "./Blog.scss";
 import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
 import { useSendFollowNotification } from "../../../Notifications/hooks/useNotification";
 import { useDeleteArticle, useUpdateArticle } from "../../hooks/useArticleHook";
 import ConfirmationModal from "../ConfirmationModal";
 import PostEditModal from "../PostEditModal";
-import { t } from "i18next";
+import { t} from "i18next";
 import ReportArticlePopup from "../../../Reports/components/ReportPostPopup";
 import { timeAgo } from "../../../../utils/dateFormater";
+import { cn } from "../../../../utils"; // Make sure cn utility is imported if you use it
+import BlogRepostModal from "../BlogRepostModal";
+import { useDeleteRepost } from "../../../Repost/hooks/useRepost";
+
 
 interface BlogProfileProps {
   date: string;
@@ -61,6 +66,8 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   const [showSignInPopup, setShowSignInPopup] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showRepostModal, setShowRepostModal] = useState(false);
+  const [showRepostDeleteConfirmation, setShowRepostDeleteConfirmation] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -76,7 +83,15 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
     useSendFollowNotification();
   const { mutate: deleteArticle, isPending: isDeletePending } =
     useDeleteArticle();
+  const { mutate: deleteRepost, isPending: isDeleteRepostPending } =
+    useDeleteRepost();
   const [showReportPopup, setShowReportPopup] = useState(false);
+
+
+
+
+  // Check if current user is the reposted user
+  const isCurrentUserReposted = article?.repost?.repost_user?._id === authUser?.id;
 
   const articleTitle =
     title ||
@@ -86,18 +101,21 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   const articleUrl = `${window.location.origin}/posts/${
     isArticle ? "article" : "post"
   }/${isArticle ? "slug/" + article.slug : article_id}`;
-  const { mutate } = useUpdateArticle();
+  const { mutate } = useUpdateArticle(); // This is for updating article properties, not for save/remove status
 
   const isCurrentAuthorArticle = user?._id === authUser?.id;
 
   const handleProfileClick = (username: string) => {
-    mutate({
-      articleId: article._id || "",
-      article: {
-        author_profile_views_count: article.author_profile_views_count! + 1,
-        engagement_count: article.engagement_count! + 1,
-      },
-    });
+    // Only update engagement if the user being clicked is not the current auth user
+    if (user?._id !== authUser?.id) {
+      mutate({
+        articleId: article._id || "",
+        article: {
+          author_profile_views_count: (article.author_profile_views_count || 0) + 1,
+          engagement_count: (article.engagement_count || 0) + 1,
+        },
+      });
+    }
     if (username) {
       goToProfile(username);
     }
@@ -117,40 +135,77 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
     });
   };
 
+  const handleEditRepostCommentary = () => {
+    setShowRepostModal(true);
+    setShowMenu(false);
+  };
+
+  const handleDeleteRepost = () => {
+    if (article?._id) {
+   
+      deleteRepost(article._id, {
+        onSuccess: () => {
+          toast.success("Repost deleted successfully");
+          setShowRepostDeleteConfirmation(false);
+          navigate("/feed");
+        },
+        onError: (error) => {
+          toast.error("An error occurred while trying to delete repost");
+          console.error("Failed to delete repost:", error.message);
+          setShowRepostDeleteConfirmation(false);
+        },
+      });
+    }
+  };
+
   const handleSavedArticle = () => {
     if (!isLoggedIn) {
       setShowSignInPopup(true);
       return;
     }
+    // Prevent multiple rapid clicks while a save/remove operation is ongoing
     if (isSavePending || isRemovePending) return;
 
     if (saved) {
       removeSavedArticle(article_id, {
         onSuccess: () => {
           toast.success(t("blog.alerts.articleRemoved"));
+          // The `useEffect` below will react to the optimistic update in `useRemoveSavedArticle`
+          // which modifies the `savedArticles` cache.
+          
+          // You might still want to update engagement count immediately for the user experience,
+          // though for true consistency, this should ideally also be part of an optimistic
+          // update on a 'main article' query or handled by your backend.
           mutate({
             articleId: article._id || "",
             article: {
-              engagement_count: article.engagement_count! - 1,
+              engagement_count: (article.engagement_count || 0) - 1,
             },
           });
-          setSaved(false);
         },
-        onError: () => toast.error(t("blog.alerts.articleRemoveFailed")),
+        onError: () => {
+          toast.error(t("blog.alerts.articleRemoveFailed"));
+          // The `useEffect` below will react to the rollback in `useRemoveSavedArticle`.
+        },
       });
     } else {
       saveArticle(article_id, {
         onSuccess: () => {
           toast.success(t("blog.alerts.articleSaved"));
-          setSaved(true);
+          // The `useEffect` below will react to the optimistic update in `useSaveArticle`.
+
+          // Similar to above, client-side engagement update.
           mutate({
             articleId: article._id || "",
             article: {
-              engagement_count: article.engagement_count! + 1,
+              engagement_count: (article.engagement_count || 0) + 1,
             },
           });
         },
-        onError: () => toast.error(t("blog.alerts.articleSaveFailed")),
+        onError: () => {
+          toast.error(t("blog.alerts.articleSaveFailed"));
+          // The `useEffect` below will react to the rollback in `useSaveArticle`.
+        },
       });
     }
   };
@@ -169,8 +224,8 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
           mutate({
             articleId: article._id || "",
             article: {
-              author_follower_count: article.author_follower_count! - 1,
-              engagement_count: article.engagement_count! - 1,
+              author_follower_count: (article.author_follower_count || 0) - 1,
+              engagement_count: (article.engagement_count || 0) - 1,
             },
           });
         },
@@ -185,8 +240,8 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
             mutate({
               articleId: article._id || "",
               article: {
-                author_follower_count: article.author_follower_count! + 1,
-                engagement_count: article.engagement_count! + 1,
+                author_follower_count: (article.author_follower_count || 0) + 1,
+                engagement_count: (article.engagement_count || 0) + 1,
               },
             });
           },
@@ -202,7 +257,6 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   };
 
   const handleEllipsisClick = () => {
-    // check() // This function is empty, no need to call it.
     if (!isLoggedIn) {
       setShowSignInPopup(true);
     } else {
@@ -224,55 +278,53 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
     setShowMenu(false);
   };
 
-  // function check() {
-  //   // This function remains empty as per your request
-  // }
-
+  // This useEffect ensures the 'saved' state is always in sync with the savedArticles cache.
+  // It will react to both optimistic updates and actual server responses (via invalidateQueries).
   useEffect(() => {
     const isSaved = savedArticles?.articles?.some(
-      (article: ArticleDuplicate) => article?.article?._id === article_id
+      (item: ArticleDuplicate) => item?.article?._id === article_id
     );
     setSaved(isSaved);
   }, [savedArticles, article_id]);
 
-  const getFollowStatusText = (isMenu = false) => {
+
+  // Helper function for follow status text display
+  const getFollowStatusText = () => {
     if (!isLoggedIn) return t("follow");
     if (isFollowPending) return `${t("following")}...`;
     if (isUnfollowPending) return `${t("unfollowing")}...`;
-    return isFollowing(user?._id || "")
-      ? t("")
-      : isMenu
-      ? t("blog.Followauthor")
-      : t("follow");
-  };
-  const getFollowMenuStatusText = (isMenu = false) => {
-    if (!isLoggedIn) return t("follow");
-    if (isFollowPending) return `${t("following")}...`;
-    if (isUnfollowPending) return `${t("unfollowing")}...`;
-    return isFollowing(user?._id || "")
-      ? t("following")
-      : isMenu
-      ? t("blog.Followauthor")
-      : t("follow");
+    // This is for the main 'Follow' button next to the author's name
+    return isFollowing(user?._id || "") ? "" : t("follow"); // Empty string to hide if already following
   };
 
+  // Helper function for follow status text display in the menu
+  const getFollowMenuStatusText = () => {
+    if (!isLoggedIn) return t("follow");
+    if (isFollowPending) return `${t("following")}...`;
+    if (isUnfollowPending) return `${t("unfollowing")}...`;
+    // This is for the menu item 'Follow author' or 'Following'
+    return isFollowing(user?._id || "") ? t("following") : t("blog.Followauthor");
+  };
+
+  // Helper function for save status text display - NOW SHARED LOGIC!
   const getSaveStatusText = () => {
     if (!isLoggedIn) return t("blog.AddToSaved");
+    // The `saved` state should update optimistically,
+    // so `isSavePending` and `isRemovePending` primarily manage text display during the network call.
     if (isSavePending) return t("blog.saving");
     if (isRemovePending) return t("blog.removing");
     return saved ? t("blog.UnsavePost") : t("blog.AddToSaved");
   };
 
+  // Initial loader for the entire component if user data isn't loaded yet.
+  // This is fine as it indicates data fetching for the profile.
   if (!user) {
     return <LuLoader className="size-4 animate-spin my-auto" />;
   }
 
   return (
     <div className="blog-profile relative flex items-center justify-between">
-      {" "}
-      {/* Changed back to justify-between */}
       {isRepostedView ? (
-        // Simplified view for reposted content
         <div className="flex items-center gap-2">
           <p
             className="font-semibold cursor-pointer"
@@ -285,7 +337,6 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
           <span className="text-neutral-300 text-sm">Reposted</span>
         </div>
       ) : (
-        // Original detailed view
         <>
           {user?.profile_picture &&
           user?.profile_picture !== "https://example.com/default-profile.png" &&
@@ -306,8 +357,6 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
             </span>
           )}
           <div className="profile-info flex-1 ml-3">
-            {" "}
-            {/* Added ml-3 for consistent gap */}
             <div className="profile-name flex items-center gap-1">
               <p
                 className="hover:underline cursor-pointer text-base font-semibold"
@@ -326,12 +375,15 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
                 <div>
                   {!isCurrentAuthorArticle && (
                     <span
-                      className={`cursor-pointer text-primary-400 hover:underline ml-2 text-sm ${
-                        !isLoggedIn ? "pointer-events-none opacity-50" : ""
-                      }`}
+                      className={cn( // Use cn utility for class concatenation
+                        `cursor-pointer text-primary-400 hover:underline ml-2 text-sm`,
+                        !isLoggedIn ? "pointer-events-none opacity-50" : "", // Grey out if not logged in
+                        (isFollowPending || isUnfollowPending) ? "opacity-70" : "" // Subtle dim for pending
+                      )}
                       onClick={handleFollowClick}
                     >
                       {getFollowStatusText()}
+                      {(isFollowPending || isUnfollowPending) && <LuLoader className="animate-spin size-3 ml-1 inline-block" />} {/* Small loader next to text */}
                     </span>
                   )}
                 </div>
@@ -348,7 +400,6 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
           </div>
         </>
       )}
-      {/* Ellipsis menu remains common to both views */}
       <div className="relative">
         {showMenu ? (
           <X
@@ -399,16 +450,53 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
                     <div>{t("blog.Delete")}</div>
                   </div>
                 </>
+              ) : isCurrentUserReposted ? (
+                <>
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                    onClick={handleEditRepostCommentary}
+                  >
+                    <MessageSquare size={18} className="text-neutral-500" />
+                    <div>Edit Commentary</div>
+                  </div>
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                    onClick={handleShareClick}
+                  >
+                    <Share2 size={18} className="text-neutral-500" />
+                    <div>{t("blog.Share")}</div>
+                  </div>
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer text-red-500"
+                    onClick={() => setShowRepostDeleteConfirmation(true)}
+                  >
+                    <Trash2 size={18} className="text-red-500" />
+                    <div>Delete Repost</div>
+                  </div>
+                </>
               ) : (
                 <>
                   {(!isArticle ||
                     (isArticle && article?.type === "Repost")) && (
                     <div
-                      className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                      className={cn( // Apply conditional styling to the div for disabling click
+                        "flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer",
+                        (isSavePending || isRemovePending) ? "pointer-events-none opacity-70" : "" // Disable and dim while pending
+                      )}
                       onClick={handleSavedArticle}
                     >
-                      <Bookmark size={18} className="text-neutral-500" />
-                      <div>{getSaveStatusText()}</div>
+                      <Bookmark
+                        size={18}
+                        className={cn(
+                          "text-neutral-500",
+                          saved ? "fill-primary-500 text-primary-500" : "", // Filled/colored if saved (optimistic)
+                       
+                        )}
+                      />
+                      <div>
+                        {getSaveStatusText()}
+                        {(isSavePending || isRemovePending) && <LuLoader className="animate-spin size-3 ml-1 inline-block" />} {/* Small loader next to text */}
+                      </div>
                     </div>
                   )}
                   <div
@@ -419,11 +507,17 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
                     {t("blog.ReportPost")}
                   </div>
                   <div
-                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                    className={cn( // Apply conditional styling to the div for disabling click
+                      "flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer",
+                      (isFollowPending || isUnfollowPending) ? "pointer-events-none opacity-70" : "" // Disable and dim while pending
+                    )}
                     onClick={handleFollowClick}
                   >
                     <UserPlus size={18} className="text-neutral-500" />
-                    {getFollowMenuStatusText(true)}
+                    <div>
+                      {getFollowMenuStatusText()}
+                      {(isFollowPending || isUnfollowPending) && <LuLoader className="animate-spin size-3 ml-1 inline-block" />} {/* Small loader next to text */}
+                    </div>
                   </div>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
@@ -453,6 +547,7 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
         />
       )}
       {showReportPopup && (
+        
         <ReportArticlePopup
           articleTitle={articleTitle}
           articleId={article_id}
@@ -474,6 +569,28 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
           isModalOpen={showEditModal}
           setIsModalOpen={setShowEditModal}
           articleId={article_id}
+        />
+      )}
+      {showRepostModal && (
+        <BlogRepostModal
+          isOpen={showRepostModal}
+          onClose={() => setShowRepostModal(false)}
+          article_id={article_id}
+          article={article}
+          author_of_post={user}
+          isEditMode={true}
+          repostId={article?.repost?.repost_id}
+          initialComment={article?.repost?.repost_comment}
+        />
+      )}
+      {showRepostDeleteConfirmation && (
+        <ConfirmationModal
+          title="Delete Repost"
+          message="Are you sure you want to delete this repost? This action cannot be undone."
+          onConfirm={handleDeleteRepost}
+          onCancel={() => setShowRepostDeleteConfirmation(false)}
+          confirmText={isDeleteRepostPending ? "Deleting..." : "Delete"}
+          confirmColor="red"
         />
       )}
     </div>

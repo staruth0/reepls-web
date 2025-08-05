@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MessageCircle, Heart, Share, User2 } from 'lucide-react';
 import { FaSpinner } from 'react-icons/fa';
-import { User, Article, MediaItem as ArticleMediaItem } from '../../../../models/datamodels';
+import { User, Article, MediaItem as ArticleMediaItem } from '../../../models/datamodels';
 
 import { LuLoader } from 'react-icons/lu';
-import { useRepostArticle, useUpdateRepost } from '../../../Repost/hooks/useRepost';
+import { useRepostArticle, useUpdateRepost } from '../../Repost/hooks/useRepost';
 
 interface RepostModalProps {
   isOpen: boolean;
