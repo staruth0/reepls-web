@@ -47,7 +47,7 @@ const ArticleNormalNoCommentary: React.FC<articleprobs> = ({ article }) => {
 
   return (
     <>
-      <div className=" mb-2 mx-2 border-b-2 border-[#E1E1E1] py-2">
+      <div className=" mb-2 mx-2 border-b-1 border-[#E1E1E1] py-2">
         <BlogArticleProfileNoComment
           title={article.title || ""}
           user={user || {}}

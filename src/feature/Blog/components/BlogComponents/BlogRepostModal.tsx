@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MessageCircle, Heart, Share, User2 } from 'lucide-react';
+import { X, MessageCircle, Heart, Share, User2, MoreHorizontal } from 'lucide-react';
 import { FaSpinner } from 'react-icons/fa';
 import { User, Article, MediaItem as ArticleMediaItem } from '../../../../models/datamodels';
 
@@ -39,10 +39,10 @@ const RepostStatusModal: React.FC<RepostStatusModalProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[4000]">
       <div className="bg-background p-6 rounded-lg max-w-md w-full mx-4">
         <div className="text-center">
-          <h3 className="text-lg font-medium mb-4">
+          <h3 className="text-lg font-medium mb-4 text-foreground">
             {isSuccess ? (isEdit ? "Commentary Updated!" : "Repost Successful!") : (isEdit ? "Update Failed" : "Repost Failed")}
           </h3>
-          <p className="mb-6">
+          <p className="mb-6 text-neutral-100">
             {isSuccess
               ? (isEdit 
                   ? "Your commentary has been updated successfully."
@@ -53,14 +53,14 @@ const RepostStatusModal: React.FC<RepostStatusModalProps> = ({
             {!isSuccess && onRetry && (
               <button
                 onClick={onRetry}
-                className="px-4 py-2 bg-[var(--primary-500)] text-[var(--plain-b)] rounded hover:bg-[var(--primary-600)] transition"
+                className="px-4 py-2 bg-primary-400 text-background rounded hover:bg-primary-500 transition"
               >
                 Try Again
               </button>
             )}
             <button
               onClick={onClose}
-              className="px-4 py-2 border border-[var(--neutral-500)] rounded hover:bg-[var(--neutral-800)] transition text-[var(--plain-a)]"
+              className="px-4 py-2 border border-neutral-300 rounded hover:bg-neutral-600 transition text-neutral-50"
             >
               OK
             </button>
@@ -196,7 +196,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
           <img
             src={images[0].url}
             alt="Post image"
-            className="w-full h-64 object-cover rounded-md"
+            className="w-full h-64 object-cover rounded-lg"
           />
         </div>
       );
@@ -210,7 +210,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
               key={mediaItem.url + index} 
               src={mediaItem.url}
               alt={`Post image ${index + 1}`}
-              className="w-full h-32 object-cover rounded-md"
+              className="w-full h-32 object-cover rounded-lg"
             />
           ))}
         </div>
@@ -223,7 +223,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
           <img
             src={images[0].url}
             alt="Post image 1"
-            className="w-full h-40 object-cover rounded-md row-span-2"
+            className="w-full h-40 object-cover rounded-lg row-span-2"
           />
           <div className="grid grid-rows-2 gap-2">
             {images.slice(1, 3).map((mediaItem: ArticleMediaItem, index: number) => (
@@ -231,7 +231,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
                 key={mediaItem.url + index}
                 src={mediaItem.url}
                 alt={`Post image ${index + 2}`}
-                className="w-full h-[76px] object-cover rounded-md"
+                className="w-full h-[76px] object-cover rounded-lg"
               />
             ))}
           </div>
@@ -247,17 +247,17 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
               key={mediaItem.url + index}
               src={mediaItem.url}
               alt={`Post image ${index + 1}`}
-              className="w-full h-32 object-cover rounded-md"
+              className="w-full h-32 object-cover rounded-lg"
             />
           ))}
           <div className="relative">
             <img
               src={images[3].url}
               alt="Post image 4"
-              className="w-full h-32 object-cover rounded-md"
+              className="w-full h-32 object-cover rounded-lg"
             />
             {imageCount > 4 && (
-              <div className="absolute inset-0 bg-black bg-opacity-50 rounded-md flex items-center justify-center">
+              <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
                 <span className="text-white text-lg font-semibold">+{imageCount - 4}</span>
               </div>
             )}
@@ -269,10 +269,10 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
 
   const ErrorState = () => (
     <div className="p-4">
-      <div className="border border-[var(--primary-300)] rounded-md p-4 bg-[var(--primary-50)]">
+      <div className="border border-red-200 rounded-lg p-4 bg-red-50">
         <div className="text-center">
-          <p className="text-[var(--primary-700)] font-medium">Article data not available</p>
-          <p className="text-[var(--primary-600)] text-sm mt-1">Please ensure the article data is passed correctly.</p>
+          <p className="text-red-600 font-medium">Article data not available</p>
+          <p className="text-red-500 text-sm mt-1">Please ensure the article data is passed correctly.</p>
         </div>
       </div>
     </div>
@@ -301,37 +301,34 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
             onClick={handleOverlayClick}
           >
             {/* Overlay */}
-            <div className="absolute inset-0 bg-[var(--foreground)]/50 backdrop-blur-sm" />
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
 
             {/* Modal */}
             <motion.div
-              className="relative w-full max-w-[600px] max-h-[90vh] bg-[var(--background)] rounded-xl shadow-2xl overflow-hidden
-                md:max-w-[600px] md:max-h-[90vh]  // For medium screens and up
-                sm:max-w-full sm:max-h-full sm:rounded-none sm:h-full // For small screens
-                "
+              className="relative w-full max-w-2xl max-h-[90vh] bg-background rounded-xl shadow-2xl overflow-hidden"
               variants={modalVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-4 border-b border-[var(--neutral-500)]">
-                <h2 className="text-lg font-semibold text-[var(--foreground)]">
+              <div className="flex items-center justify-between p-4 border-b border-neutral-400">
+                <h2 className="text-lg font-semibold text-foreground">
                   {isEditMode ? 'Edit Commentary' : 'Repost'}
                 </h2>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-[var(--neutral-600)] rounded-full transition-colors"
+                  className="p-2 hover:bg-neutral-600 rounded-full transition-colors"
                 >
-                  <X size={20} className="text-[var(--neutral-200)]" />
+                  <X size={20} className="text-neutral-100" />
                 </button>
               </div>
 
               {/* Scrollable Content */}
-              <div className="overflow-y-auto h-[calc(100%-140px)] sm:h-[calc(100vh-140px)] scrollbar-hide">
+              <div className="overflow-y-auto max-h-[calc(90vh-140px)]">
                 {/* Thoughts Section */}
-                <div className="p-4">
-                  <label htmlFor="thoughts" className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <div className="p-4 border-b border-neutral-400">
+                  <label htmlFor="thoughts" className="block text-sm font-medium text-neutral-50 mb-2">
                     {isEditMode ? 'Edit your thoughts' : 'Add your thoughts'}
                   </label>
                   <textarea
@@ -339,7 +336,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
                     value={thoughts}
                     onChange={(e) => setThoughts(e.target.value)}
                     placeholder={isEditMode ? "Update your thoughts about this post..." : "What do you think about this post?"}
-                    className="w-full p-3 border border-[var(--neutral-500)] rounded-md resize-none focus:ring-1 focus:ring-[var(--primary-400)] focus:border-transparent transition-all bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--neutral-300)]"
+                    className="w-full p-3 border border-neutral-300 rounded-lg resize-none focus:ring-1 focus:ring-primary-400 focus:border-transparent transition-all bg-background text-foreground"
                     rows={3}
                   />
                 </div>
@@ -350,15 +347,15 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
                     {isLoadingOrError && !article ? (
                       <ErrorState />
                     ) : (
-                      <FaSpinner className="animate-spin text-[var(--neutral-500)] mx-auto my-4" />
+                      <FaSpinner className="animate-spin text-neutral-200 mx-auto my-4" />
                     )}
                   </div>
                 ) : (
                   <div className="p-4">
-                    <div className="border border-[var(--neutral-500)] rounded-md p-4 bg-[var(--neutral-700)]">
+                    <div className="border border-neutral-400 rounded-lg p-4 bg-neutral-700">
                       {/* Author Info */}
                       <div className="flex items-center space-x-3 mb-3">
-                        <div className="w-10 h-10 bg-[var(--secondary-400)] rounded-full flex items-center justify-center text-[var(--plain-b)]">
+                        <div className="w-10 h-10 bg-secondary-400 rounded-full flex items-center justify-center">
                           {author_of_post?.profile_picture ? (
                             <img
                               src={author_of_post.profile_picture}
@@ -366,22 +363,27 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
                               className="w-full h-full rounded-full object-cover"
                             />
                           ) : (
-                            <User2 size={20} />
+                            <User2 size={20} className="text-neutral-100" />
                           )}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-[var(--foreground)]">
+                          <h3 className="font-semibold text-foreground">
                             {author_of_post?.name || 'Unknown Author'}
                           </h3>
-                          <p className="text-sm text-[var(--neutral-300)]">
+                          <p className="text-sm text-neutral-100">
                             @{author_of_post?.username || 'unknown'} • {article.createdAt ? new Date(article.createdAt).toLocaleDateString() : 'Unknown date'}
                           </p>
+                        </div>
+                        <div className="ml-auto">
+                          <button className="p-1 hover:bg-neutral-600 rounded-full transition-colors">
+                            <MoreHorizontal size={16} className="text-neutral-100" />
+                          </button>
                         </div>
                       </div>
 
                       {/* Post Content */}
                       <div className="mb-4">
-                        <p className="text-[var(--foreground)] leading-relaxed">
+                        <p className="text-foreground leading-relaxed">
                           {article.content || 'No content available'}
                         </p>
                       </div>
@@ -391,41 +393,23 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
                         renderImageGrid(article.media.filter((item: ArticleMediaItem) => item.type === 'image'))
                       )}
 
-                      <div className="flex items-center justify-between pt-3 border-t border-[var(--neutral-500)]">
+                      {/* Engagement Stats */}
+                      <div className="flex items-center justify-between pt-3 border-t border-neutral-400">
                         <div className="flex items-center space-x-6">
-                          <div className="flex items-center space-x-2 text-[var(--neutral-200)]">
+                          <div className="flex items-center space-x-2 text-neutral-100 transition-colors">
                             <Heart size={18} />
                             <span className="text-sm">{article.reaction_count || 0}</span>
                           </div>
-                          
 
-                          <div className="flex items-center space-x-2 text-[var(--neutral-200)]">
+                          <div className="flex items-center space-x-2 text-neutral-100  transition-colors">
                             <MessageCircle size={18} />
                             <span className="text-sm">{article.comment_count || 0}</span>
                           </div>
 
-                          <div className="flex items-center space-x-2 text-[var(--neutral-200)]">
+                          <div className="flex items-center space-x-2 text-neutral-100  transition-colors">
                             <Share size={18} />
                             <span className="text-sm">{article.shares_count || 0}</span>
                           </div>
-                          <div className="p-4 border-t border-[var(--neutral-500)] bg-[var(--background)]">
-                <div className="flex items-center justify-end space-x-3">
-                  <button
-                    onClick={handleRepost}
-                    className="px-8 py-3 !bg-[var(--primary-400)] !text-[var(--plain-b)] rounded-full !hover:bg-[var(--primary-500)] transition-colors font-medium"
-                    disabled={isPending}
-                  >
-                    {isPending ? (
-                      <>
-                        <LuLoader className="animate-spin inline-block mr-2" /> 
-                        {isEditMode ? 'Updating...' : 'Reposting...'}
-                      </>
-                    ) : (
-                      isEditMode ? 'Update commentary' : 'Repost now'
-                    )}
-                  </button>
-                </div>
-              </div>
                         </div>
                       </div>
                     </div>
@@ -434,7 +418,30 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
               </div>
 
               {/* Footer */}
-         
+              <div className="p-4 border-t border-neutral-400 bg-neutral-700">
+                <div className="flex items-center justify-end space-x-3">
+                  <button
+                    onClick={onClose}
+                    className="px-4 py-2 text-neutral-100 hover:text-foreground transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleRepost}
+                    disabled={isPending}
+                    className="px-6 py-2 !bg-primary-400 !text-white rounded-lg hover:bg-primary-500 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isPending ? (
+                      <>
+                        <LuLoader className="animate-spin inline-block mr-2" size={16} />
+                        {isEditMode ? 'Updating...' : 'Reposting...'}
+                      </>
+                    ) : (
+                      isEditMode ? 'Update Commentary' : 'Repost'
+                    )}
+                  </button>
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -443,4 +450,4 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
   );
 };
 
-export default BlogRepostModal; 
+export default BlogRepostModal;

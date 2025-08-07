@@ -52,14 +52,14 @@ const RepostStatusModal: React.FC<RepostStatusModalProps> = ({
             {!isSuccess && onRetry && (
               <button
                 onClick={onRetry}
-                className="px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600 transition"
+                className="px-4 py-2 bg-primary-400 text-white rounded hover:bg-primary-600 transition"
               >
                 Try Again
               </button>
             )}
             <button
               onClick={onClose}
-              className="px-4 py-2 border border-neutral-500 rounded hover:bg-neutral-800 transition"
+              className="px-4 py-2 border border-neutral-400 rounded hover:bg-neutral-800 transition"
             >
               OK
             </button>
@@ -208,24 +208,24 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
         onRetry={handleRetryRepost}
       />
 
-      <div className="blog-reaction-session border-t border-neutral-500 flex gap-4">
+      <div className="blog-reaction-session border-t border-neutral-400 flex gap-4">
         {/* React Button */}
         <div className="relative">
           <button
             onMouseEnter={() => isLoggedIn && setModalOpen(true)}
             onClick={handleReactClick}
             className={`flex items-center gap-2 cursor-pointer group
-              ${userReaction ? "text-primary-500" : "text-neutral-50"} `}
+              ${userReaction ? "text-primary-400" : "text-neutral-50"} `}
           >
             <ThumbsUp
               className={`size-5
                 ${
                   userReaction
-                    ? "fill-primary-500 text-primary-500"
+                    ? "fill-primary-400 text-primary-400"
                     : "text-neutral-50"
-                } group-hover:text-primary-500 group-hover:fill-primary-500`}
+                } group-hover:text-primary-400 group-hover:fill-primary-400`}
             />
-            <span className="group-hover:text-primary-500">
+            <span className="group-hover:text-primary-400">
               {userReaction ? t("blog.Reacted") : t("blog.React")}
             </span>
           </button>
@@ -244,8 +244,8 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
             className="text-neutral-50 cursor-pointer flex items-center gap-2 group"
             onClick={toggleCommentTab}
           >
-            <MessageCircle className="size-5 text-neutral-50 group-hover:text-primary-500" />
-            <span className="group-hover:text-primary-500">
+            <MessageCircle className="size-5 text-neutral-50 group-hover:text-primary-400" />
+            <span className="group-hover:text-primary-400">
               {" "}
               {t("blog.Comment")}{" "}
             </span>
@@ -270,15 +270,15 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
             className="flex gap-1 items-center text-neutral-50 cursor-pointer group"
             onClick={handleRepostClick}
           >
-            <Radio className="size-5 text-neutral-50 group-hover:text-primary-500" />
-            <span className="text-[14px] text-neutral-50 group-hover:text-primary-500">
+            <Radio className="size-5 text-neutral-50 group-hover:text-primary-400" />
+            <span className="text-[14px] text-neutral-50 group-hover:text-primary-400">
               Repost
             </span>
           </button>
 
           {/* Repost Tooltip (for reposted articles) */}
           {article.type === "Repost" && showRepostTooltip && (
-            <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-background border border-neutral-500 text-neutral-50 text-xs rounded-md py-1.5 px-2.5 whitespace-nowrap z-50 shadow-lg">
+            <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-background border border-neutral-400 text-neutral-50 text-xs rounded-md py-1.5 px-2.5 whitespace-nowrap z-50 shadow-lg">
               Note: Reposting this article will share its original content
               {/* Tooltip arrow */}
               <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-0 border-t-4 border-l-transparent border-r-transparent border-t-background" />
@@ -303,7 +303,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
                     "Repost only"
                   )}
                 </button>
-                <div className="w-full h-[.5px] bg-neutral-500"></div>
+                <div className="w-full h-[.5px] bg-neutral-400"></div>
                 <button
                   onClick={handleRepostWithThought}
                   className="py-2 text-s hover:text-primary-400 transition-colors"
