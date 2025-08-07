@@ -16,7 +16,6 @@ import {
   updateRepost,
   deleteRepost,
   cleanupOrphanedReposts,
-  ReactionType,
   TargetType,
   ShareTargetType,
   getAllRepostComments,
@@ -51,10 +50,12 @@ export const useAddCommentToRepost = () => {
     mutationFn: ({
       repostId,
       content,
+      parent_comment_id,
     }: {
       repostId: string;
       content: string;
-    }) => addCommentToRepost(repostId, { content }),
+      parent_comment_id?: string;
+    }) => addCommentToRepost(repostId, { content, parent_comment_id }),
     onSuccess: ( ) => {
       queryClient.invalidateQueries({
         queryKey: ["repost-comments-tree"],
@@ -106,14 +107,14 @@ export const useGetMyReposts = (page: number = 1, limit: number = 10) => {
 /**
  * React Query hook to create a new reaction or update an existing one.
  */
-export const useCreateUpdateReaction = () => {
+export const useCreateReactionRepost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (variables: {
       target_id: string;
       target_type: TargetType;
-      type: ReactionType;
+      type: string;
     }) => createUpdateReaction(variables),
     onSuccess: ( variables) => {
       queryClient.invalidateQueries({
@@ -173,13 +174,13 @@ export const useGetReactionById = (reactionId: string, enabled: boolean = true) 
 /**
  * React Query hook to modify an existing reaction's type.
  */
-export const useUpdateReaction = () => {
+export const useUpdateReactionRepost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (variables: { reactionId: string; type: ReactionType }) =>
+    mutationFn: (variables: { reactionId: string; type: string }) =>
       updateReaction(variables.reactionId, { type: variables.type }),
-    onSuccess: ( ) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["reaction"] });
       // Depending on how you display reactions, you might need to invalidate broader queries.
       // E.g., queryClient.invalidateQueries({ queryKey: ["reactions-by-target"] });

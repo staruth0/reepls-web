@@ -108,6 +108,7 @@ export const cleanupOrphanedReposts = async (): Promise<CleanupOrphanedResponse>
 
 export interface AddCommentToRepostPayload {
   content: string;
+  parent_comment_id?: string; 
 }
 
 export interface RepostComment {
@@ -234,12 +235,12 @@ export type TargetType = "Article" | "Comment" | "Repost";
 export interface CreateUpdateReactionPayload {
   target_id: string;
   target_type: TargetType;
-  type: ReactionType;
+  type: string;
 }
 
 export interface ReactionResponseData {
   _id: string;
-  type: ReactionType;
+  type: string;
   user_id: string;
   target_id: string;
   target_type: TargetType;
@@ -249,7 +250,7 @@ export interface ReactionResponseData {
 }
 
 export interface UpdateReactionPayload {
-  type: ReactionType;
+  type:  string; // Allow string for flexibility
 }
 
 export interface GetAllReactionsForTargetResponse {

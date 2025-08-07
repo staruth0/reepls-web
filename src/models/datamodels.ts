@@ -164,6 +164,7 @@ export interface Comment {
   _id?: string;
   author?: User;
   comment_id?:string;
+  repostId?: string; 
 }
 
 export interface Follow {

@@ -3,9 +3,17 @@ import { heart, sadface, smile, thumb, clap } from "../../../assets/icons";
 import { useUser } from "../../../hooks/useUser";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import { useCreateReaction, useGetArticleReactions, useUpdateReaction } from "../../Interactions/hooks";
+import {
+  useCreateReaction,
+  useGetArticleReactions,
+  useUpdateReaction,
+} from "../../Interactions/hooks";
 import { ReactionReceived, Article } from "../../../models/datamodels";
 import { t } from "i18next";
+import {
+  useCreateReactionRepost,
+  useUpdateReactionRepost,
+} from "../../Repost/hooks/useRepost";
 
 interface ReactionModalProps {
   isOpen: boolean;
@@ -15,110 +23,189 @@ interface ReactionModalProps {
   article: Article;
 }
 
-const ReactionModal: React.FC<ReactionModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  onReact, 
+const ReactionModal: React.FC<ReactionModalProps> = ({
+  isOpen,
+  onClose,
+  onReact,
   article_id,
-  // article 
+  article,
 }) => {
   const [isPending, setIsPending] = useState(false);
   const [pendingReaction, setPendingReaction] = useState<string | null>(null);
   const [successReaction, setSuccessReaction] = useState<string | null>(null);
   const { authUser } = useUser();
+
   const { mutate: createReaction } = useCreateReaction();
   const { mutate: updateReaction } = useUpdateReaction();
   const { data: allReactions } = useGetArticleReactions(article_id);
 
+  const { mutate: createReactionRepost } = useCreateReactionRepost();
+  const { mutate: updateReactionRepost } = useUpdateReactionRepost();
+
+  // Determine if the article is a repost for conditional logic
+  const isRepost = article?.type === "Repost" && !!article?.repost?.repost_id;
+  // Safely get repost ID if available
+  const repostId = article?.repost?.repost_id;
+
   // Close the modal when clicking outside
   useEffect(() => {
     if (!isOpen) return;
-    
+
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (!target.closest('.reaction-modal-content')) {
+      if (!target.closest(".reaction-modal-content")) {
         onClose();
       }
     };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen, onClose]);
 
-  // Handle escape key
+  // Handle escape key to close modal
   useEffect(() => {
     if (!isOpen) return;
-    
+
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === "Escape") onClose();
     };
-    
-    document.addEventListener('keydown', handleEsc);
-    return () => document.removeEventListener('keydown', handleEsc);
+
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
   }, [isOpen, onClose]);
 
   const handleReaction = (reaction: string) => {
-    if (!authUser?.id) return; // Ensure user is logged in
+    if (!authUser?.id) return; // Require login
 
     const userReaction = allReactions?.reactions?.find(
       (r: ReactionReceived) => r.user_id?.id === authUser.id
     );
 
-    if (userReaction) {
-      // Update existing reaction
-      if (userReaction.type === reaction) return; // Same reaction, no action needed
+    // If user already reacted with this type, do nothing
+    if (userReaction && userReaction.type === reaction) return;
 
-      setIsPending(true);
-      setPendingReaction(reaction);
-      updateReaction(
-        {
-          reactionId: userReaction._id,
-          type: reaction,
-        },
-        {
-          onSuccess: () => {
-            toast.success("Reaction updated successfully");
-            setIsPending(false);
-            setPendingReaction(null);
-            setSuccessReaction(reaction);
-            onReact(reaction);
-            setTimeout(() => {
-              setSuccessReaction(null);
-              onClose();
-            }, 1000);
+    setIsPending(true);
+    setPendingReaction(reaction);
+
+    if (isRepost) {
+      // For repost article: create or update reactions with repost-specific mutations
+
+      if (userReaction) {
+        // Update reaction on repost
+        updateReactionRepost(
+          {
+            reactionId: userReaction._id,
+            type: reaction,
           },
-          onError: () => {
-            toast.error("Failed to update reaction");
-            setIsPending(false);
-            setPendingReaction(null);
-          },
+          {
+            onSuccess: () => {
+              toast.success("Reaction updated successfully");
+              setIsPending(false);
+              setPendingReaction(null);
+              setSuccessReaction(reaction);
+              onReact(reaction);
+              setTimeout(() => {
+                setSuccessReaction(null);
+                onClose();
+              }, 1000);
+            },
+            onError: () => {
+              toast.error("Failed to update reaction");
+              setIsPending(false);
+              setPendingReaction(null);
+            },
+          }
+        );
+      } else {
+        // Create new reaction on repost
+        if (!repostId) {
+          toast.error("Invalid repost ID.");
+          setIsPending(false);
+          setPendingReaction(null);
+          return;
         }
-      );
+
+        createReactionRepost(
+          {
+            target_id: repostId,
+            target_type: "Comment", // Per your description
+            type: reaction,
+          },
+          {
+            onSuccess: () => {
+              toast.success(t("blog.alerts.ReactionSuccess"));
+              setIsPending(false);
+              setPendingReaction(null);
+              setSuccessReaction(reaction);
+              onReact(reaction);
+              setTimeout(() => {
+                setSuccessReaction(null);
+                onClose();
+              }, 1000);
+            },
+            onError: () => {
+              toast.error(t("blog.alerts.ReactionFailed"));
+              setIsPending(false);
+              setPendingReaction(null);
+            },
+          }
+        );
+      }
     } else {
-      // Create new reaction
-      setIsPending(true);
-      setPendingReaction(reaction);
-      createReaction(
-        { type: reaction, article_id, user_id: authUser.id },
-        {
-          onSuccess: () => {
-            toast.success(t("blog.alerts.ReactionSuccess"));
-            setIsPending(false);
-            setPendingReaction(null);
-            setSuccessReaction(reaction);
-            onReact(reaction);
-            setTimeout(() => {
-              setSuccessReaction(null);
-              onClose();
-            }, 1000);
+      // For normal article: create or update reactions with normal mutations
+
+      if (userReaction) {
+        updateReaction(
+          {
+            reactionId: userReaction._id,
+            type: reaction,
           },
-          onError: () => {
-            toast.error(t("blog.alerts.ReactionFailed"));
-            setIsPending(false);
-            setPendingReaction(null);
+          {
+            onSuccess: () => {
+              toast.success("Reaction updated successfully");
+              setIsPending(false);
+              setPendingReaction(null);
+              setSuccessReaction(reaction);
+              onReact(reaction);
+              setTimeout(() => {
+                setSuccessReaction(null);
+                onClose();
+              }, 1000);
+            },
+            onError: () => {
+              toast.error("Failed to update reaction");
+              setIsPending(false);
+              setPendingReaction(null);
+            },
+          }
+        );
+      } else {
+        createReaction(
+          {
+            type: reaction,
+            article_id,
+            user_id: authUser.id,
           },
-        }
-      );
+          {
+            onSuccess: () => {
+              toast.success(t("blog.alerts.ReactionSuccess"));
+              setIsPending(false);
+              setPendingReaction(null);
+              setSuccessReaction(reaction);
+              onReact(reaction);
+              setTimeout(() => {
+                setSuccessReaction(null);
+                onClose();
+              }, 1000);
+            },
+            onError: () => {
+              toast.error(t("blog.alerts.ReactionFailed"));
+              setIsPending(false);
+              setPendingReaction(null);
+            },
+          }
+        );
+      }
     }
   };
 
@@ -149,7 +236,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div 
+    <div
       className="absolute mt-2 shadow-lg rounded-full bg-background p-3 transition-opacity duration-400 opacity-100 z-[999]"
       style={{ bottom: "40px", left: "0px" }}
     >
