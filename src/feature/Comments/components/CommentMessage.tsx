@@ -1,10 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { ThumbsUp, MessageCircle, Edit, Trash2, EllipsisVertical, Send } from "lucide-react"; // Added Send
+import {
+  ThumbsUp,
+  MessageCircle,
+  Edit,
+  Trash2,
+  EllipsisVertical,
+  Send,
+} from "lucide-react";
 import { LuBadgeCheck, LuLoader, LuX } from "react-icons/lu";
 import { timeAgo } from "../../../utils/dateFormater";
 import CommentSectionLevel2 from "./CommentSectionLevel2";
-import { Article, Comment, ReactionReceived, User } from "../../../models/datamodels";
-import { useCreateCommentReaction, useGetCommentReactions } from "../../Interactions/hooks";
+import {
+  Article,
+  Comment,
+  ReactionReceived,
+  User,
+} from "../../../models/datamodels";
+import {
+  useCreateCommentReaction,
+  useGetCommentReactions,
+} from "../../Interactions/hooks";
 import { useUser } from "../../../hooks/useUser";
 import { useDeleteComment, useUpdateComment } from "../hooks";
 import { toast } from "react-toastify";
@@ -24,8 +39,8 @@ interface MessageComponentProps {
   author_of_post: User;
   onLevelTwoToggle?: (isOpen: boolean) => void;
   activeLevelTwoCommentId?: string | null;
-  article:Article
-}    
+  article: Article;
+}
 
 const CommentMessage: React.FC<MessageComponentProps> = ({
   content,
@@ -38,22 +53,24 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   author_of_post,
   onLevelTwoToggle,
   activeLevelTwoCommentId,
-  article
+  article,
 }) => {
   const [reactedid, setReactedids] = useState<string[]>([]);
   const [isLevelTwoCommentOpen, setIsLevelTwoCommentOpen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [isEditing, setIsEditing] = useState(false); // State for edit mode
-  const [editedContent, setEditedContent] = useState(content); // State for input value
-  const { mutate: createReaction, isPending, isSuccess } = useCreateCommentReaction();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(content);
+  const {
+    mutate: createReaction,
+    isPending,
+    isSuccess,
+  } = useCreateCommentReaction();
   const { data: reactions } = useGetCommentReactions(comment_id);
   const { mutate: deleteComment, isPending: isDeletePending } = useDeleteComment();
   const { mutate: updateComment, isPending: isUpdatePending } = useUpdateComment();
   const { authUser } = useUser();
-   const { mutate } = useUpdateArticle();
-   const {goToProfile} = useRoute()
-
-  
+  const { mutate } = useUpdateArticle();
+  const { goToProfile } = useRoute();
 
   useEffect(() => {
     if (reactions?.reactions && Array.isArray(reactions.reactions)) {
@@ -78,25 +95,33 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
     }
   };
 
+  // const effectiveArticleId =
+  //   article?.type === "Repost" && article?.repost?.repost_id
+  //     ? article.repost.repost_id
+  //     : article_id;
+
   const isAuthor = author?._id === author_of_post?._id;
   const isAuthAuthor = author?._id === authUser?.id;
 
   const handleReact = () => {
     if (!authUser?.id) return;
-    createReaction({
-      type: "like",
-      user_id: authUser.id,
-      comment_id: comment_id,
-    },{
-      onSuccess:()=>{
-         mutate({
-          articleId: article._id || '',
-          article: {
-            engagement_count: article.engagement_count! + 1, 
-          },
-        });
+    createReaction(
+      {
+        type: "like",
+        user_id: authUser.id,
+        comment_id: comment_id,
+      },
+      {
+        onSuccess: () => {
+          mutate({
+            articleId: article._id || "",
+            article: {
+              engagement_count: article.engagement_count! + 1,
+            },
+          });
+        },
       }
-    });
+    );
   };
 
   const handleToggleLevelTwo = () => {
@@ -123,9 +148,10 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
           toast.success(t("Comment updated successfully"));
           setIsEditing(false);
         },
-        onError: () => {
+        onError: (error) => {
           toast.error(t("Failed to update comment"));
           setIsEditing(false);
+          console.error("Update comment error:", error.message);
         },
       }
     );
@@ -137,19 +163,18 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
         toast.success("Comment deleted successfully");
         setShowMenu(false);
       },
-      onError: () => {
+      onError: (error) => {
         toast.error("Failed to delete comment");
         setShowMenu(false);
+        console.error("Delete comment error:", error.message);
       },
     });
   };
   const handleProfileClick = () => {
-    if(author.username) goToProfile(author?.username)
+    if (author.username) goToProfile(author?.username);
   };
 
-  useEffect(() => {
-    
-  }, [isAuthor, author, author_of_post]);
+  useEffect(() => {}, [isAuthor, author, author_of_post]);
 
   return (
     <div
@@ -157,103 +182,109 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
         isSameAuthorAsPrevious ? "self-end" : ""
       }`}
     >
-     <div className="bg-neutral-700 p-3 relative rounded-xl shadow-sm inline-block w-full">
-  <div className="flex items-center gap-2">
-    {author?.profile_picture ? (
-      <img 
-        src={author.profile_picture} 
-        alt={author.username}
-        className="size-6 rounded-full object-cover"
-        onClick={handleProfileClick}
-      />
-    ) : (
-      <div 
-        className="size-6 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-[13px]" 
-        onClick={handleProfileClick}
-      >
-        {author?.username?.charAt(0)}
-      </div>
-    )}
-    <div className="flex-1">
-      <div className="font-semibold flex items-center justify-between text-neutral-50 text-[14px]">
-        <div className="flex items-center gap-2 cursor-pointer hover:underline" onClick={handleProfileClick}>
-          {author?.username}
-          {author?.is_verified_writer && (
-            <LuBadgeCheck
-              className="text-primary-500 size-4"
-              strokeWidth={2.5}
+      <div className="bg-neutral-700 p-3 relative rounded-xl shadow-sm inline-block w-full">
+        <div className="flex items-center gap-2">
+          {author?.profile_picture ? (
+            <img
+              src={author.profile_picture}
+              alt={author.username}
+              className="size-6 rounded-full object-cover"
+              onClick={handleProfileClick}
             />
-          )}
-          {isAuthor && (
-            <div className="px-2 bg-secondary-400 text-[12px] text-plain-b rounded">
-              Author
+          ) : (
+            <div
+              className="size-6 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-[13px]"
+              onClick={handleProfileClick}
+            >
+              {author?.username?.charAt(0)}
             </div>
           )}
+          <div className="flex-1">
+            <div className="font-semibold flex items-center justify-between text-neutral-50 text-[14px]">
+              <div
+                className="flex items-center gap-2 cursor-pointer hover:underline"
+                onClick={handleProfileClick}
+              >
+                {author?.username}
+                {author?.is_verified_writer && (
+                  <LuBadgeCheck
+                    className="text-primary-500 size-4"
+                    strokeWidth={2.5}
+                  />
+                )}
+                {isAuthor && (
+                  <div className="px-2 bg-secondary-400 text-[12px] text-plain-b rounded">
+                    Author
+                  </div>
+                )}
+              </div>
+              <div className="absolute right-2 text-[12px] font-light flex items-center gap-2">
+                {formatDate()}
+                {isAuthAuthor && (
+                  <EllipsisVertical
+                    className="size-6 rotate-90 cursor-pointer text-neutral-50 hover:text-primary-400"
+                    onClick={() => setShowMenu(!showMenu)}
+                  />
+                )}
+              </div>
+            </div>
+            <p className="text-[12px] text-gray-500">{author?.title}</p>
+          </div>
         </div>
-        <div className="absolute right-2 text-[12px] font-light flex items-center gap-2">
-          {formatDate()}
-          {isAuthAuthor && (
-            <EllipsisVertical
-              className="size-6 rotate-90 cursor-pointer text-neutral-50 hover:text-primary-400"
-              onClick={() => setShowMenu(!showMenu)}
+        {isEditing ? (
+          <div className="mt-2 mb-1 flex items-center gap-2">
+            <input
+              type="text"
+              value={editedContent}
+              onChange={(e) => setEditedContent(e.target.value)}
+              className="w-full bg-transparent text-neutral-50 text-[13px] outline-none caret-neutral-50"
+              autoFocus
             />
-          )}
-        </div>
-      </div>
-      <p className="text-[12px] text-gray-500">{author?.title}</p>
-    </div>
-  </div>
-  {isEditing ? (
-    <div className="mt-2 mb-1 flex items-center gap-2">
-      <input
-        type="text"
-        value={editedContent}
-        onChange={(e) => setEditedContent(e.target.value)}
-        className="w-full bg-transparent text-neutral-50 text-[13px] outline-none caret-neutral-50"
-        autoFocus
-      />
-      <button onClick={handleUpdateClick} disabled={isUpdatePending}>
-        {isUpdatePending ? (
-          <LuLoader className="animate-spin text-foreground inline-block size-4" />
+            <button onClick={handleUpdateClick} disabled={isUpdatePending}>
+              {isUpdatePending ? (
+                <LuLoader className="animate-spin text-foreground inline-block size-4" />
+              ) : (
+                <Send
+                  size={18}
+                  className="text-neutral-50 hover:text-primary-400"
+                />
+              )}
+            </button>
+          </div>
         ) : (
-          <Send size={18} className="text-neutral-50 hover:text-primary-400" />
+          <p className="mt-2 mb-1 text-neutral-50 text-[13px]">{content}</p>
         )}
-      </button>
-    </div>
-  ) : (
-    <p className="mt-2 mb-1 text-neutral-50 text-[13px]">{content}</p>
-  )}
 
-  {/* Popup Menu */}
-  {showMenu && (
-    <>
-      <div
-        className="fixed inset-0 bg-black opacity-0 z-40"
-        onClick={() => setShowMenu(false)}
-      ></div>
-      <div className="absolute right-2 top-8 bg-neutral-800 shadow-md rounded-md p-2 w-40 text-neutral-50 z-50">
-        <div
-          className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-          onClick={handleEditClick}
-        >
-          <Edit size={18} className="text-neutral-500" />
-          <div>Edit</div>
-        </div>
-        <div
-          className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer text-red-500"
-          onClick={handleDeleteClick}
-        >
-          {isDeletePending ? (
-            <LuLoader className="animate-spin text-foreground inline-block size-4" />
-          ) : (
-            <Trash2 size={18} className="text-red-500" />
-          )}
-          <div>{isDeletePending ? "Deleting..." : "Delete"}</div>
-        </div>
+        {/* Popup Menu */}
+        {showMenu && (
+          <>
+            <div
+              className="fixed inset-0 bg-black opacity-0 z-40"
+              onClick={() => setShowMenu(false)}
+            ></div>
+            <div className="absolute right-2 top-8 bg-neutral-800 shadow-md rounded-md p-2 w-40 text-neutral-50 z-50">
+              <div
+                className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                onClick={handleEditClick}
+              >
+                <Edit size={18} className="text-neutral-500" />
+                <div>Edit</div>
+              </div>
+              <div
+                className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer text-red-500"
+                onClick={handleDeleteClick}
+              >
+                {isDeletePending ? (
+                  <LuLoader className="animate-spin text-foreground inline-block size-4" />
+                ) : (
+                  <Trash2 size={18} className="text-red-500" />
+                )}
+                <div>{isDeletePending ? "Deleting..." : "Delete"}</div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
-    </>
-  )}
-</div>
 
       <div className="flex gap-4 mt-2 text-gray-600 text-[11px] px-4">
         <div className="flex items-center gap-1">
@@ -296,6 +327,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
           comments={replies}
           author_of_post={author_of_post}
           isTabActive={activeLevelTwoCommentId === comment_id}
+          article={article}
         />
       )}
     </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Comment, User } from "../../../models/datamodels";
+import { Article, Comment, User } from "../../../models/datamodels";
 import CommentMessageLevel2 from "./CommentMessageLevel2";
 import CommentTabLevel2 from "./CommentTabLevel2";
 
@@ -8,7 +8,8 @@ interface CommentSectionProps {
   comment_id: string;
   comments: Comment[];
   author_of_post: User;
-  isTabActive: boolean; // New prop to control tab visibility
+  isTabActive: boolean; 
+  article: Article; // Added article prop for CommentTabLevel2
 }
 
 const CommentSectionLevel2: React.FC<CommentSectionProps> = ({
@@ -17,6 +18,7 @@ const CommentSectionLevel2: React.FC<CommentSectionProps> = ({
   comments,
   author_of_post,
   isTabActive,
+  article
 }) => {
   return (
     <div className="flex flex-col border-l border-neutral-400 mt-3">
@@ -33,7 +35,7 @@ const CommentSectionLevel2: React.FC<CommentSectionProps> = ({
       ))}
 
       {isTabActive && (
-        <CommentTabLevel2 article_id={article_id} parent_comment_id={comment_id} />
+        <CommentTabLevel2 article_id={article_id} parent_comment_id={comment_id} article={article} />
       )}
     </div>
   );

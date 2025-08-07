@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import Topbar from "../../components/atoms/Topbar/Topbar";
 import ToggleFeed from "./components/ToogleFeed";
 import CognitiveModeIndicator from "../../components/atoms/CognitiveModeIndicator";
@@ -7,6 +7,8 @@ import { CognitiveModeContext } from "../../context/CognitiveMode/CognitiveModeC
 import PodcastCard from "../Podcast/components/PodcastLayout1";
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
 import PodcastCard2 from "../Podcast/components/PodcastLayout2";
+import { useGetAllPodcasts } from "../Podcast/hooks";
+
 
 interface Podcast {
   id: string;
@@ -30,6 +32,8 @@ const FeedPodcasts: React.FC = () => {
   const [isBrainActive, setIsBrainActive] = useState<boolean>(false);
   const { toggleCognitiveMode } = useContext(CognitiveModeContext);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+
 
   const dummyPodcasts: Podcast[] = [
     {
@@ -171,6 +175,12 @@ const FeedPodcasts: React.FC = () => {
     }
   };
 
+  const {data} = useGetAllPodcasts({ page: 1, limit: 10, category: "Technology", sortBy: "createdAt", sortOrder: "desc" });
+
+  useEffect(() => {
+    console.log("Fetched podcasts:", data);
+  } ,[data])
+
   return (
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
       <div className="min-h-screen lg:border-r-[1px] border-neutral-500">
@@ -211,8 +221,8 @@ const FeedPodcasts: React.FC = () => {
           {/* Horizontally Scrollable Podcast Cards - Scrollbar hidden */}
           <div
             ref={scrollContainerRef}
-            className="flex overflow-x-auto pb-4 scrollbar-hide" // Changed from custom-scrollbar to scrollbar-hide
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }} // Additional hiding for Firefox and IE
+            className="flex overflow-x-auto pb-4 scrollbar-hide" 
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }} 
           >
             {dummyPodcasts.map((podcast) => (
               <div key={podcast.id} className="flex-shrink-0 w-[365px] mr-4">
