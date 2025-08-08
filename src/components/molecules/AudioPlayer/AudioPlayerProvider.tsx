@@ -10,6 +10,7 @@ type AudioPlayerAction =
   | { type: 'SET_MUTED'; payload: boolean }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null }
+  | { type: 'SET_VISIBLE'; payload: boolean }
   | { type: 'RESET' };
 
 const initialState: AudioPlayerState = {
@@ -21,6 +22,7 @@ const initialState: AudioPlayerState = {
   isMuted: false,
   isLoading: false,
   error: null,
+  isVisible: true,
 };
 
 const audioPlayerReducer = (state: AudioPlayerState, action: AudioPlayerAction): AudioPlayerState => {
@@ -41,6 +43,8 @@ const audioPlayerReducer = (state: AudioPlayerState, action: AudioPlayerAction):
       return { ...state, isLoading: action.payload };
     case 'SET_ERROR':
       return { ...state, error: action.payload };
+    case 'SET_VISIBLE':
+      return { ...state, isVisible: action.payload };
     case 'RESET':
       return initialState;
     default:
@@ -222,6 +226,10 @@ export const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({ childr
     dispatch({ type: 'SET_ERROR', payload: null });
   }, []);
 
+  const setVisible = useCallback((visible: boolean) => {
+    dispatch({ type: 'SET_VISIBLE', payload: visible });
+  }, []);
+
   const contextValue: AudioPlayerContextType = {
     state,
     play,
@@ -232,6 +240,7 @@ export const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({ childr
     toggleMute,
     loadTrack,
     clearError,
+    setVisible,
   };
 
   return (
@@ -239,4 +248,4 @@ export const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({ childr
       {children}
     </AudioPlayerContext.Provider>
   );
-}; 
+};

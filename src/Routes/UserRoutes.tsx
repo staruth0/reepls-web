@@ -15,6 +15,7 @@ import FeedPodcasts from '../feature/Feed/FeedPodcasts';
 import PostView from '../feature/Feed/PostView';
 import Notifications from '../feature/Notifications/pages';
 import Podcast from '../feature/Podcast/pages';
+import PodcastDetail from '../feature/Podcast/pages/PodcastDetail';
 import Profile from '../feature/Profile/pages';
 import EditProfile from '../feature/Profile/pages/EditProfile';
 import Followers from '../feature/Profile/pages/Followers';
@@ -95,6 +96,10 @@ const UserRoutes = {
     { 
       path: '/notifications',
       element: <Notifications />,
+    },
+    {
+      path: '/podcast/:id',
+      element: <PodcastDetail />,
     },
     { 
       path: '/notifications/anonymous',

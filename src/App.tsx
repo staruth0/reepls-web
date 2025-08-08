@@ -10,7 +10,7 @@ import { WebRoutes } from './Routes/WebRoutes';
 import { apiClient } from './services/apiClient';
 import { useFetchVapidPublicKey } from './feature/Notifications/hooks/useNotification';
 import { useUser } from './hooks/useUser';
-import { AudioPlayer } from './components/molecules/AudioPlayer';
+import { AudioPlayer, AudioPlayerProvider, useAudioPlayerControls } from './components/molecules/AudioPlayer';
 
 // Setting up routes for your app
 const router = createBrowserRouter([WebRoutes, AuthRoutes, UserRoutes, { path: '*', element: <NotFound /> }]);
@@ -160,7 +160,7 @@ function App() {
         // Send subscription to backend
         await apiClient.post('/push-notification/subscribe', subscriptionData);
       
-      } catch (error: any) {
+      } catch (error: unknown) {
         void error;
         
       }
@@ -177,11 +177,25 @@ function App() {
   }
 
   return (
+    <AudioPlayerProvider>
+      <AppContent theme={theme} />
+    </AudioPlayerProvider>
+  );
+}
+
+function AppContent({ theme }: { theme: string }) {
+  const { setPlayerVisible } = useAudioPlayerControls();
+
+  const handleClosePlayer = () => {
+    setPlayerVisible(false);
+  };
+
+  return (
     <>
       <RouterProvider router={router} />
       
       {/* Global Audio Player - persists across navigation */}
-      <AudioPlayer />
+      <AudioPlayer onClose={handleClosePlayer} />
       
       <ToastContainer
         position="top-right" 

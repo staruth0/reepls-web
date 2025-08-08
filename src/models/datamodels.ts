@@ -265,7 +265,8 @@ export interface IPodcast {
   title: string;
   description?: string;
   postId?: string; // Optional - for podcasts attached to articles
-  authorId: User;
+  authorId?: User;
+  author?: User;
 
   // Audio properties
   audio: {

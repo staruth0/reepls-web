@@ -1,4 +1,5 @@
 import React, { useContext, useState, useRef, useEffect} from "react";
+import { useNavigate } from "react-router-dom";
 import Topbar from "../../components/atoms/Topbar/Topbar";
 import ToggleFeed from "./components/ToogleFeed";
 import CognitiveModeIndicator from "../../components/atoms/CognitiveModeIndicator";
@@ -32,6 +33,7 @@ const FeedPodcasts: React.FC = () => {
   const [isBrainActive, setIsBrainActive] = useState<boolean>(false);
   const { toggleCognitiveMode } = useContext(CognitiveModeContext);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
 
   // Fetch podcasts from API
@@ -96,6 +98,10 @@ const FeedPodcasts: React.FC = () => {
 
   const handleComment = (podcastId: string) => {
     console.log(`Comment action for podcast: ${podcastId}`);
+  };
+  
+  const handlePodcastClick = (podcastId: string) => {
+    navigate(`/podcast/${podcastId}`);
   };
 
   const handleBookmark = (podcastId: string) => {
@@ -202,7 +208,8 @@ const FeedPodcasts: React.FC = () => {
               ? podcasts.map((podcast) => (
                   <div
                     key={podcast.id}
-                    className="flex-shrink-0 w-[365px] mr-4"
+                    className="flex-shrink-0 w-[365px] mr-4 cursor-pointer"
+                    onClick={() => handlePodcastClick(podcast.id)}
                   >
                     <PodcastCard
                       podcast={podcast}
@@ -228,14 +235,19 @@ const FeedPodcasts: React.FC = () => {
               ? // Show 2 skeleton cards for grid loading
                 [1, 2].map((i) => <PodcastCard2Skeleton key={i} />)
               : podcasts.map((podcast) => (
-                  <PodcastCard2
+                  <div 
                     key={podcast.id}
-                    podcast={podcast}
-                    onLike={handleLike}
-                    onComment={handleComment}
-                    onBookmark={handleBookmark}
-                    onFollow={handleFollow}
-                  />
+                    className="cursor-pointer"
+                    onClick={() => handlePodcastClick(podcast.id)}
+                  >
+                    <PodcastCard2
+                      podcast={podcast}
+                      onLike={handleLike}
+                      onComment={handleComment}
+                      onBookmark={handleBookmark}
+                      onFollow={handleFollow}
+                    />
+                  </div>
                 ))}
           </div>
         </div>

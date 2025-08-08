@@ -18,6 +18,7 @@ export interface AudioPlayerState {
   isMuted: boolean;
   isLoading: boolean;
   error: string | null;
+  isVisible: boolean;
 }
 
 export interface AudioPlayerContextType {
@@ -30,6 +31,7 @@ export interface AudioPlayerContextType {
   toggleMute: () => void;
   loadTrack: (track: AudioTrack) => void;
   clearError: () => void;
+  setVisible: (visible: boolean) => void;
 }
 
 export const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(undefined);
@@ -40,4 +42,4 @@ export const useAudioPlayer = () => {
     throw new Error('useAudioPlayer must be used within an AudioPlayerProvider');
   }
   return context;
-}; 
+};
