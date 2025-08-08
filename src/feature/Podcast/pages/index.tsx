@@ -159,7 +159,7 @@ const Podcast: React.FC = () => {
         setCategory('');
         setIsPublic(true);
       },
-      onError: (error: any) => { // Use 'any' for error type if you don't have a specific error interface
+      onError: (error) => { // Use 'any' for error type if you don't have a specific error interface
         toast.error(`Failed to post podcast: ${error.message || 'Unknown error'}`);
       },
     });

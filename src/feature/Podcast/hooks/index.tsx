@@ -44,7 +44,7 @@ export const useUploadStandalonePodcast = () => {
 };
 
 export const useCreateArticleWithPodcast = () => {
-  const queryClient = useQueryClient(); // Correct placement
+  const queryClient = useQueryClient(); 
   return useMutation({
     mutationFn: createArticleWithPodcast,
     onSuccess: () => {

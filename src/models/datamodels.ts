@@ -260,12 +260,12 @@ export interface MediaResponse {
 }
 
 
-export interface Podcast {
-  _id: string;
+export interface IPodcast {
+  id: string;
   title: string;
   description?: string;
   postId?: string; // Optional - for podcasts attached to articles
-  authorId: string;
+  authorId: User;
 
   // Audio properties
   audio: {
@@ -295,6 +295,9 @@ export interface Podcast {
   sharesCount: number; // Track sharing analytics
   averageRating: number; // Average user rating
   totalRatings: number; // Total number of ratings
+  likesCount: number; // Total number of ratings
+  isBookmarked: boolean; // Total number of ratings
+
 
   // Advanced metadata
   subtitle?: string; // Short subtitle/summary

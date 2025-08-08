@@ -1,14 +1,14 @@
-import React, { useContext, useState, useRef, useEffect } from "react";
+import React, { useContext, useState, useRef, useEffect} from "react";
 import Topbar from "../../components/atoms/Topbar/Topbar";
 import ToggleFeed from "./components/ToogleFeed";
 import CognitiveModeIndicator from "../../components/atoms/CognitiveModeIndicator";
-import Communique from "./components/Communique/Communique";
 import { CognitiveModeContext } from "../../context/CognitiveMode/CognitiveModeContext";
 import PodcastCard from "../Podcast/components/PodcastLayout1";
-import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
 import PodcastCard2 from "../Podcast/components/PodcastLayout2";
+import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
 import { useGetAllPodcasts } from "../Podcast/hooks";
-
+import { IPodcast } from "../../models/datamodels";
+import Communique from "./components/Communique/Communique";
 
 interface Podcast {
   id: string;
@@ -34,108 +34,62 @@ const FeedPodcasts: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
 
+  // Fetch podcasts from API
+  const { data: podcastsAPI, isLoading } = useGetAllPodcasts({
+    page: 1,
+    limit: 10,
+    category: "Technology",
+    sortBy: "createdAt",
+    sortOrder: "desc",
+  });
 
-  const dummyPodcasts: Podcast[] = [
-    {
-      id: "1",
-      thumbnailUrl:
-        "https://placehold.co/600x400/808080/FFFFFF?text=Podcast+Image+1",
-      author: {
-        id: "author1",
-        name: "Ndofor Icha",
-        avatarUrl: "https://placehold.co/32x32/333333/FFFFFF?text=NI",
-        isVerified: true,
-      },
-      title: "10 Immutable Truths About being a Cameroonian",
-      description:
-        "'The Tangue', alongside a number of other historic artwork from the fatherland have not found home yet. of other historic artw...",
-      publishDate: "Jun 26",
-      listenTime: "32 min",
-      likes: 25,
-      comments: 24,
-      isBookmarked: false,
-    },
-    {
-      id: "2",
-      thumbnailUrl:
-        "https://placehold.co/600x400/555555/DDDDDD?text=Podcast+Image+2",
-      author: {
-        id: "author2",
-        name: "Jane Doe",
-        avatarUrl: "https://placehold.co/32x32/666666/FFFFFF?text=JD",
-        isVerified: false,
-      },
-      title: "The Future of AI in Everyday Life",
-      description:
-        "An in-depth discussion on how artificial intelligence is shaping our world and what to expect next from this rapidly evolving field...",
-      publishDate: "Jul 15",
-      listenTime: "45 min",
-      likes: 120,
-      comments: 50,
-      isBookmarked: true,
-    },
-    {
-      id: "3",
-      thumbnailUrl:
-        "https://placehold.co/600x400/333333/AAAAAA?text=Podcast+Image+3",
-      author: {
-        id: "author3",
-        name: "John Smith",
-        avatarUrl: "https://placehold.co/32x32/999999/FFFFFF?text=JS",
-        isVerified: true,
-      },
-      title: "Mastering React Hooks: A Deep Dive",
-      description:
-        "Explore advanced patterns and best practices for using React Hooks to build robust and scalable applications. Learn about custom hooks, performance optimizations, and more...",
-      publishDate: "Aug 01",
-      listenTime: "60 min",
-      likes: 80,
-      comments: 30,
-      isBookmarked: false,
-    },
-  ];
+  useEffect(()=>{
+    console.log('fetched podcast', podcastsAPI)
+  },[podcastsAPI])
 
-  const trendingPodcasts: Podcast[] = [
-    {
-      id: "4",
-      thumbnailUrl:
-        "https://placehold.co/600x400/777777/EEEEEE?text=Trending+1",
-      author: {
-        id: "author4",
-        name: "Alice Wonderland",
-        avatarUrl: "https://placehold.co/32x32/777777/FFFFFF?text=AW",
-        isVerified: false,
-      },
-      title: "The Art of Storytelling in Podcasting",
-      description:
-        "Uncover the secrets to crafting compelling narratives that captivate your audience...",
-      publishDate: "Aug 10",
-      listenTime: "28 min",
-      likes: 145,
-      comments: 35,
-      isBookmarked: false,
-    },
-    {
-      id: "5",
-      thumbnailUrl:
-        "https://placehold.co/600x400/666666/CCCCCC?text=Trending+2",
-      author: {
-        id: "author5",
-        name: "Bob The Builder",
-        avatarUrl: "https://placehold.co/32x32/555555/FFFFFF?text=BB",
-        isVerified: true,
-      },
-      title: "Building Scalable Web Applications",
-      description:
-        "A comprehensive guide to designing and implementing web applications that can handle increasing user loads...",
-      publishDate: "Sep 01",
-      listenTime: "70 min",
-      likes: 190,
-      comments: 45,
-      isBookmarked: false,
-    },
-  ];
+  // Helper: format ISO date to "Jul 15"
+  function formatDate(iso?: string) {
+    if (!iso) return "N/A";
+    const d = new Date(iso);
+    return d.toLocaleString("en-US", { month: "short", day: "numeric" });
+  }
 
+  // Helper: seconds to "MM min"
+  function formatDuration(sec?: number) {
+    if (!sec || isNaN(sec)) return "0 min";
+    return `${Math.round(sec / 60)} min`;
+  }
+
+
+  const apiPodcastToCardPodcast = (p: IPodcast): Podcast => {
+    return {
+      id: p.id ?? "",
+      thumbnailUrl:
+        p.thumbnailUrl ||
+        "https://placehold.co/400x200/444444/FFFFFF?text=Podcast+Thumbnail",
+      author: {
+        id: p.authorId._id ? p.authorId._id : "",
+        name: p.authorId.name || '',
+        avatarUrl: p.authorId.profile_picture || "",
+        isVerified: p.authorId.is_verified_writer || false,
+      },
+      title: p.title || "Untitled Podcast",
+      description: p.description || "",
+      publishDate: formatDate(p.createdAt?.toString()),
+      listenTime: formatDuration(p.audio?.duration),
+      likes: 0,
+      comments: p.commentsCount ?? 0,
+      isBookmarked: false,
+    };
+  };
+
+  // Map API data or empty array
+  const podcasts: Podcast[] =
+    podcastsAPI?.data?.results?.length > 0
+      ? podcastsAPI.data.results.map(apiPodcastToCardPodcast)
+      : [];
+
+  // Handlers for actions
   const handleLike = (podcastId: string) => {
     console.log(`Like action for podcast: ${podcastId}`);
   };
@@ -175,11 +129,28 @@ const FeedPodcasts: React.FC = () => {
     }
   };
 
-  const {data} = useGetAllPodcasts({ page: 1, limit: 10, category: "Technology", sortBy: "createdAt", sortOrder: "desc" });
+  // Skeleton placeholder component for horizontal cards
+  const PodcastCardSkeleton: React.FC = () => (
+    <div className="flex-shrink-0 w-[365px] mr-4 animate-pulse bg-neutral-700 rounded-lg h-[350px] px-4 py-5">
+      <div className="bg-neutral-600 h-48 rounded-md mb-4 w-full" />
+      <div className="h-6 bg-neutral-600 rounded w-3/4 mb-3" />
+      <div className="h-4 bg-neutral-600 rounded w-full mb-2" />
+      <div className="h-4 bg-neutral-600 rounded w-5/6 mb-2" />
+      <div className="flex justify-between items-center mt-auto">
+        <div className="h-5 bg-neutral-600 rounded w-1/3" />
+        <div className="h-5 bg-neutral-600 rounded w-1/4" />
+      </div>
+    </div>
+  );
 
-  useEffect(() => {
-    console.log("Fetched podcasts:", data);
-  } ,[data])
+  // Skeleton placeholder component for grid cards (PodcastCard2)
+  const PodcastCard2Skeleton: React.FC = () => (
+    <div className="animate-pulse bg-neutral-700 rounded-lg h-56 p-4">
+      <div className="bg-neutral-600 h-36 rounded mb-3 w-full" />
+      <div className="h-6 bg-neutral-600 rounded w-4/5 mb-2" />
+      <div className="h-4 bg-neutral-600 rounded w-3/4" />
+    </div>
+  );
 
   return (
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
@@ -218,42 +189,54 @@ const FeedPodcasts: React.FC = () => {
             </div>
           </div>
 
-          {/* Horizontally Scrollable Podcast Cards - Scrollbar hidden */}
+          {/* Horizontally Scrollable Podcast Cards */}
           <div
             ref={scrollContainerRef}
-            className="flex overflow-x-auto pb-4 scrollbar-hide" 
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }} 
+            className="flex overflow-x-auto pb-4 scrollbar-hide"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {dummyPodcasts.map((podcast) => (
-              <div key={podcast.id} className="flex-shrink-0 w-[365px] mr-4">
-                <PodcastCard
-                  podcast={podcast}
-                  onLike={handleLike}
-                  onComment={handleComment}
-                  onBookmark={handleBookmark}
-                  onFollow={handleFollow}
-                />
-              </div>
-            ))}
+            {isLoading
+              ? // Show 3 skeletons while loading
+                [1, 2, 3].map((n) => <PodcastCardSkeleton key={n} />)
+              : podcasts.length > 0
+              ? podcasts.map((podcast) => (
+                  <div
+                    key={podcast.id}
+                    className="flex-shrink-0 w-[365px] mr-4"
+                  >
+                    <PodcastCard
+                      podcast={podcast}
+                      onLike={handleLike}
+                      onComment={handleComment}
+                      onBookmark={handleBookmark}
+                      onFollow={handleFollow}
+                    />
+                  </div>
+                ))
+              : // Empty fallback
+                <div className="text-neutral-400 italic">No podcasts available.</div>}
           </div>
         </div>
 
-        {/* Trending Section - Added below Suggested for Today */}
+        {/* Trending Section */}
         <div className="p-4 sm:p-6 bg-neutral-800 rounded-lg mx-2 md:mx-4 sm:mx-6 my-3 max-w-4xl">
           <h2 className="text-md font-semibold text-neutral-50 mb-4">
             Trending Now
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {trendingPodcasts.map((podcast) => (
-              <PodcastCard2
-                key={podcast.id}
-                podcast={podcast}
-                onLike={handleLike}
-                onComment={handleComment}
-                onBookmark={handleBookmark}
-                onFollow={handleFollow}
-              />
-            ))}
+            {isLoading
+              ? // Show 2 skeleton cards for grid loading
+                [1, 2].map((i) => <PodcastCard2Skeleton key={i} />)
+              : podcasts.map((podcast) => (
+                  <PodcastCard2
+                    key={podcast.id}
+                    podcast={podcast}
+                    onLike={handleLike}
+                    onComment={handleComment}
+                    onBookmark={handleBookmark}
+                    onFollow={handleFollow}
+                  />
+                ))}
           </div>
         </div>
       </div>
