@@ -70,10 +70,10 @@ const FeedPodcasts: React.FC = () => {
         p.thumbnailUrl ||
         "https://placehold.co/400x200/444444/FFFFFF?text=Podcast+Thumbnail",
       author: {
-        id: p.authorId._id ? p.authorId._id : "",
-        name: p.authorId.name || '',
-        avatarUrl: p.authorId.profile_picture || "",
-        isVerified: p.authorId.is_verified_writer || false,
+        id: p.authorId?._id ? p.authorId?._id : "",
+        name: p.authorId?.name || '',
+        avatarUrl: p.authorId?.profile_picture || "",
+        isVerified: p.authorId?.is_verified_writer || false,
       },
       title: p.title || "Untitled Podcast",
       description: p.description || "",

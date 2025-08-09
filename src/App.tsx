@@ -11,6 +11,7 @@ import { apiClient } from './services/apiClient';
 import { useFetchVapidPublicKey } from './feature/Notifications/hooks/useNotification';
 import { useUser } from './hooks/useUser';
 import { AudioPlayer, AudioPlayerProvider, useAudioPlayerControls } from './components/molecules/AudioPlayer';
+import { getDecryptedAccessToken } from './feature/Auth/api/Encryption';
 
 // Setting up routes for your app
 const router = createBrowserRouter([WebRoutes, AuthRoutes, UserRoutes, { path: '*', element: <NotFound /> }]);
@@ -42,6 +43,10 @@ function App() {
   const { authUser } = useUser();
   const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null);
   const [permissionGranted, setPermissionGranted] = useState<boolean>(false);
+
+  useEffect(()=>{
+    console.log("access token", getDecryptedAccessToken())
+  },[])
 
   // Convert the base64 VAPID key to UInt8Array format
   function urlBase64ToUint8Array(base64String: string): Uint8Array {

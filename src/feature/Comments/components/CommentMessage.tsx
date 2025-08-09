@@ -17,7 +17,6 @@ import {
   User,
 } from "../../../models/datamodels";
 import {
-  useCreateCommentReaction,
   useGetCommentReactions,
 } from "../../Interactions/hooks";
 import { useUser } from "../../../hooks/useUser";
@@ -26,6 +25,7 @@ import { toast } from "react-toastify";
 import { t } from "i18next";
 import { useUpdateArticle } from "../../Blog/hooks/useArticleHook";
 import { useRoute } from "../../../hooks/useRoute";
+import { useCreateReactionRepost } from "../../Repost/hooks/useRepost";
 
 interface MessageComponentProps {
   content: string;
@@ -60,17 +60,19 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(content);
-  const {
-    mutate: createReaction,
-    isPending,
-    isSuccess,
-  } = useCreateCommentReaction();
+  // const {
+  //   mutate: createReaction,
+  //   isPending,
+  //   isSuccess,
+  // } = useCreateCommentReaction();
   const { data: reactions } = useGetCommentReactions(comment_id);
   const { mutate: deleteComment, isPending: isDeletePending } = useDeleteComment();
   const { mutate: updateComment, isPending: isUpdatePending } = useUpdateComment();
   const { authUser } = useUser();
   const { mutate } = useUpdateArticle();
   const { goToProfile } = useRoute();
+
+   const { mutate: createReactionRepost ,isPending,isSuccess} = useCreateReactionRepost();
 
   useEffect(() => {
     if (reactions?.reactions && Array.isArray(reactions.reactions)) {
@@ -105,12 +107,18 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
 
   const handleReact = () => {
     if (!authUser?.id) return;
-    createReaction(
-      {
-        type: "like",
-        user_id: authUser.id,
-        comment_id: comment_id,
-      },
+    // createReaction(
+    //   {
+    //     type: "like",
+    //     user_id: authUser.id,
+    //     comment_id: comment_id,
+    //   },
+     createReactionRepost(
+          {
+            target_id: comment_id,
+            target_type: "Comment",
+            type: "like",
+          },
       {
         onSuccess: () => {
           mutate({

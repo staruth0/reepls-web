@@ -406,9 +406,15 @@ export const getAllReactionsForTarget = async (
   page: number = 1,
   limit: number = 10
 ) => {
+   console.log('target-type',target_type, 'id',id)
   const { data } = await apiClient.get(
+ 
     `/reactions/${target_type}/${id}/reactions?page=${page}&limit=${limit}`
   );
+
+console.log('API response data:', data);
+return data; 
+
   return data.data;
 };
 

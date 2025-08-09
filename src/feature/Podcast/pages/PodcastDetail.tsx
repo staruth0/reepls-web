@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useGetPodcastById } from '../hooks';
+import { useGetPodcastById, useSavePodcastToLibrary, useRemovePodcastFromLibrary } from '../hooks';
 import { LuArrowLeft, LuHeart, LuMessageSquare, LuBookmark, LuShare2, LuMenu } from 'react-icons/lu';
 import { toast } from 'react-toastify';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import { formatDateWithMonth } from '../../../utils/dateFormater';
 import { useAudioPlayerControls, AudioPlayer } from '../../../components/molecules/AudioPlayer';
+import PodcastCommentSidebar from '../components/PodcastCommentSidebar';
 
 
 const PodcastDetail: React.FC = () => {
@@ -14,9 +15,10 @@ const PodcastDetail: React.FC = () => {
 
   const [isFollowing, setIsFollowing] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isCommentSidebarOpen, setIsCommentSidebarOpen] = useState(false);
 
   // Fetch podcast data
-  const { data: podcastData, isLoading, isError } = useGetPodcastById(id || '');
+  const { data: podcastData, isLoading, isError, refetch } = useGetPodcastById(id || '');
 
   const {
     playTrack
@@ -24,6 +26,9 @@ const PodcastDetail: React.FC = () => {
 
   // When podcast data changes, load track in global player
   useEffect(() => {
+
+ console.log('log', podcastData?.data.id, 'equal to', id)
+
     if (podcastData?.data) {
       const data = podcastData.data;
 
@@ -39,21 +44,57 @@ const PodcastDetail: React.FC = () => {
       playTrack(track);
       setIsBookmarked(data.isBookmarked || false);
     }
-  }, [podcastData, playTrack]);
+  }, [podcastData, playTrack,id]);
 
   // Audio player is now handled by the AudioPlayer component
+
+  // Save podcast mutation
+  const { mutate: savePodcast, isPending: isSaving } = useSavePodcastToLibrary();
+  
+  // Remove podcast mutation
+  const { mutate: removePodcast, isPending: isRemoving } = useRemovePodcastFromLibrary();
 
   const handleLike = () => {
     toast.info('Like functionality will be implemented soon');
   };
 
   const handleComment = () => {
-    toast.info('Comment functionality will be implemented soon');
+    setIsCommentSidebarOpen(true);
   };
 
   const handleBookmark = () => {
-    setIsBookmarked((prev) => !prev);
-    toast.success(isBookmarked ? 'Removed from bookmarks' : 'Added to bookmarks');
+    if (isSaving) console.log('isSaving', isSaving)
+    if (isRemoving) console.log('isRemoving', isRemoving)
+    if (isBookmarked) {
+      removePodcast(id || '', {
+        onSuccess: () => {
+          setIsBookmarked(false);
+          toast.success('Removed from bookmarks');
+          refetch();
+        },
+        onError: (error) => {
+          toast.error('Failed to remove from bookmarks');
+          console.error('Error removing bookmark:', error);
+        }
+      });
+    } else {
+      savePodcast({
+        podcastId: id || '',
+        payload: {
+          playlistCategory: 'favorites',
+        }
+      }, {
+        onSuccess: () => {
+          setIsBookmarked(true);
+          toast.success('Added to bookmarks');
+          refetch();
+        },
+        onError: (error) => {
+          toast.error('Failed to add to bookmarks');
+          console.error('Error adding bookmark:', error);
+        }
+      });
+    }
   };
 
   const handleShare = () => {
@@ -204,6 +245,15 @@ const PodcastDetail: React.FC = () => {
           <LuShare2 size={20} />
         </button>
       </div>
+
+      {/* Comment Sidebar */}
+      <PodcastCommentSidebar
+        isOpen={isCommentSidebarOpen}
+        onClose={() => setIsCommentSidebarOpen(false)}
+        podcastId={id || ''}
+        podcastAuthor={podcast?.author}
+        podcast={podcast}
+      />
     </div>
   );
 };

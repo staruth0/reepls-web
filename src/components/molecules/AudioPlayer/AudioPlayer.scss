@@ -8,21 +8,32 @@
   // Fixed position at bottom of screen (default)
   &--fixed {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    border-top: 1px solid #475569;
-    border-radius: 0;
+    bottom: 16px;
+    right: 16px;
+    left:  auto;
+    border: 1px solid #475569;
+    border-radius: 8px;
     z-index: 1000;
-    width: 100%;
+    max-width: 300px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     
-    @media (max-width: 1024px) {
-      left: 16px;
-      right: auto;
-      bottom: 16px;
-      max-width: 300px;
-      border-radius: 8px;
-      border: 1px solid #475569;
+    // Simplified layout for fixed mode
+    .audio-player__container {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    
+    .audio-player__waveform {
+      display: none;
+    }
+    
+    .audio-player__info {
+      width: 100%;
+    }
+    
+    .audio-player__controls {
+      width: 100%;
+      justify-content: center;
     }
   }
   

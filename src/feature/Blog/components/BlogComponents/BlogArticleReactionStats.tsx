@@ -137,10 +137,16 @@ const { data: allReactionsData, isLoading: reactionsLoading2 } = useGetAllReacti
   target_id,
 );
 
+useEffect(()=>{
+  console.log({ target_type ,
+  target_id})
+   console.log('allReactionsData',allReactionsData)
+},[allReactionsData,target_type,target_id])
+
 const reactionCount2 = allReactionsData?.data?.totalReactions || 0;
 
 useEffect(() => {
-  console.log('allReactionsData',allReactionsData)
+ 
 
   if (isLoggedIn && authUser?.id && allReactionsData?.data?.reactions) {
     const userReact = allReactionsData.data.reactions.find(

@@ -33,12 +33,11 @@ import {
 
 
 export const useUploadStandalonePodcast = () => {
-  const queryClient = useQueryClient(); 
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (formData: FormData) => uploadStandalonePodcast(formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['podcasts'] });
-
     },
   });
 };
