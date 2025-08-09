@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useAudioPlayer, AudioTrack } from './AudioPlayerContext';
 
 export const useAudioPlayerControls = () => {
-  const { state, play, pause, stop, seek, setVolume, toggleMute, loadTrack, clearError } = useAudioPlayer();
+  const { state, play, pause, stop, seek, setVolume, toggleMute, loadTrack, clearError, setVisible } = useAudioPlayer();
 
   const playTrack = useCallback((track: AudioTrack) => {
     play(track);
@@ -49,6 +49,10 @@ export const useAudioPlayerControls = () => {
     clearError();
   }, [clearError]);
 
+  const setPlayerVisible = useCallback((visible: boolean) => {
+    setVisible(visible);
+  }, [setVisible]);
+
   return {
     // State
     currentTrack: state.currentTrack,
@@ -59,6 +63,7 @@ export const useAudioPlayerControls = () => {
     isMuted: state.isMuted,
     isLoading: state.isLoading,
     error: state.error,
+    isVisible: state.isVisible,
     
     // Actions
     playTrack,
@@ -69,7 +74,8 @@ export const useAudioPlayerControls = () => {
     seekToPercentage,
     setVolumeLevel,
     toggleMuteState,
+    setPlayerVisible,
     loadNewTrack,
     clearErrorMessage,
   };
-}; 
+};

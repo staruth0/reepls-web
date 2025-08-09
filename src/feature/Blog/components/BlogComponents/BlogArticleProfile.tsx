@@ -350,22 +350,22 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
             />
           ) : (
             <span
-              className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-14 h-14 text-center"
+              className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-12 h-12 text-center"
               onClick={() => handleProfileClick(user?.username || "")}
             >
               {user?.name?.charAt(0).toUpperCase() || "D"}
             </span>
           )}
-          <div className="profile-info flex-1 ml-3">
-            <div className="profile-name flex items-center gap-1">
+          <div className="flex-1 ml-3 ">
+            <div className=" flex items-center gap-1">
               <p
-                className="hover:underline cursor-pointer text-base font-semibold"
+                className="hover:underline cursor-pointer text-[15px] font-semibold"
                 onClick={() => handleProfileClick(user?.username || "")}
               >
                 {user?.name ? (
                   user?.name
                 ) : (
-                  <div className="w-20 h-4 bg-neutral-500 rounded-md animate-pulse" />
+                  <div className="w-20 bg-neutral-500 rounded-md animate-pulse" />
                 )}
               </p>
               {user?.is_verified_writer && (
@@ -389,8 +389,8 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
                 </div>
               )}
             </div>
-            <p className="text-sm text-neutral-100">{user?.bio}</p>
-            <span className="text-sm text-neutral-100">
+            <p className="text-[12px] text-neutral-100">{user?.bio}</p>
+            <span className="text-[12px] text-neutral-100">
               {article?.createdAt ? (
                 timeAgo(article?.createdAt || "")
               ) : (

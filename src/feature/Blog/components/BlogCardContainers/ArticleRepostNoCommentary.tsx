@@ -58,7 +58,7 @@ const ArticleNormalNoCommentary: React.FC<articleprobs> = ({ article }) => {
           article={article}
         />
       </div>
-
+    <div className="m-4 border-[1px] border-neutral-500 rounded-sm">
       <BlogArticleProfileRepost
         title={article.title || ""}
         user={article.author_id || {}}
@@ -68,7 +68,7 @@ const ArticleNormalNoCommentary: React.FC<articleprobs> = ({ article }) => {
         isArticle={article.isArticle || false}
         article={article}
       />
-      <div className="m-4 border-[1px] ">
+  
         <ErrorBoundary
           FallbackComponent={ErrorFallback}
           onError={(error, info) => {

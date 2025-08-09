@@ -9,12 +9,14 @@ import ArticleViewBySlug from '../feature/Blog/pages/ArticleViewBySlug';
 import PostArticleAnalytics from '../feature/Blog/pages/Post&ArticleAnalytics';
 import CommuniqueDetail from '../feature/Feed/CommuniqueDetail';
 import CommuniqueList from '../feature/Feed/CommuniqueList';
+import UploadPodcastTestPage from '../Tests/pages/UploadPodcastTestPage';
 import UserFeed from '../feature/Feed/Feed';
 import FeedFollowing from '../feature/Feed/FeedFollowings';
 import FeedPodcasts from '../feature/Feed/FeedPodcasts';
 import PostView from '../feature/Feed/PostView';
 import Notifications from '../feature/Notifications/pages';
 import Podcast from '../feature/Podcast/pages';
+import PodcastDetail from '../feature/Podcast/pages/PodcastDetail';
 import Profile from '../feature/Profile/pages';
 import EditProfile from '../feature/Profile/pages/EditProfile';
 import Followers from '../feature/Profile/pages/Followers';
@@ -96,6 +98,10 @@ const UserRoutes = {
       path: '/notifications',
       element: <Notifications />,
     },
+    {
+      path: '/podcast/:id',
+      element: <PodcastDetail />,
+    },
     { 
       path: '/notifications/anonymous',
       element: <AnonymousNotification/>,
@@ -143,6 +149,10 @@ const UserRoutes = {
     {
       path: '/posts/communiques',
       element: <CommuniqueList />,
+    },
+    {
+      path: '/test',
+      element: <UploadPodcastTestPage />,
     },
 
   ],

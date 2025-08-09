@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { LuHistory } from 'react-icons/lu';
+import { LuHistory, LuHeadphones } from 'react-icons/lu';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import Tabs from '../../../components/molecules/Tabs/Tabs';
 import { useUser } from '../../../hooks/useUser';
@@ -8,6 +8,7 @@ import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
 import { useGetFollowing } from '../../Follow/hooks';
 import { useGetReadingHistory, useGetSavedArticles } from '../../Saved/hooks';
 import AuthorComponent from '../Components/AuthorComponent';
+import { useGetMySavedPodcasts } from '../../Podcast/hooks';
 
 import AuthSkeletonComponent from '../../../components/atoms/AuthorComponentSkeleton';
 import { toast } from 'react-toastify'; // Added for toast notifications
@@ -15,6 +16,7 @@ import SavedPostsContainer from '../Components/SavedPostsContaniner';
 import SavedArticlesContainer from '../Components/SavedArticleContainer';
 import { useTranslation } from 'react-i18next';
 import ReadingHistoryContainer from '../Components/ReadingHistoryContainer';
+import SavedPodcastsContainer from '../Components/SavedPodcastsContainer';
 
 interface Article {
   id: string;
@@ -35,6 +37,7 @@ const Bookmarks: React.FC = () => {
 
   const { data: savedArticlesData, isLoading: isLoadingSavedArticles, error: savedArticlesError } = useGetSavedArticles();
   const { data: followingsData, isLoading: isLoadingFollowings, error: followingsError } = useGetFollowing(authUser?.id || '');
+  const { data: savedPodcastsData,  error: savedPodcastsError } = useGetMySavedPodcasts();
   const [savedPosts, setSavedPosts] = useState<Article[]>([]);
   const [savedArticles, setSavedArticles] = useState<Article[]>([]);
   const [followings, setFollowings] = useState<Follow[]>([]);
@@ -43,13 +46,13 @@ const Bookmarks: React.FC = () => {
   const {t} = useTranslation();
 
   // Function to get friendly error messages
-  const getFriendlyErrorMessage = (error: any, context: 'articles' | 'followings'): string => {
+  const getFriendlyErrorMessage = (error: Error | { response?: { status: number }, message: string }, context: 'articles' | 'followings' | 'podcasts'): string => {
     if (!error) return t("saved.errorMessages.default", {context});
 
     if (error.message.includes("Network Error")) {
       return t("saved.errorMessages.networkError");
     }
-    if (error.response) {
+    if ('response' in error && error.response) {
       const status = error.response.status;
       if (status === 404) {
         return context === 'articles'
@@ -75,7 +78,10 @@ const Bookmarks: React.FC = () => {
     if (followingsError) {
       toast.error(getFriendlyErrorMessage(followingsError, 'followings'));
     }
-  }, [savedArticlesError, followingsError]);
+    if (savedPodcastsError) {
+      toast.error(getFriendlyErrorMessage(savedPodcastsError, 'podcasts'));
+    }
+  }, [savedArticlesError, followingsError, savedPodcastsError]);
 
   // Filter and separate saved articles into posts and articles
 useEffect(() => {
@@ -101,6 +107,7 @@ useEffect(() => {
   const tabs = [
     { id: 'posts', title: `${t("saved.tabs.posts")} (${savedPosts.length})` },
     { id: 'articles', title: `${t("saved.tabs.articles")} (${savedArticles.length})` },
+    { id: 'podcasts', title: `Podcasts (${savedPodcastsData?.podcasts?.length || 0})`, icon: <LuHeadphones className="mx-2" /> },
     { id: 'history', title: `${t("saved.tabs.history")}`, icon: <LuHistory className="mx-2" /> },
   ];
 
@@ -218,6 +225,11 @@ useEffect(() => {
             {activeTab === 'articles' && (
               <div className="pb-10">
                 <SavedArticlesContainer articles={savedArticles} />
+              </div>
+            )}
+            {activeTab === 'podcasts' && (
+              <div className="pb-10">
+                <SavedPodcastsContainer />
               </div>
             )}
             {activeTab === 'history' && (

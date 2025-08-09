@@ -123,6 +123,18 @@ export const useCreateReactionRepost = () => {
       queryClient.invalidateQueries({
         queryKey: ["reactions-grouped-by-type", variables.target_type, variables.target_id],
       });
+            queryClient.invalidateQueries({
+        queryKey: ["reaction"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["articleReactions"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["reactionsPerType"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["reactedUsers"],
+      });
       if (variables.target_type === "Article") {
         queryClient.invalidateQueries({ queryKey: ["article", variables.target_id] });
       } else if (variables.target_type === "Comment") {

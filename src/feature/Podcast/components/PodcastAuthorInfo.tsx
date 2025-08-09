@@ -6,7 +6,7 @@ interface PodcastAuthorInfoProps {
   authorName: string;
   authorAvatarUrl: string;
   isVerified: boolean;
-  onFollowClick: () => void;
+  onFollowClick: (e: React.MouseEvent) => void;
   isFollowing: boolean; // Added to manage follow state
 }
 
@@ -38,7 +38,10 @@ const PodcastAuthorInfo: React.FC<PodcastAuthorInfoProps> = ({
       </div>
       {/* Follow Button */}
       <button
-        onClick={onFollowClick}
+        onClick={(e) => {
+          e.stopPropagation(); // Prevent event from bubbling up to parent
+          onFollowClick(e);
+        }}
         className={`ml-2 px-3 py-1 text-xs font-semibold transition-colors duration-200
           ${isFollowing
             ? 'text-neutral-700  hover:neutral-600'

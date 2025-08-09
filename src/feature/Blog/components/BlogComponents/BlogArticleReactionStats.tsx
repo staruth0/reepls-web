@@ -20,7 +20,7 @@ import { useUser } from "../../../../hooks/useUser";
 import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
 import CommentSection from "../../../Comments/components/CommentSection";
 import BlogRepostModal from "./BlogRepostModal";
-import { useRepostArticle } from "../../../Repost/hooks/useRepost";
+import { useGetAllReactionsForTarget, useRepostArticle } from "../../../Repost/hooks/useRepost";
 import { LuLoader } from "react-icons/lu";
 import {
   useSaveArticle,
@@ -126,6 +126,35 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
 
   const totalComments = articleComments?.pages?.[0]?.data?.totalComments;
   const reactionCount = allReactions?.reactions?.length || 0;
+
+
+
+const target_type = article.type === "Repost" ? "Repost" : "Article";
+const target_id = article.type === "Repost" && article.repost?.repost_id ? article.repost.repost_id : article_id;
+
+const { data: allReactionsData, isLoading: reactionsLoading2 } = useGetAllReactionsForTarget(
+  target_type ,
+  target_id,
+);
+
+useEffect(()=>{
+  console.log({ target_type ,
+  target_id})
+   console.log('allReactionsData',allReactionsData)
+},[allReactionsData,target_type,target_id])
+
+const reactionCount2 = allReactionsData?.data?.totalReactions || 0;
+
+useEffect(() => {
+ 
+
+  if (isLoggedIn && authUser?.id && allReactionsData?.data?.reactions) {
+    const userReact = allReactionsData.data.reactions.find(
+      (r: ReactionReceived) => r.user_id === authUser.id
+    );
+    setUserReaction(userReact?.type || null);
+  }
+}, [isLoggedIn, authUser, allReactionsData]);
 
   // This useEffect is crucial. It will automatically update the `saved` state
   // whenever `savedArticles` (the React Query cache data) changes,
@@ -296,6 +325,10 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
     exit: { opacity: 0, y: -10 },
   };
 
+
+
+
+
   return (
     <>
       <RepostStatusModal
@@ -337,10 +370,10 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
                 handleReactionCountClick();
               }}
             >
-              {reactionsLoading ? (
+              {reactionsLoading2 ? (
                 <div className="w-6 h-4 bg-neutral-500 rounded-md animate-pulse" />
               ) : (
-                <div>{reactionCount}</div>
+                <div>{reactionCount2}</div>
               )}
             </div>
           </div>
@@ -364,8 +397,9 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
           {showNoReactionsPopup && (
             <motion.div
               className={cn(
-                "absolute top-0 right-12 w-64 p-4 rounded-lg shadow-lg bg-background",
-                "z-50"
+                "absolute top-0 left-12 w-64 p-4 rounded-lg shadow-lg bg-background z-[900000]",
+                ""
+
               )}
               variants={popupVariants}
               initial="hidden"

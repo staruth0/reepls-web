@@ -10,7 +10,8 @@ import { WebRoutes } from './Routes/WebRoutes';
 import { apiClient } from './services/apiClient';
 import { useFetchVapidPublicKey } from './feature/Notifications/hooks/useNotification';
 import { useUser } from './hooks/useUser';
-import { AudioPlayer } from './components/molecules/AudioPlayer';
+import { AudioPlayer, AudioPlayerProvider, useAudioPlayerControls } from './components/molecules/AudioPlayer';
+import { getDecryptedAccessToken } from './feature/Auth/api/Encryption';
 
 // Setting up routes for your app
 const router = createBrowserRouter([WebRoutes, AuthRoutes, UserRoutes, { path: '*', element: <NotFound /> }]);
@@ -42,6 +43,10 @@ function App() {
   const { authUser } = useUser();
   const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null);
   const [permissionGranted, setPermissionGranted] = useState<boolean>(false);
+
+  useEffect(()=>{
+    console.log("access token", getDecryptedAccessToken())
+  },[])
 
   // Convert the base64 VAPID key to UInt8Array format
   function urlBase64ToUint8Array(base64String: string): Uint8Array {
@@ -160,7 +165,7 @@ function App() {
         // Send subscription to backend
         await apiClient.post('/push-notification/subscribe', subscriptionData);
       
-      } catch (error: any) {
+      } catch (error: unknown) {
         void error;
         
       }
@@ -177,11 +182,25 @@ function App() {
   }
 
   return (
+    <AudioPlayerProvider>
+      <AppContent theme={theme} />
+    </AudioPlayerProvider>
+  );
+}
+
+function AppContent({ theme }: { theme: string }) {
+  const { setPlayerVisible } = useAudioPlayerControls();
+
+  const handleClosePlayer = () => {
+    setPlayerVisible(false);
+  };
+
+  return (
     <>
       <RouterProvider router={router} />
       
       {/* Global Audio Player - persists across navigation */}
-      <AudioPlayer />
+      <AudioPlayer onClose={handleClosePlayer} />
       
       <ToastContainer
         position="top-right" 

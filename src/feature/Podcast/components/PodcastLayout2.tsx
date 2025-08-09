@@ -42,24 +42,26 @@ const PodcastCard2: React.FC<PodcastCardProps> = ({
   const [isFollowing, setIsFollowing] = useState(false); // Assuming initial state is not following
 
   const handleLikeClick = () => {
-    // Implement like logic, e.g., call API, then update parent state or local state
+    
     console.log(`Liked podcast: ${podcast.id}`);
     if (onLike) onLike(podcast.id);
   };
 
   const handleCommentClick = () => {
-    // Implement comment logic, e.g., navigate to comments section
+   
     console.log(`Commented on podcast: ${podcast.id}`);
     if (onComment) onComment(podcast.id);
   };
 
   const handleBookmarkClick = () => {
+ 
     setIsBookmarked((prev) => !prev); // Toggle local state
     console.log(`Bookmark toggled for podcast: ${podcast.id}`);
     if (onBookmark) onBookmark(podcast.id);
   };
 
-  const handleFollowClick = () => {
+  const handleFollowClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent event from bubbling up to parent
     setIsFollowing((prev) => !prev); // Toggle local state
     console.log(`Follow toggled for author: ${podcast.author.id}`);
     if (onFollow) onFollow(podcast.author.id);

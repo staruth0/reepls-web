@@ -4,7 +4,6 @@ import { useUser } from "../../../hooks/useUser";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import {
-  useCreateReaction,
   useGetArticleReactions,
   useUpdateReaction,
 } from "../../Interactions/hooks";
@@ -35,7 +34,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
   const [successReaction, setSuccessReaction] = useState<string | null>(null);
   const { authUser } = useUser();
 
-  const { mutate: createReaction } = useCreateReaction();
+  // const { mutate: createReaction } = useCreateReaction();
   const { mutate: updateReaction } = useUpdateReaction();
   const { data: allReactions } = useGetArticleReactions(article_id);
 
@@ -125,10 +124,17 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
           return;
         }
 
+        console.log("repostdata",   {
+            target_id: repostId,
+            target_type: "Comment",
+            type: reaction,
+          });
+
+
         createReactionRepost(
           {
             target_id: repostId,
-            target_type: "Comment", // Per your description
+            target_type: "Repost",
             type: reaction,
           },
           {
@@ -143,10 +149,11 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
                 onClose();
               }, 1000);
             },
-            onError: () => {
+            onError: (error) => {
               toast.error(t("blog.alerts.ReactionFailed"));
               setIsPending(false);
               setPendingReaction(null);
+              console.error('error message',error.message)
             },
           }
         );
@@ -180,11 +187,19 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
           }
         );
       } else {
-        createReaction(
+        // createReaction(
+        //   {
+        //     type: reaction,
+        //     article_id,
+        //     user_id: authUser.id,
+        //   },
+
+      
+          createReactionRepost(
           {
+            target_id: article_id,
+            target_type: "Article",
             type: reaction,
-            article_id,
-            user_id: authUser.id,
           },
           {
             onSuccess: () => {

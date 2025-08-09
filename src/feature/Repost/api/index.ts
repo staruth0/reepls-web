@@ -328,7 +328,7 @@ export const getCommentsTreeForRepost = async (
 export const createUpdateReaction = async (
   payload: CreateUpdateReactionPayload
 ): Promise<ReactionResponseData> => {
-  const { data } = await apiClient.post("/reactions", payload);
+  const { data } = await apiClient.post("/react", payload);
   return data.data;
 };
 
@@ -405,10 +405,16 @@ export const getAllReactionsForTarget = async (
   id: string,
   page: number = 1,
   limit: number = 10
-): Promise<GetAllReactionsForTargetResponse> => {
+) => {
+   console.log('target-type',target_type, 'id',id)
   const { data } = await apiClient.get(
+ 
     `/reactions/${target_type}/${id}/reactions?page=${page}&limit=${limit}`
   );
+
+console.log('API response data:', data);
+return data; 
+
   return data.data;
 };
 

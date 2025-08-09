@@ -1,15 +1,9 @@
 import { apiClient } from "../../../services/apiClient"; // Adjust path as needed
 
-// --- Podcast Upload & Creation ---
-
 const uploadStandalonePodcast = async (formData: FormData) => {
   const formDataObject = Object.fromEntries(formData.entries());
-  console.log('--- FormData Contents --- 2', formDataObject);
-  const { data } = await apiClient.post("/podcasts/standalone", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-    // Ensure axios doesn't try to transform FormData
- 
-  });
+  console.log('--- FormData Contents ---', formDataObject);
+  const { data } = await apiClient.post("/podcasts/standalone", formData /* no headers! */);
   return data;
 };
 
@@ -163,6 +157,7 @@ interface GetCommentsParams {
 }
 
 const getPodcastComments = async (podcastId: string, params?: GetCommentsParams) => {
+  console.log('id passed', podcastId)
   const { data } = await apiClient.get(`/podcasts/${podcastId}/comments`, { params });
   return data;
 };

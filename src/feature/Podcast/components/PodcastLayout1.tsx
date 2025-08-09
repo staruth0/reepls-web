@@ -39,7 +39,7 @@ const PodcastCard: React.FC<PodcastCardProps> = ({
   onFollow,
 }) => {
   // Local state for bookmark and follow, if not managed globally
-  const [isBookmarked, setIsBookmarked] = useState(podcast.isBookmarked);
+  const [isBookmarked, setIsBookmarked] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false); // Assuming initial state is not following
 
   const handleLikeClick = () => {

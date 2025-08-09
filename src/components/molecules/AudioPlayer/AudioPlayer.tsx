@@ -1,14 +1,16 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import { useAudioPlayer } from './AudioPlayerContext';
-import { LuPlay, LuPause, LuVolume2, LuVolumeX, LuSkipBack, LuSkipForward } from 'react-icons/lu';
+import { LuPlay, LuPause, LuVolume2, LuVolumeX, LuSkipBack, LuSkipForward, LuX } from 'react-icons/lu';
 import './AudioPlayer.scss';
 
 interface AudioPlayerProps {
   className?: string;
+  inline?: boolean; // When true, the player is rendered inline instead of fixed at bottom
+  onClose?: () => void; // Function to close the player when in fixed mode
 }
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ className = '' }) => {
+const AudioPlayer: React.FC<AudioPlayerProps> = ({ className = '', inline = false, onClose }) => {
   const { state, play, pause, seek, setVolume, toggleMute } = useAudioPlayer();
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurferRef = useRef<WaveSurfer | null>(null);
@@ -127,8 +129,22 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ className = '' }) => {
     return null;
   }
 
+  // Don't render if not visible and not inline
+  if (!state.isVisible && !inline) {
+    return null;
+  }
+
   return (
-    <div className={`audio-player ${className}`}>
+    <div className={`audio-player ${inline ? 'audio-player--inline' : 'audio-player--fixed'} ${className}`}>
+      {!inline && onClose && (
+        <button 
+          onClick={onClose} 
+          className="audio-player__close-btn" 
+          aria-label="Close audio player"
+        >
+          <LuX size={18} />
+        </button>
+      )}
       <div className="audio-player__container">
         {/* Track Info */}
         <div className="audio-player__info">
@@ -235,4 +251,4 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ className = '' }) => {
   );
 };
 
-export default AudioPlayer; 
+export default AudioPlayer;

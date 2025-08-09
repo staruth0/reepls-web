@@ -36,6 +36,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
       <ThemeProvider>
+        <AudioPlayerProvider>
         <CognitiveModeProvider>
           <ReduxProvider store={store}>
             <QueryClientProvider client={queryClient}>
@@ -61,6 +62,7 @@ createRoot(document.getElementById('root')!).render(
             </QueryClientProvider>
           </ReduxProvider>
         </CognitiveModeProvider>
+        </AudioPlayerProvider>
       </ThemeProvider>
     </AuthProvider>
   </StrictMode>
