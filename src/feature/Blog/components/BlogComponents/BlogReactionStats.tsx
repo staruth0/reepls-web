@@ -3,7 +3,7 @@ import { PenLine } from "lucide-react";
 import { hand5, heart, thumb } from "../../../../assets/icons";
 import { useGetCommentsByArticleId } from "../../../Comments/hooks";
 import ReactionsPopup from "../../../Interactions/components/ReactionsPopup";
-import { useGetArticleReactions } from "../../../Interactions/hooks";
+import { useGetAllReactionsForTarget } from "../../../../feature/Repost/hooks/useRepost";
 import { t } from "i18next";
 import { Article } from "../../../../models/datamodels";
 import { motion } from "framer-motion";
@@ -27,11 +27,12 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
   const [showNoReactionsPopup, setShowNoReactionsPopup] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
-  const { data: articleComments, isLoading: commentsLoading } =
-    useGetCommentsByArticleId(article_id);
-  const { data: allReactions, isLoading: reactionsLoading } =
-    useGetArticleReactions(article_id);
+  const { data: articleComments, isLoading: commentsLoading } = useGetCommentsByArticleId(article_id);
+  const target_type = article.type === "Repost" ? "Repost" : "Article";
+  const target_id = article.type === "Repost" && article.repost?.repost_id ? article.repost.repost_id : article_id;
 
+  const { data: allReactions, isLoading: reactionsLoading } = useGetAllReactionsForTarget(target_type, target_id);
+const reactionCount = allReactions?.data?.totalReactions || 0;
   const {
     data: repostComments,
 
@@ -42,7 +43,7 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
     ? repostComments?.parentCommentsCount ?? 0
     : articleComments?.pages?.[0]?.data?.totalComments ?? 0;
 
-  const reactionCount = allReactions?.reactions?.length || 0;
+  
   // const repostCount = 0; // Keep your existing logic or update as necessary
 
   useEffect(() => {
@@ -156,6 +157,7 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
           isOpen={showReactions}
           onClose={handleCloseReactionPopup}
           article_id={article_id}
+          article={article}
         />
       )}
 

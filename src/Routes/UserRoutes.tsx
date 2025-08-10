@@ -9,7 +9,7 @@ import ArticleViewBySlug from '../feature/Blog/pages/ArticleViewBySlug';
 import PostArticleAnalytics from '../feature/Blog/pages/Post&ArticleAnalytics';
 import CommuniqueDetail from '../feature/Feed/CommuniqueDetail';
 import CommuniqueList from '../feature/Feed/CommuniqueList';
-import UploadPodcastTestPage from '../Tests/pages/UploadPodcastTestPage';
+import UploadPodcastTestPage from '../Tests/pages/UploadPodcastTestPage.tsx';
 import UserFeed from '../feature/Feed/Feed';
 import FeedFollowing from '../feature/Feed/FeedFollowings';
 import FeedPodcasts from '../feature/Feed/FeedPodcasts';

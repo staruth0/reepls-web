@@ -11,7 +11,7 @@ import {
 import { useGetCommentsByArticleId } from "../../../Comments/hooks";
 import ReactionsPopup from "../../../Interactions/components/ReactionsPopup";
 import ReactionModal from "../../../Interactions/components/ReactionModal";
-import { useGetArticleReactions } from "../../../Interactions/hooks";
+
 import { t } from "i18next";
 import { Article, ReactionReceived, User } from "../../../../models/datamodels";
 import { motion } from "framer-motion";
@@ -121,40 +121,33 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
 
   const { data: articleComments, isLoading: commentsLoading } =
     useGetCommentsByArticleId(article_id);
-  const { data: allReactions, isLoading: reactionsLoading } =
-    useGetArticleReactions(article_id);
+
 
   const totalComments = articleComments?.pages?.[0]?.data?.totalComments;
-  const reactionCount = allReactions?.reactions?.length || 0;
+
 
 
 
 const target_type = article.type === "Repost" ? "Repost" : "Article";
 const target_id = article.type === "Repost" && article.repost?.repost_id ? article.repost.repost_id : article_id;
 
-const { data: allReactionsData, isLoading: reactionsLoading2 } = useGetAllReactionsForTarget(
+const { data: allReactions, isLoading: reactionsLoading } = useGetAllReactionsForTarget(
   target_type ,
   target_id,
 );
 
-useEffect(()=>{
-  console.log({ target_type ,
-  target_id})
-   console.log('allReactionsData',allReactionsData)
-},[allReactionsData,target_type,target_id])
-
-const reactionCount2 = allReactionsData?.data?.totalReactions || 0;
+  const reactionCount = allReactions?.data?.totalReactions || 0;
 
 useEffect(() => {
  
 
-  if (isLoggedIn && authUser?.id && allReactionsData?.data?.reactions) {
-    const userReact = allReactionsData.data.reactions.find(
+  if (isLoggedIn && authUser?.id && allReactions?.data?.reactions) {
+    const userReact = allReactions.data.reactions.find(
       (r: ReactionReceived) => r.user_id === authUser.id
     );
     setUserReaction(userReact?.type || null);
   }
-}, [isLoggedIn, authUser, allReactionsData]);
+}, [isLoggedIn, authUser, allReactions]);
 
   // This useEffect is crucial. It will automatically update the `saved` state
   // whenever `savedArticles` (the React Query cache data) changes,
@@ -163,19 +156,12 @@ useEffect(() => {
     // Check if `savedArticles` data is available and if the current article_id exists within it.
     // Assuming `savedArticles.articles` is an array where each item has an `article` object with an `_id`.
     const isSaved = savedArticles?.articles?.some(
-      (item: any) => item?.article?._id === article_id
+      (item: { article?: { _id: string } }) => item?.article?._id === article_id
     );
     setSaved(isSaved);
-  }, [savedArticles, article_id]); // Depend on savedArticles data and article_id
+  }, [savedArticles, article_id]); 
 
-  useEffect(() => {
-    if (isLoggedIn && authUser?.id && allReactions?.reactions) {
-      const userReact = allReactions.reactions.find(
-        (r: ReactionReceived) => r.user_id?.id === authUser.id
-      );
-      setUserReaction(userReact?.type || null);
-    }
-  }, [isLoggedIn, authUser, allReactions]);
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -370,10 +356,10 @@ useEffect(() => {
                 handleReactionCountClick();
               }}
             >
-              {reactionsLoading2 ? (
+              {reactionsLoading ? (
                 <div className="w-6 h-4 bg-neutral-500 rounded-md animate-pulse" />
               ) : (
-                <div>{reactionCount2}</div>
+                <div>{reactionCount}</div>
               )}
             </div>
           </div>
@@ -455,6 +441,9 @@ useEffect(() => {
             isOpen={showReactions}
             onClose={handleCloseReactionPopup}
             article_id={article_id}
+            article={article}
+           
+
           />
         )}
 

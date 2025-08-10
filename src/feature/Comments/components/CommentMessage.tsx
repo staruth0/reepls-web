@@ -13,19 +13,16 @@ import CommentSectionLevel2 from "./CommentSectionLevel2";
 import {
   Article,
   Comment,
-  ReactionReceived,
   User,
 } from "../../../models/datamodels";
-import {
-  useGetCommentReactions,
-} from "../../Interactions/hooks";
+
 import { useUser } from "../../../hooks/useUser";
 import { useDeleteComment, useUpdateComment } from "../hooks";
 import { toast } from "react-toastify";
 import { t } from "i18next";
 import { useUpdateArticle } from "../../Blog/hooks/useArticleHook";
 import { useRoute } from "../../../hooks/useRoute";
-import { useCreateReactionRepost } from "../../Repost/hooks/useRepost";
+import { useCreateReactionRepost, useGetAllReactionsForTarget } from "../../Repost/hooks/useRepost";
 
 interface MessageComponentProps {
   content: string;
@@ -42,6 +39,17 @@ interface MessageComponentProps {
   article: Article;
 }
 
+interface Reaction {
+  _id: string;
+  type: "like" | "clap" | "love" | "smile" | "cry";
+  user_id: string;
+  target_id: string;
+  target_type: "Article" | "Repost";
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
 const CommentMessage: React.FC<MessageComponentProps> = ({
   content,
   createdAt,
@@ -55,36 +63,32 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   activeLevelTwoCommentId,
   article,
 }) => {
-  const [reactedid, setReactedids] = useState<string[]>([]);
   const [isLevelTwoCommentOpen, setIsLevelTwoCommentOpen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(content);
-  // const {
-  //   mutate: createReaction,
-  //   isPending,
-  //   isSuccess,
-  // } = useCreateCommentReaction();
-  const { data: reactions } = useGetCommentReactions(comment_id);
+
+  // Define target type and ID for the new hook
+  const target_type = "Comment";
+  const target_id = comment_id;
+
+  // Replaced useGetCommentReactions with useGetAllReactionsForTarget
+  const { data: reactionsData } = useGetAllReactionsForTarget(target_type, target_id);
+  
   const { mutate: deleteComment, isPending: isDeletePending } = useDeleteComment();
   const { mutate: updateComment, isPending: isUpdatePending } = useUpdateComment();
   const { authUser } = useUser();
   const { mutate } = useUpdateArticle();
   const { goToProfile } = useRoute();
+  const { mutate: createReactionRepost, isPending: isCreateReactionPending, isSuccess: isCreateReactionSuccess } = useCreateReactionRepost();
 
-   const { mutate: createReactionRepost ,isPending,isSuccess} = useCreateReactionRepost();
-
-  useEffect(() => {
-    if (reactions?.reactions && Array.isArray(reactions.reactions)) {
-      const userIds = reactions.reactions.map((reaction: ReactionReceived) =>
-        reaction.user_id.id?.trim()
-      );
-      setReactedids(userIds);
-    }
-  }, [reactions]);
-
-  const hasUserReacted = authUser?.id ? reactedid.includes(authUser.id) : false;
-  const reactionCount = reactions?.reactions?.length || 0;
+  // The new data structure has a `data.reactions` array
+  // Use this array to check if the current user has reacted
+  const hasUserReacted = reactionsData?.data?.reactions?.some(
+    (reaction: Reaction) => reaction.user_id === authUser?.id
+  );
+  
+  const reactionCount = reactionsData?.data?.totalReactions || 0;
 
   const formatDate = () => {
     try {
@@ -97,28 +101,17 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
     }
   };
 
-  // const effectiveArticleId =
-  //   article?.type === "Repost" && article?.repost?.repost_id
-  //     ? article.repost.repost_id
-  //     : article_id;
-
   const isAuthor = author?._id === author_of_post?._id;
   const isAuthAuthor = author?._id === authUser?.id;
 
   const handleReact = () => {
     if (!authUser?.id) return;
-    // createReaction(
-    //   {
-    //     type: "like",
-    //     user_id: authUser.id,
-    //     comment_id: comment_id,
-    //   },
-     createReactionRepost(
-          {
-            target_id: comment_id,
-            target_type: "Comment",
-            type: "like",
-          },
+    createReactionRepost(
+      {
+        target_id: comment_id,
+        target_type: "Comment",
+        type: "like",
+      },
       {
         onSuccess: () => {
           mutate({
@@ -299,12 +292,12 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
           <ThumbsUp
             onClick={handleReact}
             className={`size-4 hover:text-primary-400 hover:cursor-pointer ${
-              hasUserReacted || isSuccess
+              hasUserReacted || isCreateReactionSuccess
                 ? "fill-primary-400 text-primary-400"
                 : ""
             }`}
           />
-          {isPending ? (
+          {isCreateReactionPending ? (
             <LuLoader className="animate-spin text-primary-400 inline-block mx-1" />
           ) : (
             "React"

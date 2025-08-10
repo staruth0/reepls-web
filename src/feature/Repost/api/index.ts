@@ -409,7 +409,7 @@ export const getAllReactionsForTarget = async (
    console.log('target-type',target_type, 'id',id)
   const { data } = await apiClient.get(
  
-    `/reactions/${target_type}/${id}/reactions?page=${page}&limit=${limit}`
+    `/react/${target_type}/${id}/reactions?page=${page}&limit=${limit}`
   );
 
 console.log('API response data:', data);
@@ -433,9 +433,9 @@ export const getReactionsGroupedByType = async (
   id: string,
   page: number = 1,
   limit: number = 10
-): Promise<GetReactionsGroupedByTypeResponse> => {
+) => {
   const { data } = await apiClient.get(
-    `/reactions/${target_type}/${id}/reactions/per-type?page=${page}&limit=${limit}`
+    `/react/${target_type}/${id}/reactions/per-type?page=${page}&limit=${limit}`
   );
   return data.data;
 };
@@ -469,4 +469,51 @@ export const getAllRepostComments = async ({ page = 1, limit = 10 }) => {
 export const getCommentsByRepostId = async (repostId:string) => {
   const res = await apiClient.get(`/reposts/${repostId}/comment/by-repost`);
   return res.data;
+};
+
+
+export interface SaveRepostResponse {
+  message: string;
+  savedRepost: RepostResponse;
+}
+
+export interface RemoveSavedRepostResponse {
+  message: string;
+}
+
+export interface GetSavedRepostsResponse {
+  reposts: RepostResponse[];
+  totalReposts: number;
+  totalPages: number;
+}
+
+/**
+ * Saves a repost.
+ * @param repostId The ID of the repost to save.
+ * @returns The response data from the API.
+ */
+export const saveRepost = async (repostId: string)=> {
+  const { data } = await apiClient.post(`/articles/saved-repost/${repostId}`);
+  return data;
+};
+
+/**
+ * Removes a saved repost.
+ * @param repostId The ID of the saved repost to remove.
+ * @returns The response data from the API.
+ */
+export const removeSavedRepost = async (repostId: string) => {
+  const { data } = await apiClient.delete(`/articles/saved-repost/${repostId}`);
+  return data;
+};
+
+/**
+ * Retrieves a paginated list of saved reposts for the authenticated user.
+ * @param page The page number for pagination (default: 1).
+ * @param limit The number of saved reposts per page (default: 10).
+ * @returns The paginated saved reposts data.
+ */
+export const getSavedReposts = async (page: number = 1, limit: number = 10) => {
+  const { data } = await apiClient.get(`/articles/saved-reposts?page=${page}&limit=${limit}`);
+  return data;
 };

@@ -1,14 +1,26 @@
 import { X } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import UserReactionContainer from "./UserReactionContainer";
 import { clap, heart, sadface, smile, thumb } from "../../../assets/icons";
 import ReactionTab from "./ReactionTab";
-import { useGetArticleReactions, useGetReactionsPerType } from "../hooks";
-import { ReactionReceived } from "../../../models/datamodels";
+import { Article, User } from "../../../models/datamodels";
 import { useTranslation } from "react-i18next";
+import { useGetAllReactionsForTarget, useGetReactionsGroupedByType } from "../../Repost/hooks/useRepost";
+import UserReactionContainer2 from "./UserReactionContainer2";
+
+interface Reaction {
+  _id: string;
+  type: "like" | "clap" | "love" | "smile" | "cry";
+  user_id: string;
+  target_id: string;
+  target_type: "Article" | "Repost";
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
 
 interface ReactionProps {
   article_id: string;
+  article: Article;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -17,27 +29,41 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
   isOpen,
   onClose,
   article_id,
+  article,
 }) => {
+  const { t } = useTranslation();
 
-  const {t} = useTranslation()
+  
+
+
+
+  // Determine the target type and ID based on the article prop
+  const target_type = article.type === "Repost" ? "Repost" : "Article";
+  const target_id = article.type === "Repost" && article.repost?.repost_id
+    ? article.repost.repost_id
+    : article_id;
+
+  // Use the new hooks with the determined target_type and target_id
   const {
     data: allReactions,
     isLoading: isLoadingAllReactions,
     isError: isErrorAllReactions,
-  } = useGetArticleReactions(article_id);
+  } = useGetAllReactionsForTarget(target_type, target_id);
+
   const {
     data: reactionsPerType,
     isLoading: isLoadingReactionsPerType,
     isError: isErrorReactionsPerType,
-  } = useGetReactionsPerType(article_id);
+  } = useGetReactionsGroupedByType(target_type, target_id);
 
+ 
   const reactionsTab = [
     {
       id: "All",
       title: (
         <div className="font-semibold text-[16px] space-x-1">
           <span>{t("interaction.all")}</span>
-          <span>{allReactions?.totalReactions || 0}</span>
+          <span>{allReactions?.data?.totalReactions || 0}</span>
         </div>
       ),
     },
@@ -46,7 +72,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="flex items-center gap-1 font-semibold text-[16px]">
           <img src={heart} alt="Heart" className="w-5 h-5" />
-          <span>{reactionsPerType?.love?.totalUsers || 0}</span>
+          <span>{reactionsPerType?.love?.users?.length || 0}</span>
         </div>
       ),
     },
@@ -55,7 +81,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="flex items-center gap-1 font-semibold text-[16px]">
           <img src={sadface} alt="Sad Face" className="w-5 h-5" />
-          <span>{reactionsPerType?.cry?.totalUsers || 0}</span>
+          <span>{reactionsPerType?.cry?.users?.length|| 0}</span>
         </div>
       ),
     },
@@ -64,7 +90,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="flex items-center gap-1 font-semibold text-[16px]">
           <img src={smile} alt="Smile" className="w-5 h-5" />
-          <span>{reactionsPerType?.smile?.totalUsers || 0}</span>
+          <span>{reactionsPerType?.smile?.users?.length || 0}</span>
         </div>
       ),
     },
@@ -73,7 +99,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="flex items-center gap-1 font-semibold text-[16px]">
           <img src={thumb} alt="Thumb" className="w-5 h-5" />
-          <span>{reactionsPerType?.like?.totalUsers || 0}</span>
+          <span>{reactionsPerType?.like?.users?.length || 0}</span>
         </div>
       ),
     },
@@ -82,19 +108,22 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="flex items-center gap-1 font-semibold text-[16px]">
           <img src={clap} alt="Clap" className="w-5 h-5" />
-          <span>{reactionsPerType?.clap?.totalUsers || 0}</span>
+          <span>{reactionsPerType?.clap?.users?.length || 0}</span>
         </div>
       ),
     },
   ];
 
-  const [activeTab, setActiveTab] = useState<number | string>(
+    const [activeTab, setActiveTab] = useState<number | string>(
     reactionsTab[0].id
   );
 
   useEffect(() => {
-   
-  }, [allReactions,reactionsPerType]);
+    // You can add logic here to run when reaction data changes
+    console.log('reactionspertypt',reactionsPerType)
+  }, [allReactions, reactionsPerType]);
+
+
 
   if (!isOpen) return null;
 
@@ -150,6 +179,27 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
     );
   }
 
+  // Helper function to render users for a specific reaction type
+  const renderUsersForType = (type: string) => {
+    const users = reactionsPerType?.[type]?.users;
+    if (!users || users.length === 0) {
+      return (
+        <p className="text-center text-[var(--neutral-300)]">
+          No one has reacted with {type} yet.
+        </p>
+      );
+    }
+    return users.map((user: User) => (
+      <UserReactionContainer2
+        key={user.id}
+        type={type} // Pass the reaction type
+        user_id={user.id || ''} // Pass the user ID as expected by UserReactionContainer2
+
+
+      />
+    ));
+  };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-[910]">
       <div className="bg-[var(--plain-b)] rounded-lg w-[95%] md:w-[50vw] max-w-full shadow-lg h-[50vh] md:h-[80vh]">
@@ -177,65 +227,22 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
         </div>
         <div className="p-4 space-y-3 min-h-[30vh] max-h-[63vh] overflow-y-auto">
           {activeTab === "All" &&
-            allReactions?.reactions?.map((reaction: ReactionReceived) => (
-              <UserReactionContainer
-                key={reaction.type}
-                type={reaction.type}
-                user={reaction.user_id}
-              />
+            (allReactions?.data?.reactions?.length > 0 ? (
+              allReactions.data.reactions.map((reaction: Reaction) => (
+                <UserReactionContainer2
+                  key={reaction._id}
+                  type={reaction.type}
+                  user_id={reaction.user_id}
+                />
+              ))
+            ) : (
+              <p className="text-center text-[var(--neutral-300)]">
+                No reactions yet.
+              </p>
             ))}
-          {activeTab === "smile" &&
-            allReactions?.reactions
-              ?.filter(
-                (reaction: ReactionReceived) => reaction.type === "smile"
-              )
-              .map((reaction: ReactionReceived) => (
-                <UserReactionContainer
-                  key={reaction.type}
-                  type={reaction.type}
-                  user={reaction.user_id}
-                />
-              ))}
-          {activeTab === "cry" &&
-            allReactions?.reactions
-              ?.filter((reaction: ReactionReceived) => reaction.type === "cry")
-              .map((reaction: ReactionReceived) => (
-                <UserReactionContainer
-                  key={reaction.type}
-                  type={reaction.type}
-                  user={reaction.user_id}
-                />
-              ))}
-          {activeTab === "love" &&
-            allReactions?.reactions
-              ?.filter((reaction: ReactionReceived) => reaction.type === "love")
-              .map((reaction: ReactionReceived) => (
-                <UserReactionContainer
-                  key={reaction.type}
-                  type={reaction.type}
-                  user={reaction.user_id}
-                />
-              ))}
-          {activeTab === "clap" &&
-            allReactions?.reactions
-              ?.filter((reaction: ReactionReceived) => reaction.type === "clap")
-              .map((reaction: ReactionReceived) => (
-                <UserReactionContainer
-                  key={reaction.type}
-                  type={reaction.type}
-                  user={reaction.user_id}
-                />
-              ))}
-          {activeTab === "like" &&
-            allReactions?.reactions
-              ?.filter((reaction: ReactionReceived) => reaction.type === "like")
-              .map((reaction: ReactionReceived) => (
-                <UserReactionContainer
-                  key={reaction.type}
-                  type={reaction.type}
-                  user={reaction.user_id}
-                />
-              ))}
+
+          {/* Use the helper function to render users for each tab */}
+          {activeTab !== "All" && renderUsersForType(activeTab as string)}
         </div>
       </div>
     </div>

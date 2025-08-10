@@ -57,14 +57,14 @@ const UserFeed: React.FC = () => {
   }, [data]);
 
   // Function to get friendly error messages
-  const getFriendlyErrorMessage = (error: any): string => {
+  const getFriendlyErrorMessage = (error: Error | { response?: { status: number }, message?: string } | null): string => {
     if (!error) return "Something went wrong. Please try again later.";
 
     // Handle common error cases
-    if (error.message.includes("Network Error")) {
+    if (error.message?.includes("Network Error")) {
       return "Oops! It looks like you're offline. Please check your internet connection and try again.";
     }
-    if (error.response) {
+    if ('response' in error && error.response) {
       const status = error.response.status;
       if (status === 404) {
         return "We couldn’t find any posts right now. They might be hiding!";
