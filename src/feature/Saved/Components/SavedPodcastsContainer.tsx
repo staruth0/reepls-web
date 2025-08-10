@@ -85,7 +85,27 @@ const SavedPodcastsContainer: React.FC<SavedPodcastsContainerProps> = ({ classNa
   return (
     <div className={`w-full ${className}`}>
       <div className="grid grid-cols-1 gap-6">
-        {savedPodcastsData.data.savedPodcasts.map((savedPodcast) => {
+        {savedPodcastsData.data.savedPodcasts.map((savedPodcast: { 
+          _id: string;
+          podcastId: {
+            _id: string;
+            thumbnailUrl?: string;
+            authorId?: {
+              _id: string;
+              name: string;
+              profile_picture?: string;
+              is_verified_writer?: boolean;
+            };
+            title?: string;
+            description?: string;
+            createdAt: string;
+            audio?: {
+              duration?: number;
+            };
+            likesCount?: number;
+            commentsCount?: number;
+          };
+        }) => {
           const podcast = savedPodcast.podcastId;
 
           // Create the object that matches the PodcastCard's expected props

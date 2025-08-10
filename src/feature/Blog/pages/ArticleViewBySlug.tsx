@@ -52,7 +52,7 @@ const ArticleViewBySlug: React.FC = () => {
   const commentSectionRef = useRef<HTMLDivElement>(null);
 
   const [title, setTitle] = useState<string>(
-    "*This article does not have a title*"
+    "This article does not have a title"
   );
   const [subtitle, setSubtitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
@@ -497,6 +497,7 @@ const ArticleViewBySlug: React.FC = () => {
           isOpen={showReactionsPopup}
           onClose={() => setShowReactionsPopup(false)}
           article_id={article?._id || ""}
+          article={article}
         />
       )}
 

@@ -1,257 +1,343 @@
 import React, { useState } from 'react';
-import axios, { AxiosError } from 'axios';
-import { useUser } from '../../hooks/useUser';
 import { apiClient } from '../../services/apiClient';
 
-// Define the shape of the form data
-interface IFormData {
+interface PodcastFormData {
   title: string;
   description: string;
   tags: string;
+  category: string;
   isPublic: boolean;
-  authorId: string;
+  audioFile: File | null;
 }
 
-const UploadPodcastTestPage: React.FC = () => {
+interface UploadPodcastTestPageProps {
+  onUploadSuccess?: (response: { id: string; title: string; url: string }) => void;
+  onUploadError?: (error: Error | string) => void;
+  className?: string;
+}
 
-  const {authUser} = useUser()
-  // State for form data
-  const [formData, setFormData] = useState<IFormData>({
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+
+const UploadPodcastTestPage: React.FC<UploadPodcastTestPageProps> = ({
+  onUploadSuccess,
+  onUploadError,
+  className = '',
+}) => {
+  const [formData, setFormData] = useState<PodcastFormData>({
     title: '',
     description: '',
     tags: '',
+    category: '',
     isPublic: true,
-    authorId: authUser?.id || '',
+    audioFile: null,
   });
 
-  // State for the selected audio file
-  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [error, setError] = useState<string | null>(null);
 
-  // State for UI feedback
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [message, setMessage] = useState<string | null>(null);
-  const [isError, setIsError] = useState<boolean>(false);
+  // Handle changes for inputs, selects, and checkbox
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type } = e.target;
+    // Conditionally get the value based on the input type
+    const inputValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
 
-  // Base URL for the API
-  const API_BASE_URL = 'https://reepls-api.onrender.com/api-v1';
-
-  // Handle changes in text inputs
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
+    setFormData((prev) => ({
+      ...prev,
+      [name]: inputValue,
     }));
   };
 
-  // Handle changes for the 'isPublic' checkbox
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: checked,
-    }));
-  };
-
-  // Handle file selection
+  // Handle file selection with validation
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setAudioFile(e.target.files[0]);
-    } else {
-      setAudioFile(null);
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      if (!file.type.startsWith('audio/')) {
+        const errMsg = 'Please select a valid audio file (MP3, WAV, M4A, OGG)';
+        setError(errMsg);
+        onUploadError?.(errMsg);
+        return;
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        const errMsg = 'File size must be less than 50MB';
+        setError(errMsg);
+        onUploadError?.(errMsg);
+        return;
+      }
+
+      setFormData((prev) => ({ ...prev, audioFile: file }));
+      setError(null);
     }
   };
 
-  // Handle form submission
+  // Reset form fields and file input
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      description: '',
+      tags: '',
+      category: '',
+      isPublic: true,
+      audioFile: null,
+    });
+    setUploadProgress(0);
+    setError(null);
+
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement | null;
+    if (fileInput) fileInput.value = '';
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
-    setMessage(null);
-    setIsError(false);
 
-    if (!audioFile || !formData.title || !formData.authorId) {
-      setMessage('Please fill out all required fields (Title, Author ID) and select an audio file.');
-      setIsError(true);
-      setIsLoading(false);
+    if (!formData.title.trim()) {
+      const errMsg = 'Title is required';
+      setError(errMsg);
+      onUploadError?.(errMsg);
       return;
     }
 
-    // Create a FormData object to send the multipart/form-data
-    const data = new FormData();
-    data.append('podcast_audio_file', audioFile);
-    data.append('title', formData.title);
-    data.append('description', formData.description);
-    data.append('authorId', formData.authorId);
-    data.append('isPublic', formData.isPublic.toString());
-    
-    // Add tags only if they are not empty
-    if (formData.tags) {
-      const tagsArray = formData.tags.split(',').map(tag => tag.trim());
-      tagsArray.forEach(tag => data.append('tags', tag));
+    if (!formData.audioFile) {
+      const errMsg = 'Audio file is required';
+      setError(errMsg);
+      onUploadError?.(errMsg);
+      return;
     }
 
+    setUploading(true);
+    setError(null);
+    setUploadProgress(0);
+
     try {
-      // Make the API call to the upload endpoint
-      const response = await apiClient.post(`/podcasts/standalone`, data, {
+      const uploadData = new FormData();
+      uploadData.append('title', formData.title.trim());
+      uploadData.append('description', formData.description.trim());
+      uploadData.append('category', formData.category);
+      uploadData.append('isPublic', formData.isPublic.toString());
+      uploadData.append('audio', formData.audioFile);
+      uploadData.append('tags', formData.tags); // Added tags to FormData
+
+      const result = await apiClient.post('/podcasts/standalone', uploadData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        onUploadProgress: (progressEvent) => {
+          const total = progressEvent.total ?? 1;
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / total);
+          setUploadProgress(percentCompleted);
+        },
       });
 
-      // Handle a successful response
-      setMessage(`Success! Podcast uploaded with ID: ${response.data.id}`);
-      setIsError(false);
-      
-      // Optionally, reset the form after successful upload
-      setFormData({
-        title: '',
-        description: '',
-        tags: '',
-        isPublic: true,
-        authorId: '',
-      });
-      setAudioFile(null);
+      setError(null);
+      resetForm();
+      onUploadSuccess?.(result.data);
+    } catch (err: any) {
+      let errorMessage = 'Upload failed';
+      let errorDetails = '';
 
-    } catch (error: unknown) {
-      // Handle errors
-      setIsError(true);
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError;
-        const errorMessage = (axiosError.response?.data as { message?: string })?.message || 'An unknown error occurred.';
-        setMessage(`Error: ${errorMessage}`);
+      if (err.response) {
+        const status = err.response.status;
+        const statusText = err.response.statusText;
+
+        errorMessage = `Upload failed: ${status} ${statusText}`;
+
+        if (err.response.data) {
+          if (typeof err.response.data === 'string') {
+            errorDetails = err.response.data;
+          } else if (err.response.data.message) {
+            errorDetails = err.response.data.message;
+          } else if (err.response.data.error) {
+            errorDetails =
+              typeof err.response.data.error === 'string'
+                ? err.response.data.error
+                : err.response.data.error.message || JSON.stringify(err.response.data.error);
+          }
+        }
+
+        switch (status) {
+          case 401:
+            errorMessage = 'Authentication failed. Please login again.';
+            break;
+          case 403:
+            errorMessage = 'Access denied. Check your permissions.';
+            break;
+          case 400:
+            errorMessage = 'Invalid request data.';
+            if (errorDetails.toLowerCase().includes('unexpected field')) {
+              errorDetails = 'API field validation error. Please check the form data.';
+            }
+            break;
+          case 413:
+            errorMessage = 'File too large. Maximum size is 50MB.';
+            break;
+          case 415:
+            errorMessage = 'Unsupported file type. Please use audio files only.';
+            break;
+          default:
+            if (status >= 500) {
+              errorMessage = 'Server error. Please try again later.';
+            }
+        }
+      } else if (err.request) {
+        errorMessage = 'Network error. Please check your connection.';
+        if (err.code === 'ECONNABORTED') {
+          errorDetails = 'Request timeout. File might be too large or connection is slow.';
+        } else if (err.code === 'ERR_NETWORK') {
+          errorDetails = 'Network connection failed.';
+        }
       } else {
-        setMessage('An unknown error occurred.');
+        errorMessage = 'Request error';
+        errorDetails = err.message || 'Unknown error occurred';
       }
+
+      const fullError = errorDetails ? `${errorMessage}: ${errorDetails}` : errorMessage;
+      setError(fullError);
+      onUploadError?.(fullError);
     } finally {
-      setIsLoading(false);
+      setUploading(false);
+      setUploadProgress(0);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
-        <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">Upload New Podcast</h1>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title Input */}
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-              Podcast Title <span className="text-red-500">*</span>
-            </label>
+    <div className={`podcast-upload-only ${className}`}>
+      <form onSubmit={handleSubmit} className="upload-form">
+        {/* Title - Required */}
+        <div className="form-group">
+          <label htmlFor="title">
+            Podcast Title <span className="required">*</span>
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleInputChange}
+            placeholder="Enter podcast title"
+            disabled={uploading}
+            required
+          />
+        </div>
+
+        {/* Description - Optional */}
+        <div className="form-group">
+          <label htmlFor="description">Description</label>
+          <textarea
+            id="description"
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            placeholder="Enter podcast description"
+            rows={4}
+            disabled={uploading}
+          />
+        </div>
+
+        {/* Category - Optional */}
+        <div className="form-group">
+          <label htmlFor="category">Category</label>
+          <select
+            id="category"
+            name="category"
+            value={formData.category}
+            onChange={handleInputChange}
+            disabled={uploading}
+          >
+            <option value="">Select category</option>
+            <option value="Technology">Technology</option>
+            <option value="Business">Business</option>
+            <option value="Education">Education</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Health">Health</option>
+            <option value="Sports">Sports</option>
+            <option value="Music">Music</option>
+            <option value="News">News</option>
+            <option value="Science">Science</option>
+            <option value="Comedy">Comedy</option>
+            <option value="Arts">Arts</option>
+            <option value="History">History</option>
+          </select>
+        </div>
+
+        {/* Tags - Optional */}
+        <div className="form-group">
+          <label htmlFor="tags">Tags</label>
+          <input
+            type="text"
+            id="tags"
+            name="tags"
+            value={formData.tags}
+            onChange={handleInputChange}
+            placeholder="Enter tags separated by commas (e.g., tech, innovation, AI)"
+            disabled={uploading}
+          />
+          <small className="form-help">Separate multiple tags with commas</small>
+        </div>
+
+        {/* Public/Private Toggle */}
+        <div className="form-group checkbox-group">
+          <label className="checkbox-label">
             <input
-              type="text"
-              id="title"
-              name="title"
-              value={formData.title}
+              type="checkbox"
+              name="isPublic"
+              checked={formData.isPublic}
               onChange={handleInputChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-              required
+              disabled={uploading}
             />
-          </div>
+            <span className="checkbox-text">Make podcast public</span>
+          </label>
+        </div>
 
-          {/* Author ID Input */}
-          <div>
-            <label htmlFor="authorId" className="block text-sm font-medium text-gray-700">
-              Author ID <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              id="authorId"
-              name="authorId"
-              value={formData.authorId}
-              onChange={handleInputChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-              required
-            />
-          </div>
-
-          {/* Description Input */}
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-              Description
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              rows={4}
-              value={formData.description}
-              onChange={handleInputChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-            />
-          </div>
-
-          {/* Tags Input */}
-          <div>
-            <label htmlFor="tags" className="block text-sm font-medium text-gray-700">
-              Tags (comma-separated)
-            </label>
-            <input
-              type="text"
-              id="tags"
-              name="tags"
-              value={formData.tags}
-              onChange={handleInputChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-            />
-          </div>
-
-          {/* Is Public Checkbox */}
-          <div className="flex items-start">
-            <div className="flex items-center h-5">
-              <input
-                id="isPublic"
-                name="isPublic"
-                type="checkbox"
-                checked={formData.isPublic}
-                onChange={handleCheckboxChange}
-                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-              />
-            </div>
-            <div className="ml-3 text-sm">
-              <label htmlFor="isPublic" className="font-medium text-gray-700">
-                Public Podcast
-              </label>
-              <p className="text-gray-500">
-                If checked, the podcast will be publicly available immediately.
-              </p>
-            </div>
-          </div>
-          
-          {/* Audio File Input */}
-          <div>
-            <label htmlFor="podcast_audio_file" className="block text-sm font-medium text-gray-700">
-              Audio File <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="file"
-              id="podcast_audio_file"
-              name="podcast_audio_file"
-              accept="audio/*"
-              onChange={handleFileChange}
-              className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-              required
-            />
-          </div>
-          
-          {/* Submission Button */}
-          <div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${isLoading ? 'bg-indigo-400' : 'bg-indigo-600 hover:bg-indigo-700'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
-            >
-              {isLoading ? 'Uploading...' : 'Upload Podcast'}
-            </button>
-          </div>
-
-          {/* Status Message */}
-          {message && (
-            <div className={`mt-4 p-4 rounded-md ${isError ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
-              <p>{message}</p>
+        {/* Audio File - Required */}
+        <div className="form-group">
+          <label htmlFor="audioFile">
+            Audio File <span className="required">*</span>
+          </label>
+          <input
+            type="file"
+            id="audioFile"
+            accept="audio/*"
+            onChange={handleFileChange}
+            disabled={uploading}
+            required
+          />
+          <small className="form-help">Supported formats: MP3, WAV, M4A, OGG (max 50MB)</small>
+          {formData.audioFile && (
+            <div className="file-info">
+              <span className="file-name">📁 {formData.audioFile.name}</span>
+              <span className="file-size">
+                ({(formData.audioFile.size / (1024 * 1024)).toFixed(2)} MB)
+              </span>
             </div>
           )}
-        </form>
-      </div>
+        </div>
+
+        {/* Upload Progress */}
+        {uploading && (
+          <div className="progress-container">
+            <div className="progress-bar">
+              <div className="progress-fill" style={{ width: `${uploadProgress}%` }}></div>
+            </div>
+            <span className="progress-text">Uploading... {uploadProgress}%</span>
+          </div>
+        )}
+
+        {/* Error Display */}
+        {error && (
+          <div className="error-message">
+            <span className="error-icon">⚠️</span>
+            <span className="error-text">{error}</span>
+          </div>
+        )}
+
+        {/* Submit Button */}
+        <button type="submit" disabled={uploading} className="submit-button">
+          {uploading ? 'Uploading...' : 'Upload Podcast'}
+        </button>
+      </form>
     </div>
   );
 };

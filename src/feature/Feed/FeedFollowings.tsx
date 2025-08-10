@@ -54,11 +54,16 @@ const FeedFollowing: React.FC = () => {
  
 
   // Function to get friendly error messages
-  const getFriendlyErrorMessage = (error: any): string => {
+  const getFriendlyErrorMessage = (error: { 
+    message?: string;
+    response?: {
+      status: number;
+    };
+  } | null) => {
     if (!error) return "Something went wrong. Please try again later.";
 
     // Handle common error cases
-    if (error.message.includes("Network Error")) {
+    if (error.message?.includes("Network Error")) {
       return "Oops! It looks like you're offline. Please check your internet connection and try again.";
     }
     if (error.response) {
@@ -74,8 +79,7 @@ const FeedFollowing: React.FC = () => {
       }
     }
 
-    // Default fallback for unhandled errors
-    return "Something unexpected popped up. We’re on it—please try again later!";
+  
   };
 
   // Check if there are no articles

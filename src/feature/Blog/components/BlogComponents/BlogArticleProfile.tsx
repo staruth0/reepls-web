@@ -36,7 +36,7 @@ import ReportArticlePopup from "../../../Reports/components/ReportPostPopup";
 import { timeAgo } from "../../../../utils/dateFormater";
 import { cn } from "../../../../utils"; // Make sure cn utility is imported if you use it
 import BlogRepostModal from "../BlogRepostModal";
-import { useDeleteRepost } from "../../../Repost/hooks/useRepost";
+import { useDeleteRepost, useGetSavedReposts, useRemoveSavedRepost, useSaveRepost } from "../../../Repost/hooks/useRepost";
 
 
 interface BlogProfileProps {
@@ -86,9 +86,14 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   const { mutate: deleteRepost, isPending: isDeleteRepostPending } =
     useDeleteRepost();
   const [showReportPopup, setShowReportPopup] = useState(false);
+  const { mutate: saveRepost, isPending: isSaveRepostPending } = useSaveRepost();
+  const { mutate: removeRepost, isPending: isRemoveRepostPending } = useRemoveSavedRepost();
 
+  const {data} = useGetSavedReposts();
 
-
+  useEffect(()=>{
+    console.log('data',data)
+  },[data])
 
   // Check if current user is the reposted user
   const isCurrentUserReposted = article?.repost?.repost_user?._id === authUser?.id;
@@ -142,7 +147,7 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
 
   const handleDeleteRepost = () => {
     if (article?._id) {
-   
+    
       deleteRepost(article._id, {
         onSuccess: () => {
           toast.success("Repost deleted successfully");
@@ -164,49 +169,74 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
       return;
     }
     // Prevent multiple rapid clicks while a save/remove operation is ongoing
-    if (isSavePending || isRemovePending) return;
+    if (isSavePending || isRemovePending || isSaveRepostPending || isRemoveRepostPending) return;
 
-    if (saved) {
-      removeSavedArticle(article_id, {
-        onSuccess: () => {
-          toast.success(t("blog.alerts.articleRemoved"));
-          // The `useEffect` below will react to the optimistic update in `useRemoveSavedArticle`
-          // which modifies the `savedArticles` cache.
-          
-          // You might still want to update engagement count immediately for the user experience,
-          // though for true consistency, this should ideally also be part of an optimistic
-          // update on a 'main article' query or handled by your backend.
-          mutate({
-            articleId: article._id || "",
-            article: {
-              engagement_count: (article.engagement_count || 0) - 1,
-            },
-          });
-        },
-        onError: () => {
-          toast.error(t("blog.alerts.articleRemoveFailed"));
-          // The `useEffect` below will react to the rollback in `useRemoveSavedArticle`.
-        },
-      });
+    // Check if the article is a repost and use the appropriate hooks
+    if (article?.type === 'Repost' && article?.repost?.repost_id) {
+        if (saved) {
+            removeRepost(article.repost.repost_id, {
+                onSuccess: () => {
+                    toast.success(t("blog.alerts.articleRemoved"));
+                    mutate({
+                        articleId: article._id || "",
+                        article: {
+                            engagement_count: (article.engagement_count || 0) - 1,
+                        },
+                    });
+                },
+                onError: () => {
+                    toast.error(t("blog.alerts.articleRemoveFailed"));
+                },
+            });
+        } else {
+            saveRepost(article.repost.repost_id, {
+                onSuccess: () => {
+                    toast.success(t("blog.alerts.articleSaved"));
+                    mutate({
+                        articleId: article._id || "",
+                        article: {
+                            engagement_count: (article.engagement_count || 0) + 1,
+                        },
+                    });
+                },
+                onError: () => {
+                    toast.error(t("blog.alerts.articleSaveFailed"));
+                },
+            });
+        }
     } else {
-      saveArticle(article_id, {
-        onSuccess: () => {
-          toast.success(t("blog.alerts.articleSaved"));
-          // The `useEffect` below will react to the optimistic update in `useSaveArticle`.
-
-          // Similar to above, client-side engagement update.
-          mutate({
-            articleId: article._id || "",
-            article: {
-              engagement_count: (article.engagement_count || 0) + 1,
-            },
-          });
-        },
-        onError: () => {
-          toast.error(t("blog.alerts.articleSaveFailed"));
-          // The `useEffect` below will react to the rollback in `useSaveArticle`.
-        },
-      });
+        // Original logic for standard articles
+        if (saved) {
+            removeSavedArticle(article_id, {
+                onSuccess: () => {
+                    toast.success(t("blog.alerts.articleRemoved"));
+                    mutate({
+                        articleId: article._id || "",
+                        article: {
+                            engagement_count: (article.engagement_count || 0) - 1,
+                        },
+                    });
+                },
+                onError: () => {
+                    toast.error(t("blog.alerts.articleRemoveFailed"));
+                },
+            });
+        } else {
+            saveArticle(article_id, {
+                onSuccess: () => {
+                    toast.success(t("blog.alerts.articleSaved"));
+                    mutate({
+                        articleId: article._id || "",
+                        article: {
+                            engagement_count: (article.engagement_count || 0) + 1,
+                        },
+                    });
+                },
+                onError: () => {
+                    toast.error(t("blog.alerts.articleSaveFailed"));
+                },
+            });
+        }
     }
   };
 
@@ -311,8 +341,8 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
     if (!isLoggedIn) return t("blog.AddToSaved");
     // The `saved` state should update optimistically,
     // so `isSavePending` and `isRemovePending` primarily manage text display during the network call.
-    if (isSavePending) return t("blog.saving");
-    if (isRemovePending) return t("blog.removing");
+    if (isSavePending || isSaveRepostPending) return t("blog.saving");
+    if (isRemovePending || isRemoveRepostPending) return t("blog.removing");
     return saved ? t("blog.UnsavePost") : t("blog.AddToSaved");
   };
 
@@ -321,6 +351,7 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   if (!user) {
     return <LuLoader className="size-4 animate-spin my-auto" />;
   }
+   
 
   return (
     <div className="blog-profile relative flex items-center justify-between">
@@ -481,7 +512,7 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
                     <div
                       className={cn( // Apply conditional styling to the div for disabling click
                         "flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer",
-                        (isSavePending || isRemovePending) ? "pointer-events-none opacity-70" : "" // Disable and dim while pending
+                        (isSavePending || isRemovePending || isSaveRepostPending || isRemoveRepostPending) ? "pointer-events-none opacity-70" : "" // Disable and dim while pending
                       )}
                       onClick={handleSavedArticle}
                     >
@@ -490,12 +521,12 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
                         className={cn(
                           "text-neutral-500",
                           saved ? "fill-primary-500 text-primary-500" : "", // Filled/colored if saved (optimistic)
-                       
+                        
                         )}
                       />
                       <div>
                         {getSaveStatusText()}
-                        {(isSavePending || isRemovePending) && <LuLoader className="animate-spin size-3 ml-1 inline-block" />} {/* Small loader next to text */}
+                        {(isSavePending || isRemovePending || isSaveRepostPending || isRemoveRepostPending) && <LuLoader className="animate-spin size-3 ml-1 inline-block" />} {/* Small loader next to text */}
                       </div>
                     </div>
                   )}

@@ -5,7 +5,7 @@ import { Article, User, ReactionReceived } from "../../../../models/datamodels";
 import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
 import CommentSection from "../../../Comments/components/CommentSection";
 import ReactionModal from "../../../Interactions/components/ReactionModal";
-import { useGetArticleReactions } from "../../../Interactions/hooks";
+import { useGetAllReactionsForTarget } from "../../../Repost/hooks/useRepost";
 import BlogRepostModal from "./BlogRepostModal";
 import { t } from "i18next";
 import { useRepostArticle } from "../../../Repost/hooks/useRepost";
@@ -94,14 +94,17 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   const [isRepostModalOpen, setIsRepostModalOpen] = useState(false);
   const { mutate: repost, isPending: isReposting } = useRepostArticle();
 
+  const target_type = article.type === "Repost" ? "Repost" : "Article";
+  const target_id = article.type === "Repost" && article.repost?.repost_id ? article.repost.repost_id : article_id;
+
   // Get all reactions for this article
-  const { data: allReactions } = useGetArticleReactions(article_id);
+  const { data: allReactions } = useGetAllReactionsForTarget(target_type, target_id);
 
   // Check if the current user has reacted
   useEffect(() => {
-    if (isLoggedIn && authUser?.id && allReactions?.reactions) {
-      const userReact = allReactions.reactions.find(
-        (r: ReactionReceived) => r.user_id?.id === authUser.id
+    if (isLoggedIn && authUser?.id && allReactions?.data?.reactions) {
+      const userReact = allReactions.data.reactions.find(
+        (r: ReactionReceived) => r.user_id === authUser.id
       );
 
       if (userReact) {

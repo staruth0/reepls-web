@@ -23,6 +23,12 @@ import {
 
 } from "../api/";
 
+import {
+  saveRepost,
+  removeSavedRepost,
+  getSavedReposts,
+} from "../api";
+
 export const useRepostArticle = () => {
   const queryClient = useQueryClient();
 
@@ -117,18 +123,19 @@ export const useCreateReactionRepost = () => {
       type: string;
     }) => createUpdateReaction(variables),
     onSuccess: ( variables) => {
+       queryClient.invalidateQueries({
+        queryKey: ["all-reactions-for-target"],
+      });
       queryClient.invalidateQueries({
         queryKey: ["reactions-by-target", variables.target_type, variables.target_id],
       });
       queryClient.invalidateQueries({
         queryKey: ["reactions-grouped-by-type", variables.target_type, variables.target_id],
       });
-            queryClient.invalidateQueries({
+       queryClient.invalidateQueries({
         queryKey: ["reaction"],
       });
-      queryClient.invalidateQueries({
-        queryKey: ["articleReactions"],
-      });
+     
       queryClient.invalidateQueries({
         queryKey: ["reactionsPerType"],
       });
@@ -360,3 +367,42 @@ export function useCommentsByRepostId(repostId: string) {
     enabled: !!repostId,
   });
 }
+
+
+export const useSaveRepost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (repostId: string) => saveRepost(repostId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["saved-reposts"] });
+      queryClient.invalidateQueries({ queryKey: ["my-reposts"] });
+    },
+    onError: (error) => {
+      console.error("Failed to save repost:", error);
+    },
+  });
+};
+
+export const useRemoveSavedRepost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (repostId: string) => removeSavedRepost(repostId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["saved-reposts"] });
+      queryClient.invalidateQueries({ queryKey: ["my-reposts"] });
+    },
+    onError: (error) => {
+      console.error("Failed to remove saved repost:", error);
+    },
+  });
+};
+
+export const useGetSavedReposts = (page: number = 1, limit: number = 10) => {
+  return useQuery({
+    queryKey: ["saved-reposts", page, limit],
+    queryFn: () => getSavedReposts(page, limit),
+    staleTime: 10 * 60 * 1000,
+  });
+};
