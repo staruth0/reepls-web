@@ -92,7 +92,7 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   const {data} = useGetSavedReposts();
 
   useEffect(()=>{
-    console.log('data',data)
+    console.log('data saved',data)
   },[data])
 
   // Check if current user is the reposted user
@@ -310,12 +310,22 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
 
   // This useEffect ensures the 'saved' state is always in sync with the savedArticles cache.
   // It will react to both optimistic updates and actual server responses (via invalidateQueries).
-  useEffect(() => {
-    const isSaved = savedArticles?.articles?.some(
-      (item: ArticleDuplicate) => item?.article?._id === article_id
+useEffect(() => {
+  // If no saved data is loaded yet, don't change the state
+  if (!savedArticles && !data) return;
+
+  const isArticleSaved = savedArticles?.articles?.some(
+    (item: ArticleDuplicate) => item?.article?._id === article_id
+  );
+
+  // Only check for repost if this article is actually a repost
+  const isRepostSaved = article?.type === 'Repost' && 
+    data?.reposts?.some(
+      (repost:Article) => repost?.repost?.repost_id === article?.repost?.repost_id
     );
-    setSaved(isSaved);
-  }, [savedArticles, article_id]);
+
+  setSaved(!!(isArticleSaved || isRepostSaved));
+}, [savedArticles, data, article_id, article]);
 
 
   // Helper function for follow status text display
