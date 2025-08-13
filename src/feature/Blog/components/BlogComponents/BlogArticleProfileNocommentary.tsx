@@ -33,8 +33,12 @@ import {
   Bookmark,
   Share2,
   UserPlus,
+  MessageSquare,
 } from "lucide-react";
 import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
+import BlogRepostModal from "../BlogRepostModal";
+import { useDeleteRepost, useRemoveSavedRepost, useSaveRepost } from "../../../Repost/hooks/useRepost";
+import { cn } from "../../../../utils";
 
 interface BlogProfileProps {
   date: string;
@@ -63,6 +67,8 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
   const [showSignInPopup, setShowSignInPopup] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showRepostModal, setShowRepostModal] = useState(false);
+  const [showRepostDeleteConfirmation, setShowRepostDeleteConfirmation] = useState(false);
   // const location = useLocation(); // Keep commented out as it's not used in simplified view
   const navigate = useNavigate();
 
@@ -78,7 +84,16 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
     useSendFollowNotification();
   const { mutate: deleteArticle, isPending: isDeletePending } =
     useDeleteArticle();
+  const { mutate: deleteRepost, isPending: isDeleteRepostPending } =
+    useDeleteRepost();
   const [showReportPopup, setShowReportPopup] = useState(false);
+  const { mutate: saveRepost, isPending: isSaveRepostPending } = useSaveRepost();
+  const { mutate: removeRepost, isPending: isRemoveRepostPending } = useRemoveSavedRepost();
+
+  // const {data} = useGetSavedReposts();
+
+  // Check if current user is the reposted user
+  const isCurrentUserReposted = article?.repost?.repost_user?._id === authUser?.id;
 
   const articleTitle =
     title ||
@@ -106,41 +121,103 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
     });
   };
 
+  const handleEditRepostCommentary = () => {
+    setShowRepostModal(true);
+    setShowMenu(false);
+  };
+
+  const handleDeleteRepost = () => {
+    if (article?._id) {
+    
+      deleteRepost(article._id, {
+        onSuccess: () => {
+          toast.success("Repost deleted successfully");
+          setShowRepostDeleteConfirmation(false);
+          navigate("/feed");
+        },
+        onError: (error) => {
+          toast.error("An error occurred while trying to delete repost");
+          console.error("Failed to delete repost:", error.message);
+          setShowRepostDeleteConfirmation(false);
+        },
+      });
+    }
+  };
+
   const handleSavedArticle = () => {
     if (!isLoggedIn) {
       setShowSignInPopup(true);
       return;
     }
-    if (isSavePending || isRemovePending) return;
+    // Prevent multiple rapid clicks while a save/remove operation is ongoing
+    if (isSavePending || isRemovePending || isSaveRepostPending || isRemoveRepostPending) return;
 
-    if (saved) {
-      removeSavedArticle(article_id, {
-        onSuccess: () => {
-          toast.success(t("blog.alerts.articleRemoved"));
-          mutate({
-            articleId: article._id || "",
-            article: {
-              engagement_count: article.engagement_count! - 1,
-            },
-          });
-          setSaved(false);
-        },
-        onError: () => toast.error(t("blog.alerts.articleRemoveFailed")),
-      });
+    // Check if the article is a repost and use the appropriate hooks
+    if (article?.type === 'Repost' && article?.repost?.repost_id) {
+        if (saved) {
+            removeRepost(article.repost.repost_id, {
+                onSuccess: () => {
+                    toast.success(t("blog.alerts.articleRemoved"));
+                    mutate({
+                        articleId: article._id || "",
+                        article: {
+                            engagement_count: (article.engagement_count || 0) - 1,
+                        },
+                    });
+                },
+                onError: () => {
+                    toast.error(t("blog.alerts.articleRemoveFailed"));
+                },
+            });
+        } else {
+            saveRepost(article.repost.repost_id, {
+                onSuccess: () => {
+                    toast.success(t("blog.alerts.articleSaved"));
+                    mutate({
+                        articleId: article._id || "",
+                        article: {
+                            engagement_count: (article.engagement_count || 0) + 1,
+                        },
+                    });
+                },
+                onError: () => {
+                    toast.error(t("blog.alerts.articleSaveFailed"));
+                },
+            });
+        }
     } else {
-      saveArticle(article_id, {
-        onSuccess: () => {
-          toast.success(t("blog.alerts.articleSaved"));
-          setSaved(true);
-          mutate({
-            articleId: article._id || "",
-            article: {
-              engagement_count: article.engagement_count! + 1,
-            },
-          });
-        },
-        onError: () => toast.error(t("blog.alerts.articleSaveFailed")),
-      });
+        // Original logic for standard articles
+        if (saved) {
+            removeSavedArticle(article_id, {
+                onSuccess: () => {
+                    toast.success(t("blog.alerts.articleRemoved"));
+                    mutate({
+                        articleId: article._id || "",
+                        article: {
+                            engagement_count: (article.engagement_count || 0) - 1,
+                        },
+                    });
+                },
+                onError: () => {
+                    toast.error(t("blog.alerts.articleRemoveFailed"));
+                },
+            });
+        } else {
+            saveArticle(article_id, {
+                onSuccess: () => {
+                    toast.success(t("blog.alerts.articleSaved"));
+                    mutate({
+                        articleId: article._id || "",
+                        article: {
+                            engagement_count: (article.engagement_count || 0) + 1,
+                        },
+                    });
+                },
+                onError: () => {
+                    toast.error(t("blog.alerts.articleSaveFailed"));
+                },
+            });
+        }
     }
   };
 
@@ -158,8 +235,8 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
           mutate({
             articleId: article._id || "",
             article: {
-              author_follower_count: article.author_follower_count! - 1,
-              engagement_count: article.engagement_count! - 1,
+              author_follower_count: (article.author_follower_count || 0) - 1,
+              engagement_count: (article.engagement_count || 0) - 1,
             },
           });
         },
@@ -174,8 +251,8 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
             mutate({
               articleId: article._id || "",
               article: {
-                author_follower_count: article.author_follower_count! + 1,
-                engagement_count: article.engagement_count! + 1,
+                author_follower_count: (article.author_follower_count || 0) + 1,
+                engagement_count: (article.engagement_count || 0) + 1,
               },
             });
           },
@@ -219,7 +296,7 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
 
   useEffect(() => {
     const isSaved = savedArticles?.articles?.some(
-      (article: ArticleDuplicate) => article?.article?._id === article_id
+      (item: ArticleDuplicate) => item?.article?._id === article_id
     );
     setSaved(isSaved);
   }, [savedArticles, article_id]);
@@ -237,8 +314,8 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
 
   const getSaveStatusText = () => {
     if (!isLoggedIn) return t("blog.AddToSaved");
-    if (isSavePending) return t("blog.saving");
-    if (isRemovePending) return t("blog.removing");
+    if (isSavePending || isSaveRepostPending) return t("blog.saving");
+    if (isRemovePending || isRemoveRepostPending) return t("blog.removing");
     return saved ? t("blog.UnsavePost") : t("blog.AddToSaved");
   };
 
@@ -309,15 +386,54 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
                         <div>{t("blog.Delete")}</div>
                       </div>
                     </>
-                  ) : (
+                  ) : isCurrentUserReposted ? (
                     <>
                       <div
                         className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-                        onClick={handleSavedArticle}
+                        onClick={handleEditRepostCommentary}
                       >
-                        <Bookmark size={18} className="text-neutral-500" />
-                        <div>{getSaveStatusText()}</div>
+                        <MessageSquare size={18} className="text-neutral-500" />
+                        <div>Add Commentary</div>
                       </div>
+                      <div
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                        onClick={handleShareClick}
+                      >
+                        <Share2 size={18} className="text-neutral-500" />
+                        <div>{t("blog.Share")}</div>
+                      </div>
+                      <div
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer text-red-500"
+                        onClick={() => setShowRepostDeleteConfirmation(true)}
+                      >
+                        <Trash2 size={18} className="text-red-500" />
+                        <div>Delete Repost</div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {(!isArticle ||
+                        (isArticle && article?.type === "Repost")) && (
+                        <div
+                          className={cn(
+                            "flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer",
+                            (isSavePending || isRemovePending || isSaveRepostPending || isRemoveRepostPending) ? "pointer-events-none opacity-70" : ""
+                          )}
+                          onClick={handleSavedArticle}
+                        >
+                          <Bookmark
+                            size={18}
+                            className={cn(
+                              "text-neutral-500",
+                              saved ? "fill-primary-500 text-primary-500" : ""
+                            )}
+                          />
+                          <div>
+                            {getSaveStatusText()}
+                            {(isSavePending || isRemovePending || isSaveRepostPending || isRemoveRepostPending) && <LuLoader className="animate-spin size-3 ml-1 inline-block" />}
+                          </div>
+                        </div>
+                      )}
                       <div
                         className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                         onClick={() => setShowReportPopup(true)}
@@ -326,11 +442,17 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
                         {t("blog.ReportPost")}
                       </div>
                       <div
-                        className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                        className={cn(
+                          "flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer",
+                          (isFollowPending || isUnfollowPending) ? "pointer-events-none opacity-70" : ""
+                        )}
                         onClick={handleFollowClick}
                       >
                         <UserPlus size={18} className="text-neutral-500" />
-                        {getFollowMenuStatusText(true)}
+                        <div>
+                          {getFollowMenuStatusText(true)}
+                          {(isFollowPending || isUnfollowPending) && <LuLoader className="animate-spin size-3 ml-1 inline-block" />}
+                        </div>
                       </div>
                       <div
                         className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
@@ -418,6 +540,28 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
           isModalOpen={showEditModal}
           setIsModalOpen={setShowEditModal}
           articleId={article_id}
+        />
+      )}
+      {showRepostModal && (
+        <BlogRepostModal
+          isOpen={showRepostModal}
+          onClose={() => setShowRepostModal(false)}
+          article_id={article_id}
+          article={article}
+          author_of_post={user}
+          isEditMode={true}
+          repostId={article?.repost?.repost_id}
+          initialComment={article?.repost?.repost_comment}
+        />
+      )}
+      {showRepostDeleteConfirmation && (
+        <ConfirmationModal
+          title="Delete Repost"
+          message="Are you sure you want to delete this repost? This action cannot be undone."
+          onConfirm={handleDeleteRepost}
+          onCancel={() => setShowRepostDeleteConfirmation(false)}
+          confirmText={isDeleteRepostPending ? "Deleting..." : "Delete"}
+          confirmColor="red"
         />
       )}
     </div>
