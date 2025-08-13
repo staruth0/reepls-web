@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { LuHistory, LuHeadphones } from 'react-icons/lu';
+// import { LuHistory, LuHeadphones } from 'react-icons/lu';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import Tabs from '../../../components/molecules/Tabs/Tabs';
 import { useUser } from '../../../hooks/useUser';
@@ -17,6 +17,8 @@ import SavedArticlesContainer from '../Components/SavedArticleContainer';
 import { useTranslation } from 'react-i18next';
 import ReadingHistoryContainer from '../Components/ReadingHistoryContainer';
 import SavedPodcastsContainer from '../Components/SavedPodcastsContainer';
+import SavedRepostsContainer from '../Components/SavedRepostsContainer'; // Add this import
+import { useGetSavedReposts } from '../../Repost/hooks/useRepost';
 
 interface Article {
   id: string;
@@ -42,6 +44,7 @@ const Bookmarks: React.FC = () => {
   const [savedArticles, setSavedArticles] = useState<Article[]>([]);
   const [followings, setFollowings] = useState<Follow[]>([]);
   const {data} = useGetReadingHistory(); 
+  const { data:Reposts } = useGetSavedReposts();
 
   const {t} = useTranslation();
 
@@ -107,8 +110,9 @@ useEffect(() => {
   const tabs = [
     { id: 'posts', title: `${t("saved.tabs.posts")} (${savedPosts.length})` },
     { id: 'articles', title: `${t("saved.tabs.articles")} (${savedArticles.length})` },
-    { id: 'podcasts', title: `Podcasts (${savedPodcastsData?.podcasts?.length || 0})`, icon: <LuHeadphones className="mx-2" /> },
-    { id: 'history', title: `${t("saved.tabs.history")}`, icon: <LuHistory className="mx-2" /> },
+    { id: 'podcasts', title: `Podcasts (${savedPodcastsData?.podcasts?.length || 0})` },
+    { id: 'reposts', title: `Reposts (${Reposts?.reposts.length  || 0})` }, // Add this tab
+    { id: 'history', title: `${t("saved.tabs.history")}` },
   ];
 
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
@@ -212,8 +216,8 @@ useEffect(() => {
         <Topbar>
           <p>{t("saved.title")}</p>
         </Topbar>
-        <div className="notification__content sm:px-5 md:px-10 lg:px-20 mt-5 min-h-screen flex flex-col items-center">
-          <div className="w-[82%]">
+        <div className="notification__content  md:px-10 lg:px-20 mt-5 min-h-screen flex flex-col items-center">
+          <div className="w-[88%]">
             <Tabs activeTab={activeTab} setActiveTab={setActiveTab} scale={false} tabs={tabs} borderBottom={true} />
           </div>
           <div className="px-2 mt-6 w-full">
@@ -230,6 +234,11 @@ useEffect(() => {
             {activeTab === 'podcasts' && (
               <div className="pb-10">
                 <SavedPodcastsContainer />
+              </div>
+            )}
+            {activeTab === 'reposts' && (
+              <div className="pb-10">
+                <SavedRepostsContainer />
               </div>
             )}
             {activeTab === 'history' && (

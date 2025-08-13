@@ -111,14 +111,29 @@ const UploadPodcastTestPage: React.FC<UploadPodcastTestPageProps> = ({
     setError(null);
     setUploadProgress(0);
 
+ 
     try {
       const uploadData = new FormData();
-      uploadData.append('title', formData.title.trim());
-      uploadData.append('description', formData.description.trim());
-      uploadData.append('category', formData.category);
+      
+      // Dynamically add form data only for non-empty values
+      if (formData.title.trim()) {
+        uploadData.append('title', formData.title.trim());
+      }
+      if (formData.description.trim()) {
+        uploadData.append('description', formData.description.trim());
+      }
+      if (formData.category) {
+        uploadData.append('category', formData.category);
+      }
+      // isPublic is a boolean, always include it
       uploadData.append('isPublic', formData.isPublic.toString());
-      uploadData.append('audio', formData.audioFile);
-      uploadData.append('tags', formData.tags); // Added tags to FormData
+      
+      if (formData.audioFile) {
+        uploadData.append('audio', formData.audioFile);
+      }
+      if (formData.tags.trim()) {
+        uploadData.append('tags', formData.tags.trim());
+      }
 
       const result = await apiClient.post('/podcasts/standalone', uploadData, {
         headers: {
