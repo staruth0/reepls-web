@@ -56,7 +56,7 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   article,
   title,
   content,
-  isArticle,
+  isArticle, 
   isRepostedView = false,
 }) => {
   const { authUser, isLoggedIn } = useUser();
