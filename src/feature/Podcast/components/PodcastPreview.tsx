@@ -2,6 +2,7 @@ import React from "react";
 import { FaTimes } from "react-icons/fa";
 import PodcastCard from "./PodcastLayout1";
 import { useUser } from "../../../hooks/useUser";
+import { Pics } from "../../../assets/images";
 
 interface PodcastPreviewData {
   title: string;
@@ -43,7 +44,7 @@ const PodcastPreviewModal: React.FC<PodcastPreviewModalProps> = ({
       name: authUser?.name || "Anonymous",
       avatarUrl:
         authUser?.profile_picture ||
-        "https://via.placeholder.com/150/0000FF/FFFFFF?text=A",
+        Pics.podcastimg,
       isVerified: true,
     },
     title: data.title || "Untitled Podcast",
@@ -56,7 +57,7 @@ const PodcastPreviewModal: React.FC<PodcastPreviewModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-40 p-4">
+    <div className="fixed inset-0 bg-black/10 flex items-center justify-center z-40 p-4">
       <div className="bg-neutral-800 rounded-lg shadow-xl p-6 w-full max-w-lg relative transform transition-all duration-300 scale-100 opacity-100">
         <button
           onClick={onClose}

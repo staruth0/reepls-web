@@ -1,3 +1,4 @@
+import React, { useEffect, useRef, useState } from "react";
 import {
   Bookmark,
   FilePen,
@@ -5,13 +6,10 @@ import {
   Share2,
   ThumbsUp,
   ArrowLeft,
-  Repeat2, // Added for reposts
+  Repeat2,
 } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Editor } from "reactjs-tiptap-editor";
-import { ArticleAudioControls } from "../../../components/atoms/ReadALoud/ArticleAudioControls";
 import SharePopup from "../../../components/molecules/share/SharePopup";
 import { PREVIEW_SLUG } from "../../../constants";
 import { useUser } from "../../../hooks/useUser";
@@ -44,6 +42,13 @@ import ReactionsPopup from "../../Interactions/components/ReactionsPopup";
 import { calculateReadTime } from "../../../utils/articles";
 import RepostsCommentarySidebar from "../components/RepostCommentaries";
 
+import { useAudioControls } from "../../../hooks/useMediaPlayer";
+import { LuPlay, LuPause } from "react-icons/lu";
+
+import { ArticleAudioControls } from "../../../components/atoms/ReadALoud/ArticleAudioControls";
+import { useNavigate, useParams } from "react-router-dom";
+import { useGetPodcastById } from "../../Podcast/hooks";
+import AudioWave from "../../../components/molecules/Audio/AudiWave";
 
 const ArticleViewBySlug: React.FC = () => {
   const navigate = useNavigate();
@@ -51,9 +56,7 @@ const ArticleViewBySlug: React.FC = () => {
   const { authUser, isLoggedIn } = useUser();
   const commentSectionRef = useRef<HTMLDivElement>(null);
 
-  const [title, setTitle] = useState<string>(
-    "This article does not have a title"
-  );
+  const [title, setTitle] = useState<string>("This article does not have a title");
   const [subtitle, setSubtitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [htmlArticleContent, setHtmlArticleContent] = useState<string>(
@@ -64,34 +67,48 @@ const ArticleViewBySlug: React.FC = () => {
   const [showSharePopup, setShowSharePopup] = useState<boolean>(false);
   const [showSignInPopup, setShowSignInPopup] = useState<string | null>(null);
   const [showReactionsPopup, setShowReactionsPopup] = useState<boolean>(false);
-  const [showRepostsSidebar, setShowRepostsSidebar] = useState<boolean>(false); // New state for reposts sidebar
+  const [showRepostsSidebar, setShowRepostsSidebar] = useState<boolean>(false);
 
   const { loadDraftArticle } = useDraft();
   const editorRef = useRef<{ editor: Editor | null }>(null);
   const { mutate: saveArticle, isPending: isSavePending } = useSaveArticle();
-  const { mutate: removeSavedArticle, isPending: isRemovePending } =
-    useRemoveSavedArticle();
+  const { mutate: removeSavedArticle, isPending: isRemovePending } = useRemoveSavedArticle();
   const { data: savedArticles } = useGetSavedArticles();
   const { mutate: followUser, isPending: isFollowPending } = useFollowUser();
-  const { mutate: unfollowUser, isPending: isUnfollowPending } =
-    useUnfollowUser();
+  const { mutate: unfollowUser, isPending: isUnfollowPending } = useUnfollowUser();
   const { data: followings } = useGetFollowing(authUser?.id || "");
   const { data: articleslug, isError, isPending } = useGetArticleBySlug(slug!);
   const { data: articleid } = useGetArticleById(id!);
 
   const article = slug ? articleslug : articleid;
   const { data: allReactions } = useGetArticleReactions(article?._id || "");
-  const [showReactionsHoverPopup, setShowReactionsHoverPopup] =
-    useState<boolean>(false);
+  const [showReactionsHoverPopup, setShowReactionsHoverPopup] = useState<boolean>(false);
 
   const articleUrl = `${window.location.origin}/posts/article/slug/${slug}`;
-  const articleTitle =
-    title || content.split(" ").slice(0, 10).join(" ") + "...";
+  const articleTitle = title || content.split(" ").slice(0, 10).join(" ") + "...";
 
-  const [isCommentSectionOpen, setIsCommentSectionOpen] =
-    useState<boolean>(true);
+  const [isCommentSectionOpen, setIsCommentSectionOpen] = useState<boolean>(true);
   const { mutate } = useUpdateReadingHistory();
-  // Handle mutation and show toast on error
+
+  // Podcast fetch and audio controls only if article has podcast
+  const { data: podcastData } = useGetPodcastById(article?.podcastId || "");
+  const podcast = podcastData?.data;
+  const {
+    isPlaying,
+    togglePlay,
+    currentTrack,
+  } = useAudioControls(
+    podcast
+      ? {
+          id: podcast.id,
+          title: podcast.title,
+          url: podcast.audio.url,
+          thumbnail: podcast.thumbnailUrl,
+          author: podcast.author?.name,
+        }
+      : undefined
+  );
+
   useEffect(() => {
     if (slug) {
       mutate(slug, {
@@ -106,16 +123,13 @@ const ArticleViewBySlug: React.FC = () => {
     setIsCommentSectionOpen(true);
   };
 
-  // Follow/Unfollow State Management
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   useEffect(() => {
     const followedIds =
-      followings?.data?.map((following: Follow) => following.followed_id?.id) ||
-      [];
+      followings?.data?.map((following: Follow) => following.followed_id?.id) || [];
     setIsFollowing(followedIds.includes(article?.author_id?._id));
   }, [followings, article?.author_id?._id]);
 
-  // Saved State Management
   const [isSaved, setIsSaved] = useState<boolean>(false);
   useEffect(() => {
     const isArticleSaved = savedArticles?.articles?.some(
@@ -129,11 +143,10 @@ const ArticleViewBySlug: React.FC = () => {
       setShowSignInPopup("follow");
       return;
     }
-    if (isFollowPending || isUnfollowPending || !article?.author_id?._id)
-      return;
+    if (isFollowPending || isUnfollowPending || !article?.author_id?._id) return;
 
     if (isFollowing) {
-      unfollowUser(article.author_id._id, {
+      unfollowUser(article.author_id!._id, {
         onSuccess: () => {
           toast.success("User unfollowed successfully");
           setIsFollowing(false);
@@ -141,7 +154,7 @@ const ArticleViewBySlug: React.FC = () => {
         onError: () => toast.error("Failed to unfollow user"),
       });
     } else {
-      followUser(article.author_id._id, {
+      followUser(article.author_id!._id, {
         onSuccess: () => {
           toast.success("User followed successfully");
           setIsFollowing(true);
@@ -199,7 +212,7 @@ const ArticleViewBySlug: React.FC = () => {
 
   const handleRepostCommentaryClick = () => {
     if (!isLoggedIn) {
-      setShowSignInPopup("repost"); // Specific sign-in message for reposts
+      setShowSignInPopup("repost");
       return;
     }
     setShowRepostsSidebar(true);
@@ -219,7 +232,7 @@ const ArticleViewBySlug: React.FC = () => {
       setHtmlArticleContent(draftArticle.htmlContent);
       setMedia(draftArticle.media);
     }
-  }, [articleUid, loadDraftArticle, navigate]); // Added dependencies
+  }, [articleUid, loadDraftArticle, navigate]);
 
   useEffect(() => {
     if (article) {
@@ -235,7 +248,7 @@ const ArticleViewBySlug: React.FC = () => {
       toast.error("Error fetching article.");
       navigate("/posts/create");
     }
-  }, [isError, navigate]); // Added navigate to dependencies
+  }, [isError, navigate]);
 
   useEffect(() => {
     if (editorRef.current?.editor) {
@@ -280,9 +293,7 @@ const ArticleViewBySlug: React.FC = () => {
             <h1 className="text-[26px] md:text-4xl lg:text-5xl font-semibold leading-normal lg:leading-tight mb-2">
               {title}
             </h1>
-            {subtitle && (
-              <h3 className="text-xl my-4">{subtitle}</h3>
-            )}
+            {subtitle && <h3 className="text-xl my-4">{subtitle}</h3>}
 
             {article?.thumbnail && (
               <div className="my-6 w-full max-w-full mx-auto">
@@ -312,15 +323,13 @@ const ArticleViewBySlug: React.FC = () => {
                   <p className="font-semibold text-[16px]">
                     {article?.author_id?.username || "Unknown"}
                   </p>
-                  <p className="text-sm text-neutral-100">
-                    {article?.author_id?.bio}
-                  </p>
+                  <p className="text-sm text-neutral-100">{article?.author_id?.bio}</p>
                 </div>
               </div>
               {!isPreview && (
                 <button
                   onClick={handleFollowClick}
-                  className={`ml-auto  px-4 py-2 rounded-full text-sm ${
+                  className={`ml-auto px-4 py-2 rounded-full text-sm ${
                     isFollowing
                       ? "bg-neutral-600 text-neutral-50 hover:bg-neutral-700"
                       : "bg-main-green text-white hover:bg-green-600"
@@ -331,15 +340,39 @@ const ArticleViewBySlug: React.FC = () => {
                 </button>
               )}
             </div>
-            {article && ( // Ensure article exists before accessing properties
+            {article && (
               <span className="text-sm text-neutral-100">
-                {calculateReadTime(article.content!, article.media || [])} mins
-                Read
+                {calculateReadTime(article.content!, article.media || [])} mins Read
               </span>
             )}
-            {/* Audio Controls */}
-            <div className="my-6">
-              {article && <ArticleAudioControls article={article} />}
+
+            {/* Podcast player or regular audio controls */}
+            <div className="my-6 w-full">
+              {article?.hasPodcast && podcast ? (
+                // Podcast player UI
+                <div className="flex items-center gap-4 my-6 p-4 bg-neutral-800 rounded-lg">
+                  <button
+                    onClick={togglePlay}
+                    className="p-3 rounded-full bg-main-green hover:bg-green-600 flex-shrink-0"
+                    aria-label={currentTrack?.id === podcast?.id && isPlaying ? "Pause podcast" : "Play podcast"}
+                  >
+                    {currentTrack?.id === podcast?.id && isPlaying ? (
+                      <LuPause size={20} />
+                    ) : (
+                      <LuPlay size={20} />
+                    )}
+                  </button>
+
+                  <div className="flex-grow w-full">
+                    <AudioWave isPlaying={currentTrack?.id === podcast?.id && isPlaying} />
+                  </div>
+
+                  <span className="text-sm text-neutral-400">{podcast?.duration || "0:00"}</span>
+                </div>
+              ) : (
+                // Default article audio controls
+                <ArticleAudioControls article={article} />
+              )}
             </div>
 
             {/* Article Content */}
@@ -356,17 +389,12 @@ const ArticleViewBySlug: React.FC = () => {
 
             {/* Article Stats */}
             {!isPreview && !isPending && (
-              <div className="text-neutral-100 text-md mb-5">
-                {timeAgo(article?.createdAt)}
-              </div>
+              <div className="text-neutral-100 text-md mb-5">{timeAgo(article?.createdAt)}</div>
             )}
 
             {/* Comments Section */}
             {!isPreview && !isPending && (
-              <div
-                ref={commentSectionRef}
-                className="w-full mx-auto mt-10"
-              >
+              <div ref={commentSectionRef} className="w-full mx-auto mt-10">
                 <h2 className="text-2xl font-semibold mb-4">Comments</h2>
                 {isCommentSectionOpen && (
                   <CommentSection
@@ -388,30 +416,24 @@ const ArticleViewBySlug: React.FC = () => {
           <div className="flex items-center">
             <div
               className="relative group"
-              onMouseEnter={() =>
-                isLoggedIn && setShowReactionsHoverPopup(true)
-              }
+              onMouseEnter={() => isLoggedIn && setShowReactionsHoverPopup(true)}
               onMouseLeave={() => setShowReactionsHoverPopup(false)}
             >
               <button
                 className={`p-2 rounded-full flex items-center ${
-                  isLoggedIn
-                    ? "text-neutral-50 hover:bg-neutral-700"
-                    : "text-neutral-500 cursor-not-allowed"
+                  isLoggedIn ? "text-neutral-50 hover:bg-neutral-700" : "text-neutral-500 cursor-not-allowed"
                 }`}
                 title="React"
+                aria-label="React to article"
               >
                 <ThumbsUp size={20} />
               </button>
 
               {showReactionsHoverPopup && isLoggedIn && (
                 <>
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => setShowReactionsHoverPopup(false)}
-                  />
+                  <div className="fixed inset-0 z-40" onClick={() => setShowReactionsHoverPopup(false)} />
                   <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-[999] rounded-lg p-2 min-w-[200px]">
-                    <div className="relative z-[9999]">
+                    <div className="relative z-">
                       <ReactionModal article_id={article?._id || ""} />
                     </div>
                   </div>
@@ -429,9 +451,7 @@ const ArticleViewBySlug: React.FC = () => {
           <button
             onClick={handleCommentClick}
             className={`p-2 rounded-full ${
-              isLoggedIn
-                ? "hover:bg-neutral-700 text-neutral-50"
-                : "text-neutral-500 cursor-not-allowed"
+              isLoggedIn ? "hover:bg-neutral-700 text-neutral-50" : "text-neutral-500 cursor-not-allowed"
             }`}
             title="Comment"
           >
@@ -440,23 +460,16 @@ const ArticleViewBySlug: React.FC = () => {
           <button
             onClick={handleSaveClick}
             className={`p-2 rounded-full ${
-              isLoggedIn
-                ? "hover:bg-neutral-700 text-neutral-50"
-                : "text-neutral-500 cursor-not-allowed"
+              isLoggedIn ? "hover:bg-neutral-700 text-neutral-50" : "text-neutral-500 cursor-not-allowed"
             }`}
             title={isSaved ? "Unsave" : "Save"}
           >
-            <Bookmark
-              size={20}
-              className={isSaved && isLoggedIn ? "fill-current" : ""}
-            />
+            <Bookmark size={20} className={isSaved && isLoggedIn ? "fill-current" : ""} />
           </button>
           <button
             onClick={handleShareClick}
             className={`p-2 rounded-full ${
-              isLoggedIn
-                ? "hover:bg-neutral-700 text-neutral-50"
-                : "text-neutral-500 cursor-not-allowed"
+              isLoggedIn ? "hover:bg-neutral-700 text-neutral-50" : "text-neutral-500 cursor-not-allowed"
             }`}
             title="Share"
           >
@@ -466,9 +479,7 @@ const ArticleViewBySlug: React.FC = () => {
           <button
             onClick={handleRepostCommentaryClick}
             className={`p-2 rounded-full ${
-              isLoggedIn
-                ? "hover:bg-neutral-700 text-neutral-50"
-                : "text-neutral-500 cursor-not-allowed"
+              isLoggedIn ? "hover:bg-neutral-700 text-neutral-50" : "text-neutral-500 cursor-not-allowed"
             }`}
             title="View Repost Commentaries"
           >
@@ -479,18 +490,10 @@ const ArticleViewBySlug: React.FC = () => {
 
       {/* Popups */}
       {showSharePopup && (
-        <SharePopup
-          url={articleUrl}
-          title={articleTitle}
-          onClose={() => setShowSharePopup(false)}
-        />
+        <SharePopup url={articleUrl} title={articleTitle} onClose={() => setShowSharePopup(false)} />
       )}
       {showSignInPopup && (
-        <SignInPopUp
-          text={showSignInPopup}
-          position="above"
-          onClose={() => setShowSignInPopup(null)}
-        />
+        <SignInPopUp text={showSignInPopup} position="above" onClose={() => setShowSignInPopup(null)} />
       )}
       {showReactionsPopup && (
         <ReactionsPopup

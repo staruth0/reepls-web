@@ -10,6 +10,7 @@ import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
 import { useGetAllPodcasts } from "../Podcast/hooks";
 import { IPodcast, User } from "../../models/datamodels";
 import Communique from "./components/Communique/Communique";
+import { Pics } from "../../assets/images";
 
 interface Podcast {
   id: string;
@@ -63,7 +64,7 @@ const FeedPodcasts: React.FC = () => {
       id: p.id ?? "",
       thumbnailUrl:
         p.thumbnailUrl ||
-        "https://placehold.co/400x200/444444/FFFFFF?text=Podcast+Thumbnail",
+        Pics.podcastimg,
       author: p.authorId || { id: "", name: "", profile_picture: "", is_verified_writer: false },
       title: p.title || "Untitled Podcast",
       description: p.description || "",

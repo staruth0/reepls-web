@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import PodcastAuthorInfo from './PodcastAuthorInfo';
 import PodcastEngagementMetrics from './PodcastEngagementMetrics'; 
 import { User } from '../../../models/datamodels';
@@ -29,29 +29,17 @@ interface PodcastCardProps {
 
 const PodcastCard: React.FC<PodcastCardProps> = ({
   podcast,
-  onLike,
   onComment,
-  onBookmark,
+
 
 }) => {
-  const [isBookmarked, setIsBookmarked] = useState(false);
-
-
-  const handleLikeClick = () => {
-    console.log(`Liked podcast: ${podcast.id}`);
-    if (onLike) onLike(podcast.id);
-  };
 
   const handleCommentClick = () => {
     console.log(`Commented on podcast: ${podcast.id}`);
     if (onComment) onComment(podcast.id);
   };
 
-  const handleBookmarkClick = () => {
-    setIsBookmarked(prev => !prev); 
-    console.log(`Bookmark toggled for podcast: ${podcast.id}`);
-    if (onBookmark) onBookmark(podcast.id);
-  };
+
 
 
 
@@ -86,8 +74,7 @@ const PodcastCard: React.FC<PodcastCardProps> = ({
           {podcast.description}
         </p>
 
-        {/* Date, Listen Time, and Engagement Metrics */}
-        {/* This div will be pushed to the bottom by justify-between on parent */}
+   
         <div className='flex items-center justify-between mt-2'>
           {/* Date and Listen Time */}
           <div className="flex items-center gap-2 text-neutral-50 text-[13px] font-bold">
@@ -98,12 +85,10 @@ const PodcastCard: React.FC<PodcastCardProps> = ({
 
           {/* Engagement Metrics */}
           <PodcastEngagementMetrics
-            likes={podcast.likes}
             comments={podcast.comments}
-            isBookmarked={isBookmarked}
-            onLikeClick={handleLikeClick}
+         
             onCommentClick={handleCommentClick}
-            onBookmarkClick={handleBookmarkClick}
+        
             id={podcast.id}
           />
         </div>
