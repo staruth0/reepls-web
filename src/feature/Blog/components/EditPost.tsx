@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LuCalendar, LuEye, LuSave, LuShare, LuTag } from 'react-icons/lu';
+import { LuCalendar, LuEye, LuSave, LuShare, LuTag, LuMic, LuX, LuPlus } from 'react-icons/lu';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { type Editor } from 'reactjs-tiptap-editor';
+import axios from 'axios';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import { useUser } from '../../../hooks/useUser';
 import { Article, MediaItem, MediaType } from '../../../models/datamodels';
@@ -13,11 +14,29 @@ import CreatePostTopBar from '../components/CreatePostTopBar';
 import ImageSection from '../components/ImageSection';
 import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
 import { useGetArticleById, useUpdateArticle } from '../hooks/useArticleHook';
+import { useGetPodcastsByUser } from '../../Podcast/hooks';
+import { apiClient1 } from '../../../services/apiClient';
+import UploadProgressModal from '../components/UploadProgressModal';
+
+interface Podcast {
+  id: string;
+  title: string;
+  description: string;
+  audio: {
+    url: string;
+    storageKey: string;
+    duration: number;
+    fileSize: number;
+    mimeType: string;
+  };
+  tags: string[];
+  isPublic: boolean;
+}
 
 const EditPost: React.FC = () => {
   const { authUser, isLoggedIn } = useUser();
   const [thumbnail, setThumbnail] = useState<File | null>(null);
-   const [thumbnailImage, setThumbnailImage] = useState<string>('');
+  const [thumbnailImage, setThumbnailImage] = useState<string>('');
   const [title, setTitle] = useState<string>('');
   const [subtitle, setSubtitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
@@ -33,7 +52,29 @@ const EditPost: React.FC = () => {
   const { data: article, isLoading: isFetchingArticle } = useGetArticleById(articleId || '');
   const { mutate: updateArticle, isPending: isUpdating } = useUpdateArticle();
 
-  // Actions similar to CreatePost, adjusted for editing
+  const { data: podcastsData, isLoading: podloading, isError, error } = useGetPodcastsByUser({
+    userId: authUser?.id || '',
+    limit: 10,
+    sortOrder: 'desc',
+  });
+
+  // Podcast related state
+  const [showPodcastModal, setShowPodcastModal] = useState<boolean>(false);
+  const [showPodcastListModal, setShowPodcastListModal] = useState<boolean>(false);
+  const [showNewPodcastModal, setShowNewPodcastModal] = useState<boolean>(false);
+  const [selectedPodcast, setSelectedPodcast] = useState<Podcast | null>(null);
+  const [isAttachingPodcast, setIsAttachingPodcast] = useState<boolean>(false);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  
+  // New podcast state
+  const [newPodcastTitle, setNewPodcastTitle] = useState<string>('');
+  const [newPodcastDescription, setNewPodcastDescription] = useState<string>('');
+  const [newPodcastAudioFile, setNewPodcastAudioFile] = useState<File | null>(null);
+  const [newPodcastAudioPreview, setNewPodcastAudioPreview] = useState<string>('');
+  const [newPodcastTags, setNewPodcastTags] = useState<string[]>([]);
+  const [newPodcastIsPublic, setNewPodcastIsPublic] = useState<boolean>(true);
+  const newPodcastAudioInputRef = useRef<HTMLInputElement>(null);
+
   const actions = [
     {
       label: 'Preview',
@@ -41,7 +82,7 @@ const EditPost: React.FC = () => {
       ActionIcon: LuEye,
       onClick: () => {
         if (!isLoggedIn) return;
-        navigate(`/posts/article/preview?id=${articleId}`); // Pass ID to preview if needed
+        navigate(`/posts/article/preview?id=${articleId}`);
       },
     },
     {
@@ -58,7 +99,6 @@ const EditPost: React.FC = () => {
       ActionIcon: LuShare,
       onClick: () => {
         if (!isLoggedIn) return;
-        
       },
     },
     {
@@ -78,6 +118,15 @@ const EditPost: React.FC = () => {
         toast.info('Adding tags is not available yet', { autoClose: 1500 });
       },
     },
+    {
+      label: 'Attach Podcast',
+      disabled: !isLoggedIn || isUpdating,
+      ActionIcon: LuMic,
+      onClick: () => {
+        if (!isLoggedIn) return;
+        setShowPodcastModal(true);
+      },
+    },
   ];
 
   // Populate fields with fetched article data
@@ -90,7 +139,6 @@ const EditPost: React.FC = () => {
       setMedia(article.media || []);
       setIsCommunique(article.is_communiquer || false);
       
-      // Initialize thumbnail image from article data
       if (article.thumbnail) {
         setThumbnailImage(article.thumbnail);
       } 
@@ -107,6 +155,167 @@ const EditPost: React.FC = () => {
       }, 0);
     }
   }, [isLoading, htmlContent]);
+
+  const handleNewPodcastAudioSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      if (!file.type.startsWith('audio/')) {
+        toast.error('Please upload a valid audio file.');
+        if (newPodcastAudioInputRef.current) newPodcastAudioInputRef.current.value = '';
+        return;
+      }
+      if (file.size > 50 * 1024 * 1024) {
+        toast.error('Audio file size must be less than 50MB.');
+        if (newPodcastAudioInputRef.current) newPodcastAudioInputRef.current.value = '';
+        return;
+      }
+      setNewPodcastAudioFile(file);
+      setNewPodcastAudioPreview(URL.createObjectURL(file));
+      toast.success('Audio file selected!');
+    }
+  };
+
+  const handleRemoveNewPodcastAudio = () => {
+    setNewPodcastAudioFile(null);
+    setNewPodcastAudioPreview('');
+    if (newPodcastAudioInputRef.current) newPodcastAudioInputRef.current.value = '';
+    toast.info('Audio file removed');
+  };
+
+  const handleCreateAndAttachPodcast = async () => {
+    if (!newPodcastTitle.trim() || !newPodcastAudioFile || !articleId) {
+      toast.error('Please provide a title and audio file for your podcast.');
+      return;
+    }
+
+    const toastId = toast.info('Creating and attaching podcast...', {
+      isLoading: true,
+      autoClose: false,
+    });
+
+    try {
+      setIsAttachingPodcast(true);
+      setUploadProgress(0);
+
+      const formData = new FormData();
+      formData.append('title', newPodcastTitle);
+      formData.append('description', newPodcastDescription);
+      formData.append('tags', JSON.stringify(newPodcastTags));
+      formData.append('isPublic', newPodcastIsPublic.toString());
+      formData.append('audio', newPodcastAudioFile);
+
+      await apiClient1.post(
+        `/podcasts/attach-to-article/${articleId}`,
+        formData,
+        {
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / (progressEvent.total ?? 0)
+            );
+            setUploadProgress(percentCompleted);
+          },
+        }
+      );
+
+      toast.update(toastId, {
+        render: 'New podcast created and attached successfully!',
+        type: 'success',
+        isLoading: false,
+        autoClose: 1500,
+      });
+      
+      // Reset new podcast state
+      setNewPodcastTitle('');
+      setNewPodcastDescription('');
+      setNewPodcastAudioFile(null);
+      setNewPodcastAudioPreview('');
+      setNewPodcastTags([]);
+      setNewPodcastIsPublic(true);
+      
+      setShowNewPodcastModal(false);
+      setShowPodcastModal(false);
+    } catch (error) {
+      console.error('Error creating and attaching podcast:', error);
+      let errorMessage = 'Failed to create and attach podcast';
+      if (axios.isAxiosError(error) && error.response) {
+        errorMessage = error.response.data.message || errorMessage;
+      }
+      toast.update(toastId, {
+        render: errorMessage,
+        type: 'error',
+        isLoading: false,
+        autoClose: 1500,
+      });
+    } finally {
+      setIsAttachingPodcast(false);
+      setUploadProgress(0);
+    }
+  };
+
+  const handleAttachPodcast = async () => {
+    if (!selectedPodcast || !articleId) return;
+
+    const toastId = toast.info('Attaching podcast to article...', {
+      isLoading: true,
+      autoClose: false,
+    });
+
+    try {
+      setIsAttachingPodcast(true);
+      setUploadProgress(0);
+
+      const formData = new FormData();
+      formData.append('title', selectedPodcast.title);
+      formData.append('description', selectedPodcast.description);
+      formData.append('tags', JSON.stringify(selectedPodcast.tags));
+      formData.append('isPublic', selectedPodcast.isPublic.toString());
+      
+      // Fetch the audio file as a blob
+      const response = await fetch(selectedPodcast.audio.url);
+      const audioBlob = await response.blob();
+      const audioFile = new File([audioBlob], 'podcast-audio.mp3', { type: selectedPodcast.audio.mimeType });
+      
+      formData.append('audio', audioFile);
+
+      await apiClient1.post(
+        `/podcasts/attach-to-article/${articleId}`,
+        formData,
+        {
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / (progressEvent.total ?? 0)
+            );
+            setUploadProgress(percentCompleted);
+          },
+        }
+      );
+
+      toast.update(toastId, {
+        render: 'Podcast attached to article successfully!',
+        type: 'success',
+        isLoading: false,
+        autoClose: 1500,
+      });
+      setShowPodcastListModal(false);
+      setSelectedPodcast(null);
+      navigate(`/posts/article/slug/${article?.slug || articleId}`);
+    } catch (error) {
+      console.error('Error attaching podcast:', error);
+      let errorMessage = 'Failed to attach podcast';
+      if (axios.isAxiosError(error) && error.response) {
+        errorMessage = error.response.data.message || errorMessage;
+      }
+      toast.update(toastId, {
+        render: errorMessage,
+        type: 'error',
+        isLoading: false,
+        autoClose: 1500,
+      });
+    } finally {
+      setIsAttachingPodcast(false);
+      setUploadProgress(0);
+    }
+  };
 
   const onUpdate = async () => {
     if (!isLoggedIn || !articleId) return;
@@ -144,7 +353,7 @@ const EditPost: React.FC = () => {
         subtitle,
         content,
         htmlContent,
-        thumbnail: updatedThumbnail, // Use the updated thumbnail URL
+        thumbnail: updatedThumbnail,
         media: updatedMedia,
         status: 'Published',
         type: 'LongForm',
@@ -212,16 +421,16 @@ const EditPost: React.FC = () => {
           isFetchingArticle || isLoading ? (
             <div className="text-center mt-10">Loading article...</div>
           ) : (
-            <div className=" sm:max-w-xl md:max-w-4xl  m-auto md:px-4">
-                <ImageSection 
-      onImageChange={(image) => setThumbnail(image as File)} 
-      existingImageUrl={thumbnailImage}
-    />
-              <div className=" mt-5">
-                <div className=" px-5 sm:px-0">
+            <div className="sm:max-w-xl md:max-w-4xl m-auto md:px-4">
+              <ImageSection 
+                onImageChange={(image) => setThumbnail(image as File)} 
+                existingImageUrl={thumbnailImage}
+              />
+              <div className="mt-5">
+                <div className="px-5 sm:px-0">
                   <textarea
                     placeholder={t('Enter your title here...')}
-                    className="resize-none w-full  mb-2 text-[20px] sm:text-3xl font-semibold font-instrumentSerif border-none outline-none bg-transparent placeholder-gray-500"
+                    className="resize-none w-full mb-2 text-[20px] sm:text-3xl font-semibold font-instrumentSerif border-none outline-none bg-transparent placeholder-gray-500"
                     value={title}
                     rows={2}
                     onChange={(e) => setTitle(e.target.value)}
@@ -240,7 +449,7 @@ const EditPost: React.FC = () => {
                   />
                 </div>
               </div>
-              <div id="editor" className=" mb-20">
+              <div id="editor" className="mb-20">
                 <TipTapRichTextEditor
                   initialContent={htmlContent}
                   handleContentChange={setContent}
@@ -257,6 +466,252 @@ const EditPost: React.FC = () => {
           <AuthPromptPopup text={t('edit a post')} />
         )}
       </div>
+
+      {/* Initial Podcast Modal (Choose between Listings or New) */}
+      {showPodcastModal && (
+        <div className="fixed inset-0 bg-black/10 flex items-center justify-center z-50">
+          <div className="bg-neutral-800 rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Attach Podcast</h2>
+              <button 
+                onClick={() => setShowPodcastModal(false)}
+                className="text-neutral-400 hover:text-white"
+              >
+                <LuX className="size-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <button
+                onClick={() => {
+                  setShowPodcastModal(false);
+                  setShowPodcastListModal(true);
+                }}
+                className="w-full p-4 bg-neutral-700 hover:bg-neutral-600 rounded-lg flex items-center justify-center"
+              >
+                <LuMic className="size-5 mr-2" />
+                <span>From Listings</span>
+              </button>
+              
+              <button
+                onClick={() => {
+                  setShowPodcastModal(false);
+                  setShowNewPodcastModal(true);
+                }}
+                className="w-full p-4 bg-neutral-700 hover:bg-neutral-600 rounded-lg flex items-center justify-center"
+              >
+                <LuPlus className="size-5 mr-2" />
+                <span>Add New</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Podcast Listings Modal */}
+      {showPodcastListModal && (
+        <div className="fixed inset-0 bg-black/10 flex items-center justify-center z-50">
+          <div className="bg-neutral-800 rounded-lg p-6 w-full max-w-md max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Select Podcast</h2>
+              <button 
+                onClick={() => {
+                  setShowPodcastListModal(false);
+                  setShowPodcastModal(true);
+                }}
+                className="text-neutral-400 hover:text-white"
+              >
+                <LuX className="size-5" />
+              </button>
+            </div>
+            
+            {podloading ? (
+              <div className="text-center py-4">Loading podcasts...</div>
+            ) : isError ? (
+              <div className="text-red-400 text-center py-4">
+                Error loading podcasts: {error?.message || 'Unknown error'}
+              </div>
+            ) : podcastsData?.data?.results?.length === 0 ? (
+              <div className="text-center py-4">
+                No podcasts found. 
+                <button 
+                  onClick={() => {
+                    setShowPodcastListModal(false);
+                    setShowNewPodcastModal(true);
+                  }}
+                  className="text-primary-500 hover:text-primary-400 ml-1"
+                >
+                  Create a new one
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {podcastsData?.data?.results?.map((podcast: any) => (
+                  <div 
+                    key={podcast.id}
+                    className={`p-3 rounded cursor-pointer ${selectedPodcast?.id === podcast.id ? 'bg-primary-500' : 'bg-neutral-700 hover:bg-neutral-600'}`}
+                    onClick={() => setSelectedPodcast({
+                      id: podcast.id,
+                      title: podcast.title,
+                      description: podcast.description,
+                      audio: podcast.audio,
+                      tags: podcast.tags || [],
+                      isPublic: podcast.isPublic
+                    })}
+                  >
+                    <h3 className="font-medium">{podcast.title}</h3>
+                    <p className="text-sm text-neutral-300 truncate">{podcast.description}</p>
+                    <div className="text-xs text-neutral-400 mt-1">
+                      Duration: {podcast.formattedDuration || 'N/A'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex justify-end space-x-3 pt-4 mt-4">
+              <button
+                onClick={() => {
+                  setShowPodcastListModal(false);
+                  setShowPodcastModal(true);
+                }}
+                className="px-4 py-2 bg-neutral-700 rounded hover:bg-neutral-600"
+              >
+                Back
+              </button>
+              <button
+                onClick={() => {
+                  if (selectedPodcast) {
+                    setShowPodcastListModal(false);
+                    handleAttachPodcast();
+                  }
+                }}
+                disabled={!selectedPodcast}
+                className="px-4 py-2 bg-primary-500 rounded hover:bg-primary-600 disabled:opacity-50"
+              >
+                Attach Selected
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* New Podcast Modal */}
+      {showNewPodcastModal && (
+        <div className="fixed inset-0 bg-black/10 flex items-center justify-center z-50">
+          <div className="bg-neutral-800 rounded-lg p-6 w-full max-w-md max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Create New Podcast</h2>
+              <button 
+                onClick={() => {
+                  setShowNewPodcastModal(false);
+                  setShowPodcastModal(true);
+                }}
+                className="text-neutral-400 hover:text-white"
+              >
+                <LuX className="size-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Title*</label>
+                <input
+                  type="text"
+                  value={newPodcastTitle}
+                  onChange={(e) => setNewPodcastTitle(e.target.value)}
+                  className="w-full p-2 bg-neutral-700 rounded"
+                  placeholder="Enter podcast title"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Description</label>
+                <textarea
+                  value={newPodcastDescription}
+                  onChange={(e) => setNewPodcastDescription(e.target.value)}
+                  className="w-full p-2 bg-neutral-700 rounded"
+                  rows={3}
+                  placeholder="Enter podcast description"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Audio File*</label>
+                {newPodcastAudioPreview ? (
+                  <div className="bg-neutral-700 p-3 rounded">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm truncate">
+                        {newPodcastAudioFile?.name || 'Audio file'}
+                      </span>
+                      <button 
+                        onClick={handleRemoveNewPodcastAudio}
+                        className="text-red-400 hover:text-red-300"
+                      >
+                        <LuX className="size-4" />
+                      </button>
+                    </div>
+                    <audio controls className="w-full" src={newPodcastAudioPreview} />
+                  </div>
+                ) : (
+                  <label className="flex items-center justify-center p-4 border border-dashed border-neutral-600 rounded cursor-pointer hover:bg-neutral-700">
+                    <LuMic className="size-5 mr-2" />
+                    <span>Select Audio File</span>
+                    <input
+                      type="file"
+                      accept="audio/*"
+                      onChange={handleNewPodcastAudioSelect}
+                      className="hidden"
+                      ref={newPodcastAudioInputRef}
+                      required
+                    />
+                  </label>
+                )}
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="newPodcastIsPublic"
+                  checked={newPodcastIsPublic}
+                  onChange={(e) => setNewPodcastIsPublic(e.target.checked)}
+                  className="form-checkbox h-4 w-4 text-green-600 transition duration-150 ease-in-out bg-neutral-700 border-neutral-600 rounded"
+                />
+                <label htmlFor="newPodcastIsPublic" className="text-neutral-300 text-sm">
+                  Make Public
+                </label>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-4 mt-4">
+              <button
+                onClick={() => {
+                  setShowNewPodcastModal(false);
+                  setShowPodcastModal(true);
+                }}
+                className="px-4 py-2 bg-neutral-700 rounded hover:bg-neutral-600"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleCreateAndAttachPodcast}
+                disabled={!newPodcastTitle || !newPodcastAudioFile || isAttachingPodcast}
+                className="px-4 py-2 bg-primary-500 rounded hover:bg-primary-600 disabled:opacity-50"
+              >
+                {isAttachingPodcast ? 'Creating...' : 'Create & Attach'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Upload Progress Modal */}
+      <UploadProgressModal
+        isOpen={isAttachingPodcast}
+        progress={uploadProgress}
+        message={showNewPodcastModal ? "Creating and attaching podcast..." : "Attaching podcast to article..."}
+      />
     </div>
   );
 };

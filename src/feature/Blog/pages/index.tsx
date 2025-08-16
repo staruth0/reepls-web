@@ -1,20 +1,33 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LuCalendar, LuEye, LuSave, LuShare, LuTag } from 'react-icons/lu';
+import { LuCalendar, LuEye, LuSave, LuShare, LuTag, LuMic, LuX } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { type Editor } from 'reactjs-tiptap-editor';
+import axios from 'axios';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import { useUser } from '../../../hooks/useUser';
-import { Article, MediaItem} from '../../../models/datamodels';
+import { Article, MediaItem } from '../../../models/datamodels';
 import { uploadArticleThumbnail } from '../../../utils/media';
 import AuthPromptPopup from '../../AnonymousUser/components/AuthPromtPopup';
 import CreatePostTopBar from '../components/CreatePostTopBar';
 import ImageSection from '../components/ImageSection';
 import TipTapRichTextEditor from '../components/TipTapRichTextEditor';
-// import { useCreateArticle } from '../hooks/useArticleHook';
 import useDraft from '../hooks/useDraft';
 import { useSendNewArticleNotification } from '../../Notifications/hooks/useNotification';
+import { apiClient1 } from '../../../services/apiClient';
+import UploadProgressModal from '../components/UploadProgressModal';
+
+
+interface PodcastData {
+  title: string;
+  description: string;
+  audioFile: File | null;
+  audioPreview: string;
+  tags: string[];
+  category: string;
+  isPublic: boolean;
+}
 
 const CreatePost: React.FC = () => {
   const { authUser, isLoggedIn } = useUser();
@@ -45,6 +58,21 @@ const CreatePost: React.FC = () => {
   const editorRef = useRef<{ editor: Editor | null }>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  
+  const [showPodcastModal, setShowPodcastModal] = useState<boolean>(false);
+  const [podcastData, setPodcastData] = useState<PodcastData>({
+    title: '',
+    description: '',
+    audioFile: null,
+    audioPreview: '',
+    tags: [],
+    category: '',
+    isPublic: true
+  });
+  const [isUploadingPodcast, setIsUploadingPodcast] = useState<boolean>(false);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const audioInputRef = useRef<HTMLInputElement>(null);
 
   const actions = [
     {
@@ -93,7 +121,62 @@ const CreatePost: React.FC = () => {
         });
       },
     },
+    {
+      label: 'Add Podcast',
+      disabled: !isLoggedIn,
+      ActionIcon: LuMic,
+      onClick: () => {
+        if (!isLoggedIn) return;
+        setShowPodcastModal(true);
+      },
+    },
   ];
+
+  const handlePodcastAudioSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      if (!file.type.startsWith('audio/')) {
+        toast.error('Please upload a valid audio file.');
+        if (audioInputRef.current) audioInputRef.current.value = '';
+        return;
+      }
+      if (file.size > 50 * 1024 * 1024) {
+        toast.error('Audio file size must be less than 50MB.');
+        if (audioInputRef.current) audioInputRef.current.value = '';
+        return;
+      }
+      setPodcastData(prev => ({
+        ...prev,
+        audioFile: file,
+        audioPreview: URL.createObjectURL(file)
+      }));
+      toast.success('Audio file selected!');
+    }
+  };
+
+  const handleRemovePodcastAudio = () => {
+    setPodcastData(prev => ({
+      ...prev,
+      audioFile: null,
+      audioPreview: ''
+    }));
+    if (audioInputRef.current) audioInputRef.current.value = '';
+    toast.info('Audio file removed');
+  };
+
+  const handleSavePodcast = () => {
+    if (!podcastData.title.trim()) {
+      toast.error('Podcast title cannot be empty.');
+      return;
+    }
+    if (!podcastData.audioFile) {
+      toast.error('Please upload an audio file for your podcast.');
+      return;
+    }
+    setShowPodcastModal(false);
+    toast.success('Podcast added to article!');
+  };
+
 
 const onPublish = async () => {
   if (!isLoggedIn) return;
@@ -112,53 +195,107 @@ const onPublish = async () => {
   try {
     let thumbnailUrl = thumbnailImage;
     
-   
     if (thumbnail && authUser?.id) {
       thumbnailUrl = await uploadArticleThumbnail(authUser.id, thumbnail);
       setThumbnailImage(thumbnailUrl);
     }
 
-    const article: Article = {
-      title,
-      subtitle,
-      content,
-      htmlContent,
-      thumbnail: thumbnailUrl, 
-      media,
-      status: 'Published',
-      type: 'LongForm',
-      isArticle: true,
-      is_communiquer: isCommunique,
-    };
+    // If there's no podcast, use the original hook
+    if (!podcastData.audioFile) {
+      const article: Article = {
+        title,
+        subtitle,
+        content,
+        htmlContent,
+        thumbnail: thumbnailUrl, 
+        media,
+        status: 'Published',
+        type: 'LongForm',
+        isArticle: true,
+        is_communiquer: isCommunique,
+      };
 
+      createArticle(article, {
+        onSuccess: () => {
+          toast.update(toastId, {
+            render: t('Article published successfully'),
+            type: 'success',
+            isLoading: false,
+            autoClose: 1500,
+          });
+          navigate('/feed');
+          clearDraftArticle();
+        },
+        onError: (error) => {
+          toast.update(toastId, {
+            render: t('Error creating article: ') + error,
+            type: 'error',
+            isLoading: false,
+            autoClose: 1500,
+          });
+        },
+      });
+      return;
+    }
 
-    createArticle(article, {
-      onSuccess: () => {
-        toast.update(toastId, {
-          render: t('Article created successfully'),
-          type: 'success',
-          isLoading: false,
-          autoClose: 1500,
-        });
-        navigate('/feed');
-        clearDraftArticle();
-      },
-      onError: (error) => {
-        toast.update(toastId, {
-          render: t('Error creating article: ') + error,
-          type: 'error',
-          isLoading: false,
-          autoClose: 1500,
-        });
-      },
-    });
-  } catch (error) {
+    // If there is a podcast, use the direct API call
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('subtitle', subtitle);
+    formData.append('content', content);
+    formData.append('htmlContent', htmlContent);
+    if (thumbnailUrl) {
+      formData.append('thumbnail', thumbnailUrl);
+    }
+    formData.append('is_communiquer', isCommunique.toString());
+    
+    // Add podcast data
+    formData.append('podcastTitle', podcastData.title);
+    formData.append('podcastDescription', podcastData.description);
+    formData.append('podcastTags', JSON.stringify(podcastData.tags));
+    formData.append('podcastCategory', podcastData.category);
+    formData.append('podcastIsPublic', podcastData.isPublic.toString());
+    formData.append('audio', podcastData.audioFile);
+
+    setIsUploadingPodcast(true);
+    setUploadProgress(0);
+
+    await apiClient1.post(
+      '/podcasts/create-with-article',
+      formData,
+      {
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total ?? 0)
+          );
+          setUploadProgress(percentCompleted);
+        },
+      }
+    );
+
     toast.update(toastId, {
-      render: t('Error uploading thumbnail: ') + error,
+      render: t('Article with podcast published successfully'),
+      type: 'success',
+      isLoading: false,
+      autoClose: 1500,
+    });
+    navigate('/feed');
+    clearDraftArticle();
+  } catch (error) {
+    console.error('Upload error:', error);
+    let errorMessage = 'Upload failed';
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage = error.response.data.message || errorMessage;
+    }
+    toast.update(toastId, {
+      render: errorMessage,
       type: 'error',
       isLoading: false,
       autoClose: 1500,
     });
+  } finally {
+    setIsUploadingPodcast(false);
+    setUploadProgress(0);
   }
 };
 
@@ -260,6 +397,102 @@ const onPublish = async () => {
           <AuthPromptPopup text={t('create a post')} />
         )}
       </div>
+
+      {/* Podcast Modal */}
+      {showPodcastModal && (
+        <div className="fixed inset-0 bg-black/10 flex items-center justify-center z-50">
+          <div className="bg-neutral-800 rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Add Podcast</h2>
+              <button 
+                onClick={() => setShowPodcastModal(false)}
+                className="text-neutral-400 hover:text-white"
+              >
+                <LuX className="size-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Podcast Title</label>
+                <input
+                  type="text"
+                  value={podcastData.title}
+                  onChange={(e) => setPodcastData({...podcastData, title: e.target.value})}
+                  className="w-full p-2 bg-neutral-700 rounded"
+                  placeholder="Enter podcast title"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Description</label>
+                <textarea
+                  value={podcastData.description}
+                  onChange={(e) => setPodcastData({...podcastData, description: e.target.value})}
+                  className="w-full p-2 bg-neutral-700 rounded"
+                  rows={3}
+                  placeholder="Enter podcast description"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Audio File</label>
+                {podcastData.audioPreview ? (
+                  <div className="bg-neutral-700 p-3 rounded">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm truncate">
+                        {podcastData.audioFile?.name || 'Audio file'}
+                      </span>
+                      <button 
+                        onClick={handleRemovePodcastAudio}
+                        className="text-red-400 hover:text-red-300"
+                      >
+                        <LuX className="size-4" />
+                      </button>
+                    </div>
+                    <audio controls className="w-full" src={podcastData.audioPreview} />
+                  </div>
+                ) : (
+                  <label className="flex items-center justify-center p-4 border border-dashed border-neutral-600 rounded cursor-pointer hover:bg-neutral-700">
+                    <LuMic className="size-5 mr-2" />
+                    <span>Select Audio File</span>
+                    <input
+                      type="file"
+                      accept="audio/*"
+                      onChange={handlePodcastAudioSelect}
+                      className="hidden"
+                      ref={audioInputRef}
+                    />
+                  </label>
+                )}
+              </div>
+              
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  onClick={() => setShowPodcastModal(false)}
+                  className="px-4 py-2 bg-neutral-700 rounded hover:bg-neutral-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSavePodcast}
+                  disabled={!podcastData.title || !podcastData.audioFile}
+                  className="px-4 py-2 bg-primary-500 rounded hover:bg-primary-600 disabled:opacity-50"
+                >
+                  Save Podcast
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Upload Progress Modal */}
+      <UploadProgressModal
+        isOpen={isUploadingPodcast}
+        progress={uploadProgress}
+        message={isUploadingPodcast ? "Publishing article with podcast..." : "Publishing article..."}
+      />
     </div>
   );
 };

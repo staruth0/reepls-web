@@ -1,66 +1,86 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { LuImagePlus, LuMic, LuX } from 'react-icons/lu';
 import { toast } from 'react-toastify';
-import axios from 'axios';
-
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import HamburgerMenu from '../components/HamburgerMenupopup';
 import AddTagsModal from '../components/AddTagModal';
 import AddCategoryModal from '../components/AddCategoryModal';
 import PodcastPreviewModal from '../components/PodcastPreview';
-import { apiClient1 } from '../../../services/apiClient';
-import { useUser } from '../../../hooks/useUser';
-import { t } from 'i18next';
-import { uploadPodcastThumbnail } from '../../../utils/media';
 import UploadProgressModal from '../components/UploadProgressModal';
 
-const Podcast: React.FC = () => {
+import { apiClient1 } from '../../../services/apiClient';
+import { useUser } from '../../../hooks/useUser';
+import { uploadPodcastThumbnail } from '../../../utils/media';
+import { useGetPodcastById, useUpdatePodcastMetadata } from '../hooks';
+import { useParams } from 'react-router-dom';
+
+
+
+const EditPodcast: React.FC= () => {
+  const { authUser } = useUser();
+  const { id } = useParams<{ id: string }>();
+
+  // Fetch podcast data
+  const { data: podcastData, isLoading, isError } = useGetPodcastById(id || "");
+
   // State for form fields
-  const [title, setTitle] = useState<string>('');
-  const [subtitle, setSubtitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-  const [thumbnailPreview, setThumbnailPreview] = useState<string>('');
-  const [thumbnailUrl, setThumbnailUrl] = useState<string>('');
+  const [title, setTitle] = useState('');
+  const [subtitle, setSubtitle] = useState('');
+  const [description, setDescription] = useState('');
+  // const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState('');
+  const [thumbnailUrl, setThumbnailUrl] = useState('');
   const [audioFile, setAudioFile] = useState<File | null>(null);
-  const [audioPreview, setAudioPreview] = useState<string>('');
+  const [audioPreview, setAudioPreview] = useState('');
   const [tags, setTags] = useState<string[]>([]);
-  const [category, setCategory] = useState<string>('');
-  const [isPublic, setIsPublic] = useState<boolean>(true);
+  const [category, setCategory] = useState('');
+  const [isPublic, setIsPublic] = useState(true);
 
-  // State for modals
-  const [showTagsModal, setShowTagsModal] = useState<boolean>(false);
-  const [showCategoryModal, setShowCategoryModal] = useState<boolean>(false);
-  const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
-  const [showUploadModal, setShowUploadModal] = useState<boolean>(false);
+  // Modals
+  const [showTagsModal, setShowTagsModal] = useState(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
-  // State for upload process
-  const [isUploadingThumbnail, setIsUploadingThumbnail] = useState<boolean>(false);
-  const [isPosting, setIsPosting] = useState<boolean>(false);
-  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  // Upload states
+  const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
+  // const [isPosting, setIsPosting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  // Refs for file inputs
+  // Refs
   const audioInputRef = useRef<HTMLInputElement>(null);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
 
-  const { authUser } = useUser();
+  const updateMetadata = useUpdatePodcastMetadata();
 
+  // Prefill form when podcast data loads
+  useEffect(() => {
+    if (podcastData?.success && podcastData.data) {
+      const p = podcastData.data;
+      setTitle(p.title || '');
+      setSubtitle(p.subtitle || '');
+      setDescription(p.description || '');
+      setTags(p.tags || []);
+      setCategory(p.category || '');
+      setIsPublic(p.isPublic ?? true);
+      setThumbnailUrl(p.thumbnailUrl || '');
+      setThumbnailPreview(p.thumbnailUrl || '');
+      setAudioPreview(p.audio?.url || '');
+    }
+  }, [podcastData]);
+
+  // Thumbnail upload handler
   const handleThumbnailUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
-      
-      // Validate file type
       if (!file.type.startsWith('image/')) {
-        setError('Please upload a valid image file for the thumbnail.');
         toast.error('Please upload a valid image file for the thumbnail.');
         if (thumbnailInputRef.current) thumbnailInputRef.current.value = '';
         return;
       }
-
-      // Validate file size
       if (file.size > 5 * 1024 * 1024) {
-        setError('Thumbnail image must be less than 5MB.');
         toast.error('Thumbnail image must be less than 5MB.');
         if (thumbnailInputRef.current) thumbnailInputRef.current.value = '';
         return;
@@ -70,20 +90,17 @@ const Podcast: React.FC = () => {
         setIsUploadingThumbnail(true);
         setShowUploadModal(true);
         setThumbnailPreview(URL.createObjectURL(file));
- 
-        
+     
+
         // Upload to Cloudinary
-        const url = await uploadThumbnail(file);
+        const url = await uploadPodcastThumbnail(authUser!.id || '', file);
         setThumbnailUrl(url);
-        
         toast.success('Thumbnail uploaded successfully!');
-      } catch (error) {
-        console.error('Thumbnail upload failed:', error);
-        setError('Failed to upload thumbnail');
-        toast.error('Failed to upload thumbnail');
-        setThumbnailPreview('');
+      } catch (err) {
+        console.error(err);
+        toast.error('Failed to upload thumbnail.');
    
-        if (thumbnailInputRef.current) thumbnailInputRef.current.value = '';
+        setThumbnailPreview('');
       } finally {
         setIsUploadingThumbnail(false);
         setShowUploadModal(false);
@@ -91,12 +108,12 @@ const Podcast: React.FC = () => {
     }
   };
 
-  const uploadThumbnail = async (file: File) => {
-    if (!authUser?.id) {
-      toast.error(t("User not authenticated"));
-      throw new Error("User not authenticated");
-    }
-    return await uploadPodcastThumbnail(authUser.id, file);
+  const handleRemoveThumbnail = () => {
+
+    setThumbnailUrl('');
+    setThumbnailPreview('');
+    if (thumbnailInputRef.current) thumbnailInputRef.current.value = '';
+    toast.info('Thumbnail removed');
   };
 
   const handleAudioFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,13 +121,11 @@ const Podcast: React.FC = () => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       if (!file.type.startsWith('audio/')) {
-        setError('Please upload a valid audio file.');
         toast.error('Please upload a valid audio file.');
         if (audioInputRef.current) audioInputRef.current.value = '';
         return;
       }
       if (file.size > 50 * 1024 * 1024) {
-        setError('Audio file size must be less than 50MB.');
         toast.error('Audio file size must be less than 50MB.');
         if (audioInputRef.current) audioInputRef.current.value = '';
         return;
@@ -118,159 +133,92 @@ const Podcast: React.FC = () => {
       setAudioFile(file);
       const reader = new FileReader();
       reader.onload = (e) => setAudioPreview(e.target?.result as string);
-      reader.onerror = () => {
-        setError('Error reading audio file.');
-        toast.error('Error reading audio file.');
-      };
       reader.readAsDataURL(file);
       toast.success('Audio file selected!');
     }
   };
 
-  const handleRemoveThumbnail = () => {
-    setThumbnailUrl('');
-    setThumbnailPreview('');
-    if (thumbnailInputRef.current) thumbnailInputRef.current.value = '';
-    toast.info('Thumbnail removed');
-  };
-
   const handleRemoveAudio = () => {
     setAudioFile(null);
-    setAudioPreview('');
+    setAudioPreview(podcastData?.data?.audio?.url || '');
     if (audioInputRef.current) audioInputRef.current.value = '';
     toast.info('Audio file removed');
   };
 
-  const handlePost = async () => {
-    if (!title.trim()) {
-      const err = 'Podcast title cannot be empty.';
-      setError(err);
-      toast.error(err);
+  // Metadata update
+  const handleUpdateMetadata = async () => {
+    if(!id)return
+    if (!title.trim() || !description.trim()) {
+      toast.error('Title and description cannot be empty.');
       return;
     }
-    if (!description.trim()) {
-      const err = 'Podcast description cannot be empty.';
-      setError(err);
-      toast.error(err);
-      return;
-    }
+
+    updateMetadata.mutate(
+      {
+        podcastId: id,
+        payload: { title, description, tags, category, isPublic }
+      },
+      {
+        onSuccess: () => toast.success('Podcast metadata updated successfully!'),
+        onError: (err) => {
+          console.error(err);
+          toast.error('Failed to update podcast metadata');
+        }
+      }
+    );
+  };
+
+  // Audio update
+  const handleUpdateAudio = async () => {
     if (!audioFile) {
-      const err = 'Please upload an audio file for your podcast.';
-      setError(err);
-      toast.error(err);
+      toast.error('Please select an audio file');
       return;
     }
-
-    setIsPosting(true);
-    setShowUploadModal(true);
-    setError(null);
-    setUploadProgress(0);
-
     const formData = new FormData();
-    formData.append('title', title);
-    if (subtitle.trim()) {
-      formData.append('subtitle', subtitle.trim());
-    }
-    formData.append('description', description);
-    formData.append('isPublic', isPublic.toString());
-
-    if (tags.length > 0) {
-      formData.append('tags', JSON.stringify(tags));
-    }
-    if (category.trim()) {
-      formData.append('category', category.trim());
-    }
-
-    if (audioFile) {
-      formData.append('audio', audioFile);
-    }
-    if (thumbnailUrl) {
-      formData.append('thumbnailUrl', thumbnailUrl);
-    }
+    formData.append('audio', audioFile);
 
     try {
-      await apiClient1.post(
-        '/podcasts/standalone',
-        formData,
-        {
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / (progressEvent.total ?? 0)
-            );
-            setUploadProgress(percentCompleted);
-          },
-        }
-      );
-
-      toast.success('Podcast posted successfully!');
-      // Reset form
-      setTitle('');
-      setSubtitle('');
-      setDescription('');
-
-      setThumbnailPreview('');
-      setThumbnailUrl('');
-      setAudioFile(null);
-      setAudioPreview('');
-      setTags([]);
-      setCategory('');
-      setIsPublic(true);
-      if (audioInputRef.current) audioInputRef.current.value = '';
-      if (thumbnailInputRef.current) thumbnailInputRef.current.value = '';
+      setShowUploadModal(true);
+      await apiClient1.put(`/podcasts/${id}/audio`, formData, {
+        onUploadProgress: (progressEvent) => {
+          setUploadProgress(Math.round((progressEvent.loaded * 100) / (progressEvent.total ?? 0)));
+        },
+      });
+      toast.success('Audio updated successfully!');
     } catch (err) {
-      console.error('Upload error:', err);
-      let errorMessage = 'Upload failed';
-      let errorDetails = '';
-
-      if (axios.isAxiosError(err) && err.response) {
-        const status = err.response.status;
-        errorMessage = `Upload failed: ${status} ${err.response.statusText}`;
-        if (err.response.data) {
-          errorDetails = typeof err.response.data === 'string'
-            ? err.response.data
-            : err.response.data.message || err.response.data.error || 'Unknown server error';
-        }
-
-        if (status === 401) {
-          errorMessage = 'Authentication failed. Please login again.';
-        } else if (status === 400) {
-          errorMessage = 'Invalid request data.';
-        }
-      } else if (axios.isAxiosError(err) && err.request) {
-        errorMessage = 'Network error. Please check your connection.';
-      } else {
-        errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      }
-
-      const fullError = errorDetails ? `${errorMessage}: ${errorDetails}` : errorMessage;
-      setError(fullError);
-      toast.error(fullError);
+      console.error(err);
+      toast.error('Failed to update audio');
     } finally {
-      setIsPosting(false);
       setShowUploadModal(false);
       setUploadProgress(0);
     }
   };
 
-  const handleSaveTags = (newTags: string[]) => {
-    setTags(newTags);
-    toast.success('Tags updated!');
-  };
+ const handleSaveTags = (newTags: string[]) => {
+  setTags(prevTags => {
+
+    const combinedTags = Array.from(new Set([...prevTags, ...newTags]));
+    return combinedTags;
+  });
+  toast.success('Tags updated!');
+};
+
 
   const handleSaveCategory = (newCategory: string) => {
     setCategory(newCategory);
     toast.success(`Category set to: ${newCategory}`);
   };
 
-  const handlePreview = () => {
-    setShowPreviewModal(true);
-  };
+  const handlePreview = () => setShowPreviewModal(true);
+
+  if (isLoading) return <div>Loading podcast...</div>;
+  if (isError || !podcastData?.success) return <div>Failed to load podcast data</div>;
 
   return (
     <div className="min-h-screen bg-neutral-800 text-neutral-50 flex flex-col relative">
       <Topbar>
         <div className="w-full flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-neutral-50">New Podcast</h1>
+          <h1 className="text-lg font-semibold text-neutral-50">Edit Podcast</h1>
           <div className="flex items-center gap-4">
             <HamburgerMenu
               onPreviewClick={handlePreview}
@@ -278,11 +226,18 @@ const Podcast: React.FC = () => {
               onAddCategoryClick={() => setShowCategoryModal(true)}
             />
             <button
-              onClick={handlePost}
-              disabled={isPosting || isUploadingThumbnail}
+              onClick={handleUpdateMetadata}
+              disabled={updateMetadata.isPending|| isUploadingThumbnail}
               className="bg-primary-400 text-white font-bold text-md py-2 px-6 rounded-full transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Post
+             {updateMetadata.isPending?  'Saving...' : 'Save Metadata'}
+            </button>
+            <button
+              onClick={handleUpdateAudio}
+              disabled={updateMetadata.isPending || !audioFile}
+              className="bg-primary-400 text-white font-bold text-md py-2 px-6 rounded-full transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Update Audio
             </button>
           </div>
         </div>
@@ -305,7 +260,7 @@ const Podcast: React.FC = () => {
               onChange={handleThumbnailUpload}
               className="hidden"
               ref={thumbnailInputRef}
-              disabled={isUploadingThumbnail || isPosting}
+              disabled={isUploadingThumbnail || updateMetadata.isPending }
             />
           </label>
           <label htmlFor="audio-upload" className="flex items-center gap-2 px-4 py-2 bg-neutral-700 hover:bg-neutral-600 rounded-md cursor-pointer transition-colors duration-200">
@@ -318,7 +273,7 @@ const Podcast: React.FC = () => {
               onChange={handleAudioFileSelect}
               className="hidden"
               ref={audioInputRef}
-              disabled={isPosting}
+              disabled={updateMetadata.isPending }
             />
           </label>
         </div>
@@ -362,11 +317,7 @@ const Podcast: React.FC = () => {
                   <LuX className="size-4" />
                 </button>
               </div>
-              <audio
-                controls
-                className="w-full"
-                src={audioPreview}
-              >
+              <audio controls className="w-full" src={audioPreview}>
                 Your browser does not support the audio element.
               </audio>
             </div>
@@ -381,7 +332,7 @@ const Podcast: React.FC = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full p-3 bg-neutral-700 text-neutral-50 placeholder-neutral-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-2xl font-semibold"
-            disabled={isPosting}
+            disabled={updateMetadata.isPending }
           />
         </div>
 
@@ -392,7 +343,7 @@ const Podcast: React.FC = () => {
             value={subtitle}
             onChange={(e) => setSubtitle(e.target.value)}
             className="w-full p-3 bg-neutral-700 text-neutral-50 placeholder-neutral-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-lg"
-            disabled={isPosting}
+            disabled={updateMetadata.isPending }
           />
         </div>
 
@@ -403,7 +354,7 @@ const Podcast: React.FC = () => {
             onChange={(e) => setDescription(e.target.value)}
             rows={8}
             className="w-full p-3 bg-neutral-700 text-neutral-50 placeholder-neutral-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 resize-y"
-            disabled={isPosting}
+            disabled={updateMetadata.isPending }
           ></textarea>
         </div>
 
@@ -429,7 +380,7 @@ const Podcast: React.FC = () => {
             checked={isPublic}
             onChange={(e) => setIsPublic(e.target.checked)}
             className="form-checkbox h-4 w-4 text-green-600 transition duration-150 ease-in-out bg-neutral-700 border-neutral-600 rounded"
-            disabled={isPosting}
+            disabled={updateMetadata.isPending }
           />
           <label htmlFor="isPublic" className="text-neutral-300">
             Make Public
@@ -474,10 +425,10 @@ const Podcast: React.FC = () => {
       <UploadProgressModal
         isOpen={showUploadModal}
         progress={uploadProgress}
-        message={isUploadingThumbnail ? "Uploading thumbnail..." : "Publishing podcast..."}
+        message={isUploadingThumbnail ? "Uploading thumbnail..." : "Updating podcast..."}
       />
     </div>
   );
 };
 
-export default Podcast;
+export default EditPodcast;

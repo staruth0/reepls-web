@@ -7,13 +7,14 @@ import ErrorFallback from "../../../../components/molecules/ErrorFallback/ErrorF
 import BlogArticleProfile from "../BlogComponents/BlogArticleProfile";
 import BlogArticleImagery from "../BlogComponents/BlogArticleImagery";
 import BlogArticleMessage from "../BlogComponents/BlogArticleMessage";
-// import BlogArticleReactionStats from "../BlogComponents/BlogArticleReactionStats";
-import { ReadingControls } from "../../../../components/atoms/ReadALoud/ReadingControls";
 import { calculateReadTime } from "../../../../utils/articles";
 import { useGetUserByUsername } from "../../../Profile/hooks";
 import BlogArticleProfileRepost from "../BlogComponents/BlogArticleProfileRepost";
 import BlogReactionStats from "../BlogComponents/BlogReactionStats";
 import BlogReactionSession from "../BlogComponents/BlogReactionSession";
+import { useAudioControls } from "../../../../hooks/useMediaPlayer";
+import { LuMic } from "react-icons/lu";
+import { useGetPodcastById } from "../../../Podcast/hooks";
 
 interface articleprobs {
   article: Article;
@@ -24,14 +25,35 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
   const [isCommentSectionOpen, setIsCommentSectionOpen] =
     useState<boolean>(false);
   const { mutate } = useUpdateArticle();
+  const { user } = useGetUserByUsername(
+    article.repost?.repost_user.username || ""
+  );
+
+  // Fetch podcast data if article has podcast
+  const { data: podcastData } = useGetPodcastById(article.podcastId || "");
+  const podcast = podcastData?.data;
+
+  // Audio controls for the podcast
+  const { 
+    isPlaying, 
+    togglePlay, 
+    currentTrack 
+  } = useAudioControls(podcast ? {
+    id: podcast.id,
+    title: podcast.title,
+    url: podcast.audio.url,
+    thumbnail: podcast.thumbnailUrl,
+    author: podcast.author?.name,
+  } : undefined);
 
   const toggleCommentSection = () => {
     setIsCommentSectionOpen(!isCommentSectionOpen);
   };
 
-  const { user } = useGetUserByUsername(
-    article.repost?.repost_user.username || ""
-  );
+  const handlePodcastPlay = () => {
+    if (!podcast) return;
+    togglePlay();
+  };
 
   useEffect(() => {
     mutate({
@@ -48,7 +70,6 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
 
   return (
     <>
-      {" "}
       <div className="">
         <div className="">
           <BlogArticleProfile
@@ -61,7 +82,6 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
             article={article}
           />
           <div className="p-3 text-[14px]">
-            {" "}
             {article.repost?.repost_comment}
           </div>
         </div>
@@ -97,17 +117,15 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
               article={article}
             />
             <div className="flex p-3 gap-1 items-center">
-              {article.has_podcast && (
+              {article.hasPodcast && (
                 <>
-                  {" "}
-                  <div className="relative ">
-                    <ReadingControls
-                      article={article}
-                      article_id={article.article_id || ""}
-                      article_tts={article.text_to_speech || ""}
-                    />
-                  </div>
-                  <div className="size-1 rounded-full bg-primary-400"> </div>
+                  <button 
+                    onClick={handlePodcastPlay}
+                    className={`p-2 rounded-full ${currentTrack?.id === podcast?.id && isPlaying ? 'bg-main-green' : 'bg-neutral-700'}`}
+                  >
+                    <LuMic size={18} className={currentTrack?.id === podcast?.id && isPlaying ? 'text-white' : 'text-neutral-300'} />
+                  </button>
+                  <div className="size-1 rounded-full bg-primary-400"></div>
                 </>
               )}
               <div className="text-neutral-70 text-xs mx-1">

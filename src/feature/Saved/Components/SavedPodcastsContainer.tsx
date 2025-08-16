@@ -108,7 +108,7 @@ const SavedPodcastsContainer: React.FC<SavedPodcastsContainerProps> = ({ classNa
         }) => {
           const podcast = savedPodcast.podcastId;
 
-          // Create the object that matches the PodcastCard's expected props
+         
           const cardPodcast = {
             id: podcast._id,
             thumbnailUrl: podcast.thumbnailUrl || 'https://placehold.co/400x200/444444/FFFFFF?text=Podcast+Thumbnail',
@@ -124,7 +124,7 @@ const SavedPodcastsContainer: React.FC<SavedPodcastsContainerProps> = ({ classNa
             listenTime: formatDuration(podcast.audio?.duration),
             likes: podcast.likesCount || 0,
             comments: podcast.commentsCount || 0,
-            isBookmarked: true, // It's a saved podcast, so this is always true
+            isBookmarked: true, 
           };
 
           return (

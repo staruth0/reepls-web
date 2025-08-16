@@ -8,6 +8,7 @@ import SearchPeople from "./SearchPeople";
 import SearchPosts from "./searchPosts";
 import SearchArticles from "./SearchArticles";
 import SearchAll from "./SearchAll";
+import SearchPodcast from "./SearchPodcast"; // Import the new component
 import { useUser } from "../../../hooks/useUser";
 import { useStoreSearchSuggestion } from "../hooks";
 
@@ -17,6 +18,7 @@ const tabs = [
   { id: "Posts", title: "Posts" },
   { id: "Articles", title: "Articles" },
   { id: "People", title: "People" },
+  { id: "Podcast", title: "Podcast" }, // Add the new tab
 ];
 
 const SearchResults: React.FC = () => {
@@ -64,6 +66,7 @@ const SearchResults: React.FC = () => {
             {activeTab === "Posts" && <SearchPosts query={query} />}
             {activeTab === "Articles" && <SearchArticles query={query} />}
             {activeTab === "People" && <SearchPeople query={query} />}
+            {activeTab === "Podcast" && <SearchPodcast query={query} />} {/* Conditionally render the new component */}
           </div>
         </div>
       </div>
