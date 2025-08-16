@@ -93,7 +93,6 @@ export const useGetCommentsTreeForRepost = (
     queryKey: ["repost-comments-tree", repostId, page, limit],
     queryFn: () => getCommentsTreeForRepost(repostId, page, limit),
     enabled: enabled && !!repostId,
-    staleTime: 5 * 60 * 1000,
   });
 };
 
@@ -106,7 +105,6 @@ export const useGetMyReposts = (page: number = 1, limit: number = 10) => {
   return useQuery({
     queryKey: ["my-reposts", page, limit],
     queryFn: () => getMyReposts(page, limit),
-    staleTime: 10 * 60 * 1000,
   });
 };
 
@@ -172,7 +170,6 @@ export const useGetReactionByTarget = (
     queryKey: ["reaction-by-target", target_type, target_id],
     queryFn: () => getReactionByTarget(target_type, target_id),
     enabled: enabled && !!target_id,
-    staleTime: 5 * 60 * 1000,
   });
 };
 
@@ -186,7 +183,6 @@ export const useGetReactionById = (reactionId: string, enabled: boolean = true) 
     queryKey: ["reaction", reactionId],
     queryFn: () => getReactionById(reactionId),
     enabled: enabled && !!reactionId,
-    staleTime: 5 * 60 * 1000,
   });
 };
 
@@ -250,7 +246,10 @@ export const useGetAllReactionsForTarget = (
     queryKey: ["all-reactions-for-target", target_type, id, page, limit],
     queryFn: () => getAllReactionsForTarget(target_type, id, page, limit),
     enabled: enabled && !!id,
-    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    retry: 1
+  
   });
 };
 
@@ -273,7 +272,6 @@ export const useGetReactionsGroupedByType = (
     queryKey: ["reactions-grouped-by-type", target_type, id, page, limit],
     queryFn: () => getReactionsGroupedByType(target_type, id, page, limit),
     enabled: enabled && !!id,
-    staleTime: 5 * 60 * 1000,
   });
 };
 
@@ -403,6 +401,5 @@ export const useGetSavedReposts = (page: number = 1, limit: number = 10) => {
   return useQuery({
     queryKey: ["saved-reposts", page, limit],
     queryFn: () => getSavedReposts(page, limit),
-    staleTime: 10 * 60 * 1000,
   });
 };

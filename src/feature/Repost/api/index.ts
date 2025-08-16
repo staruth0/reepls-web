@@ -230,7 +230,7 @@ export interface GetMyRepostsResponse {
 
 // Interfaces for Reactions APIs
 export type ReactionType = "like" | "dislike" | "love" | "clap" | "insightful";
-export type TargetType = "Article" | "Comment" | "Repost";
+export type TargetType = "Article" | "Comment" | "Repost" | "Podcast";
 
 export interface CreateUpdateReactionPayload {
   target_id: string;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PodcastAuthorInfo from "./PodcastAuthorInfo"; 
 import PodcastEngagementMetrics from "./PodcastEngagementMetrics"; 
 import { User } from "../../../models/datamodels";
@@ -28,18 +28,11 @@ interface PodcastCardProps {
 
 const PodcastCard2: React.FC<PodcastCardProps> = ({
   podcast,
-  onLike,
-  onComment,
-  onBookmark,
-}) => {
-  // Local state for bookmark and follow, if not managed globally
-  const [isBookmarked, setIsBookmarked] = useState(podcast.isBookmarked);
 
-  const handleLikeClick = () => {
-    
-    console.log(`Liked podcast: ${podcast.id}`);
-    if (onLike) onLike(podcast.id);
-  };
+  onComment,
+
+}) => {
+ 
 
   const handleCommentClick = () => {
    
@@ -47,12 +40,7 @@ const PodcastCard2: React.FC<PodcastCardProps> = ({
     if (onComment) onComment(podcast.id);
   };
 
-  const handleBookmarkClick = () => {
- 
-    setIsBookmarked((prev) => !prev); 
-    console.log(`Bookmark toggled for podcast: ${podcast.id}`);
-    if (onBookmark) onBookmark(podcast.id);
-  };
+
 
 
 
@@ -103,12 +91,12 @@ const PodcastCard2: React.FC<PodcastCardProps> = ({
 
         {/* Engagement Metrics */}
         <PodcastEngagementMetrics
-          likes={podcast.likes}
+        
           comments={podcast.comments}
-          isBookmarked={isBookmarked}
-          onLikeClick={handleLikeClick}
+
+      
           onCommentClick={handleCommentClick}
-          onBookmarkClick={handleBookmarkClick}
+
           id={podcast.id}
         />
       </div>

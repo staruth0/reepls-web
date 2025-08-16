@@ -1,8 +1,7 @@
 import { X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { clap, heart, sadface, smile, thumb } from "../../../assets/icons";
 import ReactionTab from "./ReactionTab";
-import { Article, User } from "../../../models/datamodels";
 import { useTranslation } from "react-i18next";
 import { useGetAllReactionsForTarget, useGetReactionsGroupedByType } from "../../Repost/hooks/useRepost";
 import UserReactionContainer2 from "./UserReactionContainer2";
@@ -12,51 +11,37 @@ interface Reaction {
   type: "like" | "clap" | "love" | "smile" | "cry";
   user_id: string;
   target_id: string;
-  target_type: "Article" | "Repost";
+  target_type: "Podcast";
   createdAt: string;
   updatedAt: string;
   __v: number;
 }
 
-interface ReactionProps {
-  article_id: string;
-  article: Article;
+interface PodcastReactionsProps {
+  podcast_id: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const ReactionsPopup: React.FC<ReactionProps> = ({
+const PodcastReactionsPopup: React.FC<PodcastReactionsProps> = ({
   isOpen,
   onClose,
-  article_id,
-  article,
+  podcast_id,
 }) => {
   const { t } = useTranslation();
 
-  
-
-
-
-  // Determine the target type and ID based on the article prop
-  const target_type = article.type === "Repost" ? "Repost" : "Article";
-  const target_id = article.type === "Repost" && article.repost?.repost_id
-    ? article.repost.repost_id
-    : article_id;
-
-  // Use the new hooks with the determined target_type and target_id
   const {
     data: allReactions,
     isLoading: isLoadingAllReactions,
     isError: isErrorAllReactions,
-  } = useGetAllReactionsForTarget(target_type, target_id);
+  } = useGetAllReactionsForTarget("Podcast", podcast_id);
 
   const {
     data: reactionsPerType,
     isLoading: isLoadingReactionsPerType,
     isError: isErrorReactionsPerType,
-  } = useGetReactionsGroupedByType(target_type, target_id);
+  } = useGetReactionsGroupedByType("Podcast", podcast_id);
 
- 
   const reactionsTab = [
     {
       id: "All",
@@ -81,7 +66,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
       title: (
         <div className="flex items-center gap-1 font-semibold text-[16px]">
           <img src={sadface} alt="Sad Face" className="w-5 h-5" />
-          <span>{reactionsPerType?.cry?.users?.length|| 0}</span>
+          <span>{reactionsPerType?.cry?.users?.length || 0}</span>
         </div>
       ),
     },
@@ -114,16 +99,7 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
     },
   ];
 
-    const [activeTab, setActiveTab] = useState<number | string>(
-    reactionsTab[0].id
-  );
-
-  useEffect(() => {
-    console.log('allReactions', allReactions)
-    console.log('reactionspertypt',reactionsPerType)
-  }, [allReactions, reactionsPerType]);
-
-
+  const [activeTab, setActiveTab] = useState<number | string>(reactionsTab[0].id);
 
   if (!isOpen) return null;
 
@@ -189,13 +165,11 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
         </p>
       );
     }
-    return users.map((user: User) => (
+    return users.map((user: any) => (
       <UserReactionContainer2
         key={user.id}
-        type={type} // Pass the reaction type
-        user_id={user.id || ''} // Pass the user ID as expected by UserReactionContainer2
-
-
+        type={type}
+        user_id={user.id || ''}
       />
     ));
   };
@@ -241,7 +215,6 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
               </p>
             ))}
 
-          {/* Use the helper function to render users for each tab */}
           {activeTab !== "All" && renderUsersForType(activeTab as string)}
         </div>
       </div>
@@ -249,4 +222,4 @@ const ReactionsPopup: React.FC<ReactionProps> = ({
   );
 };
 
-export default ReactionsPopup;
+export default PodcastReactionsPopup;
