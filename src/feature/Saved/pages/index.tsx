@@ -45,6 +45,7 @@ const Bookmarks: React.FC = () => {
   const [followings, setFollowings] = useState<Follow[]>([]);
   const {data} = useGetReadingHistory(); 
   const { data:Reposts } = useGetSavedReposts();
+ 
 
   const {t} = useTranslation();
 
@@ -108,9 +109,9 @@ useEffect(() => {
   }, [followingsData]);
 
   const tabs = [
-    { id: 'posts', title: `${t("saved.tabs.posts")} (${savedPosts.length})` },
-    { id: 'articles', title: `${t("saved.tabs.articles")} (${savedArticles.length})` },
-    { id: 'podcasts', title: `Podcasts (${savedPodcastsData?.podcasts?.length || 0})` },
+    { id: 'posts', title: `${t("saved.tabs.posts")} (${savedPosts?.length})` },
+    { id: 'articles', title: `${t("saved.tabs.articles")} (${savedArticles?.length})` },
+    { id: 'podcasts', title: `Podcasts (${savedPodcastsData?.data?.savedPodcasts.length || 0})` },
     { id: 'reposts', title: `Reposts (${Reposts?.reposts.length  || 0})` }, // Add this tab
     { id: 'history', title: `${t("saved.tabs.history")}` },
   ];

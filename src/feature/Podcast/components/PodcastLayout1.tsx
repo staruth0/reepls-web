@@ -1,22 +1,18 @@
-// src/components/molecules/PodcastCard/PodcastCard.tsx
-import React, { useState } from 'react';
-import PodcastAuthorInfo from './PodcastAuthorInfo'; // Adjust path as needed
-import PodcastEngagementMetrics from './PodcastEngagementMetrics'; // Adjust path as needed
 
-// Define the interface for the podcast data
+import React, { useState } from 'react';
+import PodcastAuthorInfo from './PodcastAuthorInfo';
+import PodcastEngagementMetrics from './PodcastEngagementMetrics'; 
+import { User } from '../../../models/datamodels';
+
+
 interface Podcast {
   id: string;
   thumbnailUrl: string;
-  author: {
-    id: string;
-    name: string;
-    avatarUrl: string;
-    isVerified: boolean;
-  };
+  author: User,
   title: string;
   description: string;
-  publishDate: string; // e.g., "Jun 26"
-  listenTime: string; // e.g., "32 min"
+  publishDate: string;
+  listenTime: string; 
   likes: number;
   comments: number;
   isBookmarked: boolean;
@@ -24,7 +20,7 @@ interface Podcast {
 
 interface PodcastCardProps {
   podcast: Podcast;
-  // Optional handlers for actions, if you want to lift state up
+
   onLike?: (podcastId: string) => void;
   onComment?: (podcastId: string) => void;
   onBookmark?: (podcastId: string) => void;
@@ -36,46 +32,37 @@ const PodcastCard: React.FC<PodcastCardProps> = ({
   onLike,
   onComment,
   onBookmark,
-  onFollow,
+
 }) => {
-  // Local state for bookmark and follow, if not managed globally
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(false); // Assuming initial state is not following
+
 
   const handleLikeClick = () => {
-    // Implement like logic, e.g., call API, then update parent state or local state
     console.log(`Liked podcast: ${podcast.id}`);
     if (onLike) onLike(podcast.id);
   };
 
   const handleCommentClick = () => {
-    // Implement comment logic, e.g., navigate to comments section
     console.log(`Commented on podcast: ${podcast.id}`);
     if (onComment) onComment(podcast.id);
   };
 
   const handleBookmarkClick = () => {
-    setIsBookmarked(prev => !prev); // Toggle local state
+    setIsBookmarked(prev => !prev); 
     console.log(`Bookmark toggled for podcast: ${podcast.id}`);
     if (onBookmark) onBookmark(podcast.id);
   };
 
-  const handleFollowClick = () => {
-    setIsFollowing(prev => !prev); // Toggle local state
-    console.log(`Follow toggled for author: ${podcast.author.id}`);
-    if (onFollow) onFollow(podcast.author.id);
-  };
+
 
   return (
     <div className="bg-neutral-800 rounded-lg shadow-md overflow-hidden border border-neutral-700 h-full flex flex-col">
-      {/* Podcast Thumbnail Image */}
       <div className="w-full h-48 overflow-hidden">
         <img
           src={podcast.thumbnailUrl}
           alt={podcast.title}
           className="w-full h-full object-cover"
           onError={(e) => {
-            // Fallback to a placeholder image if the actual image fails
             e.currentTarget.src = `https://placehold.co/400x200/444444/FFFFFF?text=Podcast+Thumbnail`;
           }}
         />
@@ -84,11 +71,9 @@ const PodcastCard: React.FC<PodcastCardProps> = ({
       <div className="p-4 flex-1 flex flex-col justify-between">
         {/* Author Info */}
         <PodcastAuthorInfo
-          authorName={podcast.author.name}
-          authorAvatarUrl={podcast.author.avatarUrl}
-          isVerified={podcast.author.isVerified}
-          onFollowClick={handleFollowClick}
-          isFollowing={isFollowing}
+          author={podcast.author}
+        
+       
         />
 
         {/* Podcast Title */}
@@ -119,6 +104,7 @@ const PodcastCard: React.FC<PodcastCardProps> = ({
             onLikeClick={handleLikeClick}
             onCommentClick={handleCommentClick}
             onBookmarkClick={handleBookmarkClick}
+            id={podcast.id}
           />
         </div>
       </div>

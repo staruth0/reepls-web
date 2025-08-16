@@ -8,18 +8,13 @@ import PodcastCard from "../Podcast/components/PodcastLayout1";
 import PodcastCard2 from "../Podcast/components/PodcastLayout2";
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
 import { useGetAllPodcasts } from "../Podcast/hooks";
-import { IPodcast } from "../../models/datamodels";
+import { IPodcast, User } from "../../models/datamodels";
 import Communique from "./components/Communique/Communique";
 
 interface Podcast {
   id: string;
   thumbnailUrl: string;
-  author: {
-    id: string;
-    name: string;
-    avatarUrl: string;
-    isVerified: boolean;
-  };
+  author: User;
   title: string;
   description: string;
   publishDate: string;
@@ -40,7 +35,7 @@ const FeedPodcasts: React.FC = () => {
   const { data: podcastsAPI, isLoading } = useGetAllPodcasts({
     page: 1,
     limit: 10,
-    category: "Technology",
+    category: "",
     sortBy: "createdAt",
     sortOrder: "desc",
   });
@@ -49,14 +44,14 @@ const FeedPodcasts: React.FC = () => {
     console.log('fetched podcast', podcastsAPI)
   },[podcastsAPI])
 
-  // Helper: format ISO date to "Jul 15"
+ 
   function formatDate(iso?: string) {
     if (!iso) return "N/A";
     const d = new Date(iso);
     return d.toLocaleString("en-US", { month: "short", day: "numeric" });
   }
 
-  // Helper: seconds to "MM min"
+
   function formatDuration(sec?: number) {
     if (!sec || isNaN(sec)) return "0 min";
     return `${Math.round(sec / 60)} min`;
@@ -69,12 +64,7 @@ const FeedPodcasts: React.FC = () => {
       thumbnailUrl:
         p.thumbnailUrl ||
         "https://placehold.co/400x200/444444/FFFFFF?text=Podcast+Thumbnail",
-      author: {
-        id: p.authorId?._id ? p.authorId?._id : "",
-        name: p.authorId?.name || '',
-        avatarUrl: p.authorId?.profile_picture || "",
-        isVerified: p.authorId?.is_verified_writer || false,
-      },
+      author: p.authorId || { id: "", name: "", profile_picture: "", is_verified_writer: false },
       title: p.title || "Untitled Podcast",
       description: p.description || "",
       publishDate: formatDate(p.createdAt?.toString()),

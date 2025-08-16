@@ -27,6 +27,7 @@ import Bookmarks from '../feature/Saved/pages';
 import Search from '../feature/Search/pages';
 import SearchResults from '../feature/Search/pages/SearchResults';
 import UserLayout from '../layouts/UserLayout';
+import EditPodcast from '../feature/Podcast/pages/PodcastEdit.tsx';
 // import Home from "../feature/Home/pages/Home";
 
 
@@ -121,6 +122,10 @@ const UserRoutes = {
     {
       path: '/podcast/create',
       element: <Podcast />,
+    },
+    {
+      path: '/podcast/edit/:id',
+      element: <EditPodcast />,
     },
     {
       path: '/feed/podcasts',

@@ -142,7 +142,7 @@ interface UseUpdatePodcastMetadataPayload {
 }
 
 export const useUpdatePodcastMetadata = () => {
-  const queryClient = useQueryClient(); // Correct placement
+  const queryClient = useQueryClient(); 
   return useMutation({
     mutationFn: ({ podcastId, payload }: UseUpdatePodcastMetadataPayload) => updatePodcastMetadata(podcastId, payload),
     onSuccess: (_, variables) => {

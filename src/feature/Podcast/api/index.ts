@@ -1,4 +1,4 @@
-import { apiClient } from "../../../services/apiClient"; // Adjust path as needed
+import { apiClient } from "../../../services/apiClient"; 
 
 const uploadStandalonePodcast = async (formData: FormData) => {
   const formDataObject = Object.fromEntries(formData.entries());
@@ -21,7 +21,6 @@ const attachPodcastToExistingArticle = async (articleId: string, formData: FormD
   return data;
 };
 
-// --- Podcast Retrieval ---
 
 interface GetPodcastsParams {
   page?: number;

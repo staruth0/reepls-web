@@ -1,27 +1,18 @@
 import React, { useEffect } from 'react';
-import { Article, User } from '../../../models/datamodels';
-import BlogPost from '../../Blog/components/BlogPost';
 import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
 import { useGetSearchResults } from '../hooks';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
-import AuthorComponent from '../../Saved/Components/AuthorComponent';
+import PodcastCard2 from '../../Podcast/components/PodcastLayout2';
 
-
-interface SearchAllProps {
+interface SearchPodcastProps {
   query: string;
 }
 
-interface SearchResultItem {
-  type: 'article' | 'user';
-  data: Article | User;
-}
-
-const SearchAll: React.FC<SearchAllProps> = ({ query }) => {
+const SearchPodcast: React.FC<SearchPodcastProps> = ({ query }) => {
   const { data: results, isLoading, error } = useGetSearchResults(query);
   const { t } = useTranslation();
 
-  // Function to get friendly error messages specific to search results
   const getFriendlyErrorMessage = (error: Error | { response?: { status: number }, message: string }, query?: string): string => {
     if (!error) return t("search.errors.default");
   
@@ -43,29 +34,15 @@ const SearchAll: React.FC<SearchAllProps> = ({ query }) => {
     return t("search.errors.default");
   };
 
-  // Toast error notification
   useEffect(() => {
     if (error) {
       toast.error(getFriendlyErrorMessage(error));
     }
   }, [error]);
 
-
-
-  // Function to determine the type of each result
-  const getResultType = (item:any): SearchResultItem => {
-    if (item.type === 'user') {
-      return { type: 'user', data: item as User };
-    } else {
-      // Treat both articles and posts the same way
-      return { type: 'article', data: item as Article };
-    }
-  };
-
-  // Loading state
   if (isLoading) {
     return (
-      <div className="search-all">
+      <div className="search-podcast">
         <div className="px-1 sm:px-8 transition-all duration-300 ease-linear flex flex-col-reverse">
           <BlogSkeletonComponent />
           <BlogSkeletonComponent />
@@ -74,10 +51,9 @@ const SearchAll: React.FC<SearchAllProps> = ({ query }) => {
     );
   }
 
-  // Error state
   if (error) {
     return (
-      <div className="search-all">
+      <div className="search-podcast">
         <div className="px-1 sm:px-8 transition-all duration-300 ease-linear">
           <p className="text-neutral-50 text-center py-4">
             {getFriendlyErrorMessage(error)}
@@ -87,28 +63,15 @@ const SearchAll: React.FC<SearchAllProps> = ({ query }) => {
     );
   }
 
-  // Success or empty state
+  const podcasts = results?.filter((item: any) => item.type === 'podcast') ;
+
   return (
-    <div className="search-all">
-      {results?.length > 0 ? (
+    <div className="search-podcast">
+      {podcasts && podcasts.length > 0 ? (
         <div className="px-1 sm:px-8 max-w-[680px] transition-all duration-300 ease-linear flex flex-col gap-7">
-          {results.map((item: User | Article, index: number) => {
-            const result = getResultType(item);
-            
-            if (result.type === 'user') {
-              const user = result.data as User;
-              return (
-                <AuthorComponent
-                  key={`${user._id}-${index}`}
-                  username={user.username || ''}
-                  // Add any other props needed by AuthorComponent
-                />
-              );
-            } else {
-              const article = result.data as Article;
-              return <BlogPost key={article._id} article={article} />;
-            }
-          })}
+          {podcasts.map((podcast: any) => (
+            <PodcastCard2 key={podcast._id} podcast={podcast} />
+          ))}
         </div>
       ) : (
         <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear">
@@ -121,4 +84,4 @@ const SearchAll: React.FC<SearchAllProps> = ({ query }) => {
   );
 };
 
-export default SearchAll;
+export default SearchPodcast;

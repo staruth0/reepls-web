@@ -87,7 +87,7 @@ export interface Article {
   title?: string;
   type?: 'ShortForm' | 'LongForm' | 'Repost';
   is_communiquer?: boolean;
-  has_podcast?:boolean;
+  hasPodcast?:boolean;
   subtitle?: string;
   content?: string;
   htmlContent?: string;
@@ -114,6 +114,7 @@ export interface Article {
   engagement_count?: number,
   author_follower_count?: number,
   author_profile_views_count?: number,
+   podcastId?:string,
   
 }
 
@@ -125,7 +126,7 @@ export interface ArticleDuplicate {
   subtitle?: string;
   content?: string;
   htmlContent?: string;
-  has_podcast?:boolean;
+  hasPodcast?:boolean;
   category?: string[];
   keywords?: string[];
   media?: MediaItem[];
@@ -149,6 +150,7 @@ export interface ArticleDuplicate {
   engagement_count?: number,
   author_follower_count?: number,
   author_profile_views_count?: number,
+   podcastId?:string,
   
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
 
 interface AddTagsModalProps {
@@ -11,6 +11,11 @@ interface AddTagsModalProps {
 const AddTagsModal: React.FC<AddTagsModalProps> = ({ isOpen, onClose, onSave, initialTags }) => {
   const [currentTag, setCurrentTag] = useState<string>('');
   const [tags, setTags] = useState<string[]>(initialTags);
+
+  // Sync with initialTags whenever it changes
+  useEffect(() => {
+    setTags(initialTags);
+  }, [initialTags]);
 
   if (!isOpen) return null;
 
@@ -49,9 +54,7 @@ const AddTagsModal: React.FC<AddTagsModalProps> = ({ isOpen, onClose, onSave, in
             value={currentTag}
             onChange={(e) => setCurrentTag(e.target.value)}
             onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                handleAddTag();
-              }
+              if (e.key === 'Enter') handleAddTag();
             }}
             placeholder="Type tag and press Enter"
             className="flex-1 p-2 bg-neutral-700 text-neutral-50 placeholder-neutral-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"

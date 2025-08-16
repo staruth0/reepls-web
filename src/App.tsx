@@ -10,8 +10,9 @@ import { WebRoutes } from './Routes/WebRoutes';
 import { apiClient } from './services/apiClient';
 import { useFetchVapidPublicKey } from './feature/Notifications/hooks/useNotification';
 import { useUser } from './hooks/useUser';
-import { AudioPlayer, AudioPlayerProvider, useAudioPlayerControls } from './components/molecules/AudioPlayer';
 import { getDecryptedAccessToken } from './feature/Auth/api/Encryption';
+import FloatingAudioPlayer from './components/molecules/Audio/FloatingAudioPlayer';
+import { AudioPlayerProvider } from './context/AudioContext/AudioContextPlayer';
 
 // Setting up routes for your app
 const router = createBrowserRouter([WebRoutes, AuthRoutes, UserRoutes, { path: '*', element: <NotFound /> }]);
@@ -38,7 +39,7 @@ interface PushSubscriptionJSON {
 }
 
 function App() {
-  const { theme } = useTheme(); // Get the current theme (light/dark) of the app
+  const { theme } = useTheme(); 
   const { data,  error } = useFetchVapidPublicKey();
   const { authUser } = useUser();
   const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null);
@@ -48,7 +49,7 @@ function App() {
     console.log("access token", getDecryptedAccessToken())
   },[])
 
-  // Convert the base64 VAPID key to UInt8Array format
+
   function urlBase64ToUint8Array(base64String: string): Uint8Array {
     if (!base64String) {
       return new Uint8Array();
@@ -65,9 +66,9 @@ function App() {
     }
   }
 
-  // Set the theme of the app based on the user's preferences
+
   useEffect(() => {
-    document.body.className = theme === 'dark' ? 'dark-theme' : ''; // Apply dark theme if selected
+    document.body.className = theme === 'dark' ? 'dark-theme' : ''; 
   }, [theme]);
 
   // Register the service worker
@@ -119,7 +120,7 @@ function App() {
           // Get the subscription as JSON
           const subscriptionJSON = existingSubscription.toJSON() as PushSubscriptionJSON;
           
-          // Optionally update the backend with the existing subscription
+
           const subscriptionData: SubscriptionData = {
             endpoint: existingSubscription.endpoint,
             expirationTime: existingSubscription.expirationTime || null,
@@ -174,33 +175,18 @@ function App() {
     subscribeToPush();
   }, [data, authUser?.id, swRegistration, permissionGranted]);
 
-  // Show loading state or error if applicable
-  
-  
   if (error) {
     void error;
   }
 
-  return (
-    <AudioPlayerProvider>
-      <AppContent theme={theme} />
-    </AudioPlayerProvider>
-  );
-}
 
-function AppContent({ theme }: { theme: string }) {
-  const { setPlayerVisible } = useAudioPlayerControls();
-
-  const handleClosePlayer = () => {
-    setPlayerVisible(false);
-  };
 
   return (
     <>
+    <AudioPlayerProvider>
       <RouterProvider router={router} />
       
-      {/* Global Audio Player - persists across navigation */}
-      <AudioPlayer onClose={handleClosePlayer} />
+      
       
       <ToastContainer
         position="top-right" 
@@ -215,6 +201,10 @@ function AppContent({ theme }: { theme: string }) {
         theme={theme}
         transition={Bounce} 
       />
+
+      <FloatingAudioPlayer />
+    </AudioPlayerProvider>
+      
     </>
   );
 }

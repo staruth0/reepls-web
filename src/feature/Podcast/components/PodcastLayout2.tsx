@@ -1,17 +1,13 @@
 import React, { useState } from "react";
 import PodcastAuthorInfo from "./PodcastAuthorInfo"; 
 import PodcastEngagementMetrics from "./PodcastEngagementMetrics"; 
+import { User } from "../../../models/datamodels";
 
 // Define the interface for the podcast data
 interface Podcast {
   id: string;
   thumbnailUrl: string;
-  author: {
-    id: string;
-    name: string;
-    avatarUrl: string;
-    isVerified: boolean;
-  };
+  author: User;
   title: string;
   description: string;
   publishDate: string; // e.g., "Jun 26"
@@ -35,11 +31,9 @@ const PodcastCard2: React.FC<PodcastCardProps> = ({
   onLike,
   onComment,
   onBookmark,
-  onFollow,
 }) => {
   // Local state for bookmark and follow, if not managed globally
   const [isBookmarked, setIsBookmarked] = useState(podcast.isBookmarked);
-  const [isFollowing, setIsFollowing] = useState(false); // Assuming initial state is not following
 
   const handleLikeClick = () => {
     
@@ -55,17 +49,12 @@ const PodcastCard2: React.FC<PodcastCardProps> = ({
 
   const handleBookmarkClick = () => {
  
-    setIsBookmarked((prev) => !prev); // Toggle local state
+    setIsBookmarked((prev) => !prev); 
     console.log(`Bookmark toggled for podcast: ${podcast.id}`);
     if (onBookmark) onBookmark(podcast.id);
   };
 
-  const handleFollowClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent event from bubbling up to parent
-    setIsFollowing((prev) => !prev); // Toggle local state
-    console.log(`Follow toggled for author: ${podcast.author.id}`);
-    if (onFollow) onFollow(podcast.author.id);
-  };
+
 
   return (
     <div className="bg-neutral-800 rounded-lg shadow-md overflow-hidden border border-neutral-700 flex flex-col p-2">
@@ -87,11 +76,8 @@ const PodcastCard2: React.FC<PodcastCardProps> = ({
         <div className="flex-1 min-w-0"> 
           {/* Author Info */}
           <PodcastAuthorInfo
-            authorName={podcast.author.name}
-            authorAvatarUrl={podcast.author.avatarUrl}
-            isVerified={podcast.author.isVerified}
-            onFollowClick={handleFollowClick}
-            isFollowing={isFollowing}
+            author={podcast.author}
+           
           />
 
           {/* Podcast Title */}
@@ -123,6 +109,7 @@ const PodcastCard2: React.FC<PodcastCardProps> = ({
           onLikeClick={handleLikeClick}
           onCommentClick={handleCommentClick}
           onBookmarkClick={handleBookmarkClick}
+          id={podcast.id}
         />
       </div>
     </div>

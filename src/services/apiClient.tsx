@@ -75,5 +75,71 @@ apiClient.interceptors.response.use(
     
   }
 );
+const apiClient1: AxiosInstance = axios.create({
+  baseURL: API_URL,
+  headers: {
+     'Content-Type': 'multipart/form-data'
+  },
+});
 
-export { apiClient };
+// Request interceptor to add Authorization header
+apiClient1.interceptors.request.use(
+  (config) => {
+    const token = getDecryptedAccessToken(); // Use the decrypted access token
+
+    if (token && !config.url?.includes('/login') && !config.url?.includes('/register')) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor for handling token expiration
+apiClient1.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      const refreshToken = getDecryptedRefreshToken(); // Use the decrypted refresh token
+      if (refreshToken) {
+        try {
+          const data = await refreshAuthTokens(refreshToken);
+          if (!data.accessToken) throw new Error('No access token received');
+
+          // Decrypt the existing login data to update it
+          const decryptedData = decryptLoginData();
+          if (!decryptedData) throw new Error('No login data found');
+
+          // Update the tokens in the decrypted data
+          decryptedData.tokens.access.token = data.accessToken;
+          decryptedData.tokens.refresh.token = data.refreshToken;
+
+          // Re-encrypt and store the updated login data
+          encryptAndStoreLoginData(decryptedData);
+
+          // Update headers before retrying the request
+          originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+          return apiClient(originalRequest);
+        } catch (e) {
+          toast.info('Please login again', {
+            autoClose: 3000,
+          });
+
+          // Clear the encrypted login data on token refresh failure
+          localStorage.removeItem(STORAGE_KEY);
+
+          window.location.href = '/auth/login/phone';
+          return Promise.reject(e);
+        }
+      }
+    }
+    return Promise.reject(error);
+    
+  }
+);
+
+export { apiClient,apiClient1 };

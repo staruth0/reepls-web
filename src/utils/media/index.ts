@@ -74,6 +74,16 @@ const uploadArticleThumbnail = async (userId: string, file: File): Promise<strin
   const response = await axiosStorageClient.post(`/${cloudinaryResourceTypes.image}/upload`, formData);
   return response.data.secure_url;
 };
+const uploadPodcastThumbnail = async (userId: string, file: File): Promise<string> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', uploadPreset as string);
+  formData.append('cloud_name', cloudName as string);
+  formData.append('folder', `articles`);
+  formData.append('asset_folder', `articles/${userId}`);
+  const response = await axiosStorageClient.post(`/${cloudinaryResourceTypes.image}/upload`, formData);
+  return response.data.secure_url;
+};
 
 const uploadArticleImage = async (userId: string, file: File): Promise<string> => {
   const formData = new FormData();
@@ -132,6 +142,7 @@ export {
   uploadArticleThumbnail,
   uploadArticleVideo,
   uploadPostImage,
+  uploadPodcastThumbnail,
   uploadPostVideo,
   uploadUserBanner,
   uploadUserProfile,
