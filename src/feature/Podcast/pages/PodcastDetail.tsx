@@ -9,7 +9,7 @@ import {
 } from "../hooks";
 import {
   LuArrowLeft,
-  LuHeart,
+  LuThumbsUp,
   LuMessageSquare,
   LuShare2,
   LuMenu,
@@ -28,47 +28,23 @@ import { useUser } from "../../../hooks/useUser";
 import { Pics } from "../../../assets/images";
 import { useAudioControls } from "../../../hooks/useMediaPlayer";
 import AudioWave from "../../../components/molecules/Audio/AudiWave";
+import { useGetAllReactionsForTarget } from "../../Repost/hooks/useRepost";
+import PodcastReactionsPopup from "../../Interactions/components/PodcastReactionPopup";
+import PodcastReactionModal from "../components/PodcastReactionmodal";
 
 const PodcastDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
- const { mutateAsync: deletePodcast } = useDeletePodcast();
-  
+  const { mutateAsync: deletePodcast } = useDeletePodcast();
+
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
-
-  const handleDelete = async () => {
-    if (!id) return;
-
-    setDeleteError(null);
-    setIsDeleting(true);
-
-    try {
-      await deletePodcast(id);
-      setIsDeleting(false);
-      toast.success("Podcast deleted");
-      navigate("/feed/podcasts");
-    } catch (error) {
-      setIsDeleting(false);
-      setDeleteError("An error occurred while deleting.");
-    }
-  };
-
-  const retryDelete = () => {
-    handleDelete();
-  };
-
-  const cancelDelete = () => {
-    setIsDeleting(false);
-    setDeleteError(null);
-  };
-  
-
   const [isCommentSidebarOpen, setIsCommentSidebarOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showReactionModal, setShowReactionModal] = useState(false);
+  const [showReactionsPopup, setShowReactionsPopup] = useState(false);
 
-  const menuRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const {
     data: podcastData,
@@ -76,6 +52,11 @@ const PodcastDetail: React.FC = () => {
     isError,
     refetch,
   } = useGetPodcastById(id || "");
+
+  const { data: allReactions } = useGetAllReactionsForTarget(
+    "Podcast",
+    id || ""
+  );
 
   const { mutate: savePodcast, isPending: isSaving } =
     useSavePodcastToLibrary();
@@ -102,7 +83,6 @@ const PodcastDetail: React.FC = () => {
   const isCurrentPodcastSaved = savedPodcastIds.includes(id || "");
 
   const { authUser } = useUser();
-
   const isCurrentauthorPodcast = authUser?.id === podcastData?.data?.author?.id;
 
   // Follow/Unfollow hook
@@ -110,24 +90,58 @@ const PodcastDetail: React.FC = () => {
     useFollowUser({ targetUserId: podcastData?.data?.author?.id });
 
   useEffect(() => {
-    console.log("Podcast data fetched:", podcastData);
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target as Node)
-      ) {
-        setIsMenuOpen(false);
-      }
+    const handleClickOutside = () => {
+      setIsMenuOpen(false);
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    if (isMenuOpen) {
+      document.addEventListener("click", handleClickOutside);
+    }
 
-  const handleLike = () =>
-    toast.info("Like functionality will be implemented soon");
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isMenuOpen]);
+
+  const handleDelete = async () => {
+    if (!id) return;
+
+    setDeleteError(null);
+    setIsDeleting(true);
+
+    try {
+      await deletePodcast(id);
+      setIsDeleting(false);
+      toast.success("Podcast deleted");
+      navigate("/feed/podcasts");
+    } catch (error) {
+      setIsDeleting(false);
+      setDeleteError("An error occurred while deleting.");
+    }
+  };
+
+  const retryDelete = () => {
+    handleDelete();
+  };
+
+  const cancelDelete = () => {
+    setIsDeleting(false);
+    setDeleteError(null);
+  };
+
+  const handleReact = () => {
+    setShowReactionModal(false);
+  };
+
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowReactionModal(true);
+  };
+
+  const handleReactionsCountClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowReactionsPopup(true);
+  };
 
   const handleComment = () => setIsCommentSidebarOpen(true);
 
@@ -171,21 +185,19 @@ const PodcastDetail: React.FC = () => {
     setIsMenuOpen(false);
   };
 
-    const podcast = podcastData?.data;
+  const podcast = podcastData?.data;
 
-
-  const { 
-    isPlaying, 
-    togglePlay, 
-    currentTrack 
-  } = useAudioControls(podcast ? {
-    id: podcast.id,
-    title: podcast.title,
-    url: podcast.audio.url,
-    thumbnail: podcast.thumbnailUrl,
-    author: podcast.author?.name,
-  } : undefined);
- 
+  const { isPlaying, togglePlay, currentTrack } = useAudioControls(
+    podcast
+      ? {
+          id: podcast.id,
+          title: podcast.title,
+          url: podcast.audio.url,
+          thumbnail: podcast.thumbnailUrl,
+          author: podcast.author?.name,
+        }
+      : undefined
+  );
 
   const getFollowStatusText = () => {
     if (isFollowPending) return "Following...";
@@ -231,11 +243,9 @@ const PodcastDetail: React.FC = () => {
     );
   }
 
-
-
   return (
     <div className="flex flex-col min-h-screen relative bg-background text-neutral-50">
-          {(isDeleting || deleteError) && (
+      {(isDeleting || deleteError) && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[2000]">
           <div className="bg-neutral-800 rounded-lg p-6 w-[300px] text-center">
             {isDeleting && !deleteError && (
@@ -266,42 +276,52 @@ const PodcastDetail: React.FC = () => {
           </div>
         </div>
       )}
-      <Topbar>
-        <div className="w-full flex justify-between items-center py-4 px-4">
-          <span className="font-semibold text-lg">Podcast</span>
-          {/* Menu only for md+ */}
-        { isCurrentauthorPodcast &&  <button
-            ref={buttonRef}
-            onClick={() => setIsMenuOpen((prev) => !prev)}
-            className="hidden md:block p-2 rounded-full hover:bg-neutral-700"
-          >
-            <LuMenu size={24} />
-          </button>}
 
-          {/* Popup menu */}
-      {isMenuOpen && (
-        <div
-          ref={menuRef}
-          className="absolute hidden md:block right-4 top-16 w-48 bg-neutral-700 rounded-md shadow-lg py-1 z-[100000]"
-        >
-          <button
-            onClick={handleEdit}
-            className="block w-full text-left px-4 py-2 text-sm text-neutral-50 hover:bg-neutral-600"
-          >
-            Edit Podcast
-          </button>
-          <button
-            onClick={handleDelete}
-            className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-neutral-600"
-          >
-            Delete Podcast
-          </button>
-        </div>
-      )}
+      <Topbar>
+        <div className="w-full flex justify-between items-center py-4 px-4 relative">
+          <span className="font-semibold text-lg">Podcast</span>
+          {isCurrentauthorPodcast && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation(); // prevent the global listener from firing immediately
+                  setIsMenuOpen((prev) => !prev);
+                }}
+                className="hidden md:block p-2 rounded-full hover:bg-neutral-700"
+              >
+                <LuMenu size={24} />
+              </button>
+
+              {/* Desktop dropdown */}
+              {isMenuOpen && (
+                <div
+                  className="absolute right-4 top-16 w-48 bg-neutral-700 rounded-md shadow-lg py-1 z-[1000000]"
+                  onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
+                >
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEdit();
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm text-neutral-50 hover:bg-neutral-600"
+                  >
+                    Edit Podcast
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete();
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-neutral-600"
+                  >
+                    Delete Podcast
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </Topbar>
-
-      
 
       <div className="max-w-[750px] w-full mx-auto px-4 mb-56 flex-grow py-8 flex flex-col gap-2">
         {/* Author Info */}
@@ -362,26 +382,28 @@ const PodcastDetail: React.FC = () => {
         </div>
 
         {/* Audio */}
- <div className="flex items-center gap-4 my-6 p-4 bg-neutral-800 rounded-lg">
-  <button
-    onClick={togglePlay}
-    className="p-3 rounded-full bg-main-green hover:bg-green-600 flex-shrink-0"
-  >
-    {currentTrack?.id === podcast?.id && isPlaying ? (
-      <LuPause size={20} />
-    ) : (
-      <LuPlay size={20} />
-    )}
-  </button>
-  
-  <div className="flex-grow w-full">
-    <AudioWave isPlaying={currentTrack?.id === podcast?.id && isPlaying} />
-  </div>
-  
-  <span className="text-sm text-neutral-400">
-    {podcast?.duration || "0:00"}
-  </span>
-</div>
+        <div className="flex items-center gap-4 my-6 p-4 bg-neutral-800 rounded-lg">
+          <button
+            onClick={togglePlay}
+            className="p-3 rounded-full bg-main-green hover:bg-green-600 flex-shrink-0"
+          >
+            {currentTrack?.id === podcast?.id && isPlaying ? (
+              <LuPause size={20} />
+            ) : (
+              <LuPlay size={20} />
+            )}
+          </button>
+
+          <div className="flex-grow w-full">
+            <AudioWave
+              isPlaying={currentTrack?.id === podcast?.id && isPlaying}
+            />
+          </div>
+
+          <span className="text-sm text-neutral-400">
+            {podcast?.duration || "0:00"}
+          </span>
+        </div>
 
         {/* Description */}
         <div className="w-full mb-5 text-lg leading-relaxed">
@@ -394,21 +416,39 @@ const PodcastDetail: React.FC = () => {
 
       {/* Floating Toolbar */}
       <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 bg-neutral-800 rounded-full shadow-lg p-2 flex gap-4 items-center justify-center">
-        <div className="flex items-center">
+        <div className="flex items-center relative">
           <button
-            onClick={handleLike}
-            className="p-2 rounded-full hover:bg-neutral-700"
+            onClick={handleLikeClick}
+            className="flex items-center gap-1 hover:text-primary-400 transition-colors duration-200 p-2"
+            title="React"
           >
-            <LuHeart
+            <LuThumbsUp
               size={20}
+              onMouseEnter={() => setShowReactionModal(true)}
               className={
-                podcast?.likesCount && podcast.likesCount > 0
-                  ? "text-red-500"
-                  : ""
+                allReactions?.data?.totalReactions ? "text-primary-400" : ""
               }
             />
+            <span
+              className="hover:underline cursor-pointer ml-1"
+              onClick={handleReactionsCountClick}
+            >
+              {allReactions?.data?.totalReactions || 0}
+            </span>
           </button>
-          <span className="ml-1 text-sm">{podcast?.likesCount || 0}</span>
+
+          {showReactionModal && (
+            <div
+              ref={modalRef}
+              className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50 rounded-lg p-2 min-w-[200px] "
+            >
+              <PodcastReactionModal
+                podcast_id={id || ""}
+                onReact={handleReact}
+                onClose={() => setShowReactionModal(false)}
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex items-center">
@@ -436,9 +476,7 @@ const PodcastDetail: React.FC = () => {
             <LuBookmark
               size={20}
               className={`${
-                isCurrentPodcastSaved
-                  ? "fill-primary-400 text-primary-400"
-                  : ""
+                isCurrentPodcastSaved ? "fill-primary-400 text-primary-400" : ""
               }`}
             />
           )}
@@ -452,38 +490,45 @@ const PodcastDetail: React.FC = () => {
         </button>
 
         {/* Mobile menu trigger */}
-      {isCurrentauthorPodcast && (
-        <button
-          ref={buttonRef}
-          onClick={() => setIsMenuOpen((prev) => !prev)}
-          className="md:hidden p-2 rounded-full hover:bg-neutral-700"
-        >
-          <EllipsisVertical size={20} />
-        </button>
-      )}
-      {/* Popup for mobile too */}
-      {isMenuOpen && (
-        <div
-          ref={menuRef}
-          className="absolute bottom-14 right-4 md:hidden w-48 bg-neutral-700 rounded-md shadow-lg py-1 z-50"
-        >
+        {isCurrentauthorPodcast && (
           <button
-            onClick={handleEdit}
-            className="block w-full text-left px-4 py-2 text-sm text-neutral-50 hover:bg-neutral-600"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMenuOpen((prev) => !prev);
+            }}
+            className="md:hidden p-2 rounded-full hover:bg-neutral-700"
           >
-            Edit Podcast
+            <EllipsisVertical size={20} />
           </button>
-          <button
-            onClick={handleDelete}
-            className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-neutral-600"
-          >
-            Delete Podcast
-          </button>
-        </div>
-      )}
-      </div>
+        )}
 
-    
+        {/* Popup for mobile too */}
+        {isMenuOpen && (
+          <div
+            className="absolute bottom-14 right-4 md:hidden w-48 bg-neutral-700 rounded-md shadow-lg py-1 z-50"
+            onClick={(e) => e.stopPropagation()} // stops propagation so global click doesn't close it
+          >
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEdit();
+              }}
+              className="block w-full text-left px-4 py-2 text-sm text-neutral-50 hover:bg-neutral-600"
+            >
+              Edit Podcast
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete();
+              }}
+              className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-neutral-600"
+            >
+              Delete Podcast
+            </button>
+          </div>
+        )}
+      </div>
 
       <PodcastCommentSidebar
         isOpen={isCommentSidebarOpen}
@@ -491,6 +536,12 @@ const PodcastDetail: React.FC = () => {
         podcastId={id || ""}
         podcastAuthor={podcast?.author}
         podcast={podcast}
+      />
+
+      <PodcastReactionsPopup
+        isOpen={showReactionsPopup}
+        onClose={() => setShowReactionsPopup(false)}
+        podcast_id={id || ""}
       />
     </div>
   );
