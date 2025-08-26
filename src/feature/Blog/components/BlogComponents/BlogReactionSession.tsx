@@ -334,7 +334,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
           article_id={article_id}
           article={article}
         />
-      </div>
+      </div>  
 
       {/* Comment Section */}
       {commentTabState && (

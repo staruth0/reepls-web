@@ -79,8 +79,44 @@ export interface User {
     viewedArticles: string[];
   };
   tokens?: AuthTokens;
- repostHistory?:RepostHistory
+ repostHistory?:RepostHistory;
+  hasAsPublication?: boolean;
+  publication?: miniPublication[];
 }
+
+export interface Publication {
+  id: string;
+  title: string;
+  short_description: string;
+  description?: string;
+  cover_image: string; 
+  articles_count?: number;
+  articles: Article[]; 
+  contributors: User[]; 
+  author:User;
+}
+export interface miniPublication {
+  id: string; //id of publication
+  name:string;//name of publication
+  cover_image: string; 
+  role:PubRole;
+  permission:PubPermission;
+
+
+}
+
+export enum PubRole {
+  Owner = 'Owner',
+  Contributor = 'Contributor'
+}
+
+export enum PubPermission {
+  Read = 'Read',
+  Write = 'Write',
+  Edit = 'Edit',
+  Delete = 'Delete',
+}
+
 
 export interface Article {
   article_id?: string;
@@ -322,3 +358,4 @@ export enum PodcastStatus {
   FAILED = 'failed',
   ARCHIVED = 'archived'
 }
+

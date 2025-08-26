@@ -180,6 +180,11 @@ function App() {
   }
 
 
+//   {
+//   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+// }
+
+
 
   return (
     <>

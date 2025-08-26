@@ -35,12 +35,21 @@ const PodcastEngagementMetrics: React.FC<PodcastEngagementMetricsProps> = ({
 
   const { data: allReactions } = useGetAllReactionsForTarget("Podcast", id);
 
-  const getSavedPodcastIds = (savedData: any): string[] => {
-    if (!savedData?.data?.savedPodcasts) return [];
-    return savedData.data.savedPodcasts.map(
-      (savedPodcast: { podcastId: { _id: string } }) => savedPodcast.podcastId._id
-    );
-  };
+const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
+  if (!savedPodcastsData?.data?.savedPodcasts) {
+    return [];
+  }
+
+  return savedPodcastsData.data.savedPodcasts
+    .map((savedPodcast: { podcastId?: { _id?: string } | null }) =>
+      savedPodcast.podcastId?._id
+    )
+    .filter(Boolean);
+};
+useEffect(() => {
+  console.log("savedpodcasts", savedPodcastsData?.data?.savedPodcasts ?? []);
+}, [savedPodcastsData]);
+
 
   const savedPodcastIds = getSavedPodcastIds(savedPodcastsData);
   const isCurrentPodcastSaved = savedPodcastIds.includes(id);
@@ -78,6 +87,7 @@ const PodcastEngagementMetrics: React.FC<PodcastEngagementMetricsProps> = ({
   // Close reaction modal when clicking outside
   const modalRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
+
     const handleClickOutside = (event: MouseEvent) => {
       if (
         showReactionModal &&

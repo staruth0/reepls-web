@@ -68,16 +68,18 @@ const PodcastDetail: React.FC = () => {
     limit: 20,
   });
 
-  const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
-    if (!savedPodcastsData?.data?.savedPodcasts) {
-      return [];
-    }
+const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
+  if (!savedPodcastsData?.data?.savedPodcasts) {
+    return [];
+  }
 
-    return savedPodcastsData.data.savedPodcasts.map(
-      (savedPodcast: { podcastId: { _id: string } }) =>
-        savedPodcast.podcastId._id
-    );
-  };
+  return savedPodcastsData.data.savedPodcasts
+    .map(
+      (savedPodcast: { podcastId?: { _id?: string } | null }) =>
+        savedPodcast.podcastId && savedPodcast.podcastId._id
+    )
+    .filter(Boolean);
+};;
 
   const savedPodcastIds = getSavedPodcastIds(savedPodcastsData);
   const isCurrentPodcastSaved = savedPodcastIds.includes(id || "");
