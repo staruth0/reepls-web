@@ -28,6 +28,8 @@ import Search from '../feature/Search/pages';
 import SearchResults from '../feature/Search/pages/SearchResults';
 import UserLayout from '../layouts/UserLayout';
 import EditPodcast from '../feature/Podcast/pages/PodcastEdit.tsx';
+import CreateStream from '../feature/Stream/Pages/CreateStream.tsx';
+import StreamDetails from '../feature/Stream/Pages/StreamDetails.tsx';
 // import Home from "../feature/Home/pages/Home";
 
 
@@ -130,6 +132,14 @@ const UserRoutes = {
     {
       path: '/feed/podcasts',
       element: <FeedPodcasts />,
+    },
+     {
+      path: '/stream/create',
+      element: <CreateStream />,
+    },
+     {
+      path: '/stream/:id',
+      element: <StreamDetails />,
     },
     {
       path: '/posts/article/:articleUid',

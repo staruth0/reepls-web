@@ -4,9 +4,10 @@ import { heart, sadface, smile, thumb, clap } from "../../../assets/icons";
 import { useUser } from "../../../hooks/useUser";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import { useCreateReaction, useGetArticleReactions, useUpdateReaction } from "../../Interactions/hooks";
+import {  useGetArticleReactions } from "../../Interactions/hooks";
 import { ReactionReceived } from "../../../models/datamodels";
 import { t } from "i18next";
+import { useCreateReactionRepost, useUpdateReactionRepost } from "../../Repost/hooks/useRepost";
 
 interface ReactionModalProps {
   article_id: string;
@@ -17,8 +18,8 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ article_id }) => {
   const [pendingReaction, setPendingReaction] = useState<string | null>(null);
   const [successReaction, setSuccessReaction] = useState<string | null>(null);
   const { authUser } = useUser();
-  const { mutate: createReaction } = useCreateReaction();
-  const { mutate: updateReaction } = useUpdateReaction();
+  const { mutate: createReaction } = useCreateReactionRepost();
+  const { mutate: updateReaction } = useUpdateReactionRepost();
   const { data: allReactions } = useGetArticleReactions(article_id);
 
   const handleReaction = (reaction: string) => {
@@ -61,7 +62,11 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ article_id }) => {
       setIsPending(true);
       setPendingReaction(reaction);
       createReaction(
-        { type: reaction, article_id, user_id: authUser.id },
+        {
+            target_id: article_id,
+            target_type: "Article",
+            type: reaction,
+          },
         {
           onSuccess: () => {
             toast.success(t("blog.alerts.ReactionSuccess"));

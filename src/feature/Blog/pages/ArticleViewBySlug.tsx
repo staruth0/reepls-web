@@ -21,7 +21,6 @@ import {
   useGetFollowing,
   useUnfollowUser,
 } from "../../Follow/hooks";
-import { useGetArticleReactions } from "../../Interactions/hooks";
 import {
   useGetSavedArticles,
   useRemoveSavedArticle,
@@ -49,6 +48,7 @@ import { ArticleAudioControls } from "../../../components/atoms/ReadALoud/Articl
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetPodcastById } from "../../Podcast/hooks";
 import AudioWave from "../../../components/molecules/Audio/AudiWave";
+import { useGetAllReactionsForTarget } from "../../Repost/hooks/useRepost";
 
 const ArticleViewBySlug: React.FC = () => {
   const navigate = useNavigate();
@@ -81,7 +81,8 @@ const ArticleViewBySlug: React.FC = () => {
   const { data: articleid } = useGetArticleById(id!);
 
   const article = slug ? articleslug : articleid;
-  const { data: allReactions } = useGetArticleReactions(article?._id || "");
+ const { data: allReactions } = useGetAllReactionsForTarget("Article", article?._id);
+const reactionCount = allReactions?.data?.totalReactions || 0;
   const [showReactionsHoverPopup, setShowReactionsHoverPopup] = useState<boolean>(false);
 
   const articleUrl = `${window.location.origin}/posts/article/slug/${slug}`;
@@ -444,7 +445,7 @@ const ArticleViewBySlug: React.FC = () => {
               className="ml-1 text-sm hover:underline cursor-pointer"
               onClick={() => setShowReactionsPopup(true)}
             >
-              {allReactions?.reactions?.length || 0}
+              {reactionCount}
             </span>
           </div>
 
