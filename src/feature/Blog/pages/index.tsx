@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LuCalendar, LuEye, LuSave, LuShare, LuTag, LuMic, LuX } from 'react-icons/lu';
+import { LuCalendar, LuEye, LuSave, LuShare, LuTag, LuMic, LuX, LuBook } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { type Editor } from 'reactjs-tiptap-editor';
 import axios from 'axios';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import { useUser } from '../../../hooks/useUser';
-import { Article, MediaItem } from '../../../models/datamodels';
+    import { Article, MediaItem, Publication } from '../../../models/datamodels';
 import { uploadArticleThumbnail } from '../../../utils/media';
 import AuthPromptPopup from '../../AnonymousUser/components/AuthPromtPopup';
 import CreatePostTopBar from '../components/CreatePostTopBar';
@@ -17,6 +17,8 @@ import useDraft from '../hooks/useDraft';
 import { useSendNewArticleNotification } from '../../Notifications/hooks/useNotification';
 import { apiClient1 } from '../../../services/apiClient';
 import UploadProgressModal from '../components/UploadProgressModal';
+import { useGetMyPublications } from '../../Stream/Hooks';
+import PublicationSelectionModal from '../../Stream/components/PublicationSelectionModal';
 
 
 interface PodcastData {
@@ -73,6 +75,9 @@ const CreatePost: React.FC = () => {
   const [isUploadingPodcast, setIsUploadingPodcast] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const audioInputRef = useRef<HTMLInputElement>(null);
+  const [selectedPublicationId, setSelectedPublicationId] = useState<string | null>(null);
+  const [showPublicationModal, setShowPublicationModal] = useState<boolean>(false);
+  const { data: publications } = useGetMyPublications();
 
   const actions = [
     {
@@ -130,6 +135,15 @@ const CreatePost: React.FC = () => {
         setShowPodcastModal(true);
       },
     },
+    {
+      label: selectedPublicationId ? 'Change Publication' : 'Select Publication',
+      disabled: !isLoggedIn,
+      ActionIcon: LuBook,
+      onClick: () => {
+        if (!isLoggedIn) return;
+        setShowPublicationModal(true);
+      },
+    },
   ];
 
   const handlePodcastAudioSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -177,6 +191,18 @@ const CreatePost: React.FC = () => {
     toast.success('Podcast added to article!');
   };
 
+  const handlePublicationSelect = (publicationId: string) => {
+    setSelectedPublicationId(publicationId);
+    setShowPublicationModal(false);
+    const selectedPub = publications?.find((p: Publication) => p.id === publicationId);
+    toast.success(`Publication "${selectedPub?.title}" selected for article!`);
+  };
+
+  const handleClearPublication = () => {
+    setSelectedPublicationId(null);
+    toast.info('Publication selection cleared');
+  };
+
 
 const onPublish = async () => {
   if (!isLoggedIn) return;
@@ -213,6 +239,7 @@ const onPublish = async () => {
         type: 'LongForm',
         isArticle: true,
         is_communiquer: isCommunique,
+        publication_id: selectedPublicationId || undefined,
       };
 
       createArticle(article, {
@@ -248,6 +275,9 @@ const onPublish = async () => {
       formData.append('thumbnail', thumbnailUrl);
     }
     formData.append('is_communiquer', isCommunique.toString());
+    if (selectedPublicationId) {
+      formData.append('publication_id', selectedPublicationId);
+    }
     
     // Add podcast data
     formData.append('podcastTitle', podcastData.title);
@@ -340,7 +370,7 @@ const onPublish = async () => {
   useEffect(() => {
     if (!hasLoadedDraft) return;
     saveDraftArticle({ title, subtitle, content, htmlContent, media, isCommunique });
-  }, [title, subtitle, content, htmlContent, media, isCommunique]);
+  }, [title, subtitle, content, htmlContent, media, isCommunique, selectedPublicationId,hasLoadedDraft]);
 
   return (
     <div className="relative min-h-screen">
@@ -379,6 +409,22 @@ const onPublish = async () => {
                   onKeyDown={(e) => handleKeyDown(e, () => editorRef?.current?.editor?.commands?.focus())}
                   disabled={!hasLoadedDraft}
                 />
+                
+                {/* Selected Publication Indicator */}
+                {selectedPublicationId && (
+                  <div className="mt-3 flex items-center gap-2 p-2 bg-primary-500/10 rounded-lg border border-primary-500/20">
+                    <LuBook size={16} className="text-primary-400" />
+                    <span className="text-sm text-primary-300">
+                      Publishing to: {publications?.find(p => p.id === selectedPublicationId)?.title}
+                    </span>
+                    <button
+                      onClick={handleClearPublication}
+                      className="ml-auto text-primary-400 hover:text-primary-300 transition-colors"
+                    >
+                      <LuX size={14} />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
             <div id="editor" className="mb-20">
@@ -493,6 +539,17 @@ const onPublish = async () => {
         progress={uploadProgress}
         message={isUploadingPodcast ? "Publishing article with podcast..." : "Publishing article..."}
       />
+
+      {/* Publication Selection Modal */}
+      {showPublicationModal && (
+        <PublicationSelectionModal
+          isOpen={showPublicationModal}
+          onClose={() => setShowPublicationModal(false)}
+          publications={publications || []}
+          onSelect={handlePublicationSelect}
+          selectedPublicationId={selectedPublicationId}
+        />
+      )}
     </div>
   );
 };

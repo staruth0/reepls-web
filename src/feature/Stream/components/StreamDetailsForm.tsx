@@ -1,27 +1,47 @@
 import React, { useState } from 'react';
 import { ImagePlus} from 'lucide-react';
+import { t } from 'i18next';
+import { toast } from 'react-toastify';
+import { useUser } from '../../../hooks/useUser';
+import { uploadUserProfile } from '../../../utils/media';
 
 interface StreamDetailsFormProps {
-  onNext: (details: { name: string; description: string; topics: string[] }) => void;
-  initialData: { name: string; description: string; topics: string[] };
+  onNext: (details: { name: string; description: string; topics: string[]; coverImage: string }) => void;
+  initialData: { name: string; description: string; topics: string[]; coverImage: string };
+  isLoading?: boolean;
 }
 
 const topicsList = ['politics', 'education', 'tech', 'art', 'data', 'history', 'international affairs', 'agriculture', 'science', 'health', 'business'];
 
-const StreamDetailsForm: React.FC<StreamDetailsFormProps> = ({ onNext, initialData }) => {
+const StreamDetailsForm: React.FC<StreamDetailsFormProps> = ({ onNext, initialData, isLoading = false }) => {
   const [name, setName] = useState(initialData.name);
   const [description, setDescription] = useState(initialData.description);
   const [topics, setTopics] = useState(initialData.topics);
   const [customTopic, setCustomTopic] = useState('');
   const [errors, setErrors] = useState({ name: '', description: '' });
 
+  const [coverImg, setCoverImg] = useState<string | undefined>(initialData.coverImage || undefined);
+  const { authUser } = useUser();
+
   const handleContinue = () => {
     const newErrors = { name: '', description: '' };
-    if (name.length > 25) {
+    
+    // Required field validations
+    if (!name.trim()) {
+      newErrors.name = 'Stream name is required';
+    } else if (name.length > 25) {
       newErrors.name = 'Name should not be more than 25 characters';
     }
-    if (description.length > 75) {
-      newErrors.description = 'You are exceeding the 75-character limit';
+    
+    if (!description.trim()) {
+      newErrors.description = 'Stream description is required';
+    } else if (description.length > 250) {
+      newErrors.description = 'You are exceeding the 250-character limit';
+    }
+
+    if (!coverImg) {
+      toast.error(t("Cover image is required"));
+      return;
     }
 
     if (newErrors.name || newErrors.description) {
@@ -35,7 +55,7 @@ const StreamDetailsForm: React.FC<StreamDetailsFormProps> = ({ onNext, initialDa
       finalTopics = [customTopic.trim()];
     }
 
-    onNext({ name, description, topics: finalTopics });
+    onNext({ name, description, topics: finalTopics, coverImage: coverImg || '' });
   };
 
   const handleTopicClick = (topic: string) => {
@@ -56,25 +76,82 @@ const StreamDetailsForm: React.FC<StreamDetailsFormProps> = ({ onNext, initialDa
     setCustomTopic(e.target.value);
   };
 
+  const handleCoverImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Show preview immediately
+      const reader = new FileReader();
+      reader.onload = (e) => setCoverImg(e.target?.result as string);
+      reader.readAsDataURL(file);
+      
+      // Upload the image
+      submitCoverImage(file)
+        .then((data) => {
+          setCoverImg(data);
+          toast.success(t("Added your cover Image"));
+        })
+        .catch(() => {
+          toast.error(t("Failed to add your cover Image"));
+        });
+    }
+  };
+
+  const handleBannerImageClick = () => {
+    toast.info(t("Banner image feature not available now"));
+  };
+
+  const submitCoverImage = async (file: File) => {
+    if (!authUser?.id) {
+      toast.error(t("You must be logged in to upload a cover image"));
+      return;
+    }
+    const url = await uploadUserProfile( file);
+    setCoverImg(url);
+    return url;
+  };
+
   return (
     <div className="max-w-xl mx-auto space-y-6">
       {/* Banner and Profile Upload Section */}
       <div className="relative w-full h-36 bg-neutral-200 rounded-lg ">
         {/* Banner upload area */}
-        <div className="flex items-center justify-center w-full h-full text-neutral-400 text-sm">
+        <div 
+          className="flex items-center justify-center w-full h-full text-neutral-400 text-sm cursor-pointer hover:bg-neutral-300 transition-colors"
+          onClick={handleBannerImageClick}
+        >
           <ImagePlus className="w-6 h-6 mr-2" />
           Upload banner
         </div>
         {/* Profile picture overlay */}
-        <div className="w-36 h-28 absolute -bottom-16 left-4 rounded-md bg-neutral-100 flex items-center justify-center text-neutral-500 text-sm border-4 border-white">
-            <ImagePlus className="w-6 h-6 mr-2" />
+        <div className="w-36 h-36 absolute -bottom-16 left-4 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 text-sm border-4 border-white cursor-pointer hover:bg-neutral-200 transition-colors">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleCoverImageChange}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            id="cover-image-input"
+          />
+          {coverImg ? (
+            <img 
+              src={coverImg} 
+              alt="Cover preview" 
+              className="w-full h-full rounded-full object-cover"
+            />
+          ) : (
+            <div className="flex flex-col items-center">
+              <ImagePlus className="w-6 h-6 mb-1" />
+              <span className="text-xs">Cover Image <span className="text-red-500">*</span></span>
+            </div>
+          )}
         </div>
       </div>
       <div className="h-12"></div> {/* Spacer to prevent content overlap */}
 
       {/* Stream Name Input */}
       <div className={`w-full p-2 border rounded-md ${errors.name ? 'border-red-500' : 'border-neutral-300'}`}>
-        <label className="block text-neutral-100 mb-1">Stream Name</label>
+        <label className="block text-neutral-100 mb-1">
+          Stream Name <span className="text-red-500">*</span>
+        </label>
         <input
           type="text"
           className={`w-full bg-transparent text-neutral-50 placeholder-neutral-400 outline-none`}
@@ -87,7 +164,9 @@ const StreamDetailsForm: React.FC<StreamDetailsFormProps> = ({ onNext, initialDa
 
       {/* Stream Description Input */}
       <div className={`p-2 border rounded-md ${errors.description ? 'border-red-500' : 'border-neutral-300'}`}>
-        <label className="block text-neutral-100 mb-1">Describe your Stream</label>
+        <label className="block text-neutral-100 mb-1">
+          Describe your Stream <span className="text-red-500">*</span>
+        </label>
         <textarea
           className={`w-full bg-transparent text-neutral-50 placeholder-neutral-400 outline-none h-20`}
           placeholder="e.g., Exploring data science frontiers. Sharing insights on ML, statistics and AI to help others learn and grow and"
@@ -130,13 +209,23 @@ const StreamDetailsForm: React.FC<StreamDetailsFormProps> = ({ onNext, initialDa
         )}
       </div>
 
-      {/* Continue Button */}
+      {/* Create Stream Button */}
       <div className="flex justify-end mt-8">
         <button
-          className="bg-primary-400 text-white px-8 py-2 rounded-full font-bold"
+          className={`bg-primary-400 text-white px-8 py-2 rounded-full font-bold flex items-center gap-2 ${
+            isLoading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
           onClick={handleContinue}
+          disabled={isLoading}
         >
-          Continue
+          {isLoading ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              Creating Stream...
+            </>
+          ) : (
+            'Create Stream'
+          )}
         </button>
       </div>
     </div>

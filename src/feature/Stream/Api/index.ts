@@ -4,32 +4,32 @@ import { apiClient } from "../../../services/apiClient";
 
 // 1. Get publication details (public-facing)
 const getPublicationById = async (id: string) => {
-  const { data } = await apiClient.get(`/api-v1/publications/${id}`);
+  const { data } = await apiClient.get(`/publications/${id}`);
   return data;
 };
 
 // 2. Create new publication (cover_image as a string URL)
 
 const createPublication = async (payload: Publication) => {
-  const { data } = await apiClient.post(`/api-v1/publications`, payload);
+  const { data } = await apiClient.post(`/publications/`, payload);
   return data;
 };
 
 // 3. Edit publication (cover_image as a string URL)
 const editPublication = async (id: string, payload: Publication) => {
-  const { data } = await apiClient.put(`/api-v1/publications/${id}`, payload);
+  const { data } = await apiClient.put(`/publications/${id}`, payload);
   return data;
 };
 
 // 4. Delete publication
 const deletePublication = async (id: string) => {
-  const { data } = await apiClient.delete(`/api-v1/publications/${id}`);
+  const { data } = await apiClient.delete(`/publications/${id}`);
   return data;
 };
 
 // 5. Get all publications by current user
 const getMyPublications = async () => {
-  const { data } = await apiClient.get(`/api-v1/publications/mine`);
+  const { data } = await apiClient.get(`/publications/mine`);
   return data;
 };
 
@@ -37,19 +37,85 @@ const getMyPublications = async () => {
 
 const createOrUpdateArticle = async (payload: Article) => {
 
-  const { data } = await apiClient.post(`/api-v1/articles`, payload);
+  const { data } = await apiClient.post(`/articles`, payload);
   return data;
 };
 
 // 8. Get user subscriptions
 const getUserSubscriptions = async () => {
-  const { data } = await apiClient.get(`/api-v1/me/subscriptions`);
+  const { data } = await apiClient.get(`/me/subscriptions`);
   return data;
 };
 
 // 9. Subscribe/unsubscribe publication toggle
 const toggleSubscription = async (id: string) => {
-  const { data } = await apiClient.post(`/api-v1/publications/${id}/subscribe`);
+  const { data } = await apiClient.post(`/publications/${id}/subscribe`);
+  return data;
+};
+
+// 10. Push existing article to publication
+const pushArticleToPublication = async (articleId: string, publicationId: string) => {
+  const { data } = await apiClient.post(`/publications/${articleId}/articles`, { publication_id: publicationId });
+  return data;
+};
+
+// 11. Remove article from publication
+const removeArticleFromPublication = async (publicationId: string, articleId: string) => {
+  const { data } = await apiClient.delete(`/publications/${publicationId}/articles/${articleId}`);
+  return data;
+};
+
+// 12. Restore publication
+const restorePublication = async (id: string) => {
+  const { data } = await apiClient.post(`/publications/${id}/restore`);
+  return data;
+};
+
+// 13. Get suggested publications
+const getSuggestedPublications = async () => {
+  const { data } = await apiClient.get(`/publications/suggested`);
+  return data;
+};
+
+// 14. Get publication subscribers
+const getPublicationSubscribers = async (id: string) => {
+  const { data } = await apiClient.get(`/publications/${id}/subscribers`);
+  return data;
+};
+
+// 15. Add collaborator
+const addCollaborator = async (id: string, userId: string, permission: string) => {
+  const { data } = await apiClient.post(`/publications/${id}/collaborators`, { user_id: userId, permission });
+  return data;
+};
+
+// 16. List all collaborators
+const getCollaborators = async (id: string) => {
+  const { data } = await apiClient.get(`/publications/${id}/collaborators`);
+  return data;
+};
+
+// 17. List all publications for a collaborator
+const getMyCollaboratorPublications = async () => {
+  const { data } = await apiClient.get(`/publications/my-publications`);
+  return data;
+};
+
+// 18. Update collaborator permission
+const updateCollaboratorPermission = async (publicationId: string, collaboratorId: string, permission: string) => {
+  const { data } = await apiClient.patch(`/publications/${publicationId}/collaborators/${collaboratorId}`, { permission });
+  return data;
+};
+
+// 19. Remove collaborator
+const removeCollaborator = async (publicationId: string, collaboratorId: string) => {
+  const { data } = await apiClient.delete(`/publications/${publicationId}/collaborators/${collaboratorId}`);
+  return data;
+};
+
+// 20. Collaborator leaves publication
+const leavePublication = async (id: string) => {
+  const { data } = await apiClient.delete(`/publications/${id}/collaborators/self`);
   return data;
 };
 
@@ -62,4 +128,15 @@ export {
   createOrUpdateArticle,
   getUserSubscriptions,
   toggleSubscription,
+  pushArticleToPublication,
+  removeArticleFromPublication,
+  restorePublication,
+  getSuggestedPublications,
+  getPublicationSubscribers,
+  addCollaborator,
+  getCollaborators,
+  getMyCollaboratorPublications,
+  updateCollaboratorPermission,
+  removeCollaborator,
+  leavePublication,
 };

@@ -8,8 +8,19 @@ import {
   createOrUpdateArticle,
   getUserSubscriptions,
   toggleSubscription,
+  pushArticleToPublication,
+  removeArticleFromPublication,
+  restorePublication,
+  getSuggestedPublications,
+  getPublicationSubscribers,
+  addCollaborator,
+  getCollaborators,
+  getMyCollaboratorPublications,
+  updateCollaboratorPermission,
+  removeCollaborator,
+  leavePublication,
 } from "../Api/";
-import { Publication } from "../../../models/datamodels";
+import { Article, Publication } from "../../../models/datamodels";
 
 // Get publication by ID
 export const useGetPublicationById = (id: string) => {
@@ -57,12 +68,7 @@ export const useGetMyPublications = () => {
 // Create or update article with publication assignment
 export const useCreateOrUpdateArticle = () => {
   return useMutation({
-    mutationFn: (payload: {
-      title: string;
-      content: string;
-      tags: string[];
-      publication_id?: string;
-    }) => createOrUpdateArticle(payload),
+    mutationFn: (payload:Article) => createOrUpdateArticle(payload),
   });
 };
 
@@ -77,6 +83,122 @@ export const useGetUserSubscriptions = () => {
 // Toggle subscription (subscribe/unsubscribe)
 export const useToggleSubscription = () => {
   return useMutation({
-    mutationFn: (id: string) => toggleSubscription(id),
+    mutationFn: ({ id}: { id: string }) => 
+      toggleSubscription(id),
+  });
+};
+
+// Push existing article to publication
+export const usePushArticleToPublication = () => {
+  return useMutation({
+    mutationFn: ({
+      articleId,
+      publicationId,
+    }: {
+      articleId: string;
+      publicationId: string;
+    }) => pushArticleToPublication(articleId, publicationId),
+  });
+};
+
+// Remove article from publication
+export const useRemoveArticleFromPublication = () => {
+  return useMutation({
+    mutationFn: ({
+      publicationId,
+      articleId,
+    }: {
+      publicationId: string;
+      articleId: string;
+    }) => removeArticleFromPublication(publicationId, articleId),
+  });
+};
+
+// Restore publication
+export const useRestorePublication = () => {
+  return useMutation({
+    mutationFn: (id: string) => restorePublication(id),
+  });
+};
+
+// Get suggested publications
+export const useGetSuggestedPublications = () => {
+  return useQuery({
+    queryKey: ["suggestedPublications"],
+    queryFn: () => getSuggestedPublications(),
+  });
+};
+
+// Get publication subscribers
+export const useGetPublicationSubscribers = (id: string) => {
+  return useQuery({
+    queryKey: ["publicationSubscribers", id],
+    queryFn: () => getPublicationSubscribers(id),
+  });
+};
+
+// Add collaborator
+export const useAddCollaborator = () => {
+  return useMutation({
+    mutationFn: ({
+      id,
+      userId,
+      permission,
+    }: {
+      id: string;
+      userId: string;
+      permission: string;
+    }) => addCollaborator(id, userId, permission),
+  });
+};
+
+// Get collaborators
+export const useGetCollaborators = (id: string) => {
+  return useQuery({
+    queryKey: ["collaborators", id],
+    queryFn: () => getCollaborators(id),
+  });
+};
+
+// Get my collaborator publications
+export const useGetMyCollaboratorPublications = () => {
+  return useQuery({
+    queryKey: ["myCollaboratorPublications"],
+    queryFn: () => getMyCollaboratorPublications(),
+  });
+};
+
+// Update collaborator permission
+export const useUpdateCollaboratorPermission = () => {
+  return useMutation({
+    mutationFn: ({
+      publicationId,
+      collaboratorId,
+      permission,
+    }: {
+      publicationId: string;
+      collaboratorId: string;
+      permission: string;
+    }) => updateCollaboratorPermission(publicationId, collaboratorId, permission),
+  });
+};
+
+// Remove collaborator
+export const useRemoveCollaborator = () => {
+  return useMutation({
+    mutationFn: ({
+      publicationId,
+      collaboratorId,
+    }: {
+      publicationId: string;
+      collaboratorId: string;
+    }) => removeCollaborator(publicationId, collaboratorId),
+  });
+};
+
+// Leave publication
+export const useLeavePublication = () => {
+  return useMutation({
+    mutationFn: (id: string) => leavePublication(id),
   });
 };

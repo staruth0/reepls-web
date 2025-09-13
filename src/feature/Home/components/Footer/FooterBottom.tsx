@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useUser } from "../../../../hooks/useUser";
 import ThemeSwitcher from "../ThemeSwitcher";
 import { Pics } from "../../../../assets/images";
+import { getVersionDisplayText } from "../../../../constants";
 
 const FooterBottom = () => {
   const { t } = useTranslation();
@@ -56,6 +57,13 @@ const FooterBottom = () => {
             <ThemeSwitcher />
           </li>
         </ul>
+      </div>
+      
+      {/* Version display */}
+      <div className="flex justify-center mt-4">
+        <span className="text-sm text-neutral-400">
+          {getVersionDisplayText()}
+        </span>
       </div>
     </div>
   );

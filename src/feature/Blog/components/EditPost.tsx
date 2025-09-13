@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LuCalendar, LuEye, LuSave, LuShare, LuTag, LuMic, LuX, LuPlus } from 'react-icons/lu';
+import { LuCalendar, LuEye, LuSave, LuShare, LuTag, LuMic, LuX, LuPlus, LuBook } from 'react-icons/lu';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { type Editor } from 'reactjs-tiptap-editor';
@@ -17,6 +17,8 @@ import { useGetArticleById, useUpdateArticle } from '../hooks/useArticleHook';
 import { useGetPodcastsByUser } from '../../Podcast/hooks';
 import { apiClient1 } from '../../../services/apiClient';
 import UploadProgressModal from '../components/UploadProgressModal';
+import { useGetMyPublications } from '../../Stream/Hooks';
+import PublicationSelectionModal from '../../Stream/components/PublicationSelectionModal';
 
 interface Podcast {
   id: string;
@@ -74,6 +76,11 @@ const EditPost: React.FC = () => {
   const [newPodcastTags, setNewPodcastTags] = useState<string[]>([]);
   const [newPodcastIsPublic, setNewPodcastIsPublic] = useState<boolean>(true);
   const newPodcastAudioInputRef = useRef<HTMLInputElement>(null);
+  
+  // Publication related state
+  const [selectedPublicationId, setSelectedPublicationId] = useState<string | null>(null);
+  const [showPublicationModal, setShowPublicationModal] = useState<boolean>(false);
+  const { data: publications } = useGetMyPublications();
 
   const actions = [
     {
@@ -127,6 +134,15 @@ const EditPost: React.FC = () => {
         setShowPodcastModal(true);
       },
     },
+    {
+      label: selectedPublicationId ? 'Change Publication' : 'Select Publication',
+      disabled: !isLoggedIn || isUpdating,
+      ActionIcon: LuBook,
+      onClick: () => {
+        if (!isLoggedIn) return;
+        setShowPublicationModal(true);
+      },
+    },
   ];
 
   // Populate fields with fetched article data
@@ -138,6 +154,7 @@ const EditPost: React.FC = () => {
       setHtmlContent(article.htmlContent || '');
       setMedia(article.media || []);
       setIsCommunique(article.is_communiquer || false);
+      setSelectedPublicationId(article.publication_id || null);
       
       if (article.thumbnail) {
         setThumbnailImage(article.thumbnail);
@@ -180,6 +197,18 @@ const EditPost: React.FC = () => {
     setNewPodcastAudioPreview('');
     if (newPodcastAudioInputRef.current) newPodcastAudioInputRef.current.value = '';
     toast.info('Audio file removed');
+  };
+
+  const handlePublicationSelect = (publicationId: string) => {
+    setSelectedPublicationId(publicationId);
+    setShowPublicationModal(false);
+    const selectedPub = publications?.find((p: any) => p.id === publicationId);
+    toast.success(`Publication "${selectedPub?.title}" selected for article!`);
+  };
+
+  const handleClearPublication = () => {
+    setSelectedPublicationId(null);
+    toast.info('Publication selection cleared');
   };
 
   const handleCreateAndAttachPodcast = async () => {
@@ -359,6 +388,7 @@ const EditPost: React.FC = () => {
         type: 'LongForm',
         isArticle: true,
         is_communiquer: isCommunique,
+        publication_id: selectedPublicationId || undefined,
       };
 
       updateArticle(
@@ -447,6 +477,22 @@ const EditPost: React.FC = () => {
                     onKeyDown={(e) => handleKeyDown(e, () => editorRef?.current?.editor?.commands?.focus())}
                     disabled={isUpdating}
                   />
+                  
+                  {/* Selected Publication Indicator */}
+                  {selectedPublicationId && (
+                    <div className="mt-3 flex items-center gap-2 p-2 bg-primary-500/10 rounded-lg border border-primary-500/20">
+                      <LuBook size={16} className="text-primary-400" />
+                      <span className="text-sm text-primary-300">
+                        Publishing to: {publications?.find((p: any) => p.id === selectedPublicationId)?.title}
+                      </span>
+                      <button
+                        onClick={handleClearPublication}
+                        className="ml-auto text-primary-400 hover:text-primary-300 transition-colors"
+                      >
+                        <LuX size={14} />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
               <div id="editor" className="mb-20">
@@ -712,6 +758,17 @@ const EditPost: React.FC = () => {
         progress={uploadProgress}
         message={showNewPodcastModal ? "Creating and attaching podcast..." : "Attaching podcast to article..."}
       />
+
+      {/* Publication Selection Modal */}
+      {showPublicationModal && (
+        <PublicationSelectionModal
+          isOpen={showPublicationModal}
+          onClose={() => setShowPublicationModal(false)}
+          publications={publications || []}
+          onSelect={handlePublicationSelect}
+          selectedPublicationId={selectedPublicationId}
+        />
+      )}
     </div>
   );
 };

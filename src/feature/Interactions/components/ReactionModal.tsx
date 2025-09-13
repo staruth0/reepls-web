@@ -187,12 +187,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
           }
         );
       } else {
-        // createReaction(
-        //   {
-        //     type: reaction,
-        //     article_id,
-        //     user_id: authUser.id,
-        //   },
+      
 
       
           createReactionRepost(

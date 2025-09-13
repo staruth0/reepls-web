@@ -9,6 +9,7 @@ import {
   BarChart2,
   Flag,
   MessageSquare,
+  Book,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { LuBadgeCheck, LuLoader } from "react-icons/lu";
@@ -37,6 +38,8 @@ import { timeAgo } from "../../../../utils/dateFormater";
 import { cn } from "../../../../utils"; // Make sure cn utility is imported if you use it
 import BlogRepostModal from "../BlogRepostModal";
 import { useDeleteRepost, useGetSavedReposts, useRemoveSavedRepost, useSaveRepost } from "../../../Repost/hooks/useRepost";
+import { useGetMyPublications, usePushArticleToPublication, useToggleSubscription, useGetUserSubscriptions, useGetPublicationById } from "../../../Stream/Hooks";
+import PublicationModal from "../../../Stream/components/PublicationModal";
 
 
 interface BlogProfileProps {
@@ -89,11 +92,30 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   const { mutate: saveRepost, isPending: isSaveRepostPending } = useSaveRepost();
   const { mutate: removeRepost, isPending: isRemoveRepostPending } = useRemoveSavedRepost();
 
+  const { mutate: pushArticleToPublication} = usePushArticleToPublication();
+  const { mutate: toggleSubscription, isPending: isSubscriptionPending } = useToggleSubscription();
+
+  const {data:publications} = useGetMyPublications();
+  const {data: userSubscriptions} = useGetUserSubscriptions();
+  const [showPublicationModal, setShowPublicationModal] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+ 
   const {data} = useGetSavedReposts();
 
   useEffect(()=>{
-    console.log('data saved',data)
-  },[data])
+    console.log('userSubscriptions',userSubscriptions)
+  },[userSubscriptions])
+
+  // Check if user is subscribed to the publication
+  useEffect(() => {
+    if (userSubscriptions && article?.publication_id) {
+      const isUserSubscribed = userSubscriptions.some(
+        (sub: any) => sub.id === article.publication_id
+      );
+      setIsSubscribed(isUserSubscribed);
+    }
+  }, [userSubscriptions, article?.publication_id]);
+  const {data: publication} = useGetPublicationById(article?.publication_id || "");
 
   // Check if current user is the reposted user
   const isCurrentUserReposted = article?.repost?.repost_user?._id === authUser?.id;
@@ -106,12 +128,11 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   const articleUrl = `${window.location.origin}/posts/${
     isArticle ? "article" : "post"
   }/${isArticle ? "slug/" + article.slug : article_id}`;
-  const { mutate } = useUpdateArticle(); // This is for updating article properties, not for save/remove status
+  const { mutate } = useUpdateArticle(); 
 
   const isCurrentAuthorArticle = user?._id === authUser?.id;
 
   const handleProfileClick = (username: string) => {
-    // Only update engagement if the user being clicked is not the current auth user
     if (user?._id !== authUser?.id) {
       mutate({
         articleId: article._id || "",
@@ -286,6 +307,37 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
     setShowMenu(false);
   };
 
+  const handleSubscriptionToggle = () => {
+    if (!isLoggedIn) {
+      setShowSignInPopup(true);
+      return;
+    }
+    if (!article?.publication_id) return;
+
+    const newStatus = isSubscribed ? "unsubscribed" : "subscribed";
+    
+    toggleSubscription(
+      { 
+        id: article.publication_id, 
+       
+      },
+      {
+        onSuccess: () => {
+          setIsSubscribed(!isSubscribed);
+          toast.success(
+            newStatus === "subscribed" 
+              ? "Successfully subscribed to publication!" 
+              : "Successfully unsubscribed from publication!"
+          );
+        },
+        onError: (error) => {
+          toast.error("Failed to update subscription");
+          console.error("Subscription error:", error);
+        },
+      }
+    );
+  };
+
   const handleEllipsisClick = () => {
     if (!isLoggedIn) {
       setShowSignInPopup(true);
@@ -399,6 +451,12 @@ useEffect(() => {
           )}
           <div className="flex-1 ml-3 ">
             <div className=" flex items-center gap-1">
+              <div className="lg:flex gap-1 ">
+              {article?.publication_id && (
+                <div className="text-neutral-50 text-sm">
+                From Stream  <span className="text-neutral-50 font-semibold text-[15px] hover:underline cursor-pointer" onClick={() => navigate(`/stream/${article?.publication_id}`)}>{publication?.title}</span>
+                </div>
+              )}  by
               <p
                 className="hover:underline cursor-pointer text-[15px] font-semibold"
                 onClick={() => handleProfileClick(user?.username || "")}
@@ -409,15 +467,19 @@ useEffect(() => {
                   <div className="w-20 bg-neutral-500 rounded-md animate-pulse" />
                 )}
               </p>
+
+              </div>
+            
               {user?.is_verified_writer && (
                 <LuBadgeCheck className="size-4 text-primary-400" />
               )}
               {!location.pathname.includes("/feed/following") && (
+
                 <div>
                   {!isCurrentAuthorArticle && (
                     <span
                       className={cn( // Use cn utility for class concatenation
-                        `cursor-pointer text-primary-400 hover:underline ml-2 text-sm`,
+                        `${article?.publication_id ?'hidden':""} cursor-pointer text-primary-400 hover:underline ml-2 text-sm`,
                         !isLoggedIn ? "pointer-events-none opacity-50" : "", // Grey out if not logged in
                         (isFollowPending || isUnfollowPending) ? "opacity-70" : "" // Subtle dim for pending
                       )}
@@ -428,6 +490,27 @@ useEffect(() => {
                     </span>
                   )}
                 </div>
+              )}
+
+              {article?.publication_id && (
+                <button
+                  onClick={handleSubscriptionToggle}
+                  disabled={isSubscriptionPending}
+                  className={cn(
+                    "text-primary-400 hover:underline ml-2 text-sm cursor-pointer transition-colors",
+                    isSubscriptionPending ? "opacity-50 cursor-not-allowed" : "",
+                    isSubscribed ? "text-green-400" : "text-primary-400"
+                  )}
+                >
+                  {isSubscriptionPending ? (
+                    <>
+                      <LuLoader className="animate-spin size-3 inline-block mr-1" />
+                      {isSubscribed ? "Unsubscribing..." : "Subscribing..."}
+                    </>
+                  ) : (
+                    isSubscribed ? "Unsubscribe" : "Subscribe"
+                  )}
+                </button>
               )}
             </div>
             <p className="text-[12px] text-neutral-100">{user?.bio}</p>
@@ -459,7 +542,7 @@ useEffect(() => {
               className="fixed inset-0 bg-black opacity-0 z-40"
               onClick={() => setShowMenu(false)}
             ></div>
-            <div className="absolute right-0 top-6 bg-neutral-800 shadow-md rounded-md p-2 w-52 text-neutral-50 z-50">
+            <div className="absolute right-0 top-6 bg-neutral-800 shadow-md rounded-md p-2 w-64 text-neutral-50 z-50">
               {isCurrentAuthorArticle ? (
                 <>
                   <div
@@ -482,6 +565,13 @@ useEffect(() => {
                   >
                     <Share2 size={18} className="text-neutral-500" />
                     <div>{t("blog.Share")}</div>
+                  </div>
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
+                    onClick={() => setShowPublicationModal(true)}
+                  >
+                    <Book size={18} className="text-neutral-500" />
+                    <div>Push to Publication</div>
                   </div>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer text-red-500"
@@ -632,6 +722,20 @@ useEffect(() => {
           onCancel={() => setShowRepostDeleteConfirmation(false)}
           confirmText={isDeleteRepostPending ? "Deleting..." : "Delete"}
           confirmColor="red"
+        />
+      )}
+      {showPublicationModal && (
+        <PublicationModal
+          isOpen={showPublicationModal}
+          onClose={() => setShowPublicationModal(false)}
+          publications={publications || []}
+          articleId={article_id}
+          onPush={(articleId, publicationId) => {
+            pushArticleToPublication({
+              articleId,
+              publicationId
+            });
+          }}
         />
       )}
     </div>

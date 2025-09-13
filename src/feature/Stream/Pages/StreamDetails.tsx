@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import StreamHeader from '../components/StreamHeader';
 import StreamSidebar from '../components/StreamSidebar';
+import StreamDetailsSkeleton from '../components/StreamDetailsSkeleton';
+import StreamError from '../components/StreamError';
 import Tabs from '../../../components/molecules/Tabs/Tabs';
+import { useGetPublicationById } from '../Hooks';
+import { useParams } from 'react-router-dom';
 
 const StreamDetails: React.FC = () => {
   const tabs = [
@@ -14,6 +18,9 @@ const StreamDetails: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<typeof tabs[number]['id']>(tabs[0].id);
 
+  const { id } = useParams<{ id: string }>();
+  const { data: streamData, isLoading, error, refetch } = useGetPublicationById(id || '');
+  
   // Map tab id → content
   const tabContent: Record<string, React.ReactNode> = {
     about: (
@@ -37,6 +44,27 @@ const StreamDetails: React.FC = () => {
       </div>
     ),
   };
+  
+  useEffect(() => {
+    if (streamData) {
+      console.log('Stream data received:', streamData);
+    }
+  }, [streamData]);
+
+  // Show loading skeleton
+  if (isLoading) {
+    return <StreamDetailsSkeleton />;
+  }
+
+  // Show error state
+  if (error) {
+    return <StreamError error={error} onRetry={() => refetch()} />;
+  }
+
+  // Show error if no data is available
+  if (!streamData) {
+    return <StreamError error={new Error('Stream not found')} onRetry={() => refetch()} />;
+  }
 
   return (
     <div className="lg:grid grid-cols-[4fr_1.65fr]">
@@ -47,7 +75,7 @@ const StreamDetails: React.FC = () => {
         </Topbar>
 
         <div className="max-w-2xl mx-auto space-y-6">
-          <StreamHeader />
+          <StreamHeader stream={streamData} />
 
           {/* Tabs header */}
           <Tabs

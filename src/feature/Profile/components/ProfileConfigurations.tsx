@@ -8,6 +8,7 @@ import { useUser } from "../../../hooks/useUser";
 import { apiClient } from "../../../services/apiClient";
 import { toast } from "react-toastify";
 import { useFetchVapidPublicKey } from "../../../feature/Notifications/hooks/useNotification";
+import { getVersionDisplayText } from "../../../constants";
 
 // Type for subscription data
 interface SubscriptionData {
@@ -261,6 +262,14 @@ const ProfileConfigurations: React.FC = () => {
             {t(`View Analytics`)}
           </div>
         </ConfigurationWrapper>
+        <ConfigurationWrapper>
+          <div
+            className="cursor-pointer w-full"
+            onClick={()=>navigate('/stream/management')}
+          >
+            {t(`Stream Management`)}
+          </div>
+        </ConfigurationWrapper>
         {/* <ConfigurationWrapper>
           <div className="cursor-pointer w-full" onClick={handleDraftsClick}>
             {t(`Drafts`)}
@@ -404,6 +413,13 @@ const ProfileConfigurations: React.FC = () => {
             {t(`profile.logout`)}
           </div>
         </ConfigurationWrapper>
+
+        {/* Version display */}
+        <div className="mt-8 pt-4 border-t border-neutral-600">
+          <div className="text-center text-sm text-neutral-400">
+            {getVersionDisplayText()}
+          </div>
+        </div>
       </div>
 
       {/* Logout Confirmation Popup */}

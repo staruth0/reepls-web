@@ -4,7 +4,7 @@ import { SidebarContext } from "../../../context/SidebarContext/SidebarContext";
 import { useUser } from "../../../hooks/useUser";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { favicon } from "../../../assets/icons"; // Assuming this path is correct
+import { favicon } from "../../../assets/icons"; 
 
 interface TopbarProps {
   children: ReactNode;

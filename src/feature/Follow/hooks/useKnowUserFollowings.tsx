@@ -1,4 +1,4 @@
-import { useGetFollowing } from ".";
+import { useGetFollowing } from "./";
 import { useUser } from "../../../hooks/useUser";
 import { User } from "../../../models/datamodels";
 

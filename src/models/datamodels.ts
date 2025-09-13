@@ -85,22 +85,49 @@ export interface User {
 }
 
 export interface Publication {
-  id: string;
+  id?: string;
   title: string;
   short_description: string;
   description?: string;
-  cover_image: string; 
+  cover_image: string;
+  owner_id?: string;
   articles_count?: number;
-  articles: Article[]; 
-  contributors: User[]; 
-  author:User;
+  subscribers_count?: number;
+  is_deleted?: boolean;
+  is_public?: boolean;
+  tags?: string[];
+  category?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  collaborators?: PublicationCollaborator[];
+}
+
+export interface Subscription {
+  _id?: string;
+  user_id: string;
+  publication_id?: string;
+  status?: 'active' | 'inactive';
+  subscribed_at?: Date;
+  unsubscribed_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface PublicationCollaborator {
+  _id?: string;
+  collaborator: string; 
+  publication?: string; 
+  permission: "Full Access" | "Edit Access" | "View Access";
+  addedBy?: string; 
+  status?: "active" | "removed" | "pending";
+  addedAt?: Date;
 }
 export interface miniPublication {
-  id: string; //id of publication
-  name:string;//name of publication
-  cover_image: string; 
-  role:PubRole;
-  permission:PubPermission;
+  id?: string; 
+  name:string;
+  cover_image?: string; 
+  role?:PubRole;
+  permission?:PubPermission;
 
 
 }
@@ -150,7 +177,8 @@ export interface Article {
   engagement_count?: number,
   author_follower_count?: number,
   author_profile_views_count?: number,
-   podcastId?:string,
+  podcastId?:string,
+  publication_id?:string,
   
 }
 

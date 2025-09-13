@@ -39,12 +39,33 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     article.type === "Repost" ? isRepostCommentsLoading : isArticleCommentsLoading;
   const isError = article.type === "Repost" ? isRepostCommentsError : isArticleCommentsError;
 
+
+    const commentsToRender =
+    article.type === "Repost" && repostComments
+      ? repostComments.commentsTree
+      : articleComments?.pages
+          ?.flatMap((page) => page.data.commentsTree) || [];
+
   const [hasOpenLevelTwo, setHasOpenLevelTwo] = useState(false);
   const [activeLevelTwoCommentId, setActiveLevelTwoCommentId] = useState<string | null>(null);
 
   useEffect(() => {
     console.log("Repost comments:", repostComments);
   }, [article_id, articleComments, repostComments]);
+
+    const handleLevelTwoToggle = (commentId: string, isOpen: boolean) => {
+    setHasOpenLevelTwo(isOpen);
+    if (isOpen) {
+      setActiveLevelTwoCommentId(commentId);
+    } else if (activeLevelTwoCommentId === commentId) {
+      setActiveLevelTwoCommentId(null);
+    }
+  };
+
+  
+
+
+
 
   if (isLoading)
     return <LuLoader className="animate-spin text-primary-400 text-xl m-4" />;
@@ -54,22 +75,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         <LuCircleAlert className="text-red-500 m-4" /> Error loading comments
       </div>
     );
-
-  const handleLevelTwoToggle = (commentId: string, isOpen: boolean) => {
-    setHasOpenLevelTwo(isOpen);
-    if (isOpen) {
-      setActiveLevelTwoCommentId(commentId);
-    } else if (activeLevelTwoCommentId === commentId) {
-      setActiveLevelTwoCommentId(null);
-    }
-  };
-
-  // Use repost comments directly as array (no pagination)
-  const commentsToRender =
-    article.type === "Repost" && repostComments
-      ? repostComments.commentsTree
-      : articleComments?.pages
-          ?.flatMap((page) => page.data.commentsTree) || [];
 
   return (
     <div className="flex flex-col gap-2">
