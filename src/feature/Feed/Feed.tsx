@@ -26,6 +26,9 @@ const UserFeed: React.FC = () => {
     setIsBrainActive((prev) => !prev);
     toggleCognitiveMode();
   };
+  useEffect(()=>{
+    console.log('data',data)
+  },[data])
 
   // Auto-fetch next page when scrolling to the bottom
   useEffect(() => {

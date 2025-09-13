@@ -415,7 +415,7 @@ const onPublish = async () => {
                   <div className="mt-3 flex items-center gap-2 p-2 bg-primary-500/10 rounded-lg border border-primary-500/20">
                     <LuBook size={16} className="text-primary-400" />
                     <span className="text-sm text-primary-300">
-                      Publishing to: {publications?.find(p => p.id === selectedPublicationId)?.title}
+                      Publishing to: {publications?.find((p: Publication) => p.id === selectedPublicationId)?.title}
                     </span>
                     <button
                       onClick={handleClearPublication}
