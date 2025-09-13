@@ -135,7 +135,6 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
     onLevelTwoToggle?.(false);
   };
 
-  // Handlers for popup actions
   const handleEditClick = () => {
     setIsEditing(true);
     setShowMenu(false);
