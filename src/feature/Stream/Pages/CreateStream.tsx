@@ -1,46 +1,54 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import StreamDetailsForm from '../components/StreamDetailsForm';
-import AuthorsTab from '../components/AuthorsTab';
-import AuthorSelection from '../components/AuthorSelection'; // Your provided component
 import StreamSidebar from '../components/StreamSidebar';
+import { useCreatePublication } from '../Hooks';
+import { Publication } from '../../../models/datamodels';
+
+interface ApiError extends Error {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
 
 const CreateStream: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState(1);
+  const navigate = useNavigate();
+  const { mutate: createPublication, isPending: isCreating, error } = useCreatePublication();
   const [streamDetails, setStreamDetails] = useState({
     name: '',
     description: '',
     topics: [] as string[],
+    coverImage: '',
   });
-  const [authors, setAuthors] = useState<{ id: string; name: string }[]>([
-    { id: 'you-1', name: 'You' },
-  ]);
-  const [isAuthorSelectionOpen, setIsAuthorSelectionOpen] = useState(false);
-  const [invitationNote, setInvitationNote] = useState('');
 
-  const handleNextStep = (details: typeof streamDetails) => {
+  const handleCreateStream = (details: typeof streamDetails) => {
     setStreamDetails(details);
-    setCurrentStep(2);
-  };
-
-  const handleBack = () => {
-    setCurrentStep(1);
-  };
-
-  const handleAuthorsSelected = (selectedAuthors: { id: string; name: string }[]) => {
-    // Merge the new selection with the existing 'You' author
-    const updatedAuthors = [{ id: 'you-1', name: 'You' }, ...selectedAuthors];
-    setAuthors(updatedAuthors);
-    setIsAuthorSelectionOpen(false);
-  };
-
-  const handleRemoveAuthor = (authorId: string) => {
-    setAuthors((prevAuthors) => prevAuthors.filter((a) => a.id !== authorId));
-  };
-
-  const handleSubmit = () => {
-    // Logic to handle form submission (e.g., creating stream, sending invites)
-    console.log('Submitting form with:', { streamDetails, authors, invitationNote });
+    
+    // Prepare publication data
+    const publicationData: Publication = {
+      title: details.name,
+      short_description: details.description,
+      cover_image: details.coverImage || '',
+      // Only include tags if the array is not empty
+      ...(details.topics.length > 0 && { tags: details.topics }),
+    };
+    console.log(publicationData);
+    createPublication(publicationData, {
+      onSuccess: () => {
+        toast.success('Stream created successfully!');
+        // Navigate to the created stream or back to streams list
+        navigate('/streams'); // Adjust the route as needed
+      },
+      onError: (error: ApiError) => {
+        console.error('Error creating stream:', error);
+        const errorMessage = error?.response?.data?.message || 'Failed to create stream. Please try again.';
+        toast.error(errorMessage);
+      },
+    });
   };
 
   return (
@@ -55,54 +63,28 @@ const CreateStream: React.FC = () => {
             <p className="text-center text-neutral-300 max-w-lg mx-auto mb-10">
               Streams allow authors to curate their work into themed collections, giving each its own unique identity and a dedicated audience. <span className="underline cursor-pointer">Learn more</span>
             </p>
-            <div className="flex justify-center items-center mb-10">
-              <div className={`flex items-center space-x-2 ${currentStep === 1 ? 'text-primary-500' : 'text-neutral-300'}`}>
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold ${currentStep === 1 ? 'bg-primary-500 text-white' : 'border border-neutral-400'}`}>
-                  1
-                </div>
-                <span>Stream Details</span>
-              </div>
-              <div className="h-px w-20 bg-neutral-300 mx-4"></div>
-              <div className={`flex items-center space-x-2 ${currentStep === 2 ? 'text-primary-500' : 'text-neutral-300'}`}>
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold ${currentStep === 2 ? 'bg-primary-500 text-white' : 'border border-neutral-400'}`}>
-                  2
-                </div>
-                <span>Authors</span>
-              </div>
-            </div>
 
-            {currentStep === 1 ? (
-              <StreamDetailsForm onNext={handleNextStep} initialData={streamDetails} />
-            ) : (
-              <AuthorsTab
-                authors={authors}
-                onBack={handleBack}
-                onSubmit={handleSubmit}
-                onOpenSelection={() => setIsAuthorSelectionOpen(true)}
-                onRemoveAuthor={handleRemoveAuthor}
-                invitationNote={invitationNote}
-                onInvitationNoteChange={setInvitationNote}
-                streamDetails={{
-                  // provide actual values from this component's state/props where available
-                  name: streamDetails.name || '',
-                  description: streamDetails.description || '',
-                  topics: streamDetails.topics || [],
-                }}
-              />
+            {/* Error Display */}
+            {error && (
+              <div className="max-w-xl mx-auto mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                <p className="font-semibold">Error creating stream:</p>
+                <p>{(error as ApiError)?.response?.data?.message || 'An unexpected error occurred. Please try again.'}</p>
+              </div>
             )}
+
+            <StreamDetailsForm 
+              onNext={handleCreateStream} 
+              initialData={{
+                name: streamDetails.name,
+                description: streamDetails.description,
+                topics: streamDetails.topics,
+                coverImage: streamDetails.coverImage,
+              }}
+              isLoading={isCreating}
+            />
           </div>
         </div>
       </div>
-
-      {isAuthorSelectionOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <AuthorSelection
-            onSelectAuthors={handleAuthorsSelected}
-            onClose={() => setIsAuthorSelectionOpen(false)}
-            initialSelectedAuthors={authors.slice(1)} 
-          />
-        </div>
-      )}
 
       <div className="communique sidebar bg-background hidden lg:block">
          <StreamSidebar />

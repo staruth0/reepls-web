@@ -110,6 +110,10 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
       : undefined
   );
 
+  useEffect(()=>{
+    console.log('article', article)
+  },[article])
+
   useEffect(() => {
     if (slug) {
       mutate(slug, {

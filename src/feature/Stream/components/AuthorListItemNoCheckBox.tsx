@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface Author {
   id: string;
@@ -12,15 +13,17 @@ interface AuthorListItemNoCheckboxProps {
 }
 
 const AuthorListItemNoCheckbox: React.FC<AuthorListItemNoCheckboxProps> = ({ author }) => {
+ const navigate = useNavigate(); 
+ const id = 'nd'
   return (
-    <div className="flex items-center py-2">
+    <div className="flex items-center py-2 w-full">
       <div className="w-10 h-10 flex items-center justify-center rounded-full bg-primary-400 text-white font-bold mr-3">
         {author.name.charAt(0)}
       </div>
 
       {/* Author details section */}
       <div className="flex-grow">
-        <p className="font-medium text-neutral-50 dark:text-neutral-50">
+        <p onClick={()=>navigate(`/stream/${id}`)} className="hover:underline cursor-pointer font-medium text-neutral-50 dark:text-neutral-50">
           {author.name}
         </p>
         <p className="text-sm text-neutral-100 dark:text-neutral-300">{author.description}</p>

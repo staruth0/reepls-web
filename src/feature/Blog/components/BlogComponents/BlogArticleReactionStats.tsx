@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
   PenLine,
-  MessageSquare,
   ThumbsUp,
   Bookmark,
   Radio,
+  MessageCircle,
 } from "lucide-react";
 // Removed useQueryClient import as it's no longer directly used in this component's logic
 // import { useQueryClient } from "@tanstack/react-query";
@@ -416,7 +416,7 @@ useEffect(() => {
               </div>
             ) : totalComments > 0 ? (
               <div className="flex items-center gap-1">
-                <MessageSquare className="size-4" />
+                <MessageCircle className="size-4" />
                 {totalComments}
               </div>
             ) : (
@@ -505,8 +505,6 @@ useEffect(() => {
             author_of_post={author_of_post}
             article={article}
           />
-
-     
 
           <div
             className="flex items-center hover:text-primary-500 cursor-pointer"

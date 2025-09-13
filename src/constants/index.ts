@@ -71,3 +71,6 @@ export {
   SHORT_POST_LENGTH,
   STORAGE_KEY,
 };
+
+// Export version utilities
+export { getPlatformVersion, getVersionDisplayText, PLATFORM_VERSION } from './version';

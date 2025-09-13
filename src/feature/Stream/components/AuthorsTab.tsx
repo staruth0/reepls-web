@@ -1,5 +1,4 @@
 import React from 'react';
-import StreamHeader from './StreamHeader';
 import { CircleUserRound, Lock, X } from 'lucide-react';
 
 interface AuthorsTabProps {
@@ -27,11 +26,7 @@ const AuthorsTab: React.FC<AuthorsTabProps> = ({
 
   return (
     <div className="max-w-xl mx-auto">
-      {/* The new component to display the stream header */}
-      <StreamHeader
-        
-      />
-
+    
    
       <div className="">
         <div className="flex flex-wrap gap-4 items-center mb-8">
@@ -68,7 +63,7 @@ const AuthorsTab: React.FC<AuthorsTabProps> = ({
           <div className="mt-8">
             <label className="block text-neutral-100 mb-2">Invitation Note</label>
             <textarea
-              className="w-full p-2 border border-neutral-200 rounded-md h-32"
+              className="w-full p-2 bg-transparent text-neutral-100 border border-neutral-200 rounded-md h-32"
               placeholder="Greetings [Name], it would be my pleasure to have you join me in streaming together on Stream Name Here. We would write about so so and so. Other benefits. Thank you for your response. Ai should refine this"
               value={invitationNote}
               onChange={(e) => onInvitationNoteChange(e.target.value)}
@@ -87,7 +82,7 @@ const AuthorsTab: React.FC<AuthorsTabProps> = ({
             className="bg-primary-400 text-white px-8 py-2 rounded-full font-bold"
             onClick={onSubmit}
           >
-            {showInviteButton ? 'Send Invite' : 'Create'}
+            {showInviteButton ? 'create and Send Invite' : 'Create'}
           </button>
         </div>
       </div>

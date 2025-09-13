@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Define the shape of the Author object
 interface Author {
@@ -16,22 +17,23 @@ interface AuthorListItemProps {
 }
 
 const AuthorListItem: React.FC<AuthorListItemProps> = ({ author, onToggleSelect }) => {
+ const navigate = useNavigate(); 
+ const id = 'nd'
   return (
-    // This is the individual author list item component
-    <div className="flex items-center py-2 border-b border-neutral-700 last:border-b-0">
-      {/* Author initial/avatar */}
+    <div className="flex items-center py-2 w-full">
       <div className="w-10 h-10 flex items-center justify-center rounded-full bg-primary-400 text-white font-bold mr-3">
         {author.name.charAt(0)}
       </div>
 
       {/* Author details section */}
       <div className="flex-grow">
-        <p className="font-medium text-neutral-50">
-          {author.name}{' '}
-          {author.selected && <span className="text-primary-400 ml-1">✔</span>}
+        <p onClick={()=>navigate(`/stream/${id}`)} className="hover:underline cursor-pointer font-medium text-neutral-50 dark:text-neutral-50">
+          {author.name}
         </p>
-        <p className="text-sm text-neutral-300">{author.description}</p>
-        <p className="text-xs text-neutral-400">{author.tags.map(tag => `#${tag}`).join(' ')}</p>
+        <p className="text-sm text-neutral-100 dark:text-neutral-300">{author.description}</p>
+        <p className="text-xs text-neutral-100 dark:text-neutral-400">
+          {author.tags.map(tag => `#${tag}`).join(' ')}
+        </p>
       </div>
 
       {/* Selection checkbox/toggle */}
