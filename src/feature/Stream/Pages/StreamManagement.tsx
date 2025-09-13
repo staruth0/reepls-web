@@ -5,8 +5,10 @@ import { t } from 'i18next'
 import Tabs from '../../../components/molecules/Tabs/Tabs'
 import NoStream from '../components/NoStream'
 import ContributorStreams from '../components/ContributorStreams'
+import { useGetMyPublications } from '../Hooks'
 
 const StreamManagement:React.FC = () => {
+  const { data: streams, isLoading, error } = useGetMyPublications();
 
     const tabs = [
 
@@ -38,14 +40,33 @@ const StreamManagement:React.FC = () => {
             />
           </div>
            <div className='mt-6 w-full '>
-           {activeTab === 'create' && (
-            <NoStream/>
+           {/* Loading State */}
+           {isLoading && (
+             <div className="flex justify-center items-center py-8">
+               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-400"></div>
+             </div>
            )}
-           {activeTab === 'contributor' && (
-            <ContributorStreams/>
+
+           {/* Error State */}
+           {error && (
+             <div className="text-center py-8 text-red-500">
+               <p>Error loading streams. Please try again later.</p>
+             </div>
            )}
-           {activeTab === 'past' && (
-            <div>past</div>
+
+           {/* Content when not loading and no error */}
+           {!isLoading && !error && (
+             <>
+               {activeTab === 'create' && (
+                streams && streams.length > 0 ? <ContributorStreams/> : <NoStream/>
+               )}
+               {activeTab === 'contributor' && (
+                <ContributorStreams/>
+               )}
+               {activeTab === 'past' && (
+                <div>past</div>
+               )}
+             </>
            )}
            </div>
         </div>

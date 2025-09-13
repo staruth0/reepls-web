@@ -41,7 +41,7 @@ const CreateStream: React.FC = () => {
       onSuccess: () => {
         toast.success('Stream created successfully!');
         // Navigate to the created stream or back to streams list
-        navigate('/streams'); // Adjust the route as needed
+        navigate('/stream/management'); // Adjust the route as needed
       },
       onError: (error: ApiError) => {
         console.error('Error creating stream:', error);
