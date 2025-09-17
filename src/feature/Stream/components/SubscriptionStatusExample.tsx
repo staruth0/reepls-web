@@ -1,5 +1,6 @@
 import React from "react";
-import { useSubscriptionStatus, useActiveSubscriptions } from "../hooks";
+import { useActiveSubscriptions, useSubscriptionStatus } from "../Hooks";
+
 
 interface SubscriptionStatusExampleProps {
   publicationId: string;

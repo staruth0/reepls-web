@@ -7,7 +7,7 @@ import { type Editor } from 'reactjs-tiptap-editor';
 import axios from 'axios';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import { useUser } from '../../../hooks/useUser';
-import { Article, MediaItem, MediaType } from '../../../models/datamodels';
+import { Article, MediaItem, MediaType, Publication } from '../../../models/datamodels';
 import { uploadArticleThumbnail } from '../../../utils/media';
 import AuthPromptPopup from '../../AnonymousUser/components/AuthPromtPopup';
 import CreatePostTopBar from '../components/CreatePostTopBar';
@@ -202,7 +202,7 @@ const EditPost: React.FC = () => {
   const handlePublicationSelect = (publicationId: string) => {
     setSelectedPublicationId(publicationId);
     setShowPublicationModal(false);
-    const selectedPub = publications?.find((p: any) => p.id === publicationId);
+    const selectedPub = publications?.find((p: Publication) => p.id === publicationId);
     toast.success(`Publication "${selectedPub?.title}" selected for article!`);
   };
 
@@ -403,7 +403,7 @@ const EditPost: React.FC = () => {
             });
             navigate(`/posts/article/slug/${article?.slug || articleId}`);
           },
-          onError: (error: any) => {
+          onError: (error: Error) => {
             toast.update(toastId, {
               render: t('Error updating article: ') + (error?.message || 'Unknown error'),
               type: 'error',
@@ -483,7 +483,7 @@ const EditPost: React.FC = () => {
                     <div className="mt-3 flex items-center gap-2 p-2 bg-primary-500/10 rounded-lg border border-primary-500/20">
                       <LuBook size={16} className="text-primary-400" />
                       <span className="text-sm text-primary-300">
-                        Publishing to: {publications?.find((p: any) => p.id === selectedPublicationId)?.title}
+                          Publishing to: {publications?.find((p: Publication) => p.id === selectedPublicationId)?.title}
                       </span>
                       <button
                         onClick={handleClearPublication}
@@ -592,7 +592,7 @@ const EditPost: React.FC = () => {
               </div>
             ) : (
               <div className="space-y-3">
-                {podcastsData?.data?.results?.map((podcast: any) => (
+                {podcastsData?.data?.results?.map((podcast: Podcast) => (
                   <div 
                     key={podcast.id}
                     className={`p-3 rounded cursor-pointer ${selectedPodcast?.id === podcast.id ? 'bg-primary-500' : 'bg-neutral-700 hover:bg-neutral-600'}`}
@@ -608,7 +608,7 @@ const EditPost: React.FC = () => {
                     <h3 className="font-medium">{podcast.title}</h3>
                     <p className="text-sm text-neutral-300 truncate">{podcast.description}</p>
                     <div className="text-xs text-neutral-400 mt-1">
-                      Duration: {podcast.formattedDuration || 'N/A'}
+                      Duration: {podcast.audio.duration || 'N/A'}
                     </div>
                   </div>
                 ))}
