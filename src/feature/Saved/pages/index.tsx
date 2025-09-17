@@ -19,6 +19,9 @@ import ReadingHistoryContainer from '../Components/ReadingHistoryContainer';
 import SavedPodcastsContainer from '../Components/SavedPodcastsContainer';
 import SavedRepostsContainer from '../Components/SavedRepostsContainer'; // Add this import
 import { useGetSavedReposts } from '../../Repost/hooks/useRepost';
+import MainContent from '../../../components/molecules/MainContent';
+import { LuArrowLeft } from 'react-icons/lu';
+import { useNavigate } from 'react-router-dom';
 
 interface Article {
   id: string;
@@ -36,7 +39,7 @@ interface SavedArticlesResponse {
 
 const Bookmarks: React.FC = () => {
   const { authUser } = useUser();
-
+  const navigate = useNavigate();
   const { data: savedArticlesData, isLoading: isLoadingSavedArticles, error: savedArticlesError } = useGetSavedArticles();
   const { data: followingsData, isLoading: isLoadingFollowings, error: followingsError } = useGetFollowing(authUser?.id || '');
   const { data: savedPodcastsData,  error: savedPodcastsError } = useGetMySavedPodcasts();
@@ -121,10 +124,18 @@ useEffect(() => {
   // Loading state for saved content
   if (isLoadingSavedArticles) {
     return (
+      <MainContent> 
       <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
         <div className="saved border-r-[1px] min-h-screen border-neutral-500">
           <Topbar>
-            <p>{t("saved.title")}</p>
+            <div className="flex items-center gap-2"><button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-neutral-700 rounded-full transition-colors"
+            >
+              <LuArrowLeft className="size-5 text-neutral-300" />
+            </button>
+            <p className="text-neutral-50 font-semibold">{t("saved.title")}</p>
+          </div>
           </Topbar>
           <div className="notification__content sm:px-5 md:px-10 lg:px-20 mt-5 min-h-screen flex flex-col items-center">
             <div className="w-[82%]">
@@ -139,7 +150,14 @@ useEffect(() => {
           </div>
         </div>
         <div className="saved__authors px-6 py-4 hidden lg:block">
-          <p>{t("saved.topSavedAuthors")}</p>
+          <div className="flex items-center gap-2"><button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-neutral-700 rounded-full transition-colors"
+            >
+              <LuArrowLeft className="size-5 text-neutral-300" />
+            </button>
+            <p className="text-neutral-50 font-semibold">{t("saved.topSavedAuthors")}</p>
+          </div>
           <div className="mt-10 flex flex-col gap-6">
             {isLoadingFollowings ? (
               <>
@@ -156,16 +174,25 @@ useEffect(() => {
           </div>
         </div>
       </div>
+      </MainContent>
     );
   }
 
   // Error state for saved articles
   if (savedArticlesError) {
     return (
+      <MainContent> 
       <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
         <div className="saved border-r-[1px] min-h-screen border-neutral-500">
           <Topbar>
-            <p>{t("saved.title")}</p>
+              <div className="flex items-center gap-2"><button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-neutral-700 rounded-full transition-colors"
+            >
+              <LuArrowLeft className="size-5 text-neutral-300" />
+            </button>
+            <p className="text-neutral-50 font-semibold">{t("saved.title")}</p>
+          </div>
           </Topbar>
           <div className="notification__content sm:px-5 md:px-10 lg:px-20 mt-5 min-h-screen flex flex-col items-center">
             <div className="w-[82%]">
@@ -207,15 +234,19 @@ useEffect(() => {
           </div>
         </div>
       </div>
+      </MainContent>
     );
   }
 
   // Success state
   return (
+    <MainContent> 
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
       <div className="saved border-r-[1px] min-h-screen border-neutral-500">
         <Topbar>
-          <p>{t("saved.title")}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-neutral-50 font-semibold">{t("saved.title")}</p>
+          </div>
         </Topbar>
         <div className="notification__content  md:px-10 lg:px-20 mt-5 min-h-screen flex flex-col items-center">
           <div className="w-[88%]">
@@ -251,7 +282,14 @@ useEffect(() => {
         </div>
       </div>
       <div className="saved__authors bg-background px-6 py-4 hidden lg:block ">
-        <p>{t("saved.topSavedAuthors")}</p>
+        <div className="flex items-center gap-2"><button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-neutral-700 rounded-full transition-colors"
+            >
+              <LuArrowLeft className="size-5 text-neutral-300" />
+            </button>
+            <p className="text-neutral-50 font-semibold">{t("saved.topSavedAuthors")}</p>
+          </div>
         <div className="mt-10 flex flex-col gap-6">
           {isLoadingFollowings ? (
             <>
@@ -279,6 +317,7 @@ useEffect(() => {
         </div>
       </div>
     </div>
+    </MainContent>
   );
 };
 

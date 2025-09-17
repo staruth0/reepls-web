@@ -23,7 +23,7 @@ const AuthRoutes =  {
       },
       {
         path: "login/phone",
-        element: <Login/>,
+        element: <Loginwithemail />,
       },
       {
         path: "login/email",
@@ -31,15 +31,15 @@ const AuthRoutes =  {
       },
       {
         path: "register/phone",
-        element: <Registerwithphone0 />,
+        element: <Registerwithemail />,
       },
       {
         path: "register/phone/one",
-        element: <RegisterWithPhone1 />,
+        element: <RegisterWithEmail1 />,
       },
       {
         path: "register/phone/two",
-        element: <RegisterWithPhone2 />,
+        element: <RegisterWithEmail2 />,
       },
       {
         path: "register/email",
@@ -59,7 +59,7 @@ const AuthRoutes =  {
       },
       {
         path: "register/checkphone",
-        element: <Checkphone />,
+        element: <Checkemail />,
       },
       {
         path: "interests",

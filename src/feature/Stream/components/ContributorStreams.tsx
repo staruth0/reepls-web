@@ -26,7 +26,7 @@ const ContributorStreams:React.FC = () => {
               <div className="text-center text-red-400">Error loading streams. Please try again.</div>
             ) : streams && streams.length > 0 ? (
               streams.map((stream:Publication) => (
-                <StreamItemEllipsis key={stream.id} author={stream} />
+                <StreamItemEllipsis key={stream._id} author={stream} />
               ))
             ) : (
               <div className="text-center text-neutral-400">No streams found. Create your first stream!</div>

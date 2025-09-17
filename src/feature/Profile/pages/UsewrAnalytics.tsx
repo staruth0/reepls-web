@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ProfileConfigurations from '../../Profile/components/ProfileConfigurations';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import { Bookmark, MessageSquare, Heart, Eye, UserPlus, BarChart2 } from 'lucide-react';
@@ -17,6 +17,7 @@ import {
 } from 'chart.js';
 import { useTranslation } from 'react-i18next';
 import { useGetAuthorStatistics, useGetUserById } from '../hooks';
+import { LuArrowLeft } from 'react-icons/lu';
 
 
 // Register ChartJS components
@@ -60,7 +61,7 @@ const UserAnalytics: React.FC = () => {
       }
     }
   };
-
+const navigate = useNavigate();
  
 
   // Loading state
@@ -69,7 +70,16 @@ const UserAnalytics: React.FC = () => {
       <div className="flex flex-col lg:grid lg:grid-cols-[4fr_1.66fr] min-h-screen">
         <div className="flex flex-col lg:border-r border-neutral-500">
           <Topbar>
-            <p>{t("profile.userAnalytics")}</p>
+          <div className="flex items-center gap-2"><button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-neutral-700 rounded-full transition-colors"
+            >
+              <LuArrowLeft className="size-5 text-neutral-300" />
+            </button>
+            <p className="text-neutral-50 font-semibold">{t("profile.userAnalytics")}</p>
+
+          </div>
+         
           </Topbar>
           <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 py-6 w-full max-w-7xl mx-auto">
             <div className="animate-pulse">
@@ -103,7 +113,15 @@ const UserAnalytics: React.FC = () => {
       <div className="flex flex-col lg:grid lg:grid-cols-[4fr_1.66fr] min-h-screen">
         <div className="flex flex-col lg:border-r border-neutral-500">
           <Topbar>
-            <p>{t("profile.userAnalytics")}</p>
+            <div className="flex items-center gap-2"><button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-neutral-700 rounded-full transition-colors"
+            >
+              <LuArrowLeft className="size-5 text-neutral-300" />
+            </button>
+            <p className="text-neutral-50 font-semibold">{t("profile.userAnalytics")}</p>
+
+          </div>
           </Topbar>
           <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 py-6 w-full max-w-7xl mx-auto">
             <p className="text-red-500">Error: {error.message}</p>
@@ -122,7 +140,15 @@ const UserAnalytics: React.FC = () => {
       <div className="flex flex-col lg:grid lg:grid-cols-[4fr_1.66fr] min-h-screen">
         <div className="flex flex-col lg:border-r border-neutral-500">
           <Topbar>
-            <p>{t("profile.userAnalytics")}</p>
+            <div className="flex items-center gap-2"><button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-neutral-700 rounded-full transition-colors"
+            >
+              <LuArrowLeft className="size-5 text-neutral-300" />
+            </button>
+            <p className="text-neutral-50 font-semibold">{t("profile.userAnalytics")}</p>
+
+          </div>
           </Topbar>
           <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 py-6 w-full max-w-7xl mx-auto">
             <p>No statistics available</p>
@@ -140,7 +166,15 @@ const UserAnalytics: React.FC = () => {
       {/* Profile Section */}
       <div className="flex flex-col lg:border-r border-neutral-500">
         <Topbar>
-          <p>{t("profile.userAnalytics")}</p>
+          <div className="flex items-center gap-2"><button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-neutral-700 rounded-full transition-colors"
+            >
+              <LuArrowLeft className="size-5 text-neutral-300" />
+            </button>
+            <p className="text-neutral-50 font-semibold">{t("profile.userAnalytics")}</p>
+
+          </div>
         </Topbar>
 
         {/* Analytics content */}

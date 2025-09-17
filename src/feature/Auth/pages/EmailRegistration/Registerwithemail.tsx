@@ -69,7 +69,7 @@ function Registerwithemail() {
       <div className="bottom__links">
         <p>
           {t("LoginPrompt")}{" "}
-          <Link to={"/auth/login/phone"} className="bottom__link_login hover:underline">
+          <Link to={"/auth/login/email"} className="bottom__link_login hover:underline">
             {t("LoginLink")}
           </Link>
         </p>

@@ -32,6 +32,7 @@ import CreateStream from '../feature/Stream/Pages/CreateStream.tsx';
 import StreamDetails from '../feature/Stream/Pages/StreamDetails.tsx';
 import StreamManagement from '../feature/Stream/Pages/StreamManagement.tsx';
 import SreamEdit from '../feature/Stream/Pages/SreamEdit.tsx';
+import Subscribers from '../feature/Stream/Pages/Subscribers.tsx';
 // import Home from "../feature/Home/pages/Home";
 
 
@@ -150,6 +151,10 @@ const UserRoutes = {
      {
       path: '/stream/:id',
       element: <StreamDetails />,
+    },
+     {
+      path: '/stream/:id/subscribers',
+      element: <Subscribers />,
     },
     {
       path: '/posts/article/:articleUid',

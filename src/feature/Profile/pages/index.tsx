@@ -20,6 +20,7 @@ import { useGetAuthorArticles, useGetAuthorPosts } from "../../Blog/hooks/useArt
 import ProfileRightSideSkeleton from "../components/ProfileRightSideSkeleton";
 import { getDecryptedUser } from "../../Auth/api/Encryption";
 import ProfileReposts from "../components/ProfileReposts";
+import MainContent from "../../../components/molecules/MainContent";
 // import { useGetMyReposts } from "../../Repost/hooks/useRepost";
 
 const Profile: React.FC = () => {
@@ -123,6 +124,7 @@ const Profile: React.FC = () => {
 
   if (isLoading) {
     return (
+      <MainContent> 
       <div className="lg:grid grid-cols-[4fr_1.65fr]">
         <div className="profile lg:border-r-[1px] border-neutral-500 min-h-screen">
           <Topbar>
@@ -136,11 +138,13 @@ const Profile: React.FC = () => {
           <ProfileRightSideSkeleton/>
         </div>
       </div>
+      </MainContent>
     );
   }
 
   if (!user) {
     return (
+      <MainContent> 
       <div className="lg:grid grid-cols-[4fr_1.65fr]">
         <div className="profile border-r-[1px] border-neutral-500 min-h-screen">
           <Topbar>
@@ -148,7 +152,7 @@ const Profile: React.FC = () => {
           </Topbar>
           <div className="flex flex-col items-center justify-center h-[60vh] text-center px-4">
             <div className="bg-neutral-800 p-6 rounded-lg max-w-md w-full">
-              <User className="w-12 h-12 mx-auto text-neutral-400 mb-4" />
+                <User className="size-12 mx-auto text-neutral-400 mb-4" />
               <h3 className="text-xl font-medium text-neutral-100 mb-2">
                 {t("title", "User Not Found")}
               </h3>
@@ -156,7 +160,7 @@ const Profile: React.FC = () => {
                 {t("description", "The profile you are looking for does not exist.")}
               </p>
               <button
-                onClick={() => navigate('/auth/login/phone')}
+                onClick={() => navigate('/auth/login/email')}
                 className="px-4 py-2 bg-main-green text-white rounded-md hover:bg-green-600 transition-colors"
               >
                 {t("proceedToLogin", "Proceed to Login")}
@@ -165,10 +169,12 @@ const Profile: React.FC = () => {
           </div>
         </div>
       </div>
+      </MainContent>
     );
   }
 
   return (
+    <MainContent> 
     <div className="lg:grid grid-cols-[4fr_1.65fr]">
       <div className="profile border-r-[1px] min-h-screen border-neutral-500">
         <Topbar>
@@ -272,7 +278,7 @@ const Profile: React.FC = () => {
         ) : (
           <div>
             <div className="py-7 px-4 font-semibold text-neutral-50 flex items-center gap-2">
-              <User className="text-main-green" size={20} />
+              <User className="text-main-green size-6" />
               {t("profile.similarProfile")}
             </div>
             <SimilarProfiles />
@@ -280,6 +286,7 @@ const Profile: React.FC = () => {
         )}
       </div>
     </div>
+    </MainContent>
   );
 };
 

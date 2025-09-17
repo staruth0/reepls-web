@@ -55,9 +55,9 @@ const UserLayout: React.FC = () => {
   };
 
   return (
-    <div className={`relative sm:grid ${!isOpen ? 'grid-cols-[.5fr_5.5fr]' : 'grid-cols-[1fr_5fr]'}`}>
+    <div className={`relative md:grid ${!isOpen ? 'grid-cols-[.5fr_5.5fr]' : 'grid-cols-[1fr_5fr]'}`}>
       <div
-        className={`absolute -translate-x-96 sm:translate-x-0 ${
+        className={`absolute -translate-x-96 sm:translate-x-0 hidden md:block ${
           isOpen ? 'translate-x-0' : '-translate-x-96'
         } transition-all duration-700 ease-linear sm:relative bg-neutral-800 sm:bg-inherit top-0 bottom-0 z-[910] h-full w-[60%] sm:w-auto`}
       >

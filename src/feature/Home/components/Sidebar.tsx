@@ -40,12 +40,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen , toggleSidebar}) => {
 
         <ul className="space-y-4 px-6">
           <li onClick={toggleSidebar}>
-            <a href={`${ isLoggedIn? 'feed' : 'auth/login/phone'}`} className="text-neutral-50 hover:text-primary-400">
+            <a href={`${ isLoggedIn? 'feed' : 'auth/login/email'}`} className="text-neutral-50 hover:text-primary-400">
             {t("header.signIn")}
             </a>
           </li>
           <li onClick={toggleSidebar}>
-            <a href="/auth/register/phone" className="text-neutral-50 hover:text-primary-400">
+            <a href="/auth/register/email" className="text-neutral-50 hover:text-primary-400">
             {t("header.signUp")}
             </a>
           </li>

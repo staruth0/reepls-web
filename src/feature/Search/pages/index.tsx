@@ -10,6 +10,9 @@ import RecentSearchesSkeleton from "../components/RecentSearchComponent";
 import { toast } from "react-toastify"; // Added for toast notifications
 import { useTranslation } from "react-i18next";
 
+
+import MainContent from "../../../components/molecules/MainContent";
+
 const Search: React.FC = () => {
   const { authUser } = useUser();
   const { data, isLoading, error } = useGetSearchSuggestions(authUser?.id || ""); // Added error
@@ -17,7 +20,6 @@ const Search: React.FC = () => {
   
 
   const {t} = useTranslation()
-
   // Function to get friendly error messages specific to search suggestions
   const getFriendlyErrorMessage = (error: any, query?: string): string => {
     if (!error) return t("search.errors.default");
@@ -50,9 +52,11 @@ const Search: React.FC = () => {
   // Loading state
   if (isLoading) {
     return (
+      <MainContent> 
       <div className="lg:grid font-roboto grid-cols-[4fr_1.65fr] min-h-screen">
         <div className="search w-full lg:border-r-[1px] border-neutral-500">
           <Topbar>
+         
             <SearchTopBar />
           </Topbar>
           <div className="px-5 md:px-10 lg:px-20 w-full flex flex-col">
@@ -65,15 +69,18 @@ const Search: React.FC = () => {
           <Communique />
         </div>
       </div>
+      </MainContent>
     );
   }
 
   // Error state
   if (error) {
     return (
+      <MainContent> 
       <div className="lg:grid font-roboto grid-cols-[4fr_1.65fr] min-h-screen">
         <div className="search w-full lg:border-r-[1px] border-neutral-500">
           <Topbar>
+          
             <SearchTopBar />
           </Topbar>
           <div className="px-5 md:px-10 lg:px-20 w-full flex flex-col">
@@ -88,14 +95,17 @@ const Search: React.FC = () => {
           <Communique />
         </div>
       </div>
+      </MainContent>
     );
   }
 
   // Success or empty state
   return (
+    <MainContent> 
     <div className="lg:grid font-roboto grid-cols-[4fr_1.65fr] min-h-screen">
       <div className="search w-full lg:border-r-[1px] border-neutral-500">
         <Topbar>
+       
           <SearchTopBar />
         </Topbar>
         
@@ -126,6 +136,7 @@ const Search: React.FC = () => {
         <Communique />
       </div>
     </div>
+    </MainContent>
   );
 };
 

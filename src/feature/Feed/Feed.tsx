@@ -1,31 +1,30 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import CognitiveModeIndicator from '../../components/atoms/CognitiveModeIndicator';
+import React, {  useEffect, useRef } from 'react';
 import Topbar from '../../components/atoms/Topbar/Topbar';
-import { CognitiveModeContext } from '../../context/CognitiveMode/CognitiveModeContext';
 import { Article } from '../../models/datamodels';
 import BlogPost from '../Blog/components/BlogPost';
 import BlogSkeletonComponent from '../Blog/components/BlogSkeleton';
-import { useGetAllArticles, } from '../Blog/hooks/useArticleHook';//useGetRecommendedArticles 
+import { useGetAllArticles } from '../Blog/hooks/useArticleHook';
 import Communique from './components/Communique/Communique';
 import ToggleFeed from './components/ToogleFeed';
 import './feed.scss';
 import { LuLoader } from 'react-icons/lu';
+import MainContent from '../../components/molecules/MainContent';
 
 
 const UserFeed: React.FC = () => {
-  const { toggleCognitiveMode, isCognitiveMode } = useContext(CognitiveModeContext);
-  const [isBrainActive, setIsBrainActive] = useState<boolean>(isCognitiveMode);
+  // const { toggleCognitiveMode, isCognitiveMode } = useContext(CognitiveModeContext);
+  // const [isBrainActive, setIsBrainActive] = useState<boolean>(isCognitiveMode);
   const bottomRef = useRef<HTMLDivElement>(null); // Ref for the bottom
 
   // Fetch data
   const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetAllArticles();
 
 
-  // Handle cognitive mode toggle
-  const handleBrainClick = () => {
-    setIsBrainActive((prev) => !prev);
-    toggleCognitiveMode();
-  };
+  // // Handle cognitive mode toggle
+  // const handleBrainClick = () => {
+  //   setIsBrainActive((prev) => !prev);
+  //   toggleCognitiveMode();
+  // };
   useEffect(()=>{
     console.log('data',data)
   },[data])
@@ -85,14 +84,16 @@ const UserFeed: React.FC = () => {
   };
 
   return (
-    <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
+    <MainContent>
+
+<div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
       <div className="Feed__Posts min-h-screen lg:border-r-[1px] border-neutral-500">
         <Topbar>
           <div className="px-3 flex justify-between items-center w-full ">
             <ToggleFeed />
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <CognitiveModeIndicator isActive={isBrainActive} onClick={handleBrainClick} />
-            </div>
+            </div> */}
           </div>
         </Topbar>
 
@@ -133,6 +134,10 @@ const UserFeed: React.FC = () => {
         <Communique />
       </div>
     </div>
+
+
+    </MainContent>
+
   );
 };
 

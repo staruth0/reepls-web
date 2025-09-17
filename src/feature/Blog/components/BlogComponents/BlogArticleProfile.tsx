@@ -38,7 +38,7 @@ import { timeAgo } from "../../../../utils/dateFormater";
 import { cn } from "../../../../utils"; // Make sure cn utility is imported if you use it
 import BlogRepostModal from "../BlogRepostModal";
 import { useDeleteRepost, useGetSavedReposts, useRemoveSavedRepost, useSaveRepost } from "../../../Repost/hooks/useRepost";
-import { useGetMyPublications, usePushArticleToPublication, useToggleSubscription, useGetUserSubscriptions, useGetPublicationById } from "../../../Stream/Hooks";
+import { useGetMyPublications, usePushArticleToPublication, useToggleSubscription, useGetPublicationById, useSubscriptionStatus } from "../../../Stream/Hooks";
 import PublicationModal from "../../../Stream/components/PublicationModal";
 
 
@@ -96,25 +96,12 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   const { mutate: toggleSubscription, isPending: isSubscriptionPending } = useToggleSubscription();
 
   const {data:publications} = useGetMyPublications();
-  const {data: userSubscriptions} = useGetUserSubscriptions();
   const [showPublicationModal, setShowPublicationModal] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState(false);
  
   const {data} = useGetSavedReposts();
 
-  useEffect(()=>{
-    console.log('userSubscriptions',userSubscriptions)
-  },[userSubscriptions])
-
-  // Check if user is subscribed to the publication
-  useEffect(() => {
-    if (userSubscriptions && article?.publication_id) {
-      const isUserSubscribed = userSubscriptions.some(
-        (sub: any) => sub.id === article.publication_id
-      );
-      setIsSubscribed(isUserSubscribed);
-    }
-  }, [userSubscriptions, article?.publication_id]);
+  // Use the subscription status hook for cleaner subscription checking
+  const { isSubscribed, isLoading: isSubscriptionLoading } = useSubscriptionStatus(article?.publication_id || "");
   const {data: publication} = useGetPublicationById(article?.publication_id || "");
 
   // Check if current user is the reposted user
@@ -323,7 +310,6 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
       },
       {
         onSuccess: () => {
-          setIsSubscribed(!isSubscribed);
           toast.success(
             newStatus === "subscribed" 
               ? "Successfully subscribed to publication!" 
@@ -455,8 +441,8 @@ useEffect(() => {
               {article?.publication_id && (
                 <div className="text-neutral-50 text-sm">
                 From Stream  <span className="text-neutral-50 font-semibold text-[15px] hover:underline cursor-pointer" onClick={() => navigate(`/stream/${article?.publication_id}`)}>{publication?.title}</span>
-                </div>
-              )}  by
+                by </div>
+              )} 
               <p
                 className="hover:underline cursor-pointer text-[15px] font-semibold"
                 onClick={() => handleProfileClick(user?.username || "")}
@@ -495,17 +481,17 @@ useEffect(() => {
               {article?.publication_id && (
                 <button
                   onClick={handleSubscriptionToggle}
-                  disabled={isSubscriptionPending}
+                  disabled={isSubscriptionPending || isSubscriptionLoading}
                   className={cn(
                     "text-primary-400 hover:underline ml-2 text-sm cursor-pointer transition-colors",
-                    isSubscriptionPending ? "opacity-50 cursor-not-allowed" : "",
+                    (isSubscriptionPending || isSubscriptionLoading) ? "opacity-50 cursor-not-allowed" : "",
                     isSubscribed ? "text-green-400" : "text-primary-400"
                   )}
                 >
-                  {isSubscriptionPending ? (
+                  {(isSubscriptionPending || isSubscriptionLoading) ? (
                     <>
                       <LuLoader className="animate-spin size-3 inline-block mr-1" />
-                      {isSubscribed ? "Unsubscribing..." : "Subscribing..."}
+                      {isSubscriptionLoading ? "Loading..." : (isSubscribed ? "Unsubscribing..." : "Subscribing...")}
                     </>
                   ) : (
                     isSubscribed ? "Unsubscribe" : "Subscribe"

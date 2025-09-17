@@ -5,7 +5,11 @@ import StreamSidebar from '../components/StreamSidebar';
 import StreamDetailsSkeleton from '../components/StreamDetailsSkeleton';
 import StreamError from '../components/StreamError';
 import Tabs from '../../../components/molecules/Tabs/Tabs';
-import { useGetPublicationById } from '../Hooks';
+import AboutTab from '../components/AboutTab';
+import ArticleTab from '../components/ArticleTab';
+import MediaTab from '../components/MediaTab';
+import AuthorsTab from '../components/AuthorsTab';
+import { useGetPublicationById  } from '../Hooks';
 import { useParams } from 'react-router-dom';
 
 const StreamDetails: React.FC = () => {
@@ -20,29 +24,14 @@ const StreamDetails: React.FC = () => {
 
   const { id } = useParams<{ id: string }>();
   const { data: streamData, isLoading, error, refetch } = useGetPublicationById(id || '');
+ 
   
-  // Map tab id → content
+  
   const tabContent: Record<string, React.ReactNode> = {
-    about: (
-      <div className="pb-10">
-        <p className="text-neutral-200">This is the About tab content.</p>
-      </div>
-    ),
-    article: (
-      <div className="pb-10">
-        <p className="text-neutral-200">Articles related to this stream will appear here.</p>
-      </div>
-    ),
-    media: (
-      <div className="pb-10">
-        <p className="text-neutral-200">Media gallery / clips for this stream.</p>
-      </div>
-    ),
-    authors: (
-      <div className="pb-10">
-        <p className="text-neutral-200">List of authors or contributors.</p>
-      </div>
-    ),
+    about: <AboutTab stream={streamData} />,
+    article: <ArticleTab stream={streamData} />,
+    media: <MediaTab stream={streamData} />,
+    authors: <AuthorsTab stream={streamData} />,
   };
   
   useEffect(() => {
@@ -87,7 +76,7 @@ const StreamDetails: React.FC = () => {
           />
 
           {/* Tabs content */}
-          <div className="mt-6">{tabContent[activeTab]}</div>
+          <div className="mt-6 ">{tabContent[activeTab]}</div>
         </div>
       </div>
 

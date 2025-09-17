@@ -241,15 +241,24 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
 
   useEffect(() => {
     if (article) {
+      console.log('article by slug', article)
+      console.log('article.htmlContent:', article.htmlContent)
+      console.log('article.content:', article.content)
       if (article.title) setTitle(article.title);
       if (article.subtitle) setSubtitle(article.subtitle);
       if (article.content) setContent(article.content);
-      if (article.htmlContent) setHtmlArticleContent(article.htmlContent);
+      if (article.htmlContent) {
+        setHtmlArticleContent(article.htmlContent);
+      } else if (article.content) {
+        // Fallback: if htmlContent is missing, use content as HTML
+        setHtmlArticleContent(article.content);
+      }
     }
   }, [article, isPending]);
 
   useEffect(() => {
     if (isError) {
+      console.error('Error fetching article:', isError);
       toast.error("Error fetching article.");
       navigate("/posts/create");
     }
@@ -337,7 +346,7 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
                   className={`ml-auto px-4 py-2 rounded-full text-sm ${
                     isFollowing
                       ? "bg-neutral-600 text-neutral-50 hover:bg-neutral-700"
-                      : "bg-main-green text-white hover:bg-green-600"
+                      : "bg-main-green text-white hover:bg-primary-500"
                   }`}
                   disabled={!isLoggedIn || isFollowPending || isUnfollowPending}
                 >
