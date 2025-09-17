@@ -26,8 +26,6 @@ function Registerwithemail() {
   };
 
 
-
-  
   // const handleGoogleRegister = async () => { 
   //  navigate('/googleAuth/register')
   // }

@@ -41,6 +41,10 @@ export const useGetReactionById = (reactionId: string) => {
   return useQuery({
     queryKey: ["reaction", reactionId],
     queryFn: () => getReactionById(reactionId),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    enabled: !!reactionId,
   });
 };
 
@@ -99,6 +103,10 @@ export const useGetAuthorScoresByCategory = (category: string) => {
   return useQuery({
     queryKey: ["authorScores", category],
     queryFn: () => getAuthorScoresByCategory(category),
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    enabled: !!category,
   });
 };
 
@@ -106,6 +114,10 @@ export const useGetReactedUsers = (articleId: string) => {
   return useQuery({
     queryKey: ["reactedUsers", articleId],
     queryFn: () => getReactedUsers(articleId),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    enabled: !!articleId,
   });
 };
 
@@ -113,6 +125,10 @@ export const useGetArticleReactions = (articleId: string) => {
   return useQuery({
     queryKey: ["articleReactions", articleId],
     queryFn: () => getArticleReactions(articleId),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    enabled: !!articleId,
   });
 };
 
@@ -120,6 +136,10 @@ export const useGetReactionsPerType = (articleId: string) => {
   return useQuery({
     queryKey: ["reactionsPerType", articleId],
     queryFn: () => getReactionsPerType(articleId),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    enabled: !!articleId,
   });
 };
 
@@ -147,6 +167,9 @@ export const useGetCommentReactions = (commentId: string) => {
   return useQuery({
     queryKey: ["commentReactions", commentId],
     queryFn: () => getCommentReactions(commentId),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     enabled: !!commentId, 
   });
 };

@@ -42,6 +42,9 @@ export const useGetArticleById = (articleId: string) => {
   return useQuery({
     queryKey: ['article', articleId],
     queryFn: () => getArticleById(articleId),
+    staleTime: 60 * 60 * 1000, // 1 hour - articles don't change often
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     enabled: articleId !== PREVIEW_SLUG,
   });
 };
@@ -50,6 +53,9 @@ export const useGetArticleBySlug = (slug: string) => {
   return useQuery({
     queryKey: ['article', slug],
     queryFn: () => getArticleBySlug(slug),
+    staleTime: 60 * 60 * 1000, // 1 hour - articles don't change often
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     enabled:slug !== PREVIEW_SLUG,
   });
 };
@@ -59,6 +65,10 @@ export const useGetArticlesByAuthorId = (authorId: string) => {
   return useQuery({
     queryKey: ['articles-by-author', authorId],
     queryFn: () => getArticleByAuthorId(authorId),
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    enabled: !!authorId,
   });
 };
 
@@ -69,12 +79,15 @@ export const useGetAllArticles = () => {
     queryKey: ['articles'],
     queryFn: getAllArticles,
     initialPageParam: 1, // Start fetching from page 1
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     getNextPageParam: (lastPage, allPages) => {
       const articlesFetched = allPages.length * 10; // 10 articles per page
       if (articlesFetched < lastPage.totalArticles) {
         return allPages.length + 1; // Next page number
       }
-      return undefined; // Stop when we’ve fetched all articles
+      return undefined; // Stop when we've fetched all articles
     },
   });
 };
@@ -86,6 +99,9 @@ export const useGetRecommendedArticles = () => {
     queryKey: ['recommended-articles'],
     queryFn: getRecommendedArticles,
     initialPageParam: 1, 
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     getNextPageParam: (lastPage, allPages) => {
       
       const articlesFetched = allPages.length * 10; 
@@ -104,6 +120,9 @@ export const useGetFollowedArticles = () => {
     queryKey: ['followed-articles'],
     queryFn: getFollowedArticles,
     initialPageParam: 1, 
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     getNextPageParam: (lastPage, allPages) => {
       
       const articlesFetched = allPages.length * 10; 
@@ -121,6 +140,9 @@ export const useGetCommuniquerArticles = () => {
     queryKey: ['communiquer-articles'],
     queryFn: getCommuniquerArticles,
     initialPageParam: 1, // Start with page 1
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     getNextPageParam: (lastPage, allPages) => {
      
       const articlesFetched = allPages.length * 10; 
@@ -140,6 +162,9 @@ export const useGetAuthorPosts = (authorId: string) => {
     queryKey: ["authorPosts", authorId],
     queryFn: ({ pageParam }) => getAuthorPosts({ pageParam, authorId }),
     initialPageParam: 1,
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     getNextPageParam: (lastPage, allPages) => {
       const postsFetched = allPages.length * 10; // 10 posts per page
       if (postsFetched < lastPage.totalPosts) {
@@ -156,6 +181,9 @@ export const useGetAuthorArticles = (authorId: string) => {
     queryKey: ["authorArticles", authorId],
     queryFn: ({ pageParam }) => getAuthorArticles({ pageParam, authorId }),
     initialPageParam: 1,
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     getNextPageParam: (lastPage, allPages) => {
       const articlesFetched = allPages.length * 10; // 10 articles per page
       if (articlesFetched < lastPage.totalArticles) {
@@ -175,14 +203,20 @@ export const useGetArticlesByCategory = (category: string) => {
   return useQuery({
     queryKey: ['articles-by-category', category],
     queryFn: () => getArticlesByCategory(category),
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     enabled: !!category,
   });
 };
 // Hook for fetching articles by category
 export const useGetArticleStatitics = (id: string) => {
   return useQuery({
-    queryKey: ['articles-by-category'],
+    queryKey: ['article-statistics', id],
     queryFn: () => getArticleStatitics(id),
+    staleTime: 10 * 60 * 1000, // 10 minutes - statistics change more frequently
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     enabled: !!id,
   });
 };

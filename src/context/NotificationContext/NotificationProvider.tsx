@@ -12,8 +12,8 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({ children })
   const [notifications, setNotifications] = useState<Notification[]>([]);
   // const { authUser } = useUser();
 
-  // Fetch notifications on mount and every 2 minutes
-  const { data, refetch } = useFetchUserNotifications();
+  // Fetch notifications on mount
+  const { data } = useFetchUserNotifications();
 
   useEffect(() => {
     if (data) {  
@@ -21,14 +21,8 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({ children })
     }
   }, [data]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      refetch(); 
-    }, 2 * 60 * 1000); 
-
-    // Cleanup interval on unmount
-    return () => clearInterval(interval);
-  }, [refetch]);
+  // Removed automatic refetching - notifications will be fetched when needed
+  // and updated via real-time updates or manual refresh
 
   // Add a new notification (if needed for other purposes)
   const addNotification = (notification: Notification) => {

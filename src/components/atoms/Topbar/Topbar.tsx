@@ -130,7 +130,7 @@ const Topbar: React.FC<TopbarProps> = ({ children }) => {
         </div>
         <Link to="/notifications" className="relative md:hidden">
           <Bell  className="size-6 text-neutral-100 cursor-pointer hover:text-primary-400" />
-          <span className="absolute top-0 right-0 -mt-2 -mr-2 rounded-full bg-red-500 text-white size-4 flex justify-center items-center text-xs">{unreadCount}</span>
+       { unreadCount > 0 && <span className="absolute top-0 right-0 -mt-2 -mr-2 rounded-full bg-red-500 text-white size-4 flex justify-center items-center text-xs">{unreadCount}</span>}
         </Link>
       </div>}
     </div>
