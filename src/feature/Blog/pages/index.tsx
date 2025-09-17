@@ -242,6 +242,8 @@ const onPublish = async () => {
         publication_id: selectedPublicationId || undefined,
       };
 
+      console.log('article debugging', article);
+
       createArticle(article, {
         onSuccess: () => {
           toast.update(toastId, {

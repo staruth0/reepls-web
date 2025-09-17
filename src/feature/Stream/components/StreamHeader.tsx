@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { ImagePlus, Plus } from 'lucide-react';
 import { Publication } from '../../../models/datamodels';
 import { useUser } from '../../../hooks/useUser';
 import { useNavigate } from 'react-router-dom';
-import { useToggleSubscription, useGetUserSubscriptions } from '../Hooks';
+import { useToggleSubscription, useGetPublicationSubscribers, useSubscriptionStatus, useGetCollaborators } from '../Hooks';
 
 interface StreamHeaderProps {
   stream: Publication;
@@ -12,34 +12,28 @@ interface StreamHeaderProps {
 
 const StreamHeader: React.FC<StreamHeaderProps> = ({ stream }) => {
   const navigate = useNavigate();
+  const {data: subscribersData} = useGetPublicationSubscribers(stream?.id || '');
+  const { data: collaboratorsData } = useGetCollaborators(stream._id || '');
 
   const {authUser} = useUser();
   const { mutate: toggleSubscription, isPending: isSubscriptionPending } = useToggleSubscription();
-  const { data: userSubscriptions } = useGetUserSubscriptions();
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  
+  // Use the subscription status hook for cleaner subscription checking
+  const { isSubscribed } = useSubscriptionStatus(stream?._id || "");
+  console.log('isSubscribed',isSubscribed)
 
   const isCurrentAuthorstream = authUser?.id === stream?.owner_id;
 
-  console.log('isCurrentAuthorstream',stream?.id,authUser?.id,isCurrentAuthorstream)
-
-  // Check if user is subscribed to the publication
   useEffect(() => {
-    if (userSubscriptions && stream?.id) {
-      const isUserSubscribed = userSubscriptions.some(
-        (sub: { id: string }) => sub.id === stream.id
-      );
-      setIsSubscribed(isUserSubscribed);
-    }
-  }, [userSubscriptions, stream?.id]);
+    console.log('subscribersData',subscribersData)
+ 
+  }, [subscribersData]);
 
   const handleSubscriptionToggle = () => {
     if (stream?.id) {
       toggleSubscription(
         { id: stream.id },
         {
-          onSuccess: () => {
-            setIsSubscribed(!isSubscribed);
-          },
           onError: (error) => {
             console.error('Subscription toggle failed:', error);
           }
@@ -79,25 +73,30 @@ const StreamHeader: React.FC<StreamHeaderProps> = ({ stream }) => {
        <div className="py-4 px-1">
         <div className="flex items-baseline ">
           <h2 className="text-lg font-bold text-neutral-50">{stream?.title}</h2>
-          <p className="ml-4 text-xs text-neutral-400">
-            {stream?.tags?.map((tag) => `#${tag}`).join(' ')}
-          </p>
+        
         </div>
         <p className="text-sm text-neutral-300 mb-2">{stream?.short_description}</p>
 
         <div className="flex items-center text-xs text-neutral-400 px-1">
-          <p>
-            <span className="font-bold text-neutral-50">{stream?.collaborators?.length || 0}</span> Editor
+          <p className='text-neutral-100'>
+            <span className="font-bold text-neutral-50">{collaboratorsData?.collaborators.length || 0}</span> Editor
           </p>
-          <p className="ml-4">
-            <span className="font-bold text-neutral-50">{stream?.subscribers_count || 0}</span> Subscribers
+          <p className="ml-4 text-neutral-100">
+           
+              <span 
+                className="font-bold text-neutral-50 hover:text-primary-400 cursor-pointer transition-colors"
+                onClick={() => navigate(`/stream/${stream?._id}/subscribers`)}
+              >
+                {stream?.subscribers_count || 0}{" "}
+              </span> 
+           Subscribers
           </p>
         </div>
       </div>
 
     { isCurrentAuthorstream ? (
       <button 
-        onClick={()=>navigate(`/stream/edit/${stream?.id}`)} 
+        onClick={()=>navigate(`/stream/edit/${stream?._id}`)} 
         className='bg-neutral-400 text-white px-4 sm:px-8 py-2 sm:py-4 rounded-full hover:bg-neutral-500 transition-colors'
       >
         <span className="hidden sm:inline">Edit Stream</span>

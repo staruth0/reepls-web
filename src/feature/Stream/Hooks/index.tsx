@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getPublicationById,
   createPublication,
@@ -32,13 +32,23 @@ export const useGetPublicationById = (id: string) => {
 
 // Create publication
 export const useCreatePublication = () => {
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: (payload: Publication) => createPublication(payload),
+    onSuccess: () => {
+      // Invalidate publications-related queries
+      queryClient.invalidateQueries({ queryKey: ["myPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["suggestedPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["myCollaboratorPublications"] });
+    },
   });
 };
 
 // Edit publication
 export const useEditPublication = () => {
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: ({
       id,
@@ -47,13 +57,31 @@ export const useEditPublication = () => {
       id: string;
       payload: Publication
     }) => editPublication(id, payload),
+    onSuccess: (variables) => {
+      // Invalidate specific publication and related queries
+      queryClient.invalidateQueries({ queryKey: ["publication", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["myPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["suggestedPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["myCollaboratorPublications"] });
+    },
   });
 };
 
 // Delete publication
 export const useDeletePublication = () => {
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: (id: string) => deletePublication(id),
+    onSuccess: (id) => {
+      // Invalidate specific publication and related queries
+      queryClient.invalidateQueries({ queryKey: ["publication", id] });
+      queryClient.invalidateQueries({ queryKey: ["myPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["suggestedPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["myCollaboratorPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["publicationSubscribers", id] });
+      queryClient.invalidateQueries({ queryKey: ["collaborators", id] });
+    },
   });
 };
 
@@ -67,8 +95,22 @@ export const useGetMyPublications = () => {
 
 // Create or update article with publication assignment
 export const useCreateOrUpdateArticle = () => {
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: (payload:Article) => createOrUpdateArticle(payload),
+    onSuccess: (variables) => {
+      // Invalidate article-related queries
+      queryClient.invalidateQueries({ queryKey: ["articles"] });
+      queryClient.invalidateQueries({ queryKey: ["recommended-articles"] });
+      queryClient.invalidateQueries({ queryKey: ["followed-articles"] });
+      
+      // If article has publication_id, invalidate publication queries
+      if (variables.publication_id) {
+        queryClient.invalidateQueries({ queryKey: ["publication", variables.publication_id] });
+        queryClient.invalidateQueries({ queryKey: ["myPublications"] });
+      }
+    },
   });
 };
 
@@ -82,14 +124,25 @@ export const useGetUserSubscriptions = () => {
 
 // Toggle subscription (subscribe/unsubscribe)
 export const useToggleSubscription = () => {
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: ({ id}: { id: string }) => 
       toggleSubscription(id),
+    onSuccess: (variables) => {
+      // Invalidate subscription-related queries
+      queryClient.invalidateQueries({ queryKey: ["userSubscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ["publication", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["publicationSubscribers", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["suggestedPublications"] });
+    },
   });
 };
 
 // Push existing article to publication
 export const usePushArticleToPublication = () => {
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: ({
       articleId,
@@ -98,11 +151,21 @@ export const usePushArticleToPublication = () => {
       articleId: string;
       publicationId: string;
     }) => pushArticleToPublication(articleId, publicationId),
+    onSuccess: (variables) => {
+      // Invalidate article and publication queries
+      queryClient.invalidateQueries({ queryKey: ["articles"] });
+      queryClient.invalidateQueries({ queryKey: ["article", variables.articleId] });
+      queryClient.invalidateQueries({ queryKey: ["publication", variables.publicationId] });
+      queryClient.invalidateQueries({ queryKey: ["myPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["recommended-articles"] });
+    },
   });
 };
 
 // Remove article from publication
 export const useRemoveArticleFromPublication = () => {
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: ({
       publicationId,
@@ -111,13 +174,30 @@ export const useRemoveArticleFromPublication = () => {
       publicationId: string;
       articleId: string;
     }) => removeArticleFromPublication(publicationId, articleId),
+    onSuccess: (variables) => {
+      // Invalidate article and publication queries
+      queryClient.invalidateQueries({ queryKey: ["articles"] });
+      queryClient.invalidateQueries({ queryKey: ["article", variables.articleId] });
+      queryClient.invalidateQueries({ queryKey: ["publication", variables.publicationId] });
+      queryClient.invalidateQueries({ queryKey: ["myPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["recommended-articles"] });
+    },
   });
 };
 
 // Restore publication
 export const useRestorePublication = () => {
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: (id: string) => restorePublication(id),
+    onSuccess: ( id) => {
+      // Invalidate publication-related queries
+      queryClient.invalidateQueries({ queryKey: ["publication", id] });
+      queryClient.invalidateQueries({ queryKey: ["myPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["suggestedPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["myCollaboratorPublications"] });
+    },
   });
 };
 
@@ -139,6 +219,8 @@ export const useGetPublicationSubscribers = (id: string) => {
 
 // Add collaborator
 export const useAddCollaborator = () => {
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: ({
       id,
@@ -149,6 +231,13 @@ export const useAddCollaborator = () => {
       userId: string;
       permission: string;
     }) => addCollaborator(id, userId, permission),
+    onSuccess: (variables) => {
+      // Invalidate collaborator and publication queries
+      queryClient.invalidateQueries({ queryKey: ["collaborators", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["publication", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["myCollaboratorPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["userSubscriptions"] });
+    },
   });
 };
 
@@ -170,6 +259,8 @@ export const useGetMyCollaboratorPublications = () => {
 
 // Update collaborator permission
 export const useUpdateCollaboratorPermission = () => {
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: ({
       publicationId,
@@ -180,11 +271,19 @@ export const useUpdateCollaboratorPermission = () => {
       collaboratorId: string;
       permission: string;
     }) => updateCollaboratorPermission(publicationId, collaboratorId, permission),
+    onSuccess: ( variables) => {
+      // Invalidate collaborator and publication queries
+      queryClient.invalidateQueries({ queryKey: ["collaborators", variables.publicationId] });
+      queryClient.invalidateQueries({ queryKey: ["publication", variables.publicationId] });
+      queryClient.invalidateQueries({ queryKey: ["myCollaboratorPublications"] });
+    },
   });
 };
 
 // Remove collaborator
 export const useRemoveCollaborator = () => {
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: ({
       publicationId,
@@ -193,12 +292,35 @@ export const useRemoveCollaborator = () => {
       publicationId: string;
       collaboratorId: string;
     }) => removeCollaborator(publicationId, collaboratorId),
+    onSuccess: (variables) => {
+      // Invalidate collaborator and publication queries
+      queryClient.invalidateQueries({ queryKey: ["collaborators", variables.publicationId] });
+      queryClient.invalidateQueries({ queryKey: ["publication", variables.publicationId] });
+      queryClient.invalidateQueries({ queryKey: ["myCollaboratorPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["userSubscriptions"] });
+    },
   });
 };
 
 // Leave publication
 export const useLeavePublication = () => {
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: (id: string) => leavePublication(id),
+    onSuccess: (id) => {
+      // Invalidate collaborator and publication queries
+      queryClient.invalidateQueries({ queryKey: ["collaborators", id] });
+      queryClient.invalidateQueries({ queryKey: ["publication", id] });
+      queryClient.invalidateQueries({ queryKey: ["myCollaboratorPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["userSubscriptions"] });
+    },
   });
 };
+
+// Export subscription status hooks
+export { 
+  useSubscriptionStatus, 
+  useActiveSubscriptions, 
+  useMultipleSubscriptionStatus 
+} from "./useSubscriptionStatus";

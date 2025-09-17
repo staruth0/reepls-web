@@ -113,7 +113,7 @@ const Sidebar: React.FC = () => {
         try {
           const url = await uploadPostImage(authUser?.id, image);
           images.push({ url, type: MediaType.Image });
-        } catch (error) {
+        } catch {
           toast.error(
             "Your images could not be uploaded. Please try again later."
           );
@@ -126,7 +126,7 @@ const Sidebar: React.FC = () => {
         try {
           const url = await uploadPostVideo(authUser?.id, video);
           videos.push({ url, type: MediaType.Video });
-        } catch (error) {
+        } catch {
           toast.error(
             "Your videos could not be uploaded. Please try again later."
           );
@@ -149,11 +149,13 @@ const Sidebar: React.FC = () => {
         setIsCreatingPost(false);
         navigate("/feed");
       },
-      onError: (error: any) => {
-        toast.error(
-          "Error creating post: " + error?.response?.data?.message ||
-            error?.message
-        );
+      onError: (error: unknown) => {
+        const errorMessage = error && typeof error === 'object' && 'response' in error 
+          ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
+          : error && typeof error === 'object' && 'message' in error
+          ? (error as { message?: string }).message
+          : 'Unknown error occurred';
+        toast.error("Error creating post: " + errorMessage);
       },
     });
   };
@@ -163,7 +165,7 @@ const Sidebar: React.FC = () => {
 
 
   return (
-    <div className="side bg-background">
+    <div className="side bg-background hidden md:block">
       <LuCircleChevronRight
         className={cn(
           "size-7 md:size-6 p-0 rounded-full cursor-pointer",

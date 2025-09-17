@@ -1,91 +1,111 @@
-import React from 'react';
-import { CircleUserRound, Lock, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { Publication } from '../../../models/datamodels';
+import { LuUserPlus } from 'react-icons/lu';
+import AddAuthorModal from './AddAuthorModal';
+import AuthorCard from './AuthorCard';
+import { useGetCollaborators, useRemoveCollaborator } from '../Hooks';
 
-interface AuthorsTabProps {
-  authors: { id: string; name: string }[];
-  onBack: () => void;
-  onSubmit: () => void;
-  onOpenSelection: () => void;
-  onRemoveAuthor: (authorId: string) => void;
-  invitationNote: string;
-  onInvitationNoteChange: (note: string) => void;
-  streamDetails: { name: string; description: string; topics: string[] };
+interface Collaborator {
+  _id: string;
+  collaborator_id: string;
+  username: string;
+  name: string | null;
+  bio: string | null;
+  permission: string;
+  role: string;
+  is_verified_writer: boolean;
+  joinedAt: string;
 }
 
-const AuthorsTab: React.FC<AuthorsTabProps> = ({
-  authors,
-  onBack,
-  onSubmit,
-  onOpenSelection,
-  onRemoveAuthor,
-  invitationNote,
-  onInvitationNoteChange,
+interface AuthorsTabProps {
+  stream: Publication;
+}
 
-}) => {
-  const showInviteButton = authors.length > 1;
+const AuthorsTab: React.FC<AuthorsTabProps> = ({ stream }) => {
+  const [isAddAuthorModalOpen, setIsAddAuthorModalOpen] = useState(false);
+  const { data: collaboratorsData, isLoading, error, refetch } = useGetCollaborators(stream._id || '');
+  const removeCollaboratorMutation = useRemoveCollaborator();
+
+  console.log('Collaborators data:', collaboratorsData);
+
+  const collaborators = collaboratorsData?.collaborators || [];
+
+  const handleRemoveCollaborator = async (collaboratorId: string) => {
+    try {
+      await removeCollaboratorMutation.mutateAsync({
+        publicationId: stream.id || '',
+        collaboratorId: collaboratorId
+      });
+      // Refetch collaborators after successful removal
+      refetch();
+    } catch (error) {
+      console.error('Error removing collaborator:', error);
+    }
+  };
+
+  const handleChangeAccessRights = (collaboratorId: string) => {
+    // TODO: Implement change access rights functionality
+    console.log('Change access rights for collaborator:', collaboratorId);
+  };
+
 
   return (
-    <div className="max-w-xl mx-auto">
-    
-   
-      <div className="">
-        <div className="flex flex-wrap gap-4 items-center mb-8">
-          {/* Replaced old "Owner: You" component with new locked version */}
-          <div className="relative">
-            <div className="w-40 h-12 bg-neutral-200 rounded-full flex items-center justify-center p-2">
-              <Lock className="w-5 h-5 text-neutral-500" />
-              <span className="text-neutral-500 ml-2">Owner: You</span>
-            </div>
-          </div>
-          {authors.slice(1).map((author) => (
-              <div key={author.id} className="">
-              <div className=" h-12 bg-neutral-500 rounded-full flex items-center gap-2 p-2">
-                <CircleUserRound className="w-8 h-8 rounded-full text-neutral-300" />
-                <span className="text-sm font-semibold">{author.name}</span>
-                <button
-                  onClick={() => onRemoveAuthor(author.id)}
-                  className="text-neutral-500 hover:text-red-500"
-                >
-                  <X className="size-6" />
-                </button>
-              </div>
-            </div>
-          ))}
-          <button
-            onClick={onOpenSelection}
-            className="size-12 bg-primary-400 rounded-full flex items-center justify-center text-white text-2xl font-light"
-          >
-            +
-          </button>
-        </div>
-
-        {showInviteButton && (
-          <div className="mt-8">
-            <label className="block text-neutral-100 mb-2">Invitation Note</label>
-            <textarea
-              className="w-full p-2 bg-transparent text-neutral-100 border border-neutral-200 rounded-md h-32"
-              placeholder="Greetings [Name], it would be my pleasure to have you join me in streaming together on Stream Name Here. We would write about so so and so. Other benefits. Thank you for your response. Ai should refine this"
-              value={invitationNote}
-              onChange={(e) => onInvitationNoteChange(e.target.value)}
-            />
-          </div>
-        )}
-
-        <div className="flex justify-between mt-8">
-          <button
-            className="text-neutral-300 px-8 py-2 rounded-full font-bold"
-            onClick={onBack}
-          >
-            Back
-          </button>
-          <button
-            className="bg-primary-400 text-white px-8 py-2 rounded-full font-bold"
-            onClick={onSubmit}
-          >
-            {showInviteButton ? 'create and Send Invite' : 'Create'}
-          </button>
+    <div className="pb-10 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-center">
+      
+        <div
+          onClick={() => setIsAddAuthorModalOpen(true)}
+          className="text-primary-400 cursor-pointer hover:text-primary-500 transition-colors text-sm"
+        >
+          <LuUserPlus className="w-4 h-4 inline mr-2" />
+          Add Author
         </div>
       </div>
+
+      {/* Authors List */}
+      <div className="space-y-4">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="text-neutral-400">Loading collaborators...</div>
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center py-8 gap-4">
+            <div className="text-red-400 text-center">Error loading collaborators</div>
+            <button
+              onClick={() => refetch()}
+              className="bg-primary-400 text-white px-4 py-2 rounded-full hover:bg-primary-500 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        ) : collaborators.length === 0 ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="text-neutral-400 text-center">
+              <p>No collaborators yet</p>
+              <p className="text-sm mt-1">Add authors to start collaborating</p>
+            </div>
+          </div>
+        ) : (
+          collaborators.map((collaborator: Collaborator) => (
+            <AuthorCard
+              key={collaborator._id}
+              collaborator={collaborator}
+              onRemoveCollaborator={handleRemoveCollaborator}
+              onChangeAccessRights={handleChangeAccessRights}
+              isOwner={collaborator.role === 'owner'}
+              isRemoving={removeCollaboratorMutation.isPending}
+            />
+          ))
+        )}
+      </div>
+
+      {/* Add Author Modal */}
+      <AddAuthorModal
+        isOpen={isAddAuthorModalOpen}
+        onClose={() => setIsAddAuthorModalOpen(false)}
+        streamId={stream._id || stream.id || ''}
+      />
     </div>
   );
 };

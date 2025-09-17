@@ -22,7 +22,7 @@ const getUserByUsername = async (username: string): Promise<User> => {
 
 // Fetch all users
 const getAllUsers = async (): Promise<User[]> => {
-  const { data } = await apiClient.get('/users');
+  const { data } = await apiClient.get('/users/index');
   return data as User[];
 };
 

@@ -13,7 +13,7 @@ interface AuthorListItemNoCheckboxProps {
 
 const StreamItemEllipsis: React.FC<AuthorListItemNoCheckboxProps> = ({ author }) => {
   const navigate = useNavigate();
-  const id = author.id; 
+  const id = author._id; 
   const deletePublication = useDeletePublication();
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -44,7 +44,7 @@ const StreamItemEllipsis: React.FC<AuthorListItemNoCheckboxProps> = ({ author })
 
   const handleEdit = () => {
     setIsPopupOpen(false);
-    navigate(`/stream/edit/${author.id}`);
+    navigate(`/stream/edit/${author._id}`);
   };
 
   const handleDelete = () => {

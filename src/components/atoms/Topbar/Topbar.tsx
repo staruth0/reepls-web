@@ -1,74 +1,132 @@
-import React, { ReactNode, useContext } from "react";
-import { FaBars, FaTimes, FaRegUserCircle } from "react-icons/fa"; 
-import { SidebarContext } from "../../../context/SidebarContext/SidebarContext";
-import { useUser } from "../../../hooks/useUser";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-import { favicon } from "../../../assets/icons"; 
+import React, { useState, useEffect, useContext } from 'react';
+import { Bell, Brain } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { t } from 'i18next';
+import { cn } from '../../../utils';
+import { CognitiveModeContext } from '../../../context/CognitiveMode/CognitiveModeContext';
+
 
 interface TopbarProps {
-  children: ReactNode;
+  children?: React.ReactNode;
 }
 
 const Topbar: React.FC<TopbarProps> = ({ children }) => {
-  const { isOpen, toggleSidebar } = useContext(SidebarContext);
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+  const [showPopup, setShowPopup] = useState(false);
+  const [, setLastShown] = useState<number | null>(null);
+  const { isCognitiveMode, toggleCognitiveMode } = useContext(CognitiveModeContext);
 
-  const { isLoggedIn } = useUser();
+  const location = useLocation();
 
-  const handleToggleSidebar = () => {
-    toggleSidebar();
+  // Key for localStorage
+  const STORAGE_KEY = 'cognitiveModePopupLastShown';
+
+  // On mount, check if the popup should show based on last shown time
+  useEffect(() => {
+    // Get the last shown timestamp from localStorage
+    const storedLastShown = localStorage.getItem(STORAGE_KEY);
+    const currentTime = Date.now();
+    const fifteenMinutes = 15 * 60 * 1000; // 15 minutes in milliseconds
+
+    setLastShown(storedLastShown ? parseInt(storedLastShown) : null);
+
+    // Show popup if 15 minutes have passed since last shown
+    if (storedLastShown && currentTime - parseInt(storedLastShown) >= fifteenMinutes) {
+      setShowPopup(true);
+      localStorage.setItem(STORAGE_KEY, currentTime.toString());
+    }
+  }, []);
+
+  // Auto-dismiss popup after 8 seconds
+  useEffect(() => {
+    if (showPopup) {
+      const autoDismissTimer = setTimeout(() => {
+        setShowPopup(false);
+      }, 8000);
+
+      return () => clearTimeout(autoDismissTimer);
+    }
+  }, [showPopup]);
+
+  const handleBrainClick = () => {
+    toggleCognitiveMode();
   };
 
+  // Handle hover to show popup immediately
+  const handleMouseEnter = () => {
+    setShowPopup(true);
+  };
+
+  const handleMouseLeave = () => {
+    setShowPopup(false);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    // Update the last shown time when manually closed
+    const currentTime = Date.now();
+    localStorage.setItem(STORAGE_KEY, currentTime.toString());
+    setLastShown(currentTime);
+  };
+
+  // Framer Motion animation variants
+  const popupVariants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -10 },
+  };
+
+  // Dynamic message based on mode
+  const popupMessage = isCognitiveMode
+    ? t("Cognitive Mode is on! Images are hidden. Turn it off to see pictures.")
+    : t("Cognitive Mode is off! Turn it on to hide images and focus better.");
+
   return (
- 
-    <div className="h-[120px] sm:h-[80px] transition-all duration-[.5s] ease-linear w-full sm:border-b-[1px] border-neutral-500 flex flex-col justify-center sm:px-5 sticky top-0 z-[900] bg-background">
-      <div className="flex items-center justify-between px-6 h-[60px] sm:hidden">
-        <div
-          className="flex items-center gap-2 cursor-pointer"
-          onClick={() => navigate("/feed")} 
-        >
-          <img src={favicon} alt="platform icon" className="h-8 w-8 object-contain" />
-        </div>
+    <div className="w-full h-[90px] border-b border-neutral-500 sticky top-0 z-[9999] bg-background flex items-center justify-between px-4">
+      <div className={`${location.pathname.includes('/search')? 'w-full': ''}`}>{children}
+      </div>  
+      {!location.pathname.includes('/search') && <div className='flex items-center gap-2 px-2'>
+        <div className="relative">
+          <Brain
+          
+            className={cn(
+              isCognitiveMode ? 'text-primary-400' : 'text-neutral-100',
+              'cursor-pointer transition-all duration-300 ease-in-out size-6',
+              'hover:text-primary-400'
+            )}
+            onClick={handleBrainClick}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            fill={isCognitiveMode ? '#7ef038' : 'none'}
+          />
 
-       
-        <div
-          className="hamburger-menu"
-          aria-label="Toggle sidebar"
-          onClick={handleToggleSidebar}
-        >
-          {isOpen ? (
-            <FaTimes onClick={handleToggleSidebar} size={24} className="cursor-pointer text-neutral-50" /> 
-          ) : (
-            <FaBars  size={24} className="cursor-pointer text-neutral-50" /> 
-          )}
-        </div>
-      </div>
-
-
-      <div className="flex items-center justify-center px-4 h-[60px] sm:hidden">
-         {children}
-      </div>
-
-   
-      <div className="hidden sm:flex px-4 items-center justify-between w-full h-full">
-        <div className="flex w-full items-center gap-2">
-          {children}
-        </div>
-        <div>
-          {!isLoggedIn && (
-            <button
-              type="button"
-              className="md:flex hidden items-center w-40 justify-center gap-2 py-1 text-neutral-50 rounded-md shadow-sm hover:bg-primary-700 transition-colors"
-              onClick={() => navigate("/auth")}
+          {showPopup && (
+            <motion.div
+              className={cn(
+                'absolute top-0 right-12 w-64 p-4 rounded-lg shadow-lg bg-background',
+                'z-50'
+              )}
+              variants={popupVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={{ duration: 0.5, ease: 'easeInOut' }}
             >
-              <FaRegUserCircle size={16} className="text-main-green" />
-              {t("Sign In")}
-            </button>
+              <p className="text-sm font-light leading-relaxed">{popupMessage}</p>
+              <button
+                onClick={handleClosePopup}
+                className="mt-2 text-xs underline hover:text-primary-200 transition-colors"
+              >
+                {t("Got it!")}
+              </button>
+            </motion.div>
           )}
         </div>
-      </div>
+        <Link to="/notifications" className="relative md:hidden">
+          <Bell  className="size-6 text-neutral-100 cursor-pointer hover:text-primary-400" />
+          <span className="absolute top-0 right-0 -mt-2 -mr-2 rounded-full bg-red-500 text-white size-4 flex justify-center items-center text-xs">9</span>
+        </Link>
+      </div>}
     </div>
   );
 };

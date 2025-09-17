@@ -1,9 +1,7 @@
-import React, { useContext, useState, useRef, useEffect} from "react";
+import React, {  useRef, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import Topbar from "../../components/atoms/Topbar/Topbar";
 import ToggleFeed from "./components/ToogleFeed";
-import CognitiveModeIndicator from "../../components/atoms/CognitiveModeIndicator";
-import { CognitiveModeContext } from "../../context/CognitiveMode/CognitiveModeContext";
 import PodcastCard from "../Podcast/components/PodcastLayout1";
 import PodcastCard2 from "../Podcast/components/PodcastLayout2";
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
@@ -11,6 +9,7 @@ import { useGetAllPodcasts } from "../Podcast/hooks";
 import { IPodcast, User } from "../../models/datamodels";
 import Communique from "./components/Communique/Communique";
 import { Pics } from "../../assets/images";
+import MainContent from "../../components/molecules/MainContent";
 
 interface Podcast {
   id: string;
@@ -26,8 +25,8 @@ interface Podcast {
 }
 
 const FeedPodcasts: React.FC = () => {
-  const [isBrainActive, setIsBrainActive] = useState<boolean>(false);
-  const { toggleCognitiveMode } = useContext(CognitiveModeContext);
+    // const [isBrainActive, setIsBrainActive] = useState<boolean>(false);
+    // const { toggleCognitiveMode } = useContext(CognitiveModeContext);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -103,10 +102,11 @@ const FeedPodcasts: React.FC = () => {
     console.log(`Follow action for author: ${authorId}`);
   };
 
-  const handleBrainClick = () => {
-    setIsBrainActive((prev) => !prev);
-    toggleCognitiveMode();
-  };
+  // const handleBrainClick = () => {
+  //   // setIsBrainActive((prev) => !prev);
+  //       // toggleCognitiveMode();
+  //   return;
+  // };
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -150,15 +150,16 @@ const FeedPodcasts: React.FC = () => {
   );
 
   return (
+    <MainContent>
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
       <div className="min-h-screen lg:border-r-[1px] border-neutral-500">
         <Topbar>
           <div className="px-3 flex justify-between items-center w-full">
             <ToggleFeed />
-            <CognitiveModeIndicator
+            {/* <CognitiveModeIndicator
               isActive={isBrainActive}
               onClick={handleBrainClick}
-            />
+            /> */}
           </div>
         </Topbar>
 
@@ -248,6 +249,7 @@ const FeedPodcasts: React.FC = () => {
         <Communique />
       </div>
     </div>
+    </MainContent>
   );
 };
 

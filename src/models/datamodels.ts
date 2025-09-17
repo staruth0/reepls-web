@@ -86,6 +86,7 @@ export interface User {
 
 export interface Publication {
   id?: string;
+  _id?: string;
   title: string;
   short_description: string;
   description?: string;

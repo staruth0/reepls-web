@@ -101,7 +101,6 @@ const SearchAll: React.FC<SearchAllProps> = ({ query }) => {
                 <AuthorComponent
                   key={`${user._id}-${index}`}
                   username={user.username || ''}
-                  // Add any other props needed by AuthorComponent
                 />
               );
             } else {
