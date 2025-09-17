@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer } from 'react';
-import { LuLoader } from 'react-icons/lu';
+import { LuArrowLeft, LuLoader } from 'react-icons/lu';
 import { useNavigate, useParams } from 'react-router-dom'; // Added useNavigate
 import { toast } from 'react-toastify'; // Added toast
 import Topbar from '../../../components/atoms/Topbar/Topbar';
@@ -9,6 +9,7 @@ import ProfileInput from '../components/ProfileInput';
 import { useGetUserByUsername, useUpdateUser } from '../hooks';
 import { useTranslation } from 'react-i18next';
 import { updateUsernameInStorage } from '../../Auth/api/Encryption';
+import MainContent from '../../../components/molecules/MainContent';
 // import { profile } from '../../../assets/icons';
 
 // Define action types
@@ -110,10 +111,20 @@ const EditProfile: React.FC = () => {
   };
 
   return (
+    <MainContent> 
     <div className="lg:grid grid-cols-[4fr_1.66fr]">
       <div className="profile lg:border-r-[1px] min-h-screen border-neutral-500">
         <Topbar>
-          <p>{t("profile.profile")}</p>
+          <div className="flex items-center gap-2"><button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-neutral-700 rounded-full transition-colors"
+            >
+              <LuArrowLeft className="size-5 text-neutral-300" />
+            </button>
+          <p className="text-neutral-50 font-semibold">{t("Profile Edit")}</p>
+
+          </div>
+        
         </Topbar>
         <div className="profile__content sm:px-5 md:px-10 lg:px-20 ">
           <ProfileEditBody user={user!}>
@@ -173,6 +184,7 @@ const EditProfile: React.FC = () => {
         <ProfileConfigurations />
       </div>
     </div>
+    </MainContent>
   );
 };
 

@@ -5,8 +5,11 @@ import { useTranslation } from "react-i18next";
 import Tabs from "../../../components/molecules/Tabs/Tabs";
 import AuthorComponent from "../../Saved/Components/AuthorComponent";
 import { useParams } from "react-router-dom";
-import { useGetFollowers, useGetFollowing } from "../../Follow/hooks"; // Import useGetFollowing
+import { useGetFollowers, useGetFollowing } from "../../Follow/hooks"; 
 import { Follow } from "../../../models/datamodels";
+import MainContent from "../../../components/molecules/MainContent";
+import { useNavigate } from "react-router-dom";
+import { LuArrowLeft } from "react-icons/lu";
 
 const tabs = [
   { id: "1", title: "Following" },
@@ -17,7 +20,7 @@ const Followers: React.FC = () => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
   const { user_id } = useParams<{ user_id?: string }>();
-
+  const navigate = useNavigate();
   // Use correct hooks for followers and following
   const { data: followersData } = useGetFollowers(user_id || "");
   const { data: followingsData } = useGetFollowing(user_id || ""); 
@@ -29,10 +32,19 @@ const Followers: React.FC = () => {
   
 
   return (
+    <MainContent> 
     <div className={`lg:grid grid-cols-[4fr_1.66fr] `}>
       <div className="profile lg:border-r-[1px] min-h-screen border-neutral-500 ">
         <Topbar>
-          <p>{t(`profile.profile`)}</p>
+            <div className="flex items-center gap-2"><button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-neutral-700 rounded-full transition-colors"
+            >
+              <LuArrowLeft className="size-5 text-neutral-300" />
+            </button>
+            <p className="text-neutral-50 font-semibold">{t("Profile Followers")}</p>
+          </div>
+         
         </Topbar>
         <div className="sm:px-5 md:px-10 lg:px-20 ">
           <div className="mt-6 flex justify-center">
@@ -88,6 +100,7 @@ const Followers: React.FC = () => {
         <ProfileConfigurations />
       </div>
     </div>
+    </MainContent>
   );
 };
 

@@ -42,7 +42,7 @@ function Interests() {
 
   const handleLoginRedirect = () => {
     setShowSuccessPopup(false);
-    navigate('/auth/login/phone');
+    navigate('/auth/login/email');
   };
 
   return (

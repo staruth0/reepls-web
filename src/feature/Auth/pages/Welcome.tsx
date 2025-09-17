@@ -9,10 +9,10 @@ function Welcome() {
  
 
   const navigateToSignIn = () => {
-    navigate("register/phone");
+    navigate("register/email");
   };
   const navigateToSignUp = () => {
-    navigate("login/phone");
+    navigate("login/email");
   };
   const navigateToFeed = () => {
     navigate("/feed");

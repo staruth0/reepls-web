@@ -66,7 +66,7 @@ apiClient.interceptors.response.use(
           // Clear the encrypted login data on token refresh failure
           localStorage.removeItem(STORAGE_KEY);
 
-          window.location.href = '/auth/login/phone';
+          window.location.href = '/auth/login/email';
           return Promise.reject(e);
         }
       }
@@ -132,7 +132,7 @@ apiClient1.interceptors.response.use(
           // Clear the encrypted login data on token refresh failure
           localStorage.removeItem(STORAGE_KEY);
 
-          window.location.href = '/auth/login/phone';
+          window.location.href = '/auth/login/email';
           return Promise.reject(e);
         }
       }

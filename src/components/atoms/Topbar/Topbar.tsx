@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { t } from 'i18next';
 import { cn } from '../../../utils';
 import { CognitiveModeContext } from '../../../context/CognitiveMode/CognitiveModeContext';
+import { useNotificationsValues } from '../../../feature/Notifications/hooks';
 
 
 interface TopbarProps {
@@ -15,6 +16,11 @@ const Topbar: React.FC<TopbarProps> = ({ children }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [, setLastShown] = useState<number | null>(null);
   const { isCognitiveMode, toggleCognitiveMode } = useContext(CognitiveModeContext);
+
+  const { notifications } = useNotificationsValues();
+  const unreadNotifications = notifications?.filter((notif) => !notif.is_read);
+
+  const unreadCount = unreadNotifications.length;
 
   const location = useLocation();
 
@@ -124,7 +130,7 @@ const Topbar: React.FC<TopbarProps> = ({ children }) => {
         </div>
         <Link to="/notifications" className="relative md:hidden">
           <Bell  className="size-6 text-neutral-100 cursor-pointer hover:text-primary-400" />
-          <span className="absolute top-0 right-0 -mt-2 -mr-2 rounded-full bg-red-500 text-white size-4 flex justify-center items-center text-xs">9</span>
+          <span className="absolute top-0 right-0 -mt-2 -mr-2 rounded-full bg-red-500 text-white size-4 flex justify-center items-center text-xs">{unreadCount}</span>
         </Link>
       </div>}
     </div>
