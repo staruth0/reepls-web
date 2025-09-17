@@ -14,6 +14,9 @@ export const useFetchUserNotifications = () => {
   return useQuery({
     queryKey: ["userNotifications"],
     queryFn: fetchUserNotifications,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -99,5 +102,8 @@ export const useFetchVapidPublicKey = () => {
   return useQuery({
     queryKey: ['vapidPublicKey'],
     queryFn: fetchVapidPublicKey,
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours - VAPID key rarely changes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 };
