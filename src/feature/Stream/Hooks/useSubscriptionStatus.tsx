@@ -3,8 +3,7 @@ import { useGetUserSubscriptions } from "./index";
 import { 
   isUserSubscribedToPublication, 
   getSubscriptionDetails, 
-  getActiveSubscriptionIds,
-  SubscriptionResponse 
+  getActiveSubscriptionIds
 } from "../utils/subscriptionUtils";
 
 /**
