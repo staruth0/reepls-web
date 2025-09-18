@@ -7,7 +7,7 @@ import StreamSidebar from "../components/StreamSidebar";
 import { ImagePlus } from "lucide-react";
 import { useGetPublicationById, useEditPublication } from "../Hooks";
 import { useUser } from "../../../hooks/useUser";
-import { uploadUserProfile } from "../../../utils/media";
+import { uploadUserProfile,uploadUserBanner } from "../../../utils/media";
 
 const topicsList = ['politics', 'education', 'tech', 'art', 'data', 'history', 'international affairs', 'agriculture', 'science', 'health', 'business'];
 
@@ -24,6 +24,7 @@ const StreamEdit: React.FC = () => {
   const [topics, setTopics] = useState<string[]>([]);
   const [customTopic, setCustomTopic] = useState("");
   const [coverImg, setCoverImg] = useState<string | undefined>(undefined);
+  const [bannerImg, setBannerImg] = useState<string | undefined>(undefined);
   const [errors, setErrors] = useState<{ name?: string; shortDescription?: string; description?: string }>({});
 
   // Load data when streamData is available
@@ -35,6 +36,7 @@ const StreamEdit: React.FC = () => {
       setDescription(streamData.description || '');
       setTopics(streamData.tags || []);
       setCoverImg(streamData.cover_image || undefined);
+      setBannerImg(streamData.banner_image || undefined);
     }
   }, [streamData]);
 
@@ -66,6 +68,25 @@ const StreamEdit: React.FC = () => {
         });
     }
   };
+  const handleBannerImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Show preview immediately
+      const reader = new FileReader();
+      reader.onload = (e) => setBannerImg(e.target?.result as string);
+      reader.readAsDataURL(file);
+      
+      // Upload the image
+      submitBannerImage(file)
+        .then((data) => {
+          setBannerImg(data);
+          toast.success(t("Banner image updated successfully"));
+        })
+        .catch(() => {
+          toast.error(t("Failed to update banner image"));
+        });
+    }
+  };
 
   const submitCoverImage = async (file: File) => {
     if (!authUser?.id) {
@@ -74,6 +95,16 @@ const StreamEdit: React.FC = () => {
     }
     const url = await uploadUserProfile(file);
     setCoverImg(url);
+    return url;
+  };
+
+  const submitBannerImage = async (file: File) => {
+    if (!authUser?.id) {
+      toast.error(t("You must be logged in to upload a banner image"));
+      return;
+    }
+    const url = await uploadUserBanner(file);
+    setBannerImg(url);
     return url;
   };
 

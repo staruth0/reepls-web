@@ -38,7 +38,7 @@ const StreamDetails: React.FC = () => {
     if (streamData) {
       console.log('Stream data received:', streamData);
     }
-  }, [streamData]);
+  }, [streamData,id]);
 
   // Show loading skeleton
   if (isLoading) {

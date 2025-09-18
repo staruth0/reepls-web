@@ -38,6 +38,10 @@ const Profile: React.FC = () => {
   const isLoading = isLoadingUsername;
   const authorId = user?.id || "";
 
+  useEffect(() => {
+    console.log('user', user);
+  }, [user]);
+
   // Infinite scrolling hooks
   const {
     data: authorPostsData,
@@ -181,7 +185,7 @@ const Profile: React.FC = () => {
           <p>{t("profile.profile")}</p>
         </Topbar>
 
-        <div className="profile__content sm:px-5 md:px-10 lg:px-20 min-h-screen">
+        <div className="profile__content max-w-4xl mx-auto sm:px-5 md:px-10 lg:px-20 min-h-screen">
           <ProfileBody user={user}>
             <div className="sm:flex items-center">
               <div className="flex-1">

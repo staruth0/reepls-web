@@ -3,7 +3,9 @@ import { ImagePlus, Plus } from 'lucide-react';
 import { Publication } from '../../../models/datamodels';
 import { useUser } from '../../../hooks/useUser';
 import { useNavigate } from 'react-router-dom';
-import { useToggleSubscription, useGetPublicationSubscribers, useSubscriptionStatus, useGetCollaborators } from '../Hooks';
+import { useToggleSubscription, useGetCollaborators } from '../Hooks';
+import { useSubscriptionStatus } from '../../../hooks/useSubscriptionStatus';
+import { toast } from 'react-hot-toast';
 
 interface StreamHeaderProps {
   stream: Publication;
@@ -12,30 +14,34 @@ interface StreamHeaderProps {
 
 const StreamHeader: React.FC<StreamHeaderProps> = ({ stream }) => {
   const navigate = useNavigate();
-  const {data: subscribersData} = useGetPublicationSubscribers(stream?.id || '');
+ 
   const { data: collaboratorsData } = useGetCollaborators(stream._id || '');
 
-  const {authUser} = useUser();
-  const { mutate: toggleSubscription, isPending: isSubscriptionPending } = useToggleSubscription();
   
-  // Use the subscription status hook for cleaner subscription checking
-  const { isSubscribed } = useSubscriptionStatus(stream?._id || "");
-  console.log('isSubscribed',isSubscribed)
+  const { mutate: toggleSubscription, isPending: isSubscriptionPending } = useToggleSubscription();
+  const {authUser} = useUser();
+ 
+  // Use the custom subscription status hook
+  const { isSubscribed,  subscribersCount, isLoading: isSubscriptionLoading, error: subscriptionError } = useSubscriptionStatus(stream?._id || '');
+
+  useEffect(() => {
+    console.log('Subscription status:', { isSubscribed, subscribersCount, isSubscriptionLoading, subscriptionError });
+  }, [isSubscribed, subscribersCount, isSubscriptionLoading, subscriptionError]);
 
   const isCurrentAuthorstream = authUser?.id === stream?.owner_id;
 
-  useEffect(() => {
-    console.log('subscribersData',subscribersData)
- 
-  }, [subscribersData]);
-
   const handleSubscriptionToggle = () => {
-    if (stream?.id) {
+    if (stream?._id) {
       toggleSubscription(
-        { id: stream.id },
+        { id: stream._id },
         {
+          onSuccess: () => {
+            toast.success('Subscription toggled successfully');
+            console.log('Subscription toggled successfully');
+          },
           onError: (error) => {
             console.error('Subscription toggle failed:', error);
+            toast.error('Subscription toggle failed');
           }
         }
       );
@@ -87,7 +93,7 @@ const StreamHeader: React.FC<StreamHeaderProps> = ({ stream }) => {
                 className="font-bold text-neutral-50 hover:text-primary-400 cursor-pointer transition-colors"
                 onClick={() => navigate(`/stream/${stream?._id}/subscribers`)}
               >
-                {stream?.subscribers_count || 0}{" "}
+                {subscribersCount || 0}{" "}
               </span> 
            Subscribers
           </p>
@@ -105,7 +111,7 @@ const StreamHeader: React.FC<StreamHeaderProps> = ({ stream }) => {
     ) : (
       <button 
         onClick={handleSubscriptionToggle}
-        disabled={isSubscriptionPending}
+       
         className={`px-4 sm:px-8 py-2 sm:py-4 rounded-full transition-colors ${
           isSubscribed 
             ? 'bg-neutral-500 text-white hover:bg-neutral-600' 

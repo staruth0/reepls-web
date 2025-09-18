@@ -1,14 +1,9 @@
 import React, { useState } from "react";
 import { X, Book } from "lucide-react";
 import { toast } from "react-toastify";
+import { Publication } from "../../../models/datamodels";
 
-interface Publication {
-  id: string;
-  title: string;
-  cover_image?: string;
-  short_description?: string;
-  articles_count?: number;
-}
+
 
 interface PublicationSelectionModalProps {
   isOpen: boolean;
@@ -70,11 +65,11 @@ const PublicationSelectionModal: React.FC<PublicationSelectionModalProps> = ({
                 <div
                   key={publication.id}
                   className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
-                    tempSelectedId === publication.id
+                    tempSelectedId === publication._id
                       ? "bg-primary-500/10"
                       : "hover:bg-neutral-700/30"
                   }`}
-                  onClick={() => setTempSelectedId(publication.id)}
+                  onClick={() => setTempSelectedId(publication._id || null)}
                 >
                   {/* Icon */}
                   <div className="w-10 h-10 rounded-lg bg-neutral-600 flex items-center justify-center flex-shrink-0">
@@ -113,11 +108,11 @@ const PublicationSelectionModal: React.FC<PublicationSelectionModalProps> = ({
                   
                   {/* Radio Button */}
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                    tempSelectedId === publication.id
+                    tempSelectedId === publication._id
                       ? "border-primary-500 bg-primary-500"
                       : "border-neutral-400"
                   }`}>
-                    {tempSelectedId === publication.id && (
+                    {tempSelectedId === publication._id && (
                       <div className="w-2 h-2 rounded-full bg-white"></div>
                     )}
                   </div>

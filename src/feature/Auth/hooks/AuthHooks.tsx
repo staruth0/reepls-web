@@ -28,7 +28,7 @@ export const useRegisterUser = () => {
   return useMutation({
     mutationFn: (user: User) => registerUser(user),
     onSuccess: (data: LoginResponse) => {
-      login(data); // Pass the full LoginResponse to encrypt and store
+      login(data); 
     },
     onError: (error) => {
       void error;
