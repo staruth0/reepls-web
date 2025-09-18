@@ -98,6 +98,8 @@ const StreamEdit: React.FC = () => {
     return url;
   };
 
+  console.log('coverImg', bannerImg);
+
   const submitBannerImage = async (file: File) => {
     if (!authUser?.id) {
       toast.error(t("You must be logged in to upload a banner image"));
@@ -200,7 +202,7 @@ const StreamEdit: React.FC = () => {
           </Topbar>
           <div className="w-full">
             <div className="p-8">
-              <div className="text-center text-red-400">Error loading stream. Please try again.</div>
+              <div onClick={() => handleBannerImageChange} className="text-center text-red-400">Error loading stream. Please try again.</div>
             </div>
           </div>
         </div>

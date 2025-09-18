@@ -18,7 +18,7 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({ children })
   useEffect(() => {
     if (data) {  
       // Sort notifications by created_at date with newest first
-      const sortedNotifications = data.notifications.sort((a, b) => {
+      const sortedNotifications = data.notifications.sort((a: any, b: any) => {
         const dateA = new Date(a.created_at).getTime();
         const dateB = new Date(b.created_at).getTime();
         return dateB - dateA; // Newest first (descending order)
