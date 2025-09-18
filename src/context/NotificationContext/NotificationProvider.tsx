@@ -17,7 +17,13 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({ children })
 
   useEffect(() => {
     if (data) {  
-      setNotifications(data.notifications);
+      // Sort notifications by created_at date with newest first
+      const sortedNotifications = data.notifications.sort((a, b) => {
+        const dateA = new Date(a.created_at).getTime();
+        const dateB = new Date(b.created_at).getTime();
+        return dateB - dateA; // Newest first (descending order)
+      });
+      setNotifications(sortedNotifications);
     }
   }, [data]);
 
@@ -26,7 +32,15 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({ children })
 
   // Add a new notification (if needed for other purposes)
   const addNotification = (notification: Notification) => {
-    setNotifications((prev) => [notification, ...prev]);
+    setNotifications((prev) => {
+      const updated = [notification, ...prev];
+      // Sort to maintain newest first order
+      return updated.sort((a, b) => {
+        const dateA = new Date(a.created_at).getTime();
+        const dateB = new Date(b.created_at).getTime();
+        return dateB - dateA; // Newest first (descending order)
+      });
+    });
   };
 
   // // Socket.IO for real-time notifications
