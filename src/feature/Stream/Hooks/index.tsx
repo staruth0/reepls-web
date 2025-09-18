@@ -25,7 +25,7 @@ import { Article, Publication } from "../../../models/datamodels";
 // Get publication by ID
 export const useGetPublicationById = (id: string) => {
   return useQuery({
-    queryKey: ["publication"],
+    queryKey: ["publication", id],
     queryFn: () => getPublicationById(id),
   });
 };
