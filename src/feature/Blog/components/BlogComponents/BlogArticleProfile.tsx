@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import SharePopup from "../../../../components/molecules/share/SharePopup";
 import { useRoute } from "../../../../hooks/useRoute";
 import { useUser } from "../../../../hooks/useUser";
+import { useSubscriptionStatus } from "../../../../hooks/useSubscriptionStatus";
 import { Article, ArticleDuplicate, User } from "../../../../models/datamodels";
 import { useUnfollowUser } from "../../../Follow/hooks";
 import { useKnowUserFollowings } from "../../../Follow/hooks/useKnowUserFollowings";
@@ -38,7 +39,7 @@ import { timeAgo } from "../../../../utils/dateFormater";
 import { cn } from "../../../../utils"; // Make sure cn utility is imported if you use it
 import BlogRepostModal from "../BlogRepostModal";
 import { useDeleteRepost, useGetSavedReposts, useRemoveSavedRepost, useSaveRepost } from "../../../Repost/hooks/useRepost";
-import { useGetMyPublications, usePushArticleToPublication, useToggleSubscription, useGetPublicationById, useSubscriptionStatus } from "../../../Stream/Hooks";
+import { useGetMyPublications, usePushArticleToPublication, useToggleSubscription, useGetPublicationById,  } from "../../../Stream/Hooks";
 import PublicationModal from "../../../Stream/components/PublicationModal";
 
 
@@ -101,7 +102,11 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   const {data} = useGetSavedReposts();
 
   // Use the subscription status hook for cleaner subscription checking
-  const { isSubscribed, isLoading: isSubscriptionLoading } = useSubscriptionStatus(article?.publication_id || "");
+  const { 
+    isSubscribed, 
+    isLoading: isSubscriptionLoading, 
+    error: subscriptionError
+  } = useSubscriptionStatus(article?.publication_id || "");
   const {data: publication} = useGetPublicationById(article?.publication_id || "");
 
   // Check if current user is the reposted user
@@ -299,14 +304,20 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
       setShowSignInPopup(true);
       return;
     }
-    if (!article?.publication_id) return;
+    if (!article?.publication_id) {
+      toast.error("No publication ID available");
+      return;
+    }
+    if (subscriptionError) {
+      toast.error("Cannot toggle subscription due to loading error");
+      return;
+    }
 
     const newStatus = isSubscribed ? "unsubscribed" : "subscribed";
     
     toggleSubscription(
       { 
         id: article.publication_id, 
-       
       },
       {
         onSuccess: () => {
@@ -481,20 +492,23 @@ useEffect(() => {
               {article?.publication_id && (
                 <button
                   onClick={handleSubscriptionToggle}
-                  disabled={isSubscriptionPending || isSubscriptionLoading}
+                  disabled={isSubscriptionPending || isSubscriptionLoading || !!subscriptionError}
                   className={cn(
                     "text-primary-400 hover:underline ml-2 text-sm cursor-pointer transition-colors",
-                    (isSubscriptionPending || isSubscriptionLoading) ? "opacity-50 cursor-not-allowed" : "",
+                    (isSubscriptionPending || isSubscriptionLoading || !!subscriptionError) ? "opacity-50 cursor-not-allowed" : "",
                     isSubscribed ? "text-green-400" : "text-primary-400"
                   )}
+                  title={subscriptionError ? "Error loading subscription status" : ""}
                 >
                   {(isSubscriptionPending || isSubscriptionLoading) ? (
                     <>
                       <LuLoader className="animate-spin size-3 inline-block mr-1" />
                       {isSubscriptionLoading ? "Loading..." : (isSubscribed ? "Unsubscribing..." : "Subscribing...")}
                     </>
+                  ) : subscriptionError ? (
+                    "Error"
                   ) : (
-                    isSubscribed ? "Unsubscribe" : "Subscribe"
+                    isSubscribed ? " " : "Subscribe"
                   )}
                 </button>
               )}

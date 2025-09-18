@@ -80,6 +80,12 @@ const CreatePost: React.FC = () => {
   const [showPublicationModal, setShowPublicationModal] = useState<boolean>(false);
   const { data: publications } = useGetMyPublications();
 
+  useEffect(() => {
+    if (publications) {
+      console.log('Publications data received:', publications);
+    }
+  }, [publications]);
+
   const actions = [
     {
       label: 'Preview',
@@ -195,7 +201,7 @@ const CreatePost: React.FC = () => {
   const handlePublicationSelect = (publicationId: string) => {
     setSelectedPublicationId(publicationId);
     setShowPublicationModal(false);
-    const selectedPub = publications?.find((p: Publication) => p.id === publicationId);
+    const selectedPub = publications?.find((p: Publication) => p._id === publicationId);
     toast.success(`Publication "${selectedPub?.title}" selected for article!`);
   };
 
@@ -418,7 +424,7 @@ const onPublish = async () => {
                   <div className="mt-3 flex items-center gap-2 p-2 bg-primary-500/10 rounded-lg border border-primary-500/20">
                     <LuBook size={16} className="text-primary-400" />
                     <span className="text-sm text-primary-300">
-                      Publishing to: {publications?.find((p: Publication) => p.id === selectedPublicationId)?.title}
+                      Publishing to: {publications?.find((p: Publication) => p._id === selectedPublicationId)?.title}
                     </span>
                     <button
                       onClick={handleClearPublication}

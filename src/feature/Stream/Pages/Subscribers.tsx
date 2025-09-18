@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { LuArrowLeft, LuUsers } from 'react-icons/lu';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
@@ -27,6 +27,12 @@ const Subscribers: React.FC = () => {
   const handleBackClick = () => {
     navigate(`/stream/${id}`);
   };
+
+  useEffect(() => {
+ 
+    console.log('Subscribers data received:', subscribersData);
+
+  }, [publicationData, subscribersData]);
 
   return (
     <div className="lg:grid grid-cols-[4fr_1.65fr]">

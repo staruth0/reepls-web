@@ -91,6 +91,7 @@ export interface Publication {
   short_description: string;
   description?: string;
   cover_image: string;
+  banner_image?: string;
   owner_id?: string;
   articles_count?: number;
   subscribers_count?: number;
@@ -101,6 +102,18 @@ export interface Publication {
   createdAt?: Date;
   updatedAt?: Date;
   collaborators?: PublicationCollaborator[];
+}
+
+export interface Subscriber {
+  _id: string;
+  username: string;
+  bio: string;
+  is_owner: boolean;
+  is_verified_writer: boolean;
+  role: string;
+  subscription_date: string;
+  subscription_id: string;
+  subscription_status: string;
 }
 
 export interface Subscription {

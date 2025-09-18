@@ -1,34 +1,31 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AuthorListItemNoCheckbox from "./AuthorListItemNoCheckBox";
+import { useGetSuggestedPublications } from "../Hooks";
+import { Publication } from "../../../models/datamodels";
 
-const mockStreams = [
-  {
-    id: "1",
-    name: "Science dos Cameroes",
-    description: "Data science compass for young Cameroonia...",
-    tags: ["data", "machinelearning", "science"],
-  },
-  {
-    id: "2",
-    name: "Data Science Collectives",
-    description: "Data journal for CSE majors",
-    tags: ["data", "machinelearning", "science"],
-  },
-  {
-    id: "3",
-    name: "Data Army",
-    description: "Data science compass for young Cameroonians",
-    tags: ["data", "machinelearning", "science"],
-  },
-  {
-    id: "4",
-    name: "Data Army",
-    description: "Data science compass for young Cameroonians",
-    tags: ["data", "machinelearning", "science"],
-  },
-];
+
 
 const StreamSidebar: React.FC = () => {
+
+  const { data: streams, isLoading, error } = useGetSuggestedPublications();
+
+  useEffect(() => {
+    console.log(' streams in sidebar', streams);
+  }, [streams]);
+
+  // Skeleton component for loading state
+  const StreamSkeleton = () => (
+    <div className="animate-pulse mb-4">
+      <div className="flex items-center space-x-3">
+        <div className="w-12 h-12 bg-neutral-700 rounded-full"></div>
+        <div className="flex-1 space-y-2">
+          <div className="h-4 bg-neutral-700 rounded w-3/4"></div>
+          <div className="h-3 bg-neutral-700 rounded w-1/2"></div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="sticky top-0  bg-background hidden lg:block p-4 ">
       <div className="w-full h-full flex flex-col justify-between">
@@ -37,9 +34,39 @@ const StreamSidebar: React.FC = () => {
             Streams Like This
           </h3>
           <div className="mb-6">
-            {mockStreams.map((stream) => (
-              <AuthorListItemNoCheckbox key={stream.id} author={stream} />
-            ))}
+            {isLoading ? (
+              // Show skeleton loading state
+              Array.from({ length: 6 }).map((_, index) => (
+                <StreamSkeleton key={index} />
+              ))
+            ) : error ? (
+              // Show error state
+              <div className="text-center py-8">
+                <div className="text-red-400 mb-2">
+                  <i className="fas fa-exclamation-triangle text-2xl"></i>
+                </div>
+                <p className="text-neutral-400 text-sm">Failed to load streams</p>
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="text-primary-400 text-xs mt-2 hover:underline"
+                >
+                  Try again
+                </button>
+              </div>
+            ) : streams?.data?.length === 0 ? (
+              // Show empty state
+              <div className="text-center py-8">
+                <div className="text-neutral-500 mb-2">
+                  <i className="fas fa-stream text-2xl"></i>
+                </div>
+                <p className="text-neutral-400 text-sm">No streams available</p>
+              </div>
+            ): (
+              // Show actual streams
+              streams?.data?.slice(0, 6).map((stream:Publication) => (
+                <AuthorListItemNoCheckbox key={stream._id} author={stream} />
+              ))
+            )}
           </div>
         </div>
 
