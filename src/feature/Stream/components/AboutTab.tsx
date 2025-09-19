@@ -2,11 +2,16 @@ import React from 'react';
 import { Publication } from '../../../models/datamodels';
 import { LuTag} from 'react-icons/lu';
 
+
 interface AboutTabProps {
   stream: Publication;
 }
 
 const AboutTab: React.FC<AboutTabProps> = ({ stream }) => {
+
+
+
+
   return (
     <div className="pb-10 space-y-6 p-6">
       {/* Description */}

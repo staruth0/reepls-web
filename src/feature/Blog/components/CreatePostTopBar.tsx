@@ -53,7 +53,7 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({ title, mainAction, acti
 
   return (
     <>
-      <div className="w-full flex items-center justify-between px-4 lg:px-10 sticky top-0 backdrop-blur-md">
+      <div className="w-full flex items-center justify-between px-4 lg:px-10 sticky top-0  backdrop-blur-md">
         <h2 className="text-xl font-instrumentSerif overflow-hidden text-ellipsis whitespace-nowrap max-w-md">
           {t(title)}
         </h2>
@@ -122,7 +122,7 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({ title, mainAction, acti
                   transition
                   anchor="bottom"
                   className={cn(
-                    'w-40 mt-6 origin-top-right rounded-lg border border-neutral-300 bg-background py-1 px-2',
+                    'w-52 mt-6 mr-2 origin-top rounded-lg border border-neutral-300 bg-background py-1 px-2 z-[9999] ',
                     'shadow-lg relative',
                     'text-sm transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0'
                   )}

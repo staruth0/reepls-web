@@ -85,7 +85,12 @@ const StreamHeader: React.FC<StreamHeaderProps> = ({ stream }) => {
 
         <div className="flex items-center text-xs text-neutral-400 px-1">
           <p className='text-neutral-100'>
-            <span className="font-bold text-neutral-50">{collaboratorsData?.collaborators.length || 0}</span> Editor
+            <span 
+              className="font-bold text-neutral-50 hover:text-primary-400 cursor-pointer transition-colors"
+              onClick={() => navigate(`/stream/${stream?._id}/collaborators`)}
+            >
+              {collaboratorsData?.collaborators.length || 0}
+            </span> Editor
           </p>
           <p className="ml-4 text-neutral-100">
            

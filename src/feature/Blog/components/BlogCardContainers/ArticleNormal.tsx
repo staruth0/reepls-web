@@ -64,7 +64,7 @@ const ArticleNormal: React.FC<articleprobs> = ({ article }) => {
         <>
             <BlogArticleProfile
                 title={article.title || ''}
-                user={article.author_id || {}}
+                user={article.author_id || article.author || {}}
                 content={article.content || ''}
                 date={article.createdAt || ''}
                 article_id={article._id || ''}
@@ -108,7 +108,7 @@ const ArticleNormal: React.FC<articleprobs> = ({ article }) => {
                 date={article.createdAt || ''}
                 article_id={article._id || ''}
                 article={article}
-                author_of_post={article.author_id!}
+                author_of_post={article.author_id || article.author! || {}}
             />
         </>
     )

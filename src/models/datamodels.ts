@@ -175,6 +175,7 @@ export interface Article {
   thumbnail?: string;
   flagged?: boolean;
   author_id?: User;
+  author?: User;
   status?: 'Draft' | 'Published' | 'Archived';
    repost?:Repost
   createdAt?: string;
@@ -211,6 +212,7 @@ export interface ArticleDuplicate {
   text_to_speech?: string;
   flagged?: boolean;
   author_id?: User;
+  author?: User;
   status?: 'Draft' | 'Published' | 'Archived';
    repost?:Repost
   createdAt?: string;

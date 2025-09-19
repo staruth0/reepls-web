@@ -19,6 +19,9 @@ import {
   updateCollaboratorPermission,
   removeCollaborator,
   leavePublication,
+  getPublicationMedia,
+  getPublicationArticles,
+  getAllUserPublications,
 } from "../Api/";
 import { Article, Publication } from "../../../models/datamodels";
 
@@ -41,6 +44,7 @@ export const useCreatePublication = () => {
       queryClient.invalidateQueries({ queryKey: ["myPublications"] });
       queryClient.invalidateQueries({ queryKey: ["suggestedPublications"] });
       queryClient.invalidateQueries({ queryKey: ["myCollaboratorPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["allUserPublications"] });
     },
   });
 };
@@ -63,6 +67,7 @@ export const useEditPublication = () => {
       queryClient.invalidateQueries({ queryKey: ["myPublications"] });
       queryClient.invalidateQueries({ queryKey: ["suggestedPublications"] });
       queryClient.invalidateQueries({ queryKey: ["myCollaboratorPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["allUserPublications"] });
     },
   });
 };
@@ -79,6 +84,7 @@ export const useDeletePublication = () => {
       queryClient.invalidateQueries({ queryKey: ["myPublications"] });
       queryClient.invalidateQueries({ queryKey: ["suggestedPublications"] });
       queryClient.invalidateQueries({ queryKey: ["myCollaboratorPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["allUserPublications"] });
       queryClient.invalidateQueries({ queryKey: ["publicationSubscribers"] });
       queryClient.invalidateQueries({ queryKey: ["collaborators"] });
     },
@@ -196,6 +202,7 @@ export const useRestorePublication = () => {
       queryClient.invalidateQueries({ queryKey: ["myPublications"] });
       queryClient.invalidateQueries({ queryKey: ["suggestedPublications"] });
       queryClient.invalidateQueries({ queryKey: ["myCollaboratorPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["allUserPublications"] });
     },
   });
 };
@@ -235,6 +242,7 @@ export const useAddCollaborator = () => {
       queryClient.invalidateQueries({ queryKey: ["collaborators"] });
       queryClient.invalidateQueries({ queryKey: ["publication"] });
       queryClient.invalidateQueries({ queryKey: ["myCollaboratorPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["allUserPublications"] });
       queryClient.invalidateQueries({ queryKey: ["userSubscriptions"] });
     },
   });
@@ -275,6 +283,7 @@ export const useUpdateCollaboratorPermission = () => {
       queryClient.invalidateQueries({ queryKey: ["collaborators"] });
       queryClient.invalidateQueries({ queryKey: ["publication"] });
       queryClient.invalidateQueries({ queryKey: ["myCollaboratorPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["allUserPublications"] });
     },
   });
 };
@@ -296,6 +305,7 @@ export const useRemoveCollaborator = () => {
       queryClient.invalidateQueries({ queryKey: ["collaborators"] });
       queryClient.invalidateQueries({ queryKey: ["publication"] });
       queryClient.invalidateQueries({ queryKey: ["myCollaboratorPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["allUserPublications"] });
       queryClient.invalidateQueries({ queryKey: ["userSubscriptions"] });
     },
   });
@@ -312,8 +322,35 @@ export const useLeavePublication = () => {
       queryClient.invalidateQueries({ queryKey: ["collaborators"] });
       queryClient.invalidateQueries({ queryKey: ["publication"] });
       queryClient.invalidateQueries({ queryKey: ["myCollaboratorPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["allUserPublications"] });
       queryClient.invalidateQueries({ queryKey: ["userSubscriptions"] });
     },
+  });
+};
+
+// Get publication media
+export const useGetPublicationMedia = (publicationId: string) => {
+  return useQuery({
+    queryKey: ["publicationMedia", publicationId],
+    queryFn: () => getPublicationMedia(publicationId),
+    enabled: !!publicationId,
+  });
+};
+
+// Get publication articles
+export const useGetPublicationArticles = (publicationId: string) => {
+  return useQuery({
+    queryKey: ["publicationArticles", publicationId],
+    queryFn: () => getPublicationArticles(publicationId),
+    enabled: !!publicationId,
+  });
+};
+
+// Get all publications that a user is a collaborator or an owner of
+export const useGetAllUserPublications = () => {
+  return useQuery({
+    queryKey: ["allUserPublications"],
+    queryFn: () => getAllUserPublications(),
   });
 };
 

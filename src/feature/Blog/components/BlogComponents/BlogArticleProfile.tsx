@@ -39,7 +39,7 @@ import { timeAgo } from "../../../../utils/dateFormater";
 import { cn } from "../../../../utils"; // Make sure cn utility is imported if you use it
 import BlogRepostModal from "../BlogRepostModal";
 import { useDeleteRepost, useGetSavedReposts, useRemoveSavedRepost, useSaveRepost } from "../../../Repost/hooks/useRepost";
-import { useGetMyPublications, usePushArticleToPublication, useToggleSubscription, useGetPublicationById,  } from "../../../Stream/Hooks";
+import { useGetMyPublications,  useToggleSubscription, useGetPublicationById,  } from "../../../Stream/Hooks";
 import PublicationModal from "../../../Stream/components/PublicationModal";
 
 
@@ -93,7 +93,7 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   const { mutate: saveRepost, isPending: isSaveRepostPending } = useSaveRepost();
   const { mutate: removeRepost, isPending: isRemoveRepostPending } = useRemoveSavedRepost();
 
-  const { mutate: pushArticleToPublication} = usePushArticleToPublication();
+  const { mutate: pushArticleToPublication} = useUpdateArticle();
   const { mutate: toggleSubscription, isPending: isSubscriptionPending } = useToggleSubscription();
 
   const {data:publications} = useGetMyPublications();
@@ -451,15 +451,14 @@ useEffect(() => {
               <div className="lg:flex gap-1 ">
               {article?.publication_id && (
                 <div className="text-neutral-50 text-sm">
-                From Stream  <span className="text-neutral-50 font-semibold text-[15px] hover:underline cursor-pointer" onClick={() => navigate(`/stream/${article?.publication_id}`)}>{publication?.title}</span>
-                by </div>
+                From Stream  <span className="text-neutral-50 font-semibold text-[15px] hover:underline cursor-pointer" onClick={() => navigate(`/stream/${article?.publication_id}`)}>{publication?.title}</span> by </div>
               )} 
               <p
                 className="hover:underline cursor-pointer text-[15px] font-semibold"
                 onClick={() => handleProfileClick(user?.username || "")}
               >
-                {user?.name ? (
-                  user?.name
+                {(user?.name  || user?.username)? (
+                  user?.name || user?.username
                 ) : (
                   <div className="w-20 bg-neutral-500 rounded-md animate-pulse" />
                 )}
@@ -733,7 +732,9 @@ useEffect(() => {
           onPush={(articleId, publicationId) => {
             pushArticleToPublication({
               articleId,
-              publicationId
+              article: {
+                publication_id: publicationId,
+              },
             });
           }}
         />

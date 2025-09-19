@@ -4,6 +4,7 @@ import { LuUserPlus } from 'react-icons/lu';
 import AddAuthorModal from './AddAuthorModal';
 import AuthorCard from './AuthorCard';
 import { useGetCollaborators, useRemoveCollaborator } from '../Hooks';
+import { useUser } from '../../../hooks/useUser';
 
 interface Collaborator {
   _id: string;
@@ -25,6 +26,8 @@ const AuthorsTab: React.FC<AuthorsTabProps> = ({ stream }) => {
   const [isAddAuthorModalOpen, setIsAddAuthorModalOpen] = useState(false);
   const { data: collaboratorsData, isLoading, error, refetch } = useGetCollaborators(stream._id || '');
   const removeCollaboratorMutation = useRemoveCollaborator();
+
+  const {authUser} = useUser()
 
   console.log('Collaborators data:', collaboratorsData);
 
@@ -48,19 +51,22 @@ const AuthorsTab: React.FC<AuthorsTabProps> = ({ stream }) => {
     console.log('Change access rights for collaborator:', collaboratorId);
   };
 
+  const isCurrentAuthorstream = authUser?.id === stream?.owner_id;
 
   return (
     <div className="pb-10 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-center">
       
-        <div
+        {isCurrentAuthorstream && (
+          <div
           onClick={() => setIsAddAuthorModalOpen(true)}
           className="text-primary-400 cursor-pointer hover:text-primary-500 transition-colors text-sm"
         >
           <LuUserPlus className="w-4 h-4 inline mr-2" />
           Add Author
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Authors List */}
