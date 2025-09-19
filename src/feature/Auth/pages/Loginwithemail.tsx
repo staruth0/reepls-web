@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { google } from '../../../assets/icons';
 import { RootState } from '../../../store';
 import { validatePassword } from '../../../utils/validatePassword';
+import { useAuthErrorHandler } from '../../../utils/errorHandler';
 import { useLoginUser } from '../hooks/AuthHooks';
 import { useStoreCredential } from '../hooks/useStoreCredential';
 import { toast } from 'react-toastify'; // Added for toast notifications
@@ -19,49 +20,19 @@ function Loginwithemail() {
 
   // Custom hooks
   const Login = useLoginUser();
+  const getErrorMessage = useAuthErrorHandler('login');
 
   // States
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [passwordInputError, setPasswordInputError] = useState<boolean>(false);
 
-  // Function to get friendly error messages specific to email login
-  const getFriendlyErrorMessage = (error: any): string => {
-    if (!error) return t('authErrors.generic', { defaultValue: "Something went wrong. Please try again." });
-  
-    // Handle network errors
-    if (error.message?.includes("Network Error")) {
-      return t('authErrors.network', { defaultValue: "No internet connection. Check and retry." });
-    }
-  
-    // Handle API response errors
-    if (error.response?.status) {
-      const status = error.response.status as keyof typeof defaultMessages; // Type assertion
-      
-      // Default messages with explicit type
-      const defaultMessages = {
-        400: "Email or password format is wrong.",
-        401: "Wrong email or password. Try again.",
-        404: "No account found with this email. Sign up!",
-        429: "Too many attempts! Wait and retry.",
-        500: "Server error. Please try again."
-      } as const; // "as const" for precise typing
-  
-      // Type-safe access with fallback
-      return t(`authErrors.loginWithEmail.${status}`, {
-        defaultValue: defaultMessages[status] ?? t('authErrors.generic')
-      });
-    }
-  
-    return t('authErrors.generic');
-  };
-
   // Toast error notification
   useEffect(() => {
     if (Login.error) {
-      toast.error(getFriendlyErrorMessage(Login.error));
+      toast.error(getErrorMessage(Login.error));
     }
-  }, [Login.error]);
+  }, [Login.error, getErrorMessage]);
 
   // Functions to handle DOM events
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,9 +95,14 @@ function Loginwithemail() {
           isInputError={passwordInputError}
           inputErrorMessage={t('IncorrectPasswordMessage')}
         />
+        <div className="forgot__password__link">
+          <Link to="/auth/forgot-password" className="forgot__password__text">
+            {t('ForgotPassword')}
+          </Link>
+        </div>
         {Login.error && (
           <div className=" text-center py-2 text-red-500">
-            {getFriendlyErrorMessage(Login.error)}
+            {getErrorMessage(Login.error)}
           </div>
         )}
         <button type="submit" className="hover:text-white" disabled={Login.isPending}>

@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuLoader } from 'react-icons/lu';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { RootState } from '../../../../store';
 import { validatePassword } from '../../../../utils/validatePassword';
+import { useAuthErrorHandler } from '../../../../utils/errorHandler';
 import InputField from '../../components/InputField';
 import { useRegisterUser } from '../../hooks/AuthHooks';
 import { useStoreCredential } from '../../hooks/useStoreCredential';
@@ -20,84 +21,11 @@ function RegisterWithEmail1() {
 
   // Custom hooks
   const { storePassword } = useStoreCredential();
+  const getErrorMessage = useAuthErrorHandler('register');
 
   // States
   const [passwords, setPassword] = useState<string>('');
   const [passwordInputError, setPasswordInputError] = useState<boolean>(false);
-
-  // Function to get error messages from backend
-  const getErrorMessage = useCallback((error: unknown): string => {
-    if (!error) return t('authErrors.generic', { defaultValue: "Something went wrong. Please try again." });
-  
-    // Type guard for error with message property
-    const isErrorWithMessage = (err: unknown): err is { message: string } => {
-      return typeof err === 'object' && err !== null && 'message' in err && typeof (err as Record<string, unknown>).message === 'string';
-    };
-
-    // Type guard for error with response property
-    const isErrorWithResponse = (err: unknown): err is { response: { data: unknown; status: number } } => {
-      return typeof err === 'object' && err !== null && 'response' in err;
-    };
-  
-    // Handle network errors
-    if (isErrorWithMessage(error) && error.message.includes("Network Error")) {
-      return t('authErrors.network', { defaultValue: "No internet connection. Check and retry." });
-    }
-  
-    // Try to get the actual error message from backend
-    if (isErrorWithResponse(error) && error.response?.data) {
-      const backendError = error.response.data as Record<string, unknown>;
-      
-      // Check for different possible error message formats
-      if (typeof backendError.message === 'string') {
-        return backendError.message;
-      }
-      
-      if (typeof backendError.error === 'string') {
-        return backendError.error;
-      }
-      
-      if (typeof backendError.details === 'string') {
-        return backendError.details;
-      }
-      
-      if (Array.isArray(backendError.errors) && backendError.errors.length > 0) {
-        const firstError = backendError.errors[0];
-        if (typeof firstError === 'string') {
-          return firstError;
-        }
-        if (typeof firstError === 'object' && firstError !== null && 'message' in firstError && typeof (firstError as Record<string, unknown>).message === 'string') {
-          return (firstError as Record<string, unknown>).message as string;
-        }
-      }
-      
-      // If it's an object with nested messages
-      if (typeof backendError === 'object') {
-        const firstError = Object.values(backendError)[0];
-        if (typeof firstError === 'string') {
-          return firstError;
-        }
-        if (Array.isArray(firstError) && firstError.length > 0) {
-          return firstError[0] as string;
-        }
-      }
-    }
-  
-    // Fallback to status-based messages if no specific message found
-    if (isErrorWithResponse(error) && error.response?.status) {
-      const status = error.response.status;
-      const defaultMessages: Record<number, string> = {
-        400: "Invalid request. Please check your input.",
-        409: "Email already registered. Log in instead.",
-        429: "Too many sign-ups. Wait and retry.",
-        500: "Server error. Please try later."
-      };
-      return defaultMessages[status] || t('authErrors.generic');
-    }
-  
-    // Fallback for unhandled errors
-    return isErrorWithMessage(error) ? error.message : t('authErrors.generic');
-  }, [t]);
 
   // Toast error notification
   useEffect(() => {
@@ -143,9 +71,10 @@ function RegisterWithEmail1() {
         onSuccess: () => {
           navigate("/auth/register/checkemail", { state: { email } });
         },
-        onError: (error: any) => {
-          toast.error(error.response.data.message);
-          console.log("error.response.data.message", error.response.data.message);
+        onError: (error: unknown) => {
+          const errorMessage = getErrorMessage(error);
+          toast.error(errorMessage);
+          console.log("Error message:", errorMessage);
         }
       }
     );
