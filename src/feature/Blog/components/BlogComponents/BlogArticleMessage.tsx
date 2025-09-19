@@ -69,7 +69,7 @@ const BlogArticleMessage: React.FC<BlogMessageProps> = ({ title, content, articl
       >
         {content}
       </p>
-      {isArticle ? (
+      {(isArticle || slug || title)? (
         <button
           onClick={handleToggle}
           disabled={hasClicked} // Disable button after first click

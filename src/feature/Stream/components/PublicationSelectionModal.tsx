@@ -39,23 +39,23 @@ const PublicationSelectionModal: React.FC<PublicationSelectionModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]">
-      <div className="bg-neutral-800 rounded-lg p-6 w-full max-w-md mx-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
+      <div className="bg-background rounded-lg p-6 text-neutral-100 w-full max-w-md mx-4">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+          <h2 className="text-xl font-semibold text-neutral-100 flex items-center gap-2">
             <Book size={20} />
             Select Publication
           </h2>
           <button
             onClick={handleClose}
-            className="text-neutral-400 hover:text-white transition-colors"
+            className="text-neutral-100 hover:text-white transition-colors"
           >
             <X size={20} />
           </button>
         </div>
 
         <div className="mb-4">
-          <p className="text-neutral-300 text-sm mb-3">
+          <p className="text-neutral-100 text-sm mb-3">
             Choose a publication to associate with this article:
           </p>
           
@@ -87,22 +87,23 @@ const PublicationSelectionModal: React.FC<PublicationSelectionModalProps> = ({
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-white text-sm">
+                      <h3 className="font-semibold text-neutral-100 text-sm">
                         {publication.title}
                       </h3>
                     </div>
                     
                     {publication.short_description && (
-                      <p className="text-xs text-neutral-400 mt-1 truncate">
+                      <p className="text-xs text-neutral-200 mt-1 truncate">
                         {publication.short_description}
                       </p>
                     )}
                     
                     {/* Tags */}
                     <div className="flex gap-1 mt-1">
-                      <span className="text-xs text-neutral-500">#data</span>
-                      <span className="text-xs text-neutral-500">#science</span>
-                      <span className="text-xs text-neutral-500">#tech</span>
+                      {publication?.tags?.map((tag) => (
+                        <span className="text-xs text-neutral-200">#{tag}</span>
+                      ))}
+                  
                     </div>
                   </div>
                   
@@ -110,7 +111,7 @@ const PublicationSelectionModal: React.FC<PublicationSelectionModalProps> = ({
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                     tempSelectedId === publication._id
                       ? "border-primary-500 bg-primary-500"
-                      : "border-neutral-400"
+                        : "border-neutral-200"
                   }`}>
                     {tempSelectedId === publication._id && (
                       <div className="w-2 h-2 rounded-full bg-white"></div>
@@ -133,7 +134,7 @@ const PublicationSelectionModal: React.FC<PublicationSelectionModalProps> = ({
         <div className="flex gap-3">
           <button
             onClick={handleClose}
-            className="flex-1 px-4 py-2 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600 transition-colors"
+            className="flex-1 px-4 py-2 bg-neutral-700 text-neutral-100 rounded-lg hover:bg-neutral-600 transition-colors"
           >
             Cancel
           </button>

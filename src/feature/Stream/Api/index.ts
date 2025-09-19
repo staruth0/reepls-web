@@ -119,6 +119,24 @@ const leavePublication = async (id: string) => {
   return data;
 };
 
+// 21. Get publication media
+const getPublicationMedia = async (publicationId: string) => {
+  const { data } = await apiClient.get(`/publications/${publicationId}/media`);
+  return data;
+};
+
+// 22. Get publication articles
+const getPublicationArticles = async (publicationId: string) => {
+  const { data } = await apiClient.get(`/publications/${publicationId}/articles`);
+  return data;
+};
+
+// 23. Get all publications that a user is a collaborator or an owner of
+const getAllUserPublications = async () => {
+  const { data } = await apiClient.get(`/api-v1/publications/all`);
+  return data;
+};
+
 export {
   getPublicationById,
   createPublication,
@@ -139,4 +157,7 @@ export {
   updateCollaboratorPermission,
   removeCollaborator,
   leavePublication,
+  getPublicationMedia,
+  getPublicationArticles,
+  getAllUserPublications,
 };
