@@ -5,6 +5,7 @@ import {
   getUserName,
   getUserPassword,
   getUserPhone,
+  clearUserData,
 } from "../redux";
 
 export const useStoreCredential = () => {
@@ -30,5 +31,9 @@ export const useStoreCredential = () => {
     dispatch(getUserName(value));
   }
 
-  return { storeEmail, storeInterests, storeName, storePassword, storePhone };
+  function clearAllUserData() {
+    dispatch(clearUserData());
+  }
+
+  return { storeEmail, storeInterests, storeName, storePassword, storePhone, clearAllUserData };
 };

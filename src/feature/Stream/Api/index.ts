@@ -133,7 +133,7 @@ const getPublicationArticles = async (publicationId: string) => {
 
 // 23. Get all publications that a user is a collaborator or an owner of
 const getAllUserPublications = async () => {
-  const { data } = await apiClient.get(`/api-v1/publications/all`);
+  const { data } = await apiClient.get(`/publications/all`);
   return data;
 };
 

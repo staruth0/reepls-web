@@ -39,7 +39,7 @@ import { timeAgo } from "../../../../utils/dateFormater";
 import { cn } from "../../../../utils"; // Make sure cn utility is imported if you use it
 import BlogRepostModal from "../BlogRepostModal";
 import { useDeleteRepost, useGetSavedReposts, useRemoveSavedRepost, useSaveRepost } from "../../../Repost/hooks/useRepost";
-import { useGetMyPublications,  useToggleSubscription, useGetPublicationById,  } from "../../../Stream/Hooks";
+import { useGetMyPublications, usePushArticleToPublication, useToggleSubscription, useGetPublicationById,  } from "../../../Stream/Hooks";
 import PublicationModal from "../../../Stream/components/PublicationModal";
 
 
@@ -93,7 +93,7 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   const { mutate: saveRepost, isPending: isSaveRepostPending } = useSaveRepost();
   const { mutate: removeRepost, isPending: isRemoveRepostPending } = useRemoveSavedRepost();
 
-  const { mutate: pushArticleToPublication} = useUpdateArticle();
+  const { mutate: pushArticleToPublication} = usePushArticleToPublication();
   const { mutate: toggleSubscription, isPending: isSubscriptionPending } = useToggleSubscription();
 
   const {data:publications} = useGetMyPublications();
@@ -673,6 +673,9 @@ useEffect(() => {
         <SharePopup
           url={articleUrl}
           title={articleTitle}
+          subtitle={article?.subtitle}
+          thumbnail={article?.thumbnail}
+          description={article?.subtitle || article?.content?.substring(0, 160) + "..."}
           onClose={() => setShowSharePopup(false)}
         />
       )}
@@ -732,9 +735,7 @@ useEffect(() => {
           onPush={(articleId, publicationId) => {
             pushArticleToPublication({
               articleId,
-              article: {
-                publication_id: publicationId,
-              },
+              publicationId
             });
           }}
         />
