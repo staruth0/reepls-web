@@ -3,8 +3,14 @@ import { useGetMyReposts } from '../../Repost/hooks/useRepost';
 import BlogPost from '../../Blog/components/BlogPost';
 import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
 
-const ProfileReposts:React.FC = () => {
-  const { data, isLoading, error } = useGetMyReposts();
+
+
+interface ProfileRepostsProps {
+  userId: string;
+}
+
+const ProfileReposts:React.FC<ProfileRepostsProps> = ({ userId }) => {
+  const { data, isLoading, error } = useGetMyReposts(userId);
 
   useEffect(() => {
     if (data) {

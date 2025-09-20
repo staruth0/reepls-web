@@ -102,6 +102,7 @@ export interface Publication {
   createdAt?: Date;
   updatedAt?: Date;
   collaborators?: PublicationCollaborator[];
+  
 }
 
 export interface Subscriber {
@@ -114,6 +115,7 @@ export interface Subscriber {
   subscription_date: string;
   subscription_id: string;
   subscription_status: string;
+
 }
 
 export interface Subscription {

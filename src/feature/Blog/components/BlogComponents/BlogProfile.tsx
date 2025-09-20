@@ -356,7 +356,14 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
         )}
       </div>
       {showSharePopup && (
-        <SharePopup url={articleUrl} title={articleTitle} onClose={() => setShowSharePopup(false)} />
+        <SharePopup 
+          url={articleUrl} 
+          title={articleTitle} 
+          subtitle={article?.subtitle}
+          thumbnail={article?.thumbnail}
+          description={article?.subtitle || article?.content?.substring(0, 160) + "..."}
+          onClose={() => setShowSharePopup(false)} 
+        />
       )}
           {showReportPopup && (
         <ReportArticlePopup

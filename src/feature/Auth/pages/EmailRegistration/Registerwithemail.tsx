@@ -1,27 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InputField from "../../components/InputField";
 import "../../styles/authpages.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { google } from "../../../../assets/icons";
 import { useStoreCredential } from "../../hooks/useStoreCredential";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../store";
 
 function Registerwithemail() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { storeEmail } = useStoreCredential()
-  
+  const { storeEmail } = useStoreCredential();
+  const { email } = useSelector((state: RootState) => state.user);
 
   //states
-  const [email, setEmail] = useState<string>("");
+  const [emailInput, setEmailInput] = useState<string>("");
+
+  // Initialize form with stored data
+  useEffect(() => {
+    if (email) {
+      setEmailInput(email);
+    }
+  }, [email]);
+
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
+    setEmailInput(e.target.value);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    storeEmail(email);
+    storeEmail(emailInput);
     navigate("/auth/register/email/two"); // Changed to navigate to name input
   };
 
@@ -48,7 +58,7 @@ function Registerwithemail() {
       </div>
       <form onSubmit={handleSubmit}>
         <InputField
-          textValue={email}
+          textValue={emailInput}
           label={t("EmailLabel")}
           type="email"
           placeholder={t("EmailPlaceholder")}

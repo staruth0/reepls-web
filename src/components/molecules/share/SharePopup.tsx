@@ -13,10 +13,20 @@ import { t } from "i18next";
 interface SharePopupProps {
   url: string; // URL of the post to share
   title: string; // Title of the post
+  subtitle?: string; // Subtitle of the post
+  thumbnail?: string; // Thumbnail image URL
+  description?: string; // Description for social media previews
   onClose: () => void; // Function to close the popup
 }
 
-const SharePopup: React.FC<SharePopupProps> = ({ url, title, onClose }) => {
+const SharePopup: React.FC<SharePopupProps> = ({ 
+  url, 
+  title, 
+  subtitle, 
+  thumbnail, 
+  description, 
+  onClose 
+}) => {
   const [copied, setCopied] = useState(false);
 
   // Handle copy link functionality
@@ -26,8 +36,69 @@ const SharePopup: React.FC<SharePopupProps> = ({ url, title, onClose }) => {
     setTimeout(() => setCopied(false), 2000); 
   };
 
+  // Create a comprehensive description for sharing
+  const shareDescription = description || subtitle || title;
+  
+  // Use thumbnail or fallback to favicon
+  // Ensure the image URL is absolute
+  const getAbsoluteImageUrl = (imageUrl: string) => {
+    if (!imageUrl) return `${window.location.origin}/favicon.png`;
+    if (imageUrl.startsWith('http')) return imageUrl;
+    if (imageUrl.startsWith('/')) return `${window.location.origin}${imageUrl}`;
+    return `${window.location.origin}/${imageUrl}`;
+  };
+  
+  const shareImage = getAbsoluteImageUrl(thumbnail || '');
+
   useEffect(() => {
-  }, [url, title]);
+    // Update meta tags for better social media previews
+    const updateMetaTags = () => {
+      // Update or create Open Graph meta tags
+      const updateMetaTag = (property: string, content: string) => {
+        let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement;
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.setAttribute('property', property);
+          document.head.appendChild(meta);
+        }
+        meta.setAttribute('content', content);
+      };
+
+      // Update or create Twitter Card meta tags
+      const updateTwitterMetaTag = (name: string, content: string) => {
+        let meta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement;
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.setAttribute('name', name);
+          document.head.appendChild(meta);
+        }
+        meta.setAttribute('content', content);
+      };
+
+      // Set Open Graph tags
+      updateMetaTag('og:title', title);
+      updateMetaTag('og:description', shareDescription);
+      updateMetaTag('og:image', shareImage);
+      updateMetaTag('og:url', url);
+      updateMetaTag('og:type', 'article');
+
+      // Set Twitter Card tags
+      updateTwitterMetaTag('twitter:card', 'summary_large_image');
+      updateTwitterMetaTag('twitter:title', title);
+      updateTwitterMetaTag('twitter:description', shareDescription);
+      updateTwitterMetaTag('twitter:image', shareImage);
+      
+      // Debug logging
+      console.log('Share metadata updated:', {
+        title,
+        description: shareDescription,
+        image: shareImage,
+        url
+      });
+    };
+
+    updateMetaTags();
+  }, [url, title, shareDescription, shareImage]);
 
   return (
     <>
@@ -45,7 +116,10 @@ const SharePopup: React.FC<SharePopupProps> = ({ url, title, onClose }) => {
         <div className="flex flex-nowrap gap-6 overflow-x-auto justify-start pb-4">
           {/* Facebook Share */}
           <div className="flex flex-col items-center min-w-[70px]">
-            <FacebookShareButton url={url} title={title}>
+            <FacebookShareButton 
+              url={url} 
+              hashtag="#reepls"
+            >
               <FacebookIcon
                 size={40}
                 round
@@ -57,7 +131,11 @@ const SharePopup: React.FC<SharePopupProps> = ({ url, title, onClose }) => {
 
           {/* WhatsApp Share */}
           <div className="flex flex-col items-center min-w-[70px]">
-            <WhatsappShareButton url={url} title={title} separator=": ">
+            <WhatsappShareButton 
+              url={url} 
+              title={title} 
+              separator=": "
+            >
               <WhatsappIcon
                 size={40}
                 round
@@ -69,7 +147,12 @@ const SharePopup: React.FC<SharePopupProps> = ({ url, title, onClose }) => {
 
           {/* X (Twitter) Share */}
           <div className="flex flex-col items-center min-w-[70px]">
-            <TwitterShareButton url={url} title={title}>
+            <TwitterShareButton 
+              url={url} 
+              title={title}
+              via="reepls"
+              hashtags={["reepls"]}
+            >
               <XIcon
                 size={40}
                 round

@@ -270,7 +270,7 @@ const Profile: React.FC = () => {
               </>
             )}
             {activeTab === "media" && <ProfileMedia userId={user.id!} />}
-            {activeTab === "reposts" && <ProfileReposts/>}
+            {activeTab === "reposts" && <ProfileReposts userId={user.id!} />}
             {activeTab === "podcasts" && <ProfilePodcasts userId={user.id!} />}
             <div ref={bottomRef} style={{ height: "100px" }} />
           </div>

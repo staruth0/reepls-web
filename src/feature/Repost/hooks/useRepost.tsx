@@ -97,14 +97,22 @@ export const useGetCommentsTreeForRepost = (
 };
 
 /**
- * React Query hook to get paginated reposts created by the authenticated user.
+ * React Query hook to get paginated reposts created by a specific user.
+ * @param userId The ID of the user whose reposts to retrieve.
  * @param page The page number for pagination (default: 1).
  * @param limit The number of reposts per page (default: 10).
+ * @param enabled A boolean to control when the query runs (default: true).
  */
-export const useGetMyReposts = (page: number = 1, limit: number = 10) => {
+export const useGetMyReposts = (
+  userId: string, 
+  page: number = 1, 
+  limit: number = 10, 
+  enabled: boolean = true
+) => {
   return useQuery({
-    queryKey: ["my-reposts", page, limit],
-    queryFn: () => getMyReposts(page, limit),
+    queryKey: ["my-reposts", userId, page, limit],
+    queryFn: () => getMyReposts(userId, page, limit),
+    enabled: enabled && !!userId,
   });
 };
 

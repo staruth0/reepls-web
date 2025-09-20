@@ -17,7 +17,7 @@ function RegisterWithEmail1() {
   const { mutate, isPending, error } = useRegisterUser();
   const navigate = useNavigate();
 
-  const { email, username } = useSelector((state: RootState) => state.user);
+  const { email, username, password } = useSelector((state: RootState) => state.user);
 
   // Custom hooks
   const { storePassword } = useStoreCredential();
@@ -26,6 +26,13 @@ function RegisterWithEmail1() {
   // States
   const [passwords, setPassword] = useState<string>('');
   const [passwordInputError, setPasswordInputError] = useState<boolean>(false);
+
+  // Initialize form with stored data
+  useEffect(() => {
+    if (password) {
+      setPassword(password);
+    }
+  }, [password]);
 
   // Toast error notification
   useEffect(() => {
@@ -52,6 +59,7 @@ function RegisterWithEmail1() {
       setPasswordInputError(false);
     }
   };
+
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
