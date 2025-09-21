@@ -1,4 +1,4 @@
-import React, {  useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Topbar from '../../components/atoms/Topbar/Topbar';
 import { Article } from '../../models/datamodels';
 import BlogPost from '../Blog/components/BlogPost';
@@ -10,26 +10,24 @@ import './feed.scss';
 import { LuLoader } from 'react-icons/lu';
 import MainContent from '../../components/molecules/MainContent';
 
-
 const UserFeed: React.FC = () => {
-  // const { toggleCognitiveMode, isCognitiveMode } = useContext(CognitiveModeContext);
-  // const [isBrainActive, setIsBrainActive] = useState<boolean>(isCognitiveMode);
-  const bottomRef = useRef<HTMLDivElement>(null); // Ref for the bottom
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   // Fetch data
-  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetAllArticles();
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetAllArticles();
 
+  useEffect(() => {
+    console.log('data', data);
+  }, [data]);
 
-  // // Handle cognitive mode toggle
-  // const handleBrainClick = () => {
-  //   setIsBrainActive((prev) => !prev);
-  //   toggleCognitiveMode();
-  // };
-  useEffect(()=>{
-    console.log('data',data)
-  },[data])
-
-  // Auto-fetch next page when scrolling to the bottom
+  // Infinite scroll observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -38,106 +36,103 @@ const UserFeed: React.FC = () => {
         }
       },
       {
-        root: null, // Use the viewport as the scroll container
-        rootMargin: '800px', // Trigger when 800px from the viewport edge
-        threshold: 0.5, // Trigger when 50% of the bottomRef is visible
+        root: null,
+        rootMargin: '800px',
+        threshold: 0.5,
       }
     );
 
-    if (bottomRef.current) {
-      observer.observe(bottomRef.current); // Note: Should be bottomRef.current, fixed below
-    }
+    if (bottomRef.current) observer.observe(bottomRef.current);
 
     return () => {
-      if (bottomRef.current) {
-        observer.unobserve(bottomRef.current); // Note: Should be bottomRef.current, fixed below
-      }
+      if (bottomRef.current) observer.unobserve(bottomRef.current);
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  useEffect(() => {
-  }, [data]);
-
   // Function to get friendly error messages
-  const getFriendlyErrorMessage = (error: Error | { response?: { status: number }, message?: string } | null): string => {
-    if (!error) return "Something went wrong. Please try again later.";
+  const getFriendlyErrorMessage = (
+    error:
+      | Error
+      | { response?: { status: number }; message?: string }
+      | null
+  ): string => {
+    if (!error) return 'Something went wrong. Please try again later.';
 
-    // Handle common error cases
-    if (error.message?.includes("Network Error")) {
+    if (error.message?.includes('Network Error')) {
       return "Oops! It looks like you're offline. Please check your internet connection and try again.";
     }
     if ('response' in error && error.response) {
       const status = error.response.status;
       if (status === 404) {
-        return "We couldn’t find any posts right now. They might be hiding!";
+        return 'We couldn’t find any posts right now. They might be hiding!';
       }
       if (status === 500) {
-        return "Our servers are having a little hiccup. Please hang tight and try again soon.";
+        return 'Our servers are having a little hiccup. Please hang tight and try again soon.';
       }
       if (status === 429) {
-        return "Whoa, slow down! Too many requests. Give it a moment and try again.";
+        return 'Whoa, slow down! Too many requests. Give it a moment and try again.';
       }
     }
 
-    // Default fallback for unhandled errors
-    return "Something unexpected happened. We’re working on it—please try again later!";
+    return 'Something unexpected happened. We’re working on it—please try again later!';
   };
 
   return (
     <MainContent>
+      <div className="lg:grid grid-cols-[4fr_1.65fr]">
+        <div className="Feed__Posts min-h-screen lg:border-r-[1px] border-neutral-500">
+          <Topbar>
+            <div className="px-3 flex justify-between items-center w-full ">
+              <ToggleFeed />
+            </div>
+          </Topbar>
 
-<div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
-      <div className="Feed__Posts min-h-screen lg:border-r-[1px] border-neutral-500">
-        <Topbar>
-          <div className="px-3 flex justify-between items-center w-full ">
-            <ToggleFeed />
-            {/* <div className="flex items-center gap-2">
-              <CognitiveModeIndicator isActive={isBrainActive} onClick={handleBrainClick} />
-            </div> */}
-          </div>
-        </Topbar>
+          {/* Loading state */}
+          {isLoading ? (
+            <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] flex flex-col-reverse">
+              <BlogSkeletonComponent />
+              <BlogSkeletonComponent />
+            </div>
+          ) : (
+            <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] flex flex-col gap-7">
+              {data?.pages.map((page, i) => (
+                <div className="flex flex-col gap-7" key={i}>
+                  {Array.isArray(page?.articles) && page.articles.length > 0 ? (
+                    page.articles.map((article: Article) => (
+                      <BlogPost key={article._id} article={article} />
+                    ))
+                  ) : (
+                    <p className="text-neutral-400 text-center">
+                      No articles found for this page.
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
 
-        {/* Display Skeleton or Articles */}
-        {isLoading ? (
-          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse">
-            <BlogSkeletonComponent />
-            <BlogSkeletonComponent />
-          </div>
-        ) : (
-          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col gap-7">
-            {data?.pages.map((page, i) => (
-              <div className="flex flex-col gap-7" key={i}>
-                {page.articles.map((article: Article) => (
-                
-                  <BlogPost key={article._id} article={article} />
-                ))}
-              </div>
-            ))}
-          </div>
-        )}
-        {/* Loading indicator for next page */}
-        {isFetchingNextPage && (
-          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse mt-8">
-            <LuLoader className="animate-spin text-primary-400 self-center size-10 inline-block mx-4" />
-          </div>
-        )}
-        <div ref={bottomRef} style={{ height: '100px' }} />
-        {/* Friendly error display */}
-        {error && (
-          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] text-neutral-50 text-center py-4">
-            {getFriendlyErrorMessage(error)}
-          </div>
-        )}
+          {/* Next page loader */}
+          {isFetchingNextPage && (
+            <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] flex flex-col-reverse mt-8">
+              <LuLoader className="animate-spin text-primary-400 self-center size-10" />
+            </div>
+          )}
+
+          <div ref={bottomRef} style={{ height: '100px' }} />
+
+          {/* Error state */}
+          {error && (
+            <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] text-neutral-50 text-center py-4">
+              {getFriendlyErrorMessage(error)}
+            </div>
+          )}
+        </div>
+
+        <div className="communique bg-background hidden lg:block">
+          <Communique />
+        </div>
       </div>
-
-      <div className="communique bg-background hidden lg:block">
-        <Communique />
-      </div>
-    </div>
-
-
     </MainContent>
-
   );
 };
 

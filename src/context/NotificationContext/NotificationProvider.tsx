@@ -16,19 +16,20 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({ children })
   const { data } = useFetchUserNotifications();
 
   useEffect(() => {
-    if (data) {  
+    // Ensure notifications is always an array before sorting
+    const notificationArray = Array.isArray(data?.notifications) ? data.notifications : [];
+    if (notificationArray.length > 0) {
       // Sort notifications by created_at date with newest first
-      const sortedNotifications = data.notifications.sort((a: any, b: any) => {
+      const sortedNotifications = notificationArray.sort((a: any, b: any) => {
         const dateA = new Date(a.created_at).getTime();
         const dateB = new Date(b.created_at).getTime();
         return dateB - dateA; // Newest first (descending order)
       });
       setNotifications(sortedNotifications);
+    } else {
+      setNotifications([]);
     }
   }, [data]);
-
-  // Removed automatic refetching - notifications will be fetched when needed
-  // and updated via real-time updates or manual refresh
 
   // Add a new notification (if needed for other purposes)
   const addNotification = (notification: Notification) => {

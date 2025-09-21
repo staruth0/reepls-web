@@ -44,7 +44,7 @@ const allowedVideoTypes = [
 ];
 
 // All about the api
-const API_BASE_URL = config.api.baseUrl;
+const API_BASE_URL = config.api.baseUrl||'https://reepls-api.onrender.com';
 const API_VERSION = config.api.version || '/api-v1';
 const API_URL = `${API_BASE_URL}${API_VERSION}`;
 

@@ -1,5 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { toast } from 'react-toastify';
+//VITE_API_BASE_URL=https://reepls-api.onrender.com
+//VITE_API_VERSION=/api-v1
 import { API_URL, STORAGE_KEY } from '../constants';
 import {
   decryptLoginData,
