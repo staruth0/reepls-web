@@ -2,19 +2,24 @@ import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headl
 import Picker, { Theme } from 'emoji-picker-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LuCalendar, LuImage, LuLoader, LuPlus, LuSmile, LuVideo, LuX } from 'react-icons/lu';
+import { LuCalendar, LuLoader, LuPlus } from 'react-icons/lu';
 import { toast } from 'react-toastify';
 import {
   allowedImageTypes,
   allowedVideoTypes,
   MAX_IMAGE_SIZE,
   MAX_VIDEO_SIZE,
-  SHORT_POST_LENGTH,
 } from '../../../constants';
 import useTheme from '../../../hooks/useTheme';
 import { cn } from '../../../utils';
 import { useUser } from '../../../hooks/useUser';
 import SignInPopUp from '../../AnonymousUser/components/SignInPopUp';
+import cancelIcon from '../../../assets/images/cancel-reepls (2).png';
+import smile from '../../../assets/images/smile.png';
+import image from '../../../assets/images/image-02.png';
+import video from '../../../assets/images/video-02.png';
+
+const WORD_LIMIT = 2500;
 
 const PostModal = ({
   isModalOpen,
@@ -46,8 +51,6 @@ const PostModal = ({
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const highlightRef = useRef<HTMLDivElement | null>(null);
-
-  const hasContent = postContent.trim().length > 0;
 
   const handleActionBlocked = (action: string) => {
     if (!isLoggedIn) {
@@ -98,11 +101,7 @@ const PostModal = ({
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (handleActionBlocked('write a post')) return;
-    if (e.target.value.length <= SHORT_POST_LENGTH) {
-      setPostContent(e.target.value);
-    } else {
-      setPostContent(e.target.value.slice(0, SHORT_POST_LENGTH));
-    }
+    setPostContent(e.target.value);
   };
 
   const handleEmojiClick = () => setIsEmojiPickerOpen((v) => !v);
@@ -148,6 +147,13 @@ const PostModal = ({
   const highlightedHtml = postContent ? buildHighlightedHtml(postContent) : '';
   const placeholderText = isLoggedIn ? t("What's on your mind ?") : t('Sign in to post');
 
+  const wordCount = postContent.trim().split(/\s+/).filter(Boolean).length;
+
+  // Button logic: green when wordCount >= 1000
+  const isButtonGreen = wordCount >= 1000;
+  const isButtonDisabled = wordCount === 0 || wordCount > WORD_LIMIT;
+  const canPost = wordCount > 0 && wordCount <= WORD_LIMIT;
+
   return (
     <Dialog
       open={isModalOpen}
@@ -166,157 +172,185 @@ const PostModal = ({
             )}
           >
             {/* Title */}
-            <DialogTitle as="h3" className="text-lg font-semibold mb-4 relative text-center">
-              {t('Create a Post')}
-              <button onClick={() => setIsModalOpen(false)} className="absolute top-0 right-0">
-                <LuX className="size-6" />
-              </button>
-            </DialogTitle>
+         <DialogTitle
+  as="h3"
+  className="text-lg font-semibold mb-4 flex items-center justify-center relative"
+>
+  <span className="w-full text-center block">{t('Create a Post')}</span>
+  <button
+    onClick={() => setIsModalOpen(false)}
+    className="absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow hover:bg-gray-100"
+    style={{ marginRight: '0.25rem' }}
+  >
+    <img src={cancelIcon} alt="Close" className="w-6 h-6" />
+  </button>
+</DialogTitle>
 
-            {/* User Preview */}
-            {isLoggedIn && authUser && (
-              <div className="flex items-center justify-between mb-4 w-full">
-                <div className="flex items-center gap-3">
-                  {authUser.profilePicture ? (
-                    <img
-                      src={authUser.profilePicture}
-                      alt={authUser.name}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center text-white font-semibold">
-                      {authUser.name
-                        .split(' ')
-                        .map((n) => n[0])
-                        .join('')
-                        .toUpperCase()}
-                    </div>
-                  )}
+      
+{/* User Preview */}
 
-                  <div className="flex flex-col">
-                    <span className="font-medium text-base">{authUser.name}</span>
-                    <span className="text-green-500 text-xs">Shared with everyone</span>
-                  </div>
-                </div>
+{isLoggedIn && authUser && (
+  <div
+    className="flex items-center justify-between w-[90%] max-w-[600px] mx-auto mb-2"
+    style={{ marginTop: '0.5rem' }}
+  >
+    {/* Profile Picture & Name */}
+    <div className="flex items-center gap-3" style={{ marginLeft: '-32px' }}>
+      {authUser.profilePicture ? (
+        <img
+          src={authUser.profilePicture}
+          alt={authUser.name}
+          className="w-12 h-12 rounded-full object-cover" // Increased size from w-10 h-10 to w-12 h-12
+        />
+      ) : (
+        <div className="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center text-white font-semibold">
+          {authUser.name
+            .split(' ')
+            .map((n) => n[0])
+            .join('')
+            .toUpperCase()}
+        </div>
+      )}
+      <div className="flex flex-col">
+        <span className="font-semibold text-base">{authUser.name}</span>
+        <span className="text-green-500 text-[10px]">Post to everyone</span>
+      </div>
+    </div>
+    {/* 3 Dots */}
+    <div className="relative group">
+      <button className="flex flex-col items-center justify-center gap-[2px] text-black">
+        <span className="block w-1.5 h-1.5 rounded-full bg-current"></span>
+        <span className="block w-1.5 h-1.5 rounded-full bg-current"></span>
+        <span className="block w-1.5 h-1.5 rounded-full bg-current"></span>
+      </button>
+      <div className="absolute right-0 mt-2 w-44 bg-white border rounded shadow-lg p-2 hidden group-hover:block z-50">
+        <button
+          className="w-full text-left p-1 hover:bg-gray-100 flex items-center gap-2"
+          onClick={() => handleActionBlocked('add an event')}
+        >
+          <LuCalendar className="size-5" />
+          {t('Add Event')}
+        </button>
+        <button
+          className="w-full text-left p-1 hover:bg-gray-100 flex items-center gap-2"
+          onClick={() => handleActionBlocked('add other content')}
+        >
+          <LuPlus className="size-5" />
+          {t('Other')}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
-                <div className="relative group">
-                  <button className="flex flex-col items-center justify-center gap-[2px] text-gray-400 hover:text-black">
-                    <span className="block w-1.5 h-1.5 rounded-full bg-current"></span>
-                    <span className="block w-1.5 h-1.5 rounded-full bg-current"></span>
-                    <span className="block w-1.5 h-1.5 rounded-full bg-current"></span>
-                  </button>
 
-                  <div className="absolute right-0 mt-2 w-44 bg-white border rounded shadow-lg p-2 hidden group-hover:block z-50">
-                    <button
-                      className="w-full text-left p-1 hover:bg-gray-100 flex items-center gap-2"
-                      onClick={() => handleActionBlocked('add an event')}
-                    >
-                      <LuCalendar className="size-5" />
-                      {t('Add Event')}
-                    </button>
-                    <button
-                      className="w-full text-left p-1 hover:bg-gray-100 flex items-center gap-2"
-                      onClick={() => handleActionBlocked('add other content')}
-                    >
-                      <LuPlus className="size-5" />
-                      {t('Other')}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Text area with dashed top and bottom borders */}
+           
+<div className="flex flex-col items-center mb-2 relative">
+  <div
+    className="rounded-lg bg-[#f4f4f4] relative overflow-hidden"
+    style={{
+      width: '90%', // Reduced width from 100% to 80%
+      height: '344px',
+      minHeight: '250px',
+      borderRadius: '16px',
+      maxWidth: '600px', // Optional: limit max width for large screens
+    }}
+  >
+    {/* Borders */}
+    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '2px', borderRadius: '16px 16px 0 0', background: 'repeating-linear-gradient(to right, #cccccc 0 30px, transparent 30px 60px)' }} />
+    <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '2px', borderRadius: '0 0 16px 16px', background: 'repeating-linear-gradient(to right, #cccccc 0 30px, transparent 30px 60px)' }} />
+    <div style={{ position: 'absolute', top: 0, left: 0, width: '2px', height: '100%', borderRadius: '16px 0 0 16px', background: 'repeating-linear-gradient(to bottom, #cccccc 0 30px, transparent 30px 60px)' }} />
+    <div style={{ position: 'absolute', top: 0, right: 0, width: '2px', height: '100%', borderRadius: '0 16px 16px 0', background: 'repeating-linear-gradient(to bottom, #cccccc 0 30px, transparent 30px 60px)' }} />
 
-            {/* Text box */}
-            <div className="flex flex-col items-center mb-2 relative">
-              <div
-                className="w-full border-2 border-dashed border-gray-400 rounded-lg bg-[#b8b7b7] relative"
-                style={{ height: '344px', minHeight: '250px' }}
-              >
-                <div
-                  ref={highlightRef}
-                  aria-hidden
-                  className="absolute inset-0 p-3 overflow-auto whitespace-pre-wrap break-words text-left text-base leading-relaxed pointer-events-none"
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      postContent.length > 0
-                        ? highlightedHtml
-                        : !isFocused
-                        ? `<span class="text-neutral-500">${escapeHtml(placeholderText)}</span>`
-                        : '',
-                  }}
-                />
+    {/* Highlighted content */}
+    <div
+      ref={highlightRef}
+      aria-hidden
+      className="absolute inset-0 p-3 overflow-y-auto whitespace-pre-wrap break-words text-left text-base leading-relaxed pointer-events-none scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200"
+      dangerouslySetInnerHTML={{
+        __html:
+          postContent.length > 0
+            ? buildHighlightedHtml(postContent)
+            : !isFocused
+            ? `<span class="text-neutral-500">${escapeHtml(placeholderText)}</span>`
+            : '',
+      }}
+    />
 
-                <textarea
-                  ref={textareaRef}
-                  value={postContent}
-                  onChange={handleTextChange}
-                  onFocus={() => setIsFocused(true)}
-                  onBlur={() => setIsFocused(false)}
-                  onScroll={() => {
-                    if (highlightRef.current && textareaRef.current) {
-                      highlightRef.current.scrollTop = textareaRef.current.scrollTop;
-                      highlightRef.current.scrollLeft = textareaRef.current.scrollLeft;
-                    }
-                  }}
-                  className={cn(
-                    'absolute inset-0 w-full h-full resize-none bg-transparent p-3 text-base leading-relaxed outline-none z-10',
-                    !isLoggedIn ? 'cursor-not-allowed' : '',
-                    'text-transparent caret-black'
-                  )}
-                  placeholder={''}
-                  disabled={!isLoggedIn}
-                />
-              </div>
-            </div>
+    {/* Textarea */}
+    <textarea
+      ref={textareaRef}
+      value={postContent}
+      onChange={handleTextChange}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
+      onScroll={() => {
+        if (highlightRef.current && textareaRef.current) {
+          highlightRef.current.scrollTop = textareaRef.current.scrollTop;
+          highlightRef.current.scrollLeft = textareaRef.current.scrollLeft;
+        }
+      }}
+      className={cn(
+        'absolute inset-0 w-full h-full resize-none bg-transparent p-3 text-base leading-relaxed outline-none z-10 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300',
+        !isLoggedIn ? 'cursor-not-allowed' : '',
+        'text-transparent caret-black'
+      )}
+      placeholder={''}
+      disabled={!isLoggedIn}
+    />
+  </div>
+</div>
 
-            {/* Emoji / Media / Word Count */}
-            <div className="flex justify-between items-center w-full mt-3 mb-4">
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <button
-                    className="flex items-center justify-center text-gray-400 hover:text-black"
-                    title="Add Emoji"
-                    onClick={() => {
-                      if (handleActionBlocked('add an emoji')) return;
-                      handleEmojiClick();
-                    }}
-                  >
-                    <LuSmile className="size-6" />
-                  </button>
-                  {isEmojiPickerOpen && isLoggedIn && (
-                    <div className="absolute z-50 top-full mt-2">
-                      <Picker
-                        searchPlaceHolder={t('Search Emojis')}
-                        theme={theme === 'light' ? Theme.LIGHT : Theme.DARK}
-                        onEmojiClick={(emojiData) => {
-                          setPostContent((prev) => {
-                            const newText = prev + emojiData.emoji;
-                            return newText.length <= SHORT_POST_LENGTH ? newText : prev;
-                          });
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
 
-                <label className="text-gray-400 hover:text-black cursor-pointer" title="Add Image">
-                  <LuImage className="size-7" />
-                  <input type="file" accept="image/*" className="hidden" multiple onChange={onPickImage} />
-                </label>
 
-                <label className="text-gray-400 hover:text-black cursor-pointer" title="Add Video">
-                  <LuVideo className="size-6" />
-                  <input type="file" accept="video/*" className="hidden" multiple onChange={onPickVideo} />
-                </label>
-              </div>
+{/* Emoji / Media / Word Count */}
+<div className="w-[90%] max-w-[600px] mx-auto mt-2 flex justify-between items-center">
+  <div className="flex items-center gap-8">
+    <div className="relative">
+      <button
+        className="flex items-center justify-center text-gray-400 hover:text-black"
+        title="Add Emoji"
+        onClick={() => {
+          if (handleActionBlocked('add an emoji')) return;
+          handleEmojiClick();
+        }}
+      >
+        <img src={smile} alt="Add Emoji" className="w-5 h-5" />
+      </button>
+      {isEmojiPickerOpen && isLoggedIn && (
+        <div className="absolute z-50 top-full mt-2">
+          <Picker
+            searchPlaceHolder={t('Search Emojis')}
+            theme={theme === 'light' ? Theme.LIGHT : Theme.DARK}
+            onEmojiClick={(emojiData) => {
+              setPostContent((prev) => prev + emojiData.emoji);
+            }}
+          />
+        </div>
+      )}
+    </div>
 
-              <span className="text-sm font-medium">
-                <span className={cn(postContent.length <= SHORT_POST_LENGTH ? 'text-green-500' : 'text-red-500')}>
-                  {postContent.length}
-                </span>
-                <span className="text-black">/{SHORT_POST_LENGTH}</span>
-              </span>
-            </div>
+    <label className="text-gray-400 hover:text-black cursor-pointer" title="Add Image">
+      <img src={image} alt="Add Image" className="w-6 h-6" />
+      <input type="file" accept="image/*" className="hidden" multiple onChange={onPickImage} />
+    </label>
+
+    <label className="text-gray-400 hover:text-black cursor-pointer" title="Add Video">
+      <img src={video} alt="Add Video" className="w-5 h-5" />
+      <input type="file" accept="video/*" className="hidden" multiple onChange={onPickVideo} />
+    </label>
+  </div>
+
+  <span className="text-sm font-medium">
+    <span className={cn(wordCount <= WORD_LIMIT ? 'text-green-500' : 'text-red-500')}>
+      {wordCount}
+    </span>
+    <span className="text-black">/{WORD_LIMIT} words</span>
+  </span>
+</div>
+
+
 
             {/* Media Preview */}
             {(postImages.length > 0 || postVideos.length > 0) && (
@@ -325,10 +359,11 @@ const PostModal = ({
                   <div key={image.name} className="relative block h-28 w-28 flex-shrink-0">
                     <img src={URL.createObjectURL(image)} alt="post image" className="object-cover h-full w-auto rounded" />
                     <button
-                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                      className="absolute top-0 right-0 bg-transparent rounded-full p-1"
                       onClick={() => handleRemoveMedia('image', index)}
+                      style={{ width: 24, height: 24 }}
                     >
-                      <LuX className="size-3" />
+                      <img src={cancelIcon} alt="Remove" style={{ width: '100%', height: '100%' }} />
                     </button>
                   </div>
                 ))}
@@ -336,10 +371,11 @@ const PostModal = ({
                   <div key={video.name} className="relative w-28 h-28 flex-shrink-0">
                     <video src={URL.createObjectURL(video)} className="object-cover w-auto h-full rounded" />
                     <button
-                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                      className="absolute top-0 right-0 bg-transparent rounded-full p-1"
                       onClick={() => handleRemoveMedia('video', index)}
+                      style={{ width: 24, height: 24 }}
                     >
-                      <LuX className="size-3" />
+                      <img src={cancelIcon} alt="Remove" style={{ width: '100%', height: '100%' }} />
                     </button>
                   </div>
                 ))}
@@ -351,12 +387,14 @@ const PostModal = ({
               <button
                 className={cn(
                   'py-2 px-10 rounded-full font-semibold transition-all duration-300',
-                  hasContent
+                  isButtonGreen
+                    ? 'border-2 border-green-500 bg-green-500 text-white cursor-pointer'
+                    : canPost
                     ? 'border-2 border-green-500 text-black hover:bg-green-500 hover:text-white cursor-pointer'
                     : 'border-2 border-gray-300 text-gray-400 cursor-not-allowed'
                 )}
                 onClick={handlePostClick}
-                disabled={!hasContent}
+                disabled={isButtonDisabled}
               >
                 {isPending ? (
                   <LuLoader className="animate-spin inline-block mr-2" />
