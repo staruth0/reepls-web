@@ -6,9 +6,9 @@ import BlogSkeletonComponent from '../Blog/components/BlogSkeleton';
 import { useGetAllArticles } from '../Blog/hooks/useArticleHook';
 import Communique from './components/Communique/Communique';
 import ToggleFeed from './components/ToogleFeed';
-import './feed.scss';
-import { LuLoader } from 'react-icons/lu';
+
 import MainContent from '../../components/molecules/MainContent';
+import { LucideLoader } from 'lucide-react';
 
 
 const UserFeed: React.FC = () => {
@@ -118,7 +118,7 @@ const UserFeed: React.FC = () => {
         {/* Loading indicator for next page */}
         {isFetchingNextPage && (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse mt-8">
-            <LuLoader className="animate-spin text-primary-400 self-center size-10 inline-block mx-4" />
+            <LucideLoader className="animate-spin text-primary-400 self-center size-10 inline-block mx-4" />
           </div>
         )}
         <div ref={bottomRef} style={{ height: '100px' }} />
