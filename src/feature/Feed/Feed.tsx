@@ -102,6 +102,7 @@ const UserFeed: React.FC = () => {
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse">
             <BlogSkeletonComponent />
             <BlogSkeletonComponent />
+            <BlogSkeletonComponent />
           </div>
         ) : (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col gap-7">
