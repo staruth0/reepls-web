@@ -91,6 +91,26 @@
 
   }
 
+  .forgot__password__link {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -0.5rem;
+    margin-bottom: 0.5rem;
+
+    .forgot__password__text {
+      font-size: 14px;
+      color: var(--main-green);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: var(--primary-300);
+        text-decoration: underline;
+      }
+    }
+  }
+
   .bottom__links{
     font-size: 16px;
     @include mixin.flex-center;

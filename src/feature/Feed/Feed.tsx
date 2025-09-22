@@ -6,9 +6,9 @@ import BlogSkeletonComponent from '../Blog/components/BlogSkeleton';
 import { useGetAllArticles } from '../Blog/hooks/useArticleHook';
 import Communique from './components/Communique/Communique';
 import ToggleFeed from './components/ToogleFeed';
-import './feed.scss';
-import { LuLoader } from 'react-icons/lu';
+
 import MainContent from '../../components/molecules/MainContent';
+
 
 const UserFeed: React.FC = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -87,46 +87,38 @@ const UserFeed: React.FC = () => {
             </div>
           </Topbar>
 
-          {/* Loading state */}
-          {isLoading ? (
-            <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] flex flex-col-reverse">
-              <BlogSkeletonComponent />
-              <BlogSkeletonComponent />
-            </div>
-          ) : (
-            <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] flex flex-col gap-7">
-              {data?.pages.map((page, i) => (
-                <div className="flex flex-col gap-7" key={i}>
-                  {Array.isArray(page?.articles) && page.articles.length > 0 ? (
-                    page.articles.map((article: Article) => (
-                      <BlogPost key={article._id} article={article} />
-                    ))
-                  ) : (
-                    <p className="text-neutral-400 text-center">
-                      No articles found for this page.
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Next page loader */}
-          {isFetchingNextPage && (
-            <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] flex flex-col-reverse mt-8">
-              <LuLoader className="animate-spin text-primary-400 self-center size-10" />
-            </div>
-          )}
-
-          <div ref={bottomRef} style={{ height: '100px' }} />
-
-          {/* Error state */}
-          {error && (
-            <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] text-neutral-50 text-center py-4">
-              {getFriendlyErrorMessage(error)}
-            </div>
-          )}
-        </div>
+        {/* Display Skeleton or Articles */}
+        {isLoading ? (
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse">
+            <BlogSkeletonComponent />
+            <BlogSkeletonComponent />
+          </div>
+        ) : (
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col gap-7">
+            {data?.pages.map((page, i) => (
+              <div className="flex flex-col gap-7" key={i}>
+                {page.articles.map((article: Article) => (
+                
+                  <BlogPost key={article._id} article={article} />
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+        {/* Loading indicator for next page */}
+        {isFetchingNextPage && (
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse mt-8">
+            <LuLoader className="animate-spin text-primary-400 self-center size-10 inline-block mx-4" />
+          </div>
+        )}
+        <div ref={bottomRef} style={{ height: '100px' }} />
+        {/* Friendly error display */}
+        {error && (
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] text-neutral-50 text-center py-4">
+            {getFriendlyErrorMessage(error)}
+          </div>
+        )}
+      </div>
 
         <div className="communique bg-background hidden lg:block">
           <Communique />

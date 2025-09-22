@@ -85,13 +85,14 @@ export const deleteRepost = async (repostId: string): Promise<DeleteRepostRespon
 };
 
 /**
- * Retrieves paginated list of reposts created by the authenticated user.
+ * Retrieves paginated list of reposts created by a specific user.
+ * @param userId The ID of the user whose reposts to retrieve.
  * @param page The page number for pagination (default: 1).
  * @param limit The number of reposts per page (default: 10).
  * @returns The paginated reposts data.
  */
-export const getMyReposts = async (page: number = 1, limit: number = 10): Promise<GetMyRepostsResponse> => {
-  const { data } = await apiClient.get(`/reposts/my?page=${page}&limit=${limit}`);
+export const getMyReposts = async (userId: string, page: number = 1, limit: number = 10): Promise<GetMyRepostsResponse> => {
+  const { data } = await apiClient.get(`/reposts/my/${userId}?page=${page}&limit=${limit}`);
   return data;
 };
 

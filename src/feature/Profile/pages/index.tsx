@@ -20,6 +20,7 @@ import { useGetAuthorArticles, useGetAuthorPosts } from "../../Blog/hooks/useArt
 import ProfileRightSideSkeleton from "../components/ProfileRightSideSkeleton";
 import { getDecryptedUser } from "../../Auth/api/Encryption";
 import ProfileReposts from "../components/ProfileReposts";
+import ProfilePodcasts from "../components/ProfilePodcasts";
 import MainContent from "../../../components/molecules/MainContent";
 // import { useGetMyReposts } from "../../Repost/hooks/useRepost";
 
@@ -269,8 +270,8 @@ const Profile: React.FC = () => {
               </>
             )}
             {activeTab === "media" && <ProfileMedia userId={user.id!} />}
-            {activeTab === "reposts" && <ProfileReposts/>}
-            {activeTab === "podcasts" && <ProfileMedia userId={user.id!} />}
+            {activeTab === "reposts" && <ProfileReposts userId={user.id!} />}
+            {activeTab === "podcasts" && <ProfilePodcasts userId={user.id!} />}
             <div ref={bottomRef} style={{ height: "100px" }} />
           </div>
         </div>

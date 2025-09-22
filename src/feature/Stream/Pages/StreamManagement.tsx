@@ -1,14 +1,20 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ProfileConfigurations from '../../Profile/components/ProfileConfigurations'
 import Topbar from '../../../components/atoms/Topbar/Topbar'
 import { t } from 'i18next'
 import Tabs from '../../../components/molecules/Tabs/Tabs'
 import NoStream from '../components/NoStream'
 import ContributorStreams from '../components/ContributorStreams'
-import { useGetMyPublications } from '../Hooks'
+import { useGetMyCollaboratorPublications, useGetMyPublications } from '../Hooks'
 
 const StreamManagement:React.FC = () => {
   const { data: streams, isLoading, error } = useGetMyPublications();
+
+  const { data: contributorStreams } = useGetMyCollaboratorPublications();
+
+  useEffect(() => {
+    console.log('contributorStreams', contributorStreams);
+  }, [contributorStreams]);
 
     const tabs = [
 

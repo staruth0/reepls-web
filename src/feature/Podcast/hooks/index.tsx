@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import {
   uploadStandalonePodcast,
   createArticleWithPodcast,
@@ -80,6 +80,28 @@ export const useGetAllPodcasts = (params?: UseGetAllPodcastsParams) => {
   return useQuery({
     queryKey: ['podcasts', params] as const,
     queryFn: () => getAllPodcasts(params),
+  });
+};
+
+// Infinite query hook for podcasts with pagination
+export const useGetAllPodcastsInfinite = (params?: Omit<UseGetAllPodcastsParams, 'page'>) => {
+  return useInfiniteQuery({
+    queryKey: ['podcasts', 'infinite', params] as const,
+    queryFn: ({ pageParam = 1 }) => getAllPodcasts({ ...params, page: pageParam }),
+    initialPageParam: 1,
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    getNextPageParam: (lastPage, allPages) => {
+      // Based on your data structure: {success: true, data: {limit: 10, page: 1, results: [...], totalPages: 4, totalResults: 39}}
+      const currentPage = allPages.length;
+      const totalPages = lastPage?.data?.totalPages;
+      
+      if (totalPages && currentPage < totalPages) {
+        return currentPage + 1;
+      }
+      return undefined; // No more pages
+    },
   });
 };
 

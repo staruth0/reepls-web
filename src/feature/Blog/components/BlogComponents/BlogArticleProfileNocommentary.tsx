@@ -515,6 +515,9 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
         <SharePopup
           url={articleUrl}
           title={articleTitle}
+          subtitle={article?.subtitle}
+          thumbnail={article?.thumbnail}
+          description={article?.subtitle || article?.content?.substring(0, 160) + "..."}
           onClose={() => setShowSharePopup(false)}
         />
       )}

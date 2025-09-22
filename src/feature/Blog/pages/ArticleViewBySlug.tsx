@@ -504,7 +504,14 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
 
       {/* Popups */}
       {showSharePopup && (
-        <SharePopup url={articleUrl} title={articleTitle} onClose={() => setShowSharePopup(false)} />
+        <SharePopup 
+          url={articleUrl} 
+          title={articleTitle} 
+          subtitle={article?.subtitle}
+          thumbnail={article?.thumbnail}
+          description={article?.subtitle || article?.content?.substring(0, 160) + "..."}
+          onClose={() => setShowSharePopup(false)} 
+        />
       )}
       {showSignInPopup && (
         <SignInPopUp text={showSignInPopup} position="above" onClose={() => setShowSignInPopup(null)} />

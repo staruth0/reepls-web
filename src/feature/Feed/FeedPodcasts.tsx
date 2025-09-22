@@ -1,15 +1,16 @@
-import React, {  useRef, useEffect} from "react";
+import React, {  useRef, useEffect, useCallback} from "react";
 import { useNavigate } from "react-router-dom";
 import Topbar from "../../components/atoms/Topbar/Topbar";
 import ToggleFeed from "./components/ToogleFeed";
 import PodcastCard from "../Podcast/components/PodcastLayout1";
 import PodcastCard2 from "../Podcast/components/PodcastLayout2";
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
-import { useGetAllPodcasts } from "../Podcast/hooks";
+import { useGetAllPodcastsInfinite } from "../Podcast/hooks";
 import { IPodcast, User } from "../../models/datamodels";
 import Communique from "./components/Communique/Communique";
 import { Pics } from "../../assets/images";
 import MainContent from "../../components/molecules/MainContent";
+import { LucideLoader2 } from "lucide-react";
 
 interface Podcast {
   id: string;
@@ -19,6 +20,7 @@ interface Podcast {
   description: string;
   publishDate: string;
   listenTime: string;
+  audioUrl: string;
   likes: number;
   comments: number;
   isBookmarked: boolean;
@@ -28,12 +30,20 @@ const FeedPodcasts: React.FC = () => {
     // const [isBrainActive, setIsBrainActive] = useState<boolean>(false);
     // const { toggleCognitiveMode } = useContext(CognitiveModeContext);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
 
-  // Fetch podcasts from API
-  const { data: podcastsAPI, isLoading } = useGetAllPodcasts({
-    page: 1,
+  // Fetch podcasts from API with infinite query
+  const { 
+    data: podcastsAPI, 
+    isLoading, 
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    isError,
+    error
+  } = useGetAllPodcastsInfinite({
     limit: 10,
     category: "",
     sortBy: "createdAt",
@@ -69,17 +79,21 @@ const FeedPodcasts: React.FC = () => {
       description: p.description || "",
       publishDate: formatDate(p.createdAt?.toString()),
       listenTime: formatDuration(p.audio?.duration),
+      audioUrl: p.audio?.url || "",
       likes: 0,
       comments: p.commentsCount ?? 0,
       isBookmarked: false,
     };
   };
 
-  // Map API data or empty array
-  const podcasts: Podcast[] =
-    podcastsAPI?.data?.results?.length > 0
-      ? podcastsAPI.data.results.map(apiPodcastToCardPodcast)
-      : [];
+  // Map API data from infinite query or empty array
+  const podcasts: Podcast[] = podcastsAPI?.pages && podcastsAPI.pages.length > 0
+    ? podcastsAPI.pages.flatMap(page => 
+        page?.data?.results?.length > 0 
+          ? page.data.results.map(apiPodcastToCardPodcast)
+          : []
+      )
+    : [];
 
   // Handlers for actions
   const handleLike = (podcastId: string) => {
@@ -125,6 +139,35 @@ const FeedPodcasts: React.FC = () => {
       });
     }
   };
+
+  const handleLoadMore = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  // Infinite scroll detection
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentRef = loadMoreRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   // Skeleton placeholder component for horizontal cards
   const PodcastCardSkeleton: React.FC = () => (
@@ -200,8 +243,7 @@ const FeedPodcasts: React.FC = () => {
               ? podcasts.map((podcast) => (
                   <div
                     key={podcast.id}
-                    className="flex-shrink-0 w-[365px] mr-4 cursor-pointer"
-                    onClick={() => handlePodcastClick(podcast.id)}
+                    className="flex-shrink-0 w-[365px] mr-4"
                   >
                     <PodcastCard
                       podcast={podcast}
@@ -209,6 +251,7 @@ const FeedPodcasts: React.FC = () => {
                       onComment={handleComment}
                       onBookmark={handleBookmark}
                       onFollow={handleFollow}
+                      onReadMore={handlePodcastClick}
                     />
                   </div>
                 ))
@@ -229,8 +272,7 @@ const FeedPodcasts: React.FC = () => {
               : podcasts.map((podcast) => (
                   <div 
                     key={podcast.id}
-                    className="cursor-pointer"
-                    onClick={() => handlePodcastClick(podcast.id)}
+                    className=""
                   >
                     <PodcastCard2
                       podcast={podcast}
@@ -238,10 +280,48 @@ const FeedPodcasts: React.FC = () => {
                       onComment={handleComment}
                       onBookmark={handleBookmark}
                       onFollow={handleFollow}
+                      onReadMore={handlePodcastClick}
                     />
                   </div>
                 ))}
           </div>
+          
+          {/* Load More Button */}
+          {hasNextPage && (
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={handleLoadMore}
+                disabled={isFetchingNextPage}
+                className="px-6 py-3  text-white rounded-full hover:bg-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center gap-2"
+              >
+                {isFetchingNextPage ? (
+                  <>
+                   <LucideLoader2 className="animate-spin text-primary-400 text-2xl" />
+                  </>
+                ) : (
+                  ''
+                )}
+              </button>
+            </div>
+          )}
+          
+          {/* Intersection Observer Trigger */}
+          <div ref={loadMoreRef} className="h-4" />
+          
+          {/* Error State */}
+          {isError && (
+            <div className="text-center mt-6">
+              <p className="text-red-400 mb-4">
+                Failed to load podcasts: {error?.message || 'Unknown error'}
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-neutral-700 text-neutral-300 rounded-lg hover:bg-neutral-600 transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

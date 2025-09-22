@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Publication } from '../../../models/datamodels';
 import { LuTag} from 'react-icons/lu';
+import { useGetAllUserPublications } from '../Hooks';
+
 
 interface AboutTabProps {
   stream: Publication;
 }
 
 const AboutTab: React.FC<AboutTabProps> = ({ stream }) => {
+
+
+const {data: allUserPublications} = useGetAllUserPublications();
+
+  useEffect(() => {
+    console.log('allUserPublications', allUserPublications);
+  }, [allUserPublications]);
+
   return (
     <div className="pb-10 space-y-6 p-6">
       {/* Description */}

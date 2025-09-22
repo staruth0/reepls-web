@@ -3,7 +3,8 @@ import { useGetMySavedPodcasts } from '../../Podcast/hooks';
 import { Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatDateWithMonth } from '../../../utils/dateFormater';
-import PodcastCard from '../../Podcast/components/PodcastLayout1';
+
+import PodcastCard2 from '../../Podcast/components/PodcastLayout2';
 
 
 
@@ -85,66 +86,88 @@ const SavedPodcastsContainer: React.FC<SavedPodcastsContainerProps> = ({ classNa
   return (
     <div className={`w-full ${className}`}>
       <div className="grid grid-cols-1 gap-6">
-        {savedPodcastsData.data.savedPodcasts.map((savedPodcast: { 
-          _id: string;
-          podcastId: {
+        {savedPodcastsData.data.savedPodcasts
+          .filter((savedPodcast: { 
             _id: string;
-            thumbnailUrl?: string;
-            authorId?: {
+            podcastId: {
               _id: string;
-              name: string;
-              profile_picture?: string;
-              is_verified_writer?: boolean;
+              thumbnailUrl?: string;
+              authorId?: {
+                _id: string;
+                name: string;
+                profile_picture?: string;
+                is_verified_writer?: boolean;
+              };
+              title?: string;
+              description?: string;
+              createdAt: string;
+              audio?: {
+                duration?: number;
+              };
+              likesCount?: number;
+              commentsCount?: number;
+            } | null;
+          }) => savedPodcast.podcastId !== null) // Filter out null podcastId
+          .map((savedPodcast: { 
+            _id: string;
+            podcastId: {
+              _id: string;
+              thumbnailUrl?: string;
+              authorId?: {
+                _id: string;
+                name: string;
+                profile_picture?: string;
+                is_verified_writer?: boolean;
+              };
+              title?: string;
+              description?: string;
+              createdAt: string;
+              audio?: {
+                duration?: number;
+              };
+              likesCount?: number;
+              commentsCount?: number;
             };
-            title?: string;
-            description?: string;
-            createdAt: string;
-            audio?: {
-              duration?: number;
-            };
-            likesCount?: number;
-            commentsCount?: number;
-          };
-        }) => {
-          const podcast = savedPodcast.podcastId;
+          }) => {
+            const podcast = savedPodcast.podcastId;
 
+            // Additional safety check
+            if (!podcast) {
+              return null;
+            }
          
-          const cardPodcast = {
-            id: podcast._id,
-            thumbnailUrl: podcast.thumbnailUrl || 'https://placehold.co/400x200/444444/FFFFFF?text=Podcast+Thumbnail',
-            author: {
-              id: podcast.authorId?._id || '',
-              name: podcast.authorId?.name || 'Unknown',
-              avatarUrl: podcast.authorId?.profile_picture || '',
-              isVerified: podcast.authorId?.is_verified_writer || false,
-            },
-            title: podcast.title || "Untitled Podcast",
-            description: podcast.description || "",
-            publishDate: formatDateWithMonth(podcast.createdAt),
-            listenTime: formatDuration(podcast.audio?.duration),
-            likes: podcast.likesCount || 0,
-            comments: podcast.commentsCount || 0,
-            isBookmarked: true, 
-          };
+            const cardPodcast = {
+              id: podcast._id,
+              thumbnailUrl: podcast.thumbnailUrl || 'https://placehold.co/400x200/444444/FFFFFF?text=Podcast+Thumbnail',
+              author: {
+                id: podcast.authorId?._id || '',
+                name: podcast.authorId?.name || 'Unknown',
+                avatarUrl: podcast.authorId?.profile_picture || '',
+                isVerified: podcast.authorId?.is_verified_writer || false,
+              },
+              title: podcast.title || "Untitled Podcast",
+              description: podcast.description || "",
+              publishDate: formatDateWithMonth(podcast.createdAt),
+              listenTime: formatDuration(podcast.audio?.duration),
+              likes: podcast.likesCount || 0,
+              comments: podcast.commentsCount || 0,
+              isBookmarked: true, 
+            };
 
-          return (
-            <div
-              key={savedPodcast._id}
-              className="cursor-pointer"
-              onClick={() => handlePodcastClick(cardPodcast.id)}
-            >
-              {/* Using PodcastCard with the correctly mapped data */}
-              <PodcastCard
-                podcast={cardPodcast}
-                onLike={() => { /* You can add a like action here if needed */ }}
-                onComment={() => { /* You can add a comment action here if needed */ }}
-                onBookmark={() => { /* You can add a bookmark action here if needed */ }}
-                onFollow={() => { /* You can add a follow action here if needed */ }}
-              
-              />
-            </div>
-          );
-        })}
+            return (
+              <div
+                key={savedPodcast._id}
+                className="cursor-pointer"
+                onClick={() => handlePodcastClick(cardPodcast.id)}
+              >
+               
+                <PodcastCard2
+                  podcast={cardPodcast}
+                 
+                />
+              </div>
+            );
+          })}
       </div>
     </div>
   );

@@ -4,6 +4,9 @@ import Registerwithemail from "../feature/Auth/pages/EmailRegistration/Registerw
 import RegisterWithEmail1 from "../feature/Auth/pages/EmailRegistration/RegisterWithEmail1";
 import RegisterWithEmail2 from "../feature/Auth/pages/EmailRegistration/RegisterWithEmail2";
 import Interests from "../feature/Auth/pages/Interests";
+import ForgotPassword from "../feature/Auth/pages/ForgotPassword";
+import VerifyResetCode from "../feature/Auth/pages/VerifyResetCode";
+import ResetPassword from "../feature/Auth/pages/ResetPassword";
 
 import Loginwithemail from "../feature/Auth/pages/Loginwithemail";
 
@@ -61,6 +64,18 @@ const AuthRoutes =  {
       {
         path: "interests",
         element: <Interests />,
+      },
+      {
+        path: "forgot-password",
+        element: <ForgotPassword />,
+      },
+      {
+        path: "verify-reset-code",
+        element: <VerifyResetCode />,
+      },
+      {
+        path: "reset-password",
+        element: <ResetPassword />,
       },
     ],
   }

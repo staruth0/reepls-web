@@ -451,15 +451,14 @@ useEffect(() => {
               <div className="lg:flex gap-1 ">
               {article?.publication_id && (
                 <div className="text-neutral-50 text-sm">
-                From Stream  <span className="text-neutral-50 font-semibold text-[15px] hover:underline cursor-pointer" onClick={() => navigate(`/stream/${article?.publication_id}`)}>{publication?.title}</span>
-                by </div>
+                From Stream  <span className="text-neutral-50 font-semibold text-[15px] hover:underline cursor-pointer" onClick={() => navigate(`/stream/${article?.publication_id}`)}>{publication?.title}</span> by </div>
               )} 
               <p
                 className="hover:underline cursor-pointer text-[15px] font-semibold"
                 onClick={() => handleProfileClick(user?.username || "")}
               >
-                {user?.name ? (
-                  user?.name
+                {(user?.name  || user?.username)? (
+                  user?.name || user?.username
                 ) : (
                   <div className="w-20 bg-neutral-500 rounded-md animate-pulse" />
                 )}
@@ -674,6 +673,9 @@ useEffect(() => {
         <SharePopup
           url={articleUrl}
           title={articleTitle}
+          subtitle={article?.subtitle}
+          thumbnail={article?.thumbnail}
+          description={article?.subtitle || article?.content?.substring(0, 160) + "..."}
           onClose={() => setShowSharePopup(false)}
         />
       )}

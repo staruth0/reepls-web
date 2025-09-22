@@ -16,6 +16,9 @@ import {
   verifyPhoneCode,
   logoutUser,
   logOutWithGoogle,
+  forgotPassword,
+  verifyResetPasswordCode,
+  resetPassword,
 } from "../api";
 import { useTokenStorage } from './useTokenStorage';
 
@@ -202,35 +205,31 @@ export const useLogoutUser = (token: string) => {
   });
 };
 
-// // Hook for sending a forgot password email
-// export const useForgotPassword = () => {
+// Hook for sending a forgot password email
+export const useForgotPassword = () => {
 
-//   return useMutation({
-//     mutationFn: (email: string) => forgotPassword(email),
-//   });
-// };
+  return useMutation({
+    mutationFn: (email: string) => forgotPassword(email),
+  });
+};
 
-// // Hook for verifying reset password code
-// export const useVerifyResetPasswordCode = () => {
-//   const navigate = useNavigate();
+// Hook for verifying reset password code
+export const useVerifyResetPasswordCode = () => {
 
-//   const navigateToResetPassword = (email: string) => {
-//     navigate('/auth/reset-password/new', { state: { email } }); 
-//   };
 
-//   return useMutation({
-//     mutationFn: ({ code, email }: { code: string; email: string }) => 
-//       verifyResetPasswordCode(code, email),
+  return useMutation({
+    mutationFn: ({ code, email }: { code: string; email: string }) => 
+      verifyResetPasswordCode(code, email),
   
-//   });
-// };
+  });
+};
 
-// // Hook for resetting the password
-// export const useResetPassword = () => {
+// Hook for resetting the password
+export const useResetPassword = () => {
 
-//   return useMutation({
-//     mutationFn: ({ token, email, password }: { token: string; email: string; password: string }) => 
-//       resetPassword(token, email, password),
+  return useMutation({
+    mutationFn: ({ token, email, password }: { token: string; email: string; password: string }) => 
+      resetPassword(token, email, password),
 
-//   });
-// };
+  });
+};

@@ -34,9 +34,16 @@ const userSlice = createSlice({
             state.interests?.push(interest)
         ))
     },
+    clearUserData(state) {
+        state.username = "";
+        state.email = "";
+        state.password = "";
+        state.phone = "";
+        state.interests = [];
+    },
   },
 });
 
 
-export const { getUserName,getUserEmail,getUserPassword,getUserInterests,getUserPhone } = userSlice.actions;
+export const { getUserName,getUserEmail,getUserPassword,getUserInterests,getUserPhone,clearUserData } = userSlice.actions;
 export default userSlice.reducer;

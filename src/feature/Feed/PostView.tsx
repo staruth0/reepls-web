@@ -50,7 +50,7 @@ const PostView: React.FC = () => {
           </button>
         </Topbar>
 
-        <div className="post-content-container">
+        <div className="post-content-container ">
           {isLoading ? (
             <div className="loading-container">
               <LuLoader className="animate-spin text-primary-400 text-2xl" />
