@@ -123,6 +123,7 @@ const ProfilePodcasts: React.FC<ProfilePodcastsProps> = ({ userId }) => {
       <div className="space-y-4">
         {podcastsData.data.results.map((podcast: PodcastData) => (
           <PodcastCard2
+          
             key={podcast.id}
             podcast={transformPodcastData(podcast)}
             onComment={(podcastId) => {
