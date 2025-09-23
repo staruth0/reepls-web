@@ -2,7 +2,8 @@ import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headl
 import Picker, { Theme } from 'emoji-picker-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LuCalendar, LuLoader, LuPlus } from 'react-icons/lu';
+import { LuLoader } from 'react-icons/lu';
+import { X, MoreVertical } from 'lucide-react';
 import { toast } from 'react-toastify';
 import {
   allowedImageTypes,
@@ -14,7 +15,6 @@ import useTheme from '../../../hooks/useTheme';
 import { cn } from '../../../utils';
 import { useUser } from '../../../hooks/useUser';
 import SignInPopUp from '../../AnonymousUser/components/SignInPopUp';
-import cancelIcon from '../../../assets/images/cancel-reepls (2).png';
 import smile from '../../../assets/images/smile.png';
 import image from '../../../assets/images/image-02.png';
 import video from '../../../assets/images/video-02.png';
@@ -41,10 +41,11 @@ const PostModal = ({
   const [postImages, setPostImages] = useState<File[]>([]);
   const [postVideos, setPostVideos] = useState<File[]>([]);
   const [isCommunique, setIsCommunique] = useState<boolean>(false);
-  const [postAudience, setPostAudience] = useState<string>('everyone');
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState<boolean>(false);
   const [showSignInPopup, setShowSignInPopup] = useState<string | null>(null);
   const [isFocused, setIsFocused] = useState<boolean>(false);
+  const [showMenu, setShowMenu] = useState<boolean>(false);
+  const [tags, setTags] = useState<string>('');
 
   const { theme } = useTheme();
   const { t } = useTranslation();
@@ -97,7 +98,7 @@ const PostModal = ({
 
   const handlePostClick = () => {
     if (handleActionBlocked('post')) return;
-    handlePost(postContent, postImages, postVideos, postAudience === 'communique');
+    handlePost(postContent, postImages, postVideos, isCommunique);
   };
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -178,15 +179,12 @@ const PostModal = ({
               className="text-lg font-semibold mb-4 flex items-center justify-center relative"
             >
               <span className="w-full text-center block">{t('Create a Post')}</span>
-              <img
-                src={cancelIcon}
-                alt="Close"
-                className="absolute right-0 top-1/2 -translate-y-1/2 w-6 h-6 cursor-pointer bg-white rounded-full p-2 shadow hover:bg-gray-100"
+              <X
+                size={32}
+                className="absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer bg-white rounded-full p-2 shadow hover:bg-gray-100"
                 style={{ marginRight: '0.25rem' }}
                 onClick={() => setIsModalOpen(false)}
-                draggable={false}
-                loading="lazy"
-                decoding="async"
+                strokeWidth={2.5}
               />
             </DialogTitle>
 
@@ -215,41 +213,41 @@ const PostModal = ({
                   )}
                   <div className="flex flex-col">
                     <span className="font-semibold text-base">{authUser.name}</span>
-                    <select
-                      className="text-green-500 text-[10px] bg-transparent border-none outline-none cursor-pointer"
-                      value={postAudience}
-                      onChange={e => setPostAudience(e.target.value)}
-                    >
-                      <option value="everyone">{t('Post to everyone')}</option>
-                      <option value="communique">{t('Post to communique')}</option>
-                      <option value="friends">{t('Post to friends')}</option>
-                      <option value="private">{t('Post privately')}</option>
-                    </select>
+                    <span className="text-green-500 text-[10px]">
+                      {authUser.bio || ''}
+                    </span>
                   </div>
                 </div>
-                {/* 3 Dots */}
+                {/* Lucide MoreVertical icon for ellipse */}
                 <div className="relative group">
-                  <button className="flex flex-col items-center justify-center gap-[2px] text-black">
-                    <span className="block w-1.5 h-1.5 rounded-full bg-current"></span>
-                    <span className="block w-1.5 h-1.5 rounded-full bg-current"></span>
-                    <span className="block w-1.5 h-1.5 rounded-full bg-current"></span>
-                  </button>
-                  <div className="absolute right-0 mt-2 w-44 bg-white border rounded shadow-lg p-2 hidden group-hover:block z-50">
-                    <button
-                      className="w-full text-left p-1 hover:bg-gray-100 flex items-center gap-2"
-                      onClick={() => handleActionBlocked('add an event')}
-                    >
-                      <LuCalendar className="size-5" />
-                      {t('Add Event')}
-                    </button>
-                    <button
-                      className="w-full text-left p-1 hover:bg-gray-100 flex items-center gap-2"
-                      onClick={() => handleActionBlocked('add other content')}
-                    >
-                      <LuPlus className="size-5" />
-                      {t('Other')}
-                    </button>
-                  </div>
+                  <MoreVertical
+                    size={18}
+                    className="text-gray-400 cursor-pointer"
+                    onClick={() => setShowMenu((v) => !v)}
+                  />
+                  {showMenu && (
+                    <div className="absolute right-0 mt-2 w-44 bg-white border rounded shadow-lg p-2 z-50">
+                      <button
+                        className="w-full text-left p-1 hover:bg-gray-100 flex items-center gap-2"
+                        onClick={() => {
+                          setIsCommunique(true);
+                          setShowMenu(false);
+                        }}
+                      >
+                        Set as Communiquer
+                      </button>
+                      <div className="w-full flex flex-col gap-1 mt-2">
+                        <label className="text-xs text-gray-500">Add tags</label>
+                        <input
+                          type="text"
+                          className="border rounded px-2 py-1 text-xs"
+                          placeholder="e.g. news, update"
+                          value={tags}
+                          onChange={e => setTags(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -363,25 +361,25 @@ const PostModal = ({
                 {postImages.map((image, index) => (
                   <div key={image.name} className="relative block h-28 w-28 flex-shrink-0">
                     <img src={URL.createObjectURL(image)} alt="post image" className="object-cover h-full w-auto rounded" />
-                    <button
-                      className="absolute top-0 right-0 bg-gray-400 rounded-full p-1 flex items-center justify-center"
-                      onClick={() => handleRemoveMedia('image', index)}
+                    <div
+                      className="absolute top-0 right-0 bg-gray-400 rounded-full p-1 flex items-center justify-center cursor-pointer"
                       style={{ width: 24, height: 24 }}
+                      onClick={() => handleRemoveMedia('image', index)}
                     >
-                      <img src={cancelIcon} alt="Remove" style={{ width: '16px', height: '16px' }} />
-                    </button>
+                      <X size={16} strokeWidth={2} className="text-white" />
+                    </div>
                   </div>
                 ))}
                 {postVideos.map((video, index) => (
                   <div key={video.name} className="relative w-28 h-28 flex-shrink-0">
                     <video src={URL.createObjectURL(video)} className="object-cover w-auto h-full rounded" />
-                    <button
-                      className="absolute top-0 right-0 bg-gray-400 rounded-full p-1 flex items-center justify-center"
-                      onClick={() => handleRemoveMedia('video', index)}
+                    <div
+                      className="absolute top-0 right-0 bg-gray-400 rounded-full p-1 flex items-center justify-center cursor-pointer"
                       style={{ width: 24, height: 24 }}
+                      onClick={() => handleRemoveMedia('video', index)}
                     >
-                      <img src={cancelIcon} alt="Remove" style={{ width: '16px', height: '16px' }} />
-                    </button>
+                      <X size={16} strokeWidth={2} className="text-white" />
+                    </div>
                   </div>
                 ))}
               </div>
