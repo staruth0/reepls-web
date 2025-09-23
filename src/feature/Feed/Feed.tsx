@@ -8,6 +8,7 @@ import Communique from './components/Communique/Communique';
 import ToggleFeed from './components/ToogleFeed';
 
 import MainContent from '../../components/molecules/MainContent';
+import { LuLoader } from 'react-icons/lu';
 
 
 const UserFeed: React.FC = () => {
