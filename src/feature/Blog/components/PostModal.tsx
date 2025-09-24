@@ -19,7 +19,7 @@ import smile from '../../../assets/images/smile.png';
 import image from '../../../assets/images/image-02.png';
 import video from '../../../assets/images/video-02.png';
 
-const WORD_LIMIT = 2500;
+const CHAR_LIMIT = 2500; // Updated name
 
 const PostModal = ({
   isModalOpen,
@@ -149,12 +149,13 @@ const PostModal = ({
   const highlightedHtml = postContent ? buildHighlightedHtml(postContent) : '';
   const placeholderText = isLoggedIn ? t("What's on your mind ?") : t('Sign in to post');
 
-  const wordCount = postContent.trim().split(/\s+/).filter(Boolean).length;
+  // Character count logic
+  const charCount = postContent.length;
 
-  // Button logic: green when wordCount >= 1000
-  const isButtonGreen = wordCount >= 1000;
-  const isButtonDisabled = wordCount === 0 || wordCount > WORD_LIMIT;
-  const canPost = wordCount > 0 && wordCount <= WORD_LIMIT;
+  // Button logic
+  const isButtonGreen = charCount >= 1000;
+  const isButtonDisabled = charCount === 0 || charCount > CHAR_LIMIT;
+  const canPost = charCount > 0 && charCount <= CHAR_LIMIT;
 
   return (
     <Dialog
@@ -194,7 +195,6 @@ const PostModal = ({
                 className="flex items-center justify-between w-[90%] max-w-[600px] mx-auto mb-2"
                 style={{ marginTop: '0.5rem' }}
               >
-                {/* Profile Picture & Name */}
                 <div className="flex items-center gap-3" style={{ marginLeft: '-32px' }}>
                   {authUser.profilePicture ? (
                     <img
@@ -213,12 +213,16 @@ const PostModal = ({
                   )}
                   <div className="flex flex-col">
                     <span className="font-semibold text-base">{authUser.name}</span>
-                    <span className="text-green-500 text-[10px]">
-                      {authUser.bio || ''}
-                    </span>
+                    {authUser.bio && (
+                      <span
+                        className="text-gray-500 text-sm break-words"
+                        title={authUser.bio}
+                      >
+                        {authUser.bio}
+                      </span>
+                    )}
                   </div>
                 </div>
-                {/* Lucide MoreVertical icon for ellipse */}
                 <div className="relative group">
                   <MoreVertical
                     size={18}
@@ -252,7 +256,7 @@ const PostModal = ({
               </div>
             )}
 
-            {/* Text area with dashed top and bottom borders */}
+            {/* Text area */}
             <div className="flex flex-col items-center mb-2 relative">
               <div
                 className="rounded-lg bg-[#f4f4f4] relative overflow-hidden"
@@ -285,19 +289,12 @@ const PostModal = ({
                   }}
                 />
 
-                {/* Textarea */}
                 <textarea
                   ref={textareaRef}
                   value={postContent}
                   onChange={handleTextChange}
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setIsFocused(false)}
-                  onScroll={() => {
-                    if (highlightRef.current && textareaRef.current) {
-                      highlightRef.current.scrollTop = textareaRef.current.scrollTop;
-                      highlightRef.current.scrollLeft = textareaRef.current.scrollLeft;
-                    }
-                  }}
                   className={cn(
                     'absolute inset-0 w-full h-full resize-none bg-transparent p-3 text-base leading-relaxed outline-none z-10 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300',
                     !isLoggedIn ? 'cursor-not-allowed' : '',
@@ -309,7 +306,7 @@ const PostModal = ({
               </div>
             </div>
 
-            {/* Emoji / Media / Word Count */}
+            {/* Emoji / Media / Character Count */}
             <div className="w-[90%] max-w-[600px] mx-auto mt-2 flex justify-between items-center">
               <div className="flex items-center gap-8">
                 <div className="relative">
@@ -348,10 +345,10 @@ const PostModal = ({
               </div>
 
               <span className="text-sm font-medium">
-                <span className={cn(wordCount <= WORD_LIMIT ? 'text-green-500' : 'text-red-500')}>
-                  {wordCount}
+                <span className={cn(charCount <= CHAR_LIMIT ? 'text-green-500' : 'text-red-500')}>
+                  {charCount}
                 </span>
-                <span className="text-black">/{WORD_LIMIT} words</span>
+                <span className="text-black">/{CHAR_LIMIT} characters</span>
               </span>
             </div>
 
@@ -388,26 +385,29 @@ const PostModal = ({
             {/* Publish / Post Button */}
             <div className="flex justify-center mt-4">
               <button
-                className={cn(
-                  'py-2 px-10 rounded-full font-semibold transition-all duration-300',
-                  isButtonGreen
-                    ? 'border-2 border-green-500 bg-green-500 text-white cursor-pointer'
-                    : canPost
-                    ? 'border-2 border-green-500 text-black hover:bg-green-500 hover:text-white cursor-pointer'
-                    : 'border-2 border-gray-300 text-gray-400 cursor-not-allowed'
-                )}
-                onClick={handlePostClick}
-                disabled={isButtonDisabled}
-              >
-                {isPending ? (
-                  <LuLoader className="animate-spin inline-block mr-2" />
-                ) : (
-                  <>
-                    <span className="block md:hidden">{t('Post')}</span>
-                    <span className="hidden md:block">{t('Publish')}</span>
-                  </>
-                )}
-              </button>
+  className={cn(
+    'py-2 px-10 rounded-full font-semibold transition-all duration-300',
+    charCount === 0 || charCount > CHAR_LIMIT
+      ? 'border-2 border-gray-300 text-gray-400 cursor-not-allowed bg-gray-100'
+      : isButtonGreen
+      ? 'border-2 border-green-500 bg-green-500 text-white cursor-pointer'
+      : canPost
+      ? 'border-2 border-green-500 text-black hover:bg-green-500 hover:text-white cursor-pointer'
+      : 'border-2 border-gray-300 text-gray-400 cursor-not-allowed'
+  )}
+  onClick={handlePostClick}
+  disabled={charCount === 0 || charCount > CHAR_LIMIT} // disables when empty or over limit
+>
+  {isPending ? (
+    <LuLoader className="animate-spin inline-block mr-2" />
+  ) : (
+    <>
+      <span className="block md:hidden">{t('Post')}</span>
+      <span className="hidden md:block">{t('Publish')}</span>
+    </>
+  )}
+</button>
+
             </div>
           </DialogPanel>
         </div>
