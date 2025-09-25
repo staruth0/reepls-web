@@ -137,9 +137,8 @@ const PodcastReactionModal: React.FC<PodcastReactionModalProps> = ({
 
   return (
     <div
-      className="mt-2 shadow-sm rounded-full bg-background p-3 transition-opacity duration-400 opacity-100 z-[999]"
-      style={{ bottom: "40px", left: "0px" }}
-        onClick={(e) => e.stopPropagation()}
+      className="shadow-lg rounded-full bg-neutral-800 p-3 transition-opacity duration-400 opacity-100 border border-neutral-600"
+      onClick={(e) => e.stopPropagation()}
     >
       <div className="flex space-x-4">
         {reactions.map((reaction) => (

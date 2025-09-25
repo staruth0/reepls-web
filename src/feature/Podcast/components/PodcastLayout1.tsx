@@ -66,7 +66,7 @@ const PodcastCard: React.FC<PodcastCardProps> = ({
 
 
   return (
-    <div className="bg-neutral-800 rounded-lg shadow-md overflow-hidden border border-neutral-700 h-full flex flex-col">
+    <div className="bg-neutral-800 rounded-lg shadow-md overflow-visible border border-neutral-700 h-full flex flex-col">
       <div className="w-full h-48 overflow-hidden">
         <img
           src={podcast.thumbnailUrl}
