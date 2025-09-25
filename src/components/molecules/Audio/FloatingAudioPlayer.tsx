@@ -41,6 +41,7 @@ const FloatingAudioPlayer: React.FC = () => {
   }>>([]);
   const [currentPodcastIndex, setCurrentPodcastIndex] = useState(-1);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [hasBeenPositioned, setHasBeenPositioned] = useState(false);
 
   // Fetch popular podcasts for navigation
   const { data: popularPodcastsData, isLoading: isLoadingPodcasts } = useGetPopularPodcasts({
@@ -56,14 +57,19 @@ const FloatingAudioPlayer: React.FC = () => {
     setIsVisible(true);
     setIsLoading(true);
     
-    // Set initial position to bottom right
-    if (playerRef.current) {
+    // Only set initial position if this is the first time showing the player
+    if (playerRef.current && !hasBeenPositioned) {
+      const playerWidth = 320; // w-80 = 320px
+      const playerHeight = 200; // Approximate height
+      const margin = 20;
+      
       setPosition({
-        x: window.innerWidth - playerRef.current.offsetWidth - 20,
-        y: window.innerHeight - playerRef.current.offsetHeight - 20
+        x: Math.max(margin, window.innerWidth - playerWidth - margin),
+        y: Math.max(margin, window.innerHeight - playerHeight - margin)
       });
+      setHasBeenPositioned(true);
     }
-  }, [currentTrack]);
+  }, [currentTrack, hasBeenPositioned]);
 
   // Track loading state
   useEffect(() => {
@@ -124,23 +130,33 @@ const FloatingAudioPlayer: React.FC = () => {
   };
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDragging) return;
+    if (!isDragging || !playerRef.current) return;
+    
+    const playerWidth = playerRef.current.offsetWidth;
+    const playerHeight = playerRef.current.offsetHeight;
+    const margin = 10;
     
     setPosition({
-      x: e.clientX - offset.x,
-      y: e.clientY - offset.y
+      x: Math.max(margin, Math.min(e.clientX - offset.x, window.innerWidth - playerWidth - margin)),
+      y: Math.max(margin, Math.min(e.clientY - offset.y, window.innerHeight - playerHeight - margin))
     });
+    setHasBeenPositioned(true); // Mark as positioned when user drags
   }, [isDragging, offset]);
 
   const handleTouchMove = useCallback((e: TouchEvent) => {
-    if (!isDragging) return;
+    if (!isDragging || !playerRef.current) return;
     e.preventDefault();
     
     const touch = e.touches[0];
+    const playerWidth = playerRef.current.offsetWidth;
+    const playerHeight = playerRef.current.offsetHeight;
+    const margin = 10;
+    
     setPosition({
-      x: touch.clientX - offset.x,
-      y: touch.clientY - offset.y
+      x: Math.max(margin, Math.min(touch.clientX - offset.x, window.innerWidth - playerWidth - margin)),
+      y: Math.max(margin, Math.min(touch.clientY - offset.y, window.innerHeight - playerHeight - margin))
     });
+    setHasBeenPositioned(true); // Mark as positioned when user drags
   }, [isDragging, offset]);
 
   const handleMouseUp = useCallback(() => {
@@ -301,10 +317,10 @@ const FloatingAudioPlayer: React.FC = () => {
   return (
     <div
       ref={playerRef}
-      className="fixed z-[10000] bg-gradient-to-br from-neutral-500 via-neutral-400 to-neutral-400 rounded-2xl shadow-2xl p-4 w-96 max-w-full select-none backdrop-blur-sm touch-none"
+      className="fixed z-[10000] bg-gradient-to-br from-neutral-500 via-neutral-400 to-neutral-400 rounded-2xl shadow-2xl p-3 sm:p-4 w-80 sm:w-96 max-w-[calc(100vw-2rem)] select-none backdrop-blur-sm touch-none"
       style={{
-        left: `${position.x}px`,
-        top: `${position.y}px`,
+        left: `${Math.min(position.x, window.innerWidth - 320)}px`, // Prevent overflow
+        top: `${Math.min(position.y, window.innerHeight - 200)}px`, // Prevent overflow
         userSelect: 'none',
         background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)',
         boxShadow: '0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05)',
@@ -372,7 +388,7 @@ const FloatingAudioPlayer: React.FC = () => {
       </div>
 
       {/* Progress bar */}
-      <div className="mb-4">
+      <div className="mb-4 ">
         <div className="flex items-center gap-3">
           <span className="text-xs text-neutral-400 w-10 text-right">
             {formatTime(progress)}
