@@ -66,7 +66,7 @@ const PodcastCard2: React.FC<PodcastCardProps> = ({
 
 
   return (
-    <div className="bg-neutral-800 rounded-lg shadow-md overflow-hidden border border-neutral-700 flex flex-col p-2">
+    <div className="bg-neutral-800 rounded-lg shadow-md overflow-visible border border-neutral-700 flex flex-col p-2">
     
       <div className="flex flex-row-reverse items-start gap-4 mb-4"> 
        
