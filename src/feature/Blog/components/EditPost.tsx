@@ -19,6 +19,16 @@ import { apiClient1 } from '../../../services/apiClient';
 import UploadProgressModal from '../components/UploadProgressModal';
 import { useGetMyPublications } from '../../Stream/Hooks';
 import PublicationSelectionModal from '../../Stream/components/PublicationSelectionModal';
+import { 
+  validateArticleTitle, 
+  validateArticleSubtitle, 
+  validateArticleContent,
+  getCharacterCountDisplay,
+  getWordCountDisplay,
+  getCharacterCountColor,
+  getWordCountColor,
+  LIMITS
+} from '../../../utils/validation';
 
 interface Podcast {
   id: string;
@@ -348,8 +358,32 @@ const EditPost: React.FC = () => {
 
   const onUpdate = async () => {
     if (!isLoggedIn || !articleId) return;
-    if (!title || !subtitle || !content) {
-      toast.error(t('Please provide a title, subtitle, and content.'), { autoClose: 1500 });
+    
+    // Validate title
+    const titleValidation = validateArticleTitle(title);
+    if (!titleValidation.isValid) {
+      toast.error(titleValidation.message, { autoClose: 3000 });
+      return;
+    }
+    
+    // Validate subtitle (optional but with character limit)
+    if (subtitle) {
+      const subtitleValidation = validateArticleSubtitle(subtitle);
+      if (!subtitleValidation.isValid) {
+        toast.error(subtitleValidation.message, { autoClose: 3000 });
+        return;
+      }
+    }
+    
+    // Validate content
+    const contentValidation = validateArticleContent(content);
+    if (!contentValidation.isValid) {
+      toast.error(contentValidation.message, { autoClose: 3000 });
+      return;
+    }
+    
+    if (!title || !content) {
+      toast.error(t('Please provide a title and content.'), { autoClose: 1500 });
       return;
     }
 
@@ -458,25 +492,49 @@ const EditPost: React.FC = () => {
               />
               <div className="mt-5">
                 <div className="px-5 sm:px-0">
-                  <textarea
-                    placeholder={t('Enter your title here...')}
-                    className="resize-none w-full mb-2 text-[20px] sm:text-3xl font-semibold font-instrumentSerif border-none outline-none bg-transparent placeholder-gray-500"
-                    value={title}
-                    rows={2}
-                    onChange={(e) => setTitle(e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(e, () => document.getElementById('subtitle')?.focus())}
-                    disabled={isUpdating}
-                  />
-                  <textarea
-                    id="subtitle"
-                    placeholder={t('Enter your subtitle here...')}
-                    className="resize-none w-full h-auto mb-0 text-lg font-medium font-inter border-none outline-none bg-transparent placeholder-gray-400"
-                    value={subtitle}
-                    rows={2}
-                    onChange={(e) => setSubtitle(e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(e, () => editorRef?.current?.editor?.commands?.focus())}
-                    disabled={isUpdating}
-                  />
+                  <div className="relative">
+                    <textarea
+                      placeholder={t('Enter your title here...')}
+                      className="resize-none w-full mb-2 text-[20px] sm:text-3xl font-semibold font-instrumentSerif border-none outline-none bg-transparent placeholder-gray-500"
+                      value={title}
+                      rows={2}
+                      maxLength={LIMITS.ARTICLE.TITLE_MAX_CHARS}
+                      onChange={(e) => {
+                        if (e.target.value.length <= LIMITS.ARTICLE.TITLE_MAX_CHARS) {
+                          setTitle(e.target.value);
+                        }
+                      }}
+                      onKeyDown={(e) => handleKeyDown(e, () => document.getElementById('subtitle')?.focus())}
+                      disabled={isUpdating}
+                    />
+                    <div className="absolute bottom-1 right-2 text-xs">
+                      <span className={getCharacterCountColor(title, LIMITS.ARTICLE.TITLE_MAX_CHARS)}>
+                        {getCharacterCountDisplay(title, LIMITS.ARTICLE.TITLE_MAX_CHARS)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <textarea
+                      id="subtitle"
+                      placeholder={t('Enter your subtitle here... (optional)')}
+                      className="resize-none w-full h-auto mb-0 text-lg font-medium font-inter border-none outline-none bg-transparent placeholder-gray-400"
+                      value={subtitle}
+                      rows={2}
+                      maxLength={LIMITS.ARTICLE.SUBTITLE_MAX_CHARS}
+                      onChange={(e) => {
+                        if (e.target.value.length <= LIMITS.ARTICLE.SUBTITLE_MAX_CHARS) {
+                          setSubtitle(e.target.value);
+                        }
+                      }}
+                      onKeyDown={(e) => handleKeyDown(e, () => editorRef?.current?.editor?.commands?.focus())}
+                      disabled={isUpdating}
+                    />
+                    <div className="absolute bottom-1 right-2 text-xs">
+                      <span className={getCharacterCountColor(subtitle, LIMITS.ARTICLE.SUBTITLE_MAX_CHARS)}>
+                        {getCharacterCountDisplay(subtitle, LIMITS.ARTICLE.SUBTITLE_MAX_CHARS)}
+                      </span>
+                    </div>
+                  </div>
                   
                   {/* Selected Publication Indicator */}
                   {selectedPublicationId && (
@@ -505,6 +563,11 @@ const EditPost: React.FC = () => {
                   disabled={isUpdating}
                   className="block max-w-full bg-primary-100 static mx-auto my-1"
                 />
+                <div className="mt-2 text-right">
+                  <span className={`text-xs ${getWordCountColor(content, LIMITS.ARTICLE.CONTENT_MAX_WORDS)}`}>
+                    {getWordCountDisplay(content, LIMITS.ARTICLE.CONTENT_MAX_WORDS)} words
+                  </span>
+                </div>
               </div>
             </div>
           )

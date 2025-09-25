@@ -10,6 +10,14 @@ import { useGetUserByUsername, useUpdateUser } from '../hooks';
 import { useTranslation } from 'react-i18next';
 import { updateUsernameInStorage } from '../../Auth/api/Encryption';
 import MainContent from '../../../components/molecules/MainContent';
+import { 
+  validateProfileName, 
+  validateProfileUsername, 
+  validateProfileBio, 
+  validateProfileAbout, 
+  validateProfileLocation,
+  LIMITS
+} from '../../../utils/validation';
 // import { profile } from '../../../assets/icons';
 
 // Define action types
@@ -100,6 +108,37 @@ const EditProfile: React.FC = () => {
   }, [isSuccess, isError, error, navigate, state.username, t]);
 
   const handleUpdateProfile = () => {
+    // Validate all fields
+    const nameValidation = validateProfileName(state.name);
+    if (!nameValidation.isValid) {
+      toast.error(nameValidation.message, { autoClose: 3000 });
+      return;
+    }
+
+    const usernameValidation = validateProfileUsername(state.username);
+    if (!usernameValidation.isValid) {
+      toast.error(usernameValidation.message, { autoClose: 3000 });
+      return;
+    }
+
+    const bioValidation = validateProfileBio(state.bio);
+    if (!bioValidation.isValid) {
+      toast.error(bioValidation.message, { autoClose: 3000 });
+      return;
+    }
+
+    const aboutValidation = validateProfileAbout(state.about);
+    if (!aboutValidation.isValid) {
+      toast.error(aboutValidation.message, { autoClose: 3000 });
+      return;
+    }
+
+    const locationValidation = validateProfileLocation(state.location);
+    if (!locationValidation.isValid) {
+      toast.error(locationValidation.message, { autoClose: 3000 });
+      return;
+    }
+
     mutate({
       username: state.username,
       name: state.name,
@@ -107,7 +146,6 @@ const EditProfile: React.FC = () => {
       about: state.about,
       address: state.location,
     });
-    
   };
 
   return (
@@ -134,19 +172,29 @@ const EditProfile: React.FC = () => {
                 value={state.name}
                 onChange={(e) => dispatch({ type: 'SET_NAME', payload: e.target.value })}
                 placeholder={t("profile.enterName")}
+                maxLength={LIMITS.PROFILE.NAME_MAX_CHARS}
+                showCharCount={true}
               />
               <div className="bg-neutral-700 rounded-[5px] px-2 py-1 flex flex-col gap-1 mt-3">
-                <label className="text-neutral-400 text-[15px]">{'Username'}</label>
+                <div className="flex justify-between items-center">
+                  <label className="text-neutral-400 text-[15px]">{'Username'}</label>
+                  <span className={`text-xs ${state.username.length > LIMITS.PROFILE.USERNAME_MAX_CHARS ? 'text-red-500' : state.username.length > LIMITS.PROFILE.USERNAME_MAX_CHARS * 0.8 ? 'text-yellow-500' : 'text-gray-400'}`}>
+                    {state.username.length}/{LIMITS.PROFILE.USERNAME_MAX_CHARS}
+                  </span>
+                </div>
                 <div className="flex items-center gap-0">
                   <span className="text-primary-200 text-[15px]">{'reepls.com/profile/'}</span>
                   <input
                     type="text"
                     className="w-full bg-transparent text-primary-400 text-[16px] outline-none"
-                    maxLength={40}
+                    maxLength={LIMITS.PROFILE.USERNAME_MAX_CHARS}
                     value={state.username}
-                    onChange={(e) =>
-                      dispatch({ type: 'SET_USERNAME', payload: e.target.value.replace(/[^a-zA-Z0-9_]/g, '') })
-                    }
+                    onChange={(e) => {
+                      const filteredValue = e.target.value.replace(/[^a-zA-Z0-9_]/g, '');
+                      if (filteredValue.length <= LIMITS.PROFILE.USERNAME_MAX_CHARS) {
+                        dispatch({ type: 'SET_USERNAME', payload: filteredValue });
+                      }
+                    }}
                     placeholder={t("profile.changeUsername")}
                   />
                 </div>
@@ -156,18 +204,25 @@ const EditProfile: React.FC = () => {
                 value={state.bio}
                 onChange={(e) => dispatch({ type: 'SET_BIO', payload: e.target.value })}
                 placeholder={t("profile.enterBio")}
+                maxLength={LIMITS.PROFILE.BIO_MAX_CHARS}
+                showCharCount={true}
               />
               <ProfileInput
                 label={t("profile.about")}
                 value={state.about}
                 onChange={(e) => dispatch({ type: 'SET_ABOUT', payload: e.target.value })}
                 placeholder={t("profile.aboutYou")}
+                maxLength={LIMITS.PROFILE.ABOUT_MAX_CHARS}
+                showCharCount={true}
+                isTextarea={true}
               />
               <ProfileInput
                 label={t("profile.location")}
                 value={state.location}
                 onChange={(e) => dispatch({ type: 'SET_LOCATION', payload: e.target.value })}
                 placeholder={t("profile.enterLocation")}
+                maxLength={LIMITS.PROFILE.LOCATION_MAX_CHARS}
+                showCharCount={true}
               />
               <button
                 className="outline-none border-none bg-primary-400 text-white px-4 py-2 mt-8 rounded-full self-center cursor-pointer w-[320px] h-[40px] flex justify-center items-center"

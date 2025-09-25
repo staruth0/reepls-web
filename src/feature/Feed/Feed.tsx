@@ -8,7 +8,8 @@ import Communique from './components/Communique/Communique';
 import ToggleFeed from './components/ToogleFeed';
 
 import MainContent from '../../components/molecules/MainContent';
-import { LucideLoader } from 'lucide-react';
+import { Loader2 as LucideLoader } from 'lucide-react';
+
 
 
 const UserFeed: React.FC = () => {

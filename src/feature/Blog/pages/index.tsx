@@ -17,6 +17,16 @@ import useDraft from '../hooks/useDraft';
 import { useSendNewArticleNotification } from '../../Notifications/hooks/useNotification';
 import { apiClient1 } from '../../../services/apiClient';
 import UploadProgressModal from '../components/UploadProgressModal';
+import { 
+  validateArticleTitle, 
+  validateArticleSubtitle, 
+  validateArticleContent,
+  getCharacterCountDisplay,
+  getWordCountDisplay,
+  getCharacterCountColor,
+  getWordCountColor,
+  LIMITS
+} from '../../../utils/validation';
 
 import PublicationSelectionModal from '../../Stream/components/PublicationSelectionModal';
 import { useGetMyPublications } from '../../Stream/Hooks';
@@ -213,8 +223,32 @@ const CreatePost: React.FC = () => {
 
 const onPublish = async () => {
   if (!isLoggedIn) return;
-  if (!title || !subtitle || !content) {
-    toast.error(t('Please provide a title, subtitle and content.'), {
+  
+  // Validate title
+  const titleValidation = validateArticleTitle(title);
+  if (!titleValidation.isValid) {
+    toast.error(titleValidation.message, { autoClose: 3000 });
+    return;
+  }
+  
+  // Validate subtitle (optional but with character limit)
+  if (subtitle) {
+    const subtitleValidation = validateArticleSubtitle(subtitle);
+    if (!subtitleValidation.isValid) {
+      toast.error(subtitleValidation.message, { autoClose: 3000 });
+      return;
+    }
+  }
+  
+  // Validate content
+  const contentValidation = validateArticleContent(content);
+  if (!contentValidation.isValid) {
+    toast.error(contentValidation.message, { autoClose: 3000 });
+    return;
+  }
+  
+  if (!title || !content) {
+    toast.error(t('Please provide a title and content.'), {
       autoClose: 1500,
     });
     return;
@@ -364,7 +398,7 @@ const onPublish = async () => {
       setIsCommunique(draftArticle.isCommunique || false);
     }
     setHasLoadedDraft(true);
-  }, []);
+  }, [hasLoadedDraft, loadDraftArticle]);
 
   useEffect(() => {
     if (hasLoadedDraft && editorRef.current?.editor) {
@@ -379,7 +413,7 @@ const onPublish = async () => {
   useEffect(() => {
     if (!hasLoadedDraft) return;
     saveDraftArticle({ title, subtitle, content, htmlContent, media, isCommunique });
-  }, [title, subtitle, content, htmlContent, media, isCommunique, selectedPublicationId,hasLoadedDraft]);
+  }, [title, subtitle, content, htmlContent, media, isCommunique, selectedPublicationId, hasLoadedDraft, saveDraftArticle]);
 
   return (
     <div className="relative min-h-screen">
@@ -399,25 +433,49 @@ const onPublish = async () => {
             <ImageSection onImageChange={(image) => setThumbnail(image as File)} />
             <div className="mx-auto mt-3 px-5 sm:px-0 max-w-4xl">
               <div className="">
-                <textarea
-                  placeholder={t('Enter your title here...')}
-                  className="resize-none w-full h-auto mb-2 text-3xl font-semibold font-instrumentSerif border-none outline-none bg-transparent placeholder-gray-500"
-                  value={title}
-                  rows={2}
-                  onChange={(e) => setTitle(e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(e, () => document.getElementById('subtitle')?.focus())}
-                  disabled={!hasLoadedDraft}
-                />
-                <textarea
-                  id="subtitle"
-                  placeholder={t('Enter your subtitle here...')}
-                  className="resize-none w-full h-auto mb-0 text-lg font-medium font-inter border-none outline-none bg-transparent placeholder-gray-400"
-                  value={subtitle}
-                  rows={2}
-                  onChange={(e) => setSubtitle(e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(e, () => editorRef?.current?.editor?.commands?.focus())}
-                  disabled={!hasLoadedDraft}
-                />
+                <div className="relative">
+                  <textarea
+                    placeholder={t('Enter your title here...')}
+                    className="resize-none w-full h-auto mb-2 text-3xl font-semibold font-instrumentSerif border-none outline-none bg-transparent placeholder-gray-500"
+                    value={title}
+                    rows={2}
+                    maxLength={LIMITS.ARTICLE.TITLE_MAX_CHARS}
+                    onChange={(e) => {
+                      if (e.target.value.length <= LIMITS.ARTICLE.TITLE_MAX_CHARS) {
+                        setTitle(e.target.value);
+                      }
+                    }}
+                    onKeyDown={(e) => handleKeyDown(e, () => document.getElementById('subtitle')?.focus())}
+                    disabled={!hasLoadedDraft}
+                  />
+                  <div className="absolute bottom-1 right-2 text-xs">
+                    <span className={getCharacterCountColor(title, LIMITS.ARTICLE.TITLE_MAX_CHARS)}>
+                      {getCharacterCountDisplay(title, LIMITS.ARTICLE.TITLE_MAX_CHARS)}
+                    </span>
+                  </div>
+                </div>
+                <div className="relative">
+                  <textarea
+                    id="subtitle"
+                    placeholder={t('Enter your subtitle here... (optional)')}
+                    className="resize-none w-full h-auto mb-0 text-lg font-medium font-inter border-none outline-none bg-transparent placeholder-gray-400"
+                    value={subtitle}
+                    rows={2}
+                    maxLength={LIMITS.ARTICLE.SUBTITLE_MAX_CHARS}
+                    onChange={(e) => {
+                      if (e.target.value.length <= LIMITS.ARTICLE.SUBTITLE_MAX_CHARS) {
+                        setSubtitle(e.target.value);
+                      }
+                    }}
+                    onKeyDown={(e) => handleKeyDown(e, () => editorRef?.current?.editor?.commands?.focus())}
+                    disabled={!hasLoadedDraft}
+                  />
+                  <div className="absolute bottom-1 right-2 text-xs">
+                    <span className={getCharacterCountColor(subtitle, LIMITS.ARTICLE.SUBTITLE_MAX_CHARS)}>
+                      {getCharacterCountDisplay(subtitle, LIMITS.ARTICLE.SUBTITLE_MAX_CHARS)}
+                    </span>
+                  </div>
+                </div>
                 
                 {/* Selected Publication Indicator */}
                 {selectedPublicationId && (
@@ -446,6 +504,11 @@ const onPublish = async () => {
                 disabled={!hasLoadedDraft}
                 className="block max-w-full bg-primary-100 static mx-auto my-1"
               />
+              <div className="mt-2 text-right">
+                <span className={`text-xs ${getWordCountColor(content, LIMITS.ARTICLE.CONTENT_MAX_WORDS)}`}>
+                  {getWordCountDisplay(content, LIMITS.ARTICLE.CONTENT_MAX_WORDS)} words
+                </span>
+              </div>
             </div>
           </div>
         ) : (
