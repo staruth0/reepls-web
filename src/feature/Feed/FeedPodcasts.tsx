@@ -195,7 +195,7 @@ const FeedPodcasts: React.FC = () => {
   return (
     <MainContent>
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
-      <div className="min-h-screen lg:border-r-[1px] border-neutral-500">
+      <div className="min-h-screen flex flex-col items-center lg:border-r-[1px] border-neutral-500">
         <Topbar>
           <div className="px-3 flex justify-between items-center w-full">
             <ToggleFeed />
@@ -261,7 +261,7 @@ const FeedPodcasts: React.FC = () => {
         </div>
 
         {/* Trending Section */}
-        <div className="p-4 sm:p-6 bg-neutral-800 rounded-lg mx-2 md:mx-4 sm:mx-6 my-3 max-w-4xl">
+        <div className="p-4 sm:p-6 bg-neutral-800 flex flex-col rounded-lg mx-2 md:mx-4 sm:mx-6 my-3 max-w-4xl">
           <h2 className="text-md font-semibold text-neutral-50 mb-4">
             Trending Now
           </h2>

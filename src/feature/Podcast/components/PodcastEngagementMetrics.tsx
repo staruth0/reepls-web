@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { LuThumbsUp, LuMessageSquare, LuBookmark, LuLoader } from "react-icons/lu";
+import { LuThumbsUp,  LuBookmark, LuLoader } from "react-icons/lu";
 import { toast } from "react-toastify";
 import { useGetMySavedPodcasts } from "../hooks";
 import {
@@ -12,14 +12,13 @@ import PodcastReactionsPopup from "../../Interactions/components/PodcastReaction
 import PodcastReactionModal from "./PodcastReactionmodal";
 
 interface PodcastEngagementMetricsProps {
-  comments: number;
+  comments?: number;
   onCommentClick?: () => void;
   id: string;
 }
 
 const PodcastEngagementMetrics: React.FC<PodcastEngagementMetricsProps> = ({
-  comments,
-  onCommentClick,
+ 
   id,
 }) => {
   const [showReactionModal, setShowReactionModal] = useState(false);
@@ -151,14 +150,7 @@ useEffect(() => {
           )}
         </div>
 
-        <button
-          onClick={onCommentClick}
-          className="flex items-center gap-1 hover:text-primary-400 transition-colors duration-200"
-          title="Comment"
-        >
-          <LuMessageSquare className="size-4" />
-          <span className="text-sm">{comments}</span>
-        </button>
+    
 
         {/* Bookmark Icon */}
         <button
