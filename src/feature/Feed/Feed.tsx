@@ -1,4 +1,4 @@
-import React, {  useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Topbar from '../../components/atoms/Topbar/Topbar';
 import { Article } from '../../models/datamodels';
 import BlogPost from '../Blog/components/BlogPost';
@@ -8,29 +8,29 @@ import Communique from './components/Communique/Communique';
 import ToggleFeed from './components/ToogleFeed';
 
 import MainContent from '../../components/molecules/MainContent';
+
 import { Loader2 as LucideLoader } from 'lucide-react';
 
 
 
 const UserFeed: React.FC = () => {
-  // const { toggleCognitiveMode, isCognitiveMode } = useContext(CognitiveModeContext);
-  // const [isBrainActive, setIsBrainActive] = useState<boolean>(isCognitiveMode);
-  const bottomRef = useRef<HTMLDivElement>(null); // Ref for the bottom
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   // Fetch data
-  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetAllArticles();
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetAllArticles();
 
+  useEffect(() => {
+    console.log('data', data);
+  }, [data]);
 
-  // // Handle cognitive mode toggle
-  // const handleBrainClick = () => {
-  //   setIsBrainActive((prev) => !prev);
-  //   toggleCognitiveMode();
-  // };
-  useEffect(()=>{
-    console.log('data',data)
-  },[data])
-
-  // Auto-fetch next page when scrolling to the bottom
+  // Infinite scroll observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -39,69 +39,60 @@ const UserFeed: React.FC = () => {
         }
       },
       {
-        root: null, // Use the viewport as the scroll container
-        rootMargin: '800px', // Trigger when 800px from the viewport edge
-        threshold: 0.5, // Trigger when 50% of the bottomRef is visible
+        root: null,
+        rootMargin: '800px',
+        threshold: 0.5,
       }
     );
 
-    if (bottomRef.current) {
-      observer.observe(bottomRef.current); // Note: Should be bottomRef.current, fixed below
-    }
+    if (bottomRef.current) observer.observe(bottomRef.current);
 
     return () => {
-      if (bottomRef.current) {
-        observer.unobserve(bottomRef.current); // Note: Should be bottomRef.current, fixed below
-      }
+      if (bottomRef.current) observer.unobserve(bottomRef.current);
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  useEffect(() => {
-  }, [data]);
-
   // Function to get friendly error messages
-  const getFriendlyErrorMessage = (error: Error | { response?: { status: number }, message?: string } | null): string => {
-    if (!error) return "Something went wrong. Please try again later.";
+  const getFriendlyErrorMessage = (
+    error:
+      | Error
+      | { response?: { status: number }; message?: string }
+      | null
+  ): string => {
+    if (!error) return 'Something went wrong. Please try again later.';
 
-    // Handle common error cases
-    if (error.message?.includes("Network Error")) {
+    if (error.message?.includes('Network Error')) {
       return "Oops! It looks like you're offline. Please check your internet connection and try again.";
     }
     if ('response' in error && error.response) {
       const status = error.response.status;
       if (status === 404) {
-        return "We couldn’t find any posts right now. They might be hiding!";
+        return 'We couldn’t find any posts right now. They might be hiding!';
       }
       if (status === 500) {
-        return "Our servers are having a little hiccup. Please hang tight and try again soon.";
+        return 'Our servers are having a little hiccup. Please hang tight and try again soon.';
       }
       if (status === 429) {
-        return "Whoa, slow down! Too many requests. Give it a moment and try again.";
+        return 'Whoa, slow down! Too many requests. Give it a moment and try again.';
       }
     }
 
-    // Default fallback for unhandled errors
-    return "Something unexpected happened. We’re working on it—please try again later!";
+    return 'Something unexpected happened. We’re working on it—please try again later!';
   };
 
   return (
     <MainContent>
-
-<div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
-      <div className="Feed__Posts min-h-screen lg:border-r-[1px] border-neutral-500">
-        <Topbar>
-          <div className="px-3 flex justify-between items-center w-full ">
-            <ToggleFeed />
-            {/* <div className="flex items-center gap-2">
-              <CognitiveModeIndicator isActive={isBrainActive} onClick={handleBrainClick} />
-            </div> */}
-          </div>
-        </Topbar>
+      <div className="lg:grid grid-cols-[4fr_1.65fr]">
+        <div className="Feed__Posts min-h-screen lg:border-r-[1px] border-neutral-500">
+          <Topbar>
+            <div className="px-3 flex justify-between items-center w-full ">
+              <ToggleFeed />
+            </div>
+          </Topbar>
 
         {/* Display Skeleton or Articles */}
         {isLoading ? (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse">
-            <BlogSkeletonComponent />
             <BlogSkeletonComponent />
             <BlogSkeletonComponent />
           </div>
@@ -120,7 +111,7 @@ const UserFeed: React.FC = () => {
         {/* Loading indicator for next page */}
         {isFetchingNextPage && (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse mt-8">
-            <LucideLoader className="animate-spin text-primary-400 self-center size-10 inline-block mx-4" />
+            <LuLoader className="animate-spin text-primary-400 self-center size-10 inline-block mx-4" />
           </div>
         )}
         <div ref={bottomRef} style={{ height: '100px' }} />
@@ -132,14 +123,11 @@ const UserFeed: React.FC = () => {
         )}
       </div>
 
-      <div className="communique bg-background hidden lg:block">
-        <Communique />
+        <div className="communique bg-background hidden lg:block">
+          <Communique />
+        </div>
       </div>
-    </div>
-
-
     </MainContent>
-
   );
 };
 

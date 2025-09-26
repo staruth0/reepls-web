@@ -10,5 +10,7 @@ const config = {
     version: import.meta.env.VITE_API_VERSION,
   },
 };
+//VITE_API_BASE_URL=https://reepls-api.onrender.com
+//VITE_API_VERSION=/api-v1
 
 export default config;
