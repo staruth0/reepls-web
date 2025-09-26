@@ -13,6 +13,16 @@ import { useUser } from '../../../hooks/useUser';
 import { t } from 'i18next';
 import { uploadPodcastThumbnail } from '../../../utils/media';
 import UploadProgressModal from '../components/UploadProgressModal';
+import { 
+  validatePodcastTitle, 
+  validatePodcastSubtitle, 
+  validatePodcastDescription,
+  getCharacterCountDisplay,
+  getWordCountDisplay,
+  getCharacterCountColor,
+  getWordCountColor,
+  LIMITS
+} from '../../../utils/validation';
 
 const Podcast: React.FC = () => {
   // State for form fields
@@ -142,6 +152,32 @@ const Podcast: React.FC = () => {
   };
 
   const handlePost = async () => {
+    // Validate title
+    const titleValidation = validatePodcastTitle(title);
+    if (!titleValidation.isValid) {
+      setError(titleValidation.message || '');
+      toast.error(titleValidation.message, { autoClose: 3000 });
+      return;
+    }
+    
+    // Validate subtitle (optional but with character limit)
+    if (subtitle) {
+      const subtitleValidation = validatePodcastSubtitle(subtitle);
+      if (!subtitleValidation.isValid) {
+        setError(subtitleValidation.message || '');
+        toast.error(subtitleValidation.message, { autoClose: 3000 });
+        return;
+      }
+    }
+    
+    // Validate description
+    const descriptionValidation = validatePodcastDescription(description);
+    if (!descriptionValidation.isValid) {
+      setError(descriptionValidation.message || '');
+      toast.error(descriptionValidation.message, { autoClose: 3000 });
+      return;
+    }
+    
     if (!title.trim()) {
       const err = 'Podcast title cannot be empty.';
       setError(err);
@@ -375,36 +411,77 @@ const Podcast: React.FC = () => {
 
         {/* Form fields */}
         <div className="mb-6">
-          <input
-            type="text"
-            placeholder="Title of Podcast here"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-3 bg-neutral-700 text-neutral-50 placeholder-neutral-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-2xl font-semibold"
-            disabled={isPosting}
-          />
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Title of Podcast here"
+              value={title}
+              onChange={(e) => {
+                if (e.target.value.length <= LIMITS.PODCAST.TITLE_MAX_CHARS) {
+                  setTitle(e.target.value);
+                }
+              }}
+              className="w-full p-3 bg-neutral-700 text-neutral-50 placeholder-neutral-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-2xl font-semibold pr-16"
+              maxLength={LIMITS.PODCAST.TITLE_MAX_CHARS}
+              disabled={isPosting}
+            />
+            <div className="absolute bottom-2 right-3 text-xs">
+              <span className={getCharacterCountColor(title, LIMITS.PODCAST.TITLE_MAX_CHARS)}>
+                {getCharacterCountDisplay(title, LIMITS.PODCAST.TITLE_MAX_CHARS)}
+              </span>
+            </div>
+          </div>
         </div>
 
         <div className="mb-6">
-          <input
-            type="text"
-            placeholder="Subtitle here (optional)"
-            value={subtitle}
-            onChange={(e) => setSubtitle(e.target.value)}
-            className="w-full p-3 bg-neutral-700 text-neutral-50 placeholder-neutral-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-lg"
-            disabled={isPosting}
-          />
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Subtitle here (optional)"
+              value={subtitle}
+              onChange={(e) => {
+                if (e.target.value.length <= LIMITS.PODCAST.SUBTITLE_MAX_CHARS) {
+                  setSubtitle(e.target.value);
+                }
+              }}
+              className="w-full p-3 bg-neutral-700 text-neutral-50 placeholder-neutral-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-lg pr-16"
+              maxLength={LIMITS.PODCAST.SUBTITLE_MAX_CHARS}
+              disabled={isPosting}
+            />
+            <div className="absolute bottom-2 right-3 text-xs">
+              <span className={getCharacterCountColor(subtitle, LIMITS.PODCAST.SUBTITLE_MAX_CHARS)}>
+                {getCharacterCountDisplay(subtitle, LIMITS.PODCAST.SUBTITLE_MAX_CHARS)}
+              </span>
+            </div>
+          </div>
         </div>
 
         <div className="mb-6">
-          <textarea
-            placeholder="Description of your podcast here..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows={8}
-            className="w-full p-3 bg-neutral-700 text-neutral-50 placeholder-neutral-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 resize-y"
-            disabled={isPosting}
-          ></textarea>
+          <div className="relative">
+            <textarea
+              placeholder="Description of your podcast here..."
+              value={description}
+              onChange={(e) => {
+                if (e.target.value.length <= LIMITS.PODCAST.DESCRIPTION_MAX_CHARS) {
+                  setDescription(e.target.value);
+                }
+              }}
+              rows={8}
+              className="w-full p-3 bg-neutral-700 text-neutral-50 placeholder-neutral-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 resize-y pr-20"
+              maxLength={LIMITS.PODCAST.DESCRIPTION_MAX_CHARS}
+              disabled={isPosting}
+            ></textarea>
+            <div className="absolute bottom-2 right-3 text-xs">
+              <div className="text-right">
+                <div className={getWordCountColor(description, LIMITS.PODCAST.DESCRIPTION_MAX_WORDS)}>
+                  {getWordCountDisplay(description, LIMITS.PODCAST.DESCRIPTION_MAX_WORDS)} words
+                </div>
+                <div className={getCharacterCountColor(description, LIMITS.PODCAST.DESCRIPTION_MAX_CHARS)}>
+                  {getCharacterCountDisplay(description, LIMITS.PODCAST.DESCRIPTION_MAX_CHARS)} chars
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Tags and category */}

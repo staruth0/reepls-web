@@ -171,14 +171,14 @@ const FeedPodcasts: React.FC = () => {
 
   // Skeleton placeholder component for horizontal cards
   const PodcastCardSkeleton: React.FC = () => (
-    <div className="flex-shrink-0 w-[365px] mr-4 animate-pulse bg-neutral-700 rounded-lg h-[350px] px-4 py-5">
-      <div className="bg-neutral-600 h-48 rounded-md mb-4 w-full" />
-      <div className="h-6 bg-neutral-600 rounded w-3/4 mb-3" />
-      <div className="h-4 bg-neutral-600 rounded w-full mb-2" />
-      <div className="h-4 bg-neutral-600 rounded w-5/6 mb-2" />
+    <div className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-[365px] mr-3 sm:mr-4 animate-pulse bg-neutral-700 rounded-lg h-[300px] sm:h-[350px] px-3 sm:px-4 py-4 sm:py-5">
+      <div className="bg-neutral-600 h-40 sm:h-48 rounded-md mb-3 sm:mb-4 w-full" />
+      <div className="h-5 sm:h-6 bg-neutral-600 rounded w-3/4 mb-2 sm:mb-3" />
+      <div className="h-3 sm:h-4 bg-neutral-600 rounded w-full mb-2" />
+      <div className="h-3 sm:h-4 bg-neutral-600 rounded w-5/6 mb-2" />
       <div className="flex justify-between items-center mt-auto">
-        <div className="h-5 bg-neutral-600 rounded w-1/3" />
-        <div className="h-5 bg-neutral-600 rounded w-1/4" />
+        <div className="h-4 sm:h-5 bg-neutral-600 rounded w-1/3" />
+        <div className="h-4 sm:h-5 bg-neutral-600 rounded w-1/4" />
       </div>
     </div>
   );
@@ -195,7 +195,7 @@ const FeedPodcasts: React.FC = () => {
   return (
     <MainContent>
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
-      <div className="min-h-screen lg:border-r-[1px] border-neutral-500">
+      <div className="min-h-screen flex flex-col items-center lg:border-r-[1px] border-neutral-500">
         <Topbar>
           <div className="px-3 flex justify-between items-center w-full">
             <ToggleFeed />
@@ -207,25 +207,25 @@ const FeedPodcasts: React.FC = () => {
         </Topbar>
 
         {/* Suggested for Today Section */}
-        <div className="p-4 sm:p-6 bg-neutral-800 rounded-lg mx-2 md:mx-4 sm:mx-6 my-3 max-w-4xl">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-md font-semibold text-neutral-50">
+        <div className="p-3 sm:p-4 md:p-6 bg-neutral-800 rounded-lg mx-2 md:mx-4 sm:mx-6 my-3 max-w-4xl w-full">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h2 className="text-sm sm:text-md font-semibold text-neutral-50">
               Suggested for Today
             </h2>
-            <div className="flex gap-2">
+            <div className="flex gap-1 sm:gap-2">
               <button
                 onClick={scrollLeft}
-                className="p-2 rounded-full bg-neutral-700 hover:bg-neutral-600 text-neutral-50 transition-colors duration-200"
+                className="p-1.5 sm:p-2 rounded-full bg-neutral-700 hover:bg-neutral-600 text-neutral-50 transition-colors duration-200"
                 aria-label="Scroll left"
               >
-                <LuArrowLeft size={20} />
+                <LuArrowLeft size={16} className="sm:w-5 sm:h-5" />
               </button>
               <button
                 onClick={scrollRight}
-                className="p-2 rounded-full bg-neutral-700 hover:bg-neutral-600 text-neutral-50 transition-colors duration-200"
+                className="p-1.5 sm:p-2 rounded-full bg-neutral-700 hover:bg-neutral-600 text-neutral-50 transition-colors duration-200"
                 aria-label="Scroll right"
               >
-                <LuArrowRight size={20} />
+                <LuArrowRight size={16} className="sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>
@@ -233,7 +233,7 @@ const FeedPodcasts: React.FC = () => {
           {/* Horizontally Scrollable Podcast Cards */}
           <div
             ref={scrollContainerRef}
-            className="flex overflow-x-auto pb-4 scrollbar-hide"
+            className="flex justify-start overflow-x-auto pb-3 sm:pb-4 scrollbar-hide"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {isLoading
@@ -243,7 +243,7 @@ const FeedPodcasts: React.FC = () => {
               ? podcasts.map((podcast) => (
                   <div
                     key={podcast.id}
-                    className="flex-shrink-0 w-[365px] mr-4"
+                    className="  flex-shrink-0 w-[280px] sm:w-[320px] md:w-[365px] mr-3 sm:mr-4"
                   >
                     <PodcastCard
                       podcast={podcast}
@@ -256,16 +256,16 @@ const FeedPodcasts: React.FC = () => {
                   </div>
                 ))
               : // Empty fallback
-                <div className="text-neutral-400 italic">No podcasts available.</div>}
+                <div className="text-neutral-400 italic text-sm sm:text-base">No podcasts available.</div>}
           </div>
         </div>
 
         {/* Trending Section */}
-        <div className="p-4 sm:p-6 bg-neutral-800 rounded-lg mx-2 md:mx-4 sm:mx-6 my-3 max-w-4xl">
-          <h2 className="text-md font-semibold text-neutral-50 mb-4">
+        <div className="p-3 sm:p-4 md:p-6 bg-neutral-800 flex flex-col rounded-lg mx-2 md:mx-4 sm:mx-6 my-3 max-w-4xl w-full">
+          <h2 className="text-sm sm:text-md font-semibold text-neutral-50 mb-3 sm:mb-4">
             Trending Now
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {isLoading
               ? // Show 2 skeleton cards for grid loading
                 [1, 2].map((i) => <PodcastCard2Skeleton key={i} />)

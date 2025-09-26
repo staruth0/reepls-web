@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { LuThumbsUp, LuMessageSquare, LuBookmark, LuLoader } from "react-icons/lu";
+import { LuThumbsUp,  LuBookmark, LuLoader } from "react-icons/lu";
 import { toast } from "react-toastify";
 import { useGetMySavedPodcasts } from "../hooks";
 import {
@@ -12,14 +12,13 @@ import PodcastReactionsPopup from "../../Interactions/components/PodcastReaction
 import PodcastReactionModal from "./PodcastReactionmodal";
 
 interface PodcastEngagementMetricsProps {
-  comments: number;
+  comments?: number;
   onCommentClick?: () => void;
   id: string;
 }
 
 const PodcastEngagementMetrics: React.FC<PodcastEngagementMetricsProps> = ({
-  comments,
-  onCommentClick,
+ 
   id,
 }) => {
   const [showReactionModal, setShowReactionModal] = useState(false);
@@ -35,7 +34,7 @@ const PodcastEngagementMetrics: React.FC<PodcastEngagementMetricsProps> = ({
 
   const { data: allReactions } = useGetAllReactionsForTarget("Podcast", id);
 
-const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
+const getSavedPodcastIds = (savedPodcastsData: { data?: { savedPodcasts?: Array<{ podcastId?: { _id?: string } | null }> } }): string[] => {
   if (!savedPodcastsData?.data?.savedPodcasts) {
     return [];
   }
@@ -44,7 +43,7 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
     .map((savedPodcast: { podcastId?: { _id?: string } | null }) =>
       savedPodcast.podcastId?._id
     )
-    .filter(Boolean);
+    .filter((id): id is string => Boolean(id));
 };
 useEffect(() => {
   console.log("savedpodcasts", savedPodcastsData?.data?.savedPodcasts ?? []);
@@ -122,43 +121,38 @@ useEffect(() => {
       <div className="flex items-center justify-between gap-6">
         {/* Engagement Icons */}
         <div className="flex items-center gap-3 text-neutral-50 relative">
-          <button
-            onClick={handleLikeClick}
-            className="flex items-center gap-1 hover:text-primary-400 transition-colors duration-200"
-            title="React"
-          >
-            <LuThumbsUp className="size-4"  onMouseEnter={() => setShowReactionModal(true)} />
-            <span
-              className="hover:underline cursor-pointer"
-              onClick={handleReactionsCountClick}
+          <div className="relative">
+            <button
+              onClick={handleLikeClick}
+              className="flex items-center gap-1 hover:text-primary-400 transition-colors duration-200"
+              title="React"
             >
-              {allReactions?.data?.totalReactions || 0}
-            </span>
-          </button>
+              <LuThumbsUp className="size-4"  onMouseEnter={() => setShowReactionModal(true)} />
+              <span
+                className="hover:underline cursor-pointer"
+                onClick={handleReactionsCountClick}
+              >
+                {allReactions?.data?.totalReactions || 0}
+              </span>
+            </button>
 
-        
-          {showReactionModal && (
-            <div
-              ref={modalRef}
-              className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50 rounded-lg p-2 min-w-[200px]"
-            >
-              <PodcastReactionModal
-                podcast_id={id}
-                onReact={handleReact}
-                onClose={() => setShowReactionModal(false)}
-              />
-            </div>
-          )}
+            {/* Reaction Modal - Positioned relative to the button */}
+            {showReactionModal && (
+              <div
+                ref={modalRef}
+                className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-[9999] rounded-lg p-2 min-w-[200px]"
+              >
+                <PodcastReactionModal
+                  podcast_id={id}
+                  onReact={handleReact}
+                  onClose={() => setShowReactionModal(false)}
+                />
+              </div>
+            )}
+          </div>
         </div>
 
-        <button
-          onClick={onCommentClick}
-          className="flex items-center gap-1 hover:text-primary-400 transition-colors duration-200"
-          title="Comment"
-        >
-          <LuMessageSquare className="size-4" />
-          <span className="text-sm">{comments}</span>
-        </button>
+    
 
         {/* Bookmark Icon */}
         <button
