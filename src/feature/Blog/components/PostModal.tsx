@@ -1,9 +1,9 @@
-import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
+import {  Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import Picker, { Theme } from 'emoji-picker-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuLoader } from 'react-icons/lu';
-import { X, MoreVertical } from 'lucide-react';
+import { X, MoreVertical, Star } from 'lucide-react';
 import { toast } from 'react-toastify';
 import {
   allowedImageTypes,
@@ -146,7 +146,7 @@ const PostModal = ({
     return () => ta.removeEventListener('scroll', onScroll);
   }, []);
 
-  const highlightedHtml = postContent ? buildHighlightedHtml(postContent) : '';
+  // const highlightedHtml = postContent ? buildHighlightedHtml(postContent) : '';
   const placeholderText = isLoggedIn ? t("What's on your mind ?") : t('Sign in to post');
 
   // Character count logic
@@ -154,7 +154,7 @@ const PostModal = ({
 
   // Button logic
   const isButtonGreen = charCount >= 1000;
-  const isButtonDisabled = charCount === 0 || charCount > CHAR_LIMIT;
+  // const isButtonDisabled = charCount === 0 || charCount > CHAR_LIMIT;
   const canPost = charCount > 0 && charCount <= CHAR_LIMIT;
 
   return (
@@ -164,9 +164,9 @@ const PostModal = ({
       className="relative z-[999] focus:outline-none"
       onClose={() => setIsModalOpen(false)}
     >
-      <DialogBackdrop className="fixed inset-0 bg-black/30" />
+      <DialogBackdrop className="fixed inset-0 z-[99999] bg-black/20" />
 
-      <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
+      <div className="fixed inset-0 z-[99999] w-screen overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-4">
           <DialogPanel
             className={cn(
@@ -182,7 +182,7 @@ const PostModal = ({
               <span className="w-full text-center block">{t('Create a Post')}</span>
               <X
                 size={32}
-                className="absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer bg-white rounded-full p-2 shadow hover:bg-gray-100"
+                className="absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer bg-neutral-800 rounded-full p-2 shadow hover:bg-neutral-700"
                 style={{ marginRight: '0.25rem' }}
                 onClick={() => setIsModalOpen(false)}
                 strokeWidth={2.5}
@@ -192,30 +192,31 @@ const PostModal = ({
             {/* User Preview */}
             {isLoggedIn && authUser && (
               <div
-                className="flex items-center justify-between w-[90%] max-w-[600px] mx-auto mb-2"
+                className="flex items-center mb-2 justify-between w-[90%] max-w-[600px] mx-auto mb-2"
                 style={{ marginTop: '0.5rem' }}
               >
                 <div className="flex items-center gap-3" style={{ marginLeft: '-32px' }}>
-                  {authUser.profilePicture ? (
+                  {authUser.profile_picture ? (
                     <img
-                      src={authUser.profilePicture}
+                      src={authUser.profile_picture}
                       alt={authUser.name}
                       className="w-12 h-12 rounded-full object-cover"
                     />
                   ) : (
                     <div className="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center text-white font-semibold">
-                      {authUser.name
+                      {authUser?.name
+                        ? authUser.name
                         .split(' ')
                         .map((n) => n[0])
                         .join('')
-                        .toUpperCase()}
+                        .toUpperCase(): ""}
                     </div>
                   )}
                   <div className="flex flex-col">
                     <span className="font-semibold text-base">{authUser.name}</span>
                     {authUser.bio && (
                       <span
-                        className="text-gray-500 text-sm break-words"
+                        className="text-neutral-200 text-sm break-words"
                         title={authUser.bio}
                       >
                         {authUser.bio}
@@ -226,7 +227,7 @@ const PostModal = ({
                 <div className="relative group">
                   <MoreVertical
                     size={18}
-                    className="text-gray-400 cursor-pointer"
+                    className="text-neutral-300 cursor-pointer"
                     onClick={() => setShowMenu((v) => !v)}
                   />
                   {showMenu && (
@@ -234,14 +235,14 @@ const PostModal = ({
                       <button
                         className="w-full text-left p-1 hover:bg-gray-100 flex items-center gap-2"
                         onClick={() => {
-                          setIsCommunique(true);
+                          setIsCommunique(!isCommunique);
                           setShowMenu(false);
                         }}
                       >
-                        Set as Communiquer
+                        {isCommunique ? 'Undo Communiquer' : 'Set as Communiquer'}
                       </button>
                       <div className="w-full flex flex-col gap-1 mt-2">
-                        <label className="text-xs text-gray-500">Add tags</label>
+                        <label className="text-xs text-neutral-200">Add tags</label>
                         <input
                           type="text"
                           className="border rounded px-2 py-1 text-xs"
@@ -308,10 +309,24 @@ const PostModal = ({
 
             {/* Emoji / Media / Character Count */}
             <div className="w-[90%] max-w-[600px] mx-auto mt-2 flex justify-between items-center">
-              <div className="flex items-center gap-8">
+              <div className="flex items-center gap-4 md:gap-8">
+                {/* Communique indicator */}
+                {isCommunique && (
+                  <div className="flex items-center justify-center relative group">
+                    <Star 
+                      size={20} 
+                      className="text-secondary-400 fill-secondary-400" 
+                    />
+                    {/* Tooltip */}
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-background text-neutral-100 text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+                      This post is now a communique
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-neutral-50"></div>
+                    </div>
+                  </div>
+                )}
                 <div className="relative">
                   <button
-                    className="flex items-center justify-center text-gray-400 hover:text-black"
+                    className="flex items-center justify-center text-neutral-300 hover:text-neutral-50"
                     title="Add Emoji"
                     onClick={() => {
                       if (handleActionBlocked('add an emoji')) return;
@@ -333,19 +348,19 @@ const PostModal = ({
                   )}
                 </div>
 
-                <label className="text-gray-400 hover:text-black cursor-pointer" title="Add Image">
+                <label className="text-neutral-300 hover:text-neutral-50 cursor-pointer" title="Add Image">
                   <img src={image} alt="Add Image" className="w-6 h-6" />
                   <input type="file" accept="image/*" className="hidden" multiple onChange={onPickImage} />
                 </label>
 
-                <label className="text-gray-400 hover:text-black cursor-pointer" title="Add Video">
+                <label className="text-neutral-300 hover:text-neutral-50 cursor-pointer" title="Add Video">
                   <img src={video} alt="Add Video" className="w-5 h-5" />
                   <input type="file" accept="video/*" className="hidden" multiple onChange={onPickVideo} />
                 </label>
               </div>
 
               <span className="text-sm font-medium">
-                <span className={cn(charCount <= CHAR_LIMIT ? 'text-green-500' : 'text-red-500')}>
+                <span className={cn(charCount <= CHAR_LIMIT ? 'text-primary-400' : 'text-red-500')}>
                   {charCount}
                 </span>
                 <span className="text-black">/{CHAR_LIMIT} characters</span>
@@ -388,12 +403,12 @@ const PostModal = ({
   className={cn(
     'py-2 px-10 rounded-full font-semibold transition-all duration-300',
     charCount === 0 || charCount > CHAR_LIMIT
-      ? 'border-2 border-gray-300 text-gray-400 cursor-not-allowed bg-gray-100'
+      ? 'border-2 border-neutral-400 text-neutral-300 cursor-not-allowed bg-neutral-600'
       : isButtonGreen
-      ? 'border-2 border-green-500 bg-green-500 text-white cursor-pointer'
+      ? 'border-2 border-primary-400 bg-primary-400 text-white cursor-pointer'
       : canPost
-      ? 'border-2 border-green-500 text-black hover:bg-green-500 hover:text-white cursor-pointer'
-      : 'border-2 border-gray-300 text-gray-400 cursor-not-allowed'
+      ? 'border-2 border-primary-400 text-neutral-50 hover:bg-primary-400 hover:text-white cursor-pointer'
+      : 'border-2 border-neutral-400 text-neutral-300 cursor-not-allowed'
   )}
   onClick={handlePostClick}
   disabled={charCount === 0 || charCount > CHAR_LIMIT} // disables when empty or over limit
