@@ -2,7 +2,8 @@ import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headl
 import Picker, { Theme } from 'emoji-picker-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LuCalendar, LuLoader, LuPlus } from 'react-icons/lu';
+import { LuLoader } from 'react-icons/lu';
+import { X, MoreVertical } from 'lucide-react';
 import { toast } from 'react-toastify';
 import {
   allowedImageTypes,
@@ -14,12 +15,11 @@ import useTheme from '../../../hooks/useTheme';
 import { cn } from '../../../utils';
 import { useUser } from '../../../hooks/useUser';
 import SignInPopUp from '../../AnonymousUser/components/SignInPopUp';
-import cancelIcon from '../../../assets/images/cancel-reepls (2).png';
 import smile from '../../../assets/images/smile.png';
 import image from '../../../assets/images/image-02.png';
 import video from '../../../assets/images/video-02.png';
 
-const WORD_LIMIT = 2500;
+const CHAR_LIMIT = 2500; // Updated name
 
 const PostModal = ({
   isModalOpen,
@@ -41,10 +41,11 @@ const PostModal = ({
   const [postImages, setPostImages] = useState<File[]>([]);
   const [postVideos, setPostVideos] = useState<File[]>([]);
   const [isCommunique, setIsCommunique] = useState<boolean>(false);
-  const [postAudience, setPostAudience] = useState<string>('everyone');
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState<boolean>(false);
   const [showSignInPopup, setShowSignInPopup] = useState<string | null>(null);
   const [isFocused, setIsFocused] = useState<boolean>(false);
+  const [showMenu, setShowMenu] = useState<boolean>(false);
+  const [tags, setTags] = useState<string>('');
 
   const { theme } = useTheme();
   const { t } = useTranslation();
@@ -97,7 +98,7 @@ const PostModal = ({
 
   const handlePostClick = () => {
     if (handleActionBlocked('post')) return;
-    handlePost(postContent, postImages, postVideos, postAudience === 'communique');
+    handlePost(postContent, postImages, postVideos, isCommunique);
   };
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -148,12 +149,13 @@ const PostModal = ({
   const highlightedHtml = postContent ? buildHighlightedHtml(postContent) : '';
   const placeholderText = isLoggedIn ? t("What's on your mind ?") : t('Sign in to post');
 
-  const wordCount = postContent.trim().split(/\s+/).filter(Boolean).length;
+  // Character count logic
+  const charCount = postContent.length;
 
-  // Button logic: green when wordCount >= 1000
-  const isButtonGreen = wordCount >= 1000;
-  const isButtonDisabled = wordCount === 0 || wordCount > WORD_LIMIT;
-  const canPost = wordCount > 0 && wordCount <= WORD_LIMIT;
+  // Button logic
+  const isButtonGreen = charCount >= 1000;
+  const isButtonDisabled = charCount === 0 || charCount > CHAR_LIMIT;
+  const canPost = charCount > 0 && charCount <= CHAR_LIMIT;
 
   return (
     <Dialog
@@ -178,15 +180,12 @@ const PostModal = ({
               className="text-lg font-semibold mb-4 flex items-center justify-center relative"
             >
               <span className="w-full text-center block">{t('Create a Post')}</span>
-              <img
-                src={cancelIcon}
-                alt="Close"
-                className="absolute right-0 top-1/2 -translate-y-1/2 w-6 h-6 cursor-pointer bg-white rounded-full p-2 shadow hover:bg-gray-100"
+              <X
+                size={32}
+                className="absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer bg-white rounded-full p-2 shadow hover:bg-gray-100"
                 style={{ marginRight: '0.25rem' }}
                 onClick={() => setIsModalOpen(false)}
-                draggable={false}
-                loading="lazy"
-                decoding="async"
+                strokeWidth={2.5}
               />
             </DialogTitle>
 
@@ -196,7 +195,6 @@ const PostModal = ({
                 className="flex items-center justify-between w-[90%] max-w-[600px] mx-auto mb-2"
                 style={{ marginTop: '0.5rem' }}
               >
-                {/* Profile Picture & Name */}
                 <div className="flex items-center gap-3" style={{ marginLeft: '-32px' }}>
                   {authUser.profilePicture ? (
                     <img
@@ -215,46 +213,50 @@ const PostModal = ({
                   )}
                   <div className="flex flex-col">
                     <span className="font-semibold text-base">{authUser.name}</span>
-                    <select
-                      className="text-green-500 text-[10px] bg-transparent border-none outline-none cursor-pointer"
-                      value={postAudience}
-                      onChange={e => setPostAudience(e.target.value)}
-                    >
-                      <option value="everyone">{t('Post to everyone')}</option>
-                      <option value="communique">{t('Post to communique')}</option>
-                      <option value="friends">{t('Post to friends')}</option>
-                      <option value="private">{t('Post privately')}</option>
-                    </select>
+                    {authUser.bio && (
+                      <span
+                        className="text-gray-500 text-sm break-words"
+                        title={authUser.bio}
+                      >
+                        {authUser.bio}
+                      </span>
+                    )}
                   </div>
                 </div>
-                {/* 3 Dots */}
                 <div className="relative group">
-                  <button className="flex flex-col items-center justify-center gap-[2px] text-black">
-                    <span className="block w-1.5 h-1.5 rounded-full bg-current"></span>
-                    <span className="block w-1.5 h-1.5 rounded-full bg-current"></span>
-                    <span className="block w-1.5 h-1.5 rounded-full bg-current"></span>
-                  </button>
-                  <div className="absolute right-0 mt-2 w-44 bg-white border rounded shadow-lg p-2 hidden group-hover:block z-50">
-                    <button
-                      className="w-full text-left p-1 hover:bg-gray-100 flex items-center gap-2"
-                      onClick={() => handleActionBlocked('add an event')}
-                    >
-                      <LuCalendar className="size-5" />
-                      {t('Add Event')}
-                    </button>
-                    <button
-                      className="w-full text-left p-1 hover:bg-gray-100 flex items-center gap-2"
-                      onClick={() => handleActionBlocked('add other content')}
-                    >
-                      <LuPlus className="size-5" />
-                      {t('Other')}
-                    </button>
-                  </div>
+                  <MoreVertical
+                    size={18}
+                    className="text-gray-400 cursor-pointer"
+                    onClick={() => setShowMenu((v) => !v)}
+                  />
+                  {showMenu && (
+                    <div className="absolute right-0 mt-2 w-44 bg-white border rounded shadow-lg p-2 z-50">
+                      <button
+                        className="w-full text-left p-1 hover:bg-gray-100 flex items-center gap-2"
+                        onClick={() => {
+                          setIsCommunique(true);
+                          setShowMenu(false);
+                        }}
+                      >
+                        Set as Communiquer
+                      </button>
+                      <div className="w-full flex flex-col gap-1 mt-2">
+                        <label className="text-xs text-gray-500">Add tags</label>
+                        <input
+                          type="text"
+                          className="border rounded px-2 py-1 text-xs"
+                          placeholder="e.g. news, update"
+                          value={tags}
+                          onChange={e => setTags(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
 
-            {/* Text area with dashed top and bottom borders */}
+            {/* Text area */}
             <div className="flex flex-col items-center mb-2 relative">
               <div
                 className="rounded-lg bg-[#f4f4f4] relative overflow-hidden"
@@ -287,19 +289,12 @@ const PostModal = ({
                   }}
                 />
 
-                {/* Textarea */}
                 <textarea
                   ref={textareaRef}
                   value={postContent}
                   onChange={handleTextChange}
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setIsFocused(false)}
-                  onScroll={() => {
-                    if (highlightRef.current && textareaRef.current) {
-                      highlightRef.current.scrollTop = textareaRef.current.scrollTop;
-                      highlightRef.current.scrollLeft = textareaRef.current.scrollLeft;
-                    }
-                  }}
                   className={cn(
                     'absolute inset-0 w-full h-full resize-none bg-transparent p-3 text-base leading-relaxed outline-none z-10 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300',
                     !isLoggedIn ? 'cursor-not-allowed' : '',
@@ -311,7 +306,7 @@ const PostModal = ({
               </div>
             </div>
 
-            {/* Emoji / Media / Word Count */}
+            {/* Emoji / Media / Character Count */}
             <div className="w-[90%] max-w-[600px] mx-auto mt-2 flex justify-between items-center">
               <div className="flex items-center gap-8">
                 <div className="relative">
@@ -350,10 +345,10 @@ const PostModal = ({
               </div>
 
               <span className="text-sm font-medium">
-                <span className={cn(wordCount <= WORD_LIMIT ? 'text-green-500' : 'text-red-500')}>
-                  {wordCount}
+                <span className={cn(charCount <= CHAR_LIMIT ? 'text-green-500' : 'text-red-500')}>
+                  {charCount}
                 </span>
-                <span className="text-black">/{WORD_LIMIT} words</span>
+                <span className="text-black">/{CHAR_LIMIT} characters</span>
               </span>
             </div>
 
@@ -363,25 +358,25 @@ const PostModal = ({
                 {postImages.map((image, index) => (
                   <div key={image.name} className="relative block h-28 w-28 flex-shrink-0">
                     <img src={URL.createObjectURL(image)} alt="post image" className="object-cover h-full w-auto rounded" />
-                    <button
-                      className="absolute top-0 right-0 bg-gray-400 rounded-full p-1 flex items-center justify-center"
-                      onClick={() => handleRemoveMedia('image', index)}
+                    <div
+                      className="absolute top-0 right-0 bg-gray-400 rounded-full p-1 flex items-center justify-center cursor-pointer"
                       style={{ width: 24, height: 24 }}
+                      onClick={() => handleRemoveMedia('image', index)}
                     >
-                      <img src={cancelIcon} alt="Remove" style={{ width: '16px', height: '16px' }} />
-                    </button>
+                      <X size={16} strokeWidth={2} className="text-white" />
+                    </div>
                   </div>
                 ))}
                 {postVideos.map((video, index) => (
                   <div key={video.name} className="relative w-28 h-28 flex-shrink-0">
                     <video src={URL.createObjectURL(video)} className="object-cover w-auto h-full rounded" />
-                    <button
-                      className="absolute top-0 right-0 bg-gray-400 rounded-full p-1 flex items-center justify-center"
-                      onClick={() => handleRemoveMedia('video', index)}
+                    <div
+                      className="absolute top-0 right-0 bg-gray-400 rounded-full p-1 flex items-center justify-center cursor-pointer"
                       style={{ width: 24, height: 24 }}
+                      onClick={() => handleRemoveMedia('video', index)}
                     >
-                      <img src={cancelIcon} alt="Remove" style={{ width: '16px', height: '16px' }} />
-                    </button>
+                      <X size={16} strokeWidth={2} className="text-white" />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -390,26 +385,29 @@ const PostModal = ({
             {/* Publish / Post Button */}
             <div className="flex justify-center mt-4">
               <button
-                className={cn(
-                  'py-2 px-10 rounded-full font-semibold transition-all duration-300',
-                  isButtonGreen
-                    ? 'border-2 border-green-500 bg-green-500 text-white cursor-pointer'
-                    : canPost
-                    ? 'border-2 border-green-500 text-black hover:bg-green-500 hover:text-white cursor-pointer'
-                    : 'border-2 border-gray-300 text-gray-400 cursor-not-allowed'
-                )}
-                onClick={handlePostClick}
-                disabled={isButtonDisabled}
-              >
-                {isPending ? (
-                  <LuLoader className="animate-spin inline-block mr-2" />
-                ) : (
-                  <>
-                    <span className="block md:hidden">{t('Post')}</span>
-                    <span className="hidden md:block">{t('Publish')}</span>
-                  </>
-                )}
-              </button>
+  className={cn(
+    'py-2 px-10 rounded-full font-semibold transition-all duration-300',
+    charCount === 0 || charCount > CHAR_LIMIT
+      ? 'border-2 border-gray-300 text-gray-400 cursor-not-allowed bg-gray-100'
+      : isButtonGreen
+      ? 'border-2 border-green-500 bg-green-500 text-white cursor-pointer'
+      : canPost
+      ? 'border-2 border-green-500 text-black hover:bg-green-500 hover:text-white cursor-pointer'
+      : 'border-2 border-gray-300 text-gray-400 cursor-not-allowed'
+  )}
+  onClick={handlePostClick}
+  disabled={charCount === 0 || charCount > CHAR_LIMIT} // disables when empty or over limit
+>
+  {isPending ? (
+    <LuLoader className="animate-spin inline-block mr-2" />
+  ) : (
+    <>
+      <span className="block md:hidden">{t('Post')}</span>
+      <span className="hidden md:block">{t('Publish')}</span>
+    </>
+  )}
+</button>
+
             </div>
           </DialogPanel>
         </div>
