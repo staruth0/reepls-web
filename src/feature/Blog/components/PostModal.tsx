@@ -258,9 +258,9 @@ const PostModal = ({
             )}
 
             {/* Text area */}
-            <div className="flex flex-col items-center mb-2 relative">
+            <div className="flex flex-col items-center mb-6 relative">
               <div
-                className="rounded-lg bg-[#f4f4f4] relative overflow-hidden"
+                className="rounded-lg  relative overflow-hidden"
                 style={{
                   width: '90%',
                   height: '344px',
@@ -270,10 +270,10 @@ const PostModal = ({
                 }}
               >
                 {/* Borders */}
-                <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '2px', borderRadius: '16px 16px 0 0', background: 'repeating-linear-gradient(to right, #cccccc 0 30px, transparent 30px 60px)' }} />
-                <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '2px', borderRadius: '0 0 16px 16px', background: 'repeating-linear-gradient(to right, #cccccc 0 30px, transparent 30px 60px)' }} />
-                <div style={{ position: 'absolute', top: 0, left: 0, width: '2px', height: '100%', borderRadius: '16px 0 0 16px', background: 'repeating-linear-gradient(to bottom, #cccccc 0 30px, transparent 30px 60px)' }} />
-                <div style={{ position: 'absolute', top: 0, right: 0, width: '2px', height: '100%', borderRadius: '0 16px 16px 0', background: 'repeating-linear-gradient(to bottom, #cccccc 0 30px, transparent 30px 60px)' }} />
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '1px', borderRadius: '16px 16px 0 0', background: 'repeating-linear-gradient(to right, #cccccc 0 30px, transparent 30px 60px)' }} />
+                <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '1px', borderRadius: '0 0 16px 16px', background: 'repeating-linear-gradient(to right, #cccccc 0 30px, transparent 30px 60px)' }} />
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '1px', height: '100%', borderRadius: '16px 0 0 16px', background: 'repeating-linear-gradient(to bottom, #cccccc 0 30px, transparent 30px 60px)' }} />
+                <div style={{ position: 'absolute', top: 0, right: 0, width: '1px', height: '100%', borderRadius: '0 16px 16px 0', background: 'repeating-linear-gradient(to bottom, #cccccc 0 30px, transparent 30px 60px)' }} />
 
                 {/* Highlighted content */}
                 <div
@@ -297,7 +297,7 @@ const PostModal = ({
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setIsFocused(false)}
                   className={cn(
-                    'absolute inset-0 w-full h-full resize-none bg-transparent p-3 text-base leading-relaxed outline-none z-10 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300',
+                    'absolute inset-0 w-full h-full resize-none bg-transparent  p-3 text-base leading-relaxed outline-none z-10 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300',
                     !isLoggedIn ? 'cursor-not-allowed' : '',
                     'text-transparent caret-black'
                   )}
@@ -308,7 +308,7 @@ const PostModal = ({
             </div>
 
             {/* Emoji / Media / Character Count */}
-            <div className="w-[90%] max-w-[600px] mx-auto mt-2 flex justify-between items-center">
+            <div className="w-[90%] max-w-[600px] mx-auto mt-6 flex justify-between items-center">
               <div className="flex items-center gap-4 md:gap-8">
                 {/* Communique indicator */}
                 {isCommunique && (
@@ -363,7 +363,7 @@ const PostModal = ({
                 <span className={cn(charCount <= CHAR_LIMIT ? 'text-primary-400' : 'text-red-500')}>
                   {charCount}
                 </span>
-                <span className="text-black">/{CHAR_LIMIT} characters</span>
+                <span className="text-plain-a">/{CHAR_LIMIT} characters</span>
               </span>
             </div>
 
