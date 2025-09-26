@@ -9,7 +9,8 @@ import ToggleFeed from './components/ToogleFeed';
 
 import MainContent from '../../components/molecules/MainContent';
 
-import { Loader2 as LucideLoader } from 'lucide-react';
+
+import { LuLoader } from 'react-icons/lu';
 
 
 
