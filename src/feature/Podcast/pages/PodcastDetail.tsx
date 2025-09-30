@@ -31,6 +31,7 @@ import AudioWave from "../../../components/molecules/Audio/AudiWave";
 import { useGetAllReactionsForTarget } from "../../Repost/hooks/useRepost";
 import PodcastReactionsPopup from "../../Interactions/components/PodcastReactionPopup";
 import PodcastReactionModal from "../components/PodcastReactionmodal";
+import PodcastDetailSkeleton from "../components/PodcastDetailSkeleton";
 
 const PodcastDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -208,19 +209,7 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background text-neutral-50">
-        <Topbar>
-          <div className="w-full flex justify-between items-center py-4 px-4">
-            <span className="font-semibold text-lg">Podcast</span>
-            <LuMenu size={24} className="hidden md:block" />
-          </div>
-        </Topbar>
-        <div className="flex justify-center items-center h-[80vh]">
-          <div className="animate-pulse text-xl">Loading podcast...</div>
-        </div>
-      </div>
-    );
+    return <PodcastDetailSkeleton />;
   }
 
   if (isError) {

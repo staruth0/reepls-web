@@ -57,7 +57,7 @@ const PodcastPreviewModal: React.FC<PodcastPreviewModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/10 flex items-center justify-center z-40 p-4">
+    <div className="fixed inset-0 bg-black/10 flex items-center justify-center z-[9999] p-4">
       <div className="bg-neutral-800 rounded-lg shadow-xl p-6 w-full max-w-lg relative transform transition-all duration-300 scale-100 opacity-100">
         <button
           onClick={onClose}

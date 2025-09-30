@@ -6,6 +6,7 @@ import {
   Trash2,
   EllipsisVertical,
   Send,
+
 } from "lucide-react";
 import { LuBadgeCheck, LuLoader, LuX } from "react-icons/lu";
 import { timeAgo } from "../../../utils/dateFormater";
@@ -23,6 +24,8 @@ import { t } from "i18next";
 import { useUpdateArticle } from "../../Blog/hooks/useArticleHook";
 import { useRoute } from "../../../hooks/useRoute";
 import { useCreateReactionRepost, useGetAllReactionsForTarget } from "../../Repost/hooks/useRepost";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "../../../utils";
 
 interface MessageComponentProps {
   content: string;
@@ -130,10 +133,10 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
     setIsLevelTwoCommentOpen(true);
   };
 
-  const handleCloseLevelTwo = () => {
-    setIsLevelTwoCommentOpen(false);
-    onLevelTwoToggle?.(false);
-  };
+  // const handleCloseLevelTwo = () => {
+  //   setIsLevelTwoCommentOpen(false);
+  //   onLevelTwoToggle?.(false);
+  // };
 
   // Handlers for popup actions
   const handleEditClick = () => {
@@ -178,160 +181,258 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   useEffect(() => {}, [isAuthor, author, author_of_post]);
 
   return (
-    <div
-      className={`lg:min-w-[70%] w-full p-2 relative self-start ${
-        isSameAuthorAsPrevious ? "self-end" : ""
-      }`}
+    <motion.div
+      className={cn(
+        "w-full p-3 relative",
+        isSameAuthorAsPrevious ? "self-end" : "self-start"
+      )}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.2 }}
     >
-      <div className="bg-neutral-700 p-3 relative rounded-xl shadow-sm inline-block w-full">
+      <motion.div 
+        className="bg-neutral-700 p-3 relative rounded-xl shadow-sm inline-block w-full transition-all duration-200"
+        whileHover={{ scale: 1.01 }}
+      >
+        {/* Header */}
         <div className="flex items-center gap-2">
-          {author?.profile_picture ? (
-            <img
-              src={author.profile_picture}
-              alt={author.username}
-              className="size-6 rounded-full object-cover"
-              onClick={handleProfileClick}
-            />
-          ) : (
-            <div
-              className="size-6 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-[13px]"
-              onClick={handleProfileClick}
-            >
-              {author?.username?.charAt(0)}
-            </div>
-          )}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="cursor-pointer"
+            onClick={handleProfileClick}
+          >
+            {author?.profile_picture ? (
+              <img
+                src={author.profile_picture}
+                alt={author.username}
+                className="size-8 rounded-full object-cover"
+              />
+            ) : (
+              <div className="size-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
+                {author?.username?.charAt(0)?.toUpperCase()}
+              </div>
+            )}
+          </motion.div>
+          
           <div className="flex-1">
             <div className="font-semibold flex items-center justify-between text-neutral-50 text-[14px]">
-              <div
-                className="flex items-center gap-2 cursor-pointer hover:underline"
+              <motion.div
+                className="flex items-center gap-2 cursor-pointer group"
                 onClick={handleProfileClick}
+                whileHover={{ x: 2 }}
               >
-                {author?.username}
+                <span className="font-semibold text-neutral-100 text-sm group-hover:text-primary-400 transition-colors">
+                  {author?.username}
+                </span>
                 {author?.is_verified_writer && (
                   <LuBadgeCheck
-                    className="text-primary-500 size-4"
+                    className="text-primary-400 size-4"
                     strokeWidth={2.5}
                   />
                 )}
                 {isAuthor && (
-                  <div className="px-2 bg-secondary-400 text-[12px] text-plain-b rounded">
+                  <motion.div 
+                    className="px-2 py-0.5 text-primary-400 text-xs"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
                     Author
-                  </div>
+                  </motion.div>
                 )}
-              </div>
-              <div className="absolute right-2 text-[12px] font-light flex items-center gap-2">
-                {formatDate()}
+              </motion.div>
+              
+              <div className="absolute right-2 text-[12px] font-light flex items-center gap-2 text-neutral-100">
+                <span>{formatDate()}</span>
                 {isAuthAuthor && (
-                  <EllipsisVertical
-                    className="size-6 rotate-90 cursor-pointer text-neutral-50 hover:text-primary-400"
+                  <motion.button
+                    whileHover={{ scale: 1.1, rotate: 90 }}
+                    whileTap={{ scale: 0.9 }}
                     onClick={() => setShowMenu(!showMenu)}
-                  />
+                    className="p-1 rounded-full hover:bg-neutral-700/50 transition-colors"
+                  >
+                    <EllipsisVertical className="size-4 text-neutral-100 hover:text-neutral-200" />
+                  </motion.button>
                 )}
               </div>
             </div>
-            <p className="text-[12px] text-gray-500">{author?.title}</p>
+            
+            {author?.title && (
+              <p className="text-[12px] text-neutral-100">{author.title}</p>
+            )}
           </div>
         </div>
-        {isEditing ? (
-          <div className="mt-2 mb-1 flex items-center gap-2">
-            <input
-              type="text"
-              value={editedContent}
-              onChange={(e) => setEditedContent(e.target.value)}
-              className="w-full bg-transparent text-neutral-50 text-[13px] outline-none caret-neutral-50"
-              autoFocus
-            />
-            <button onClick={handleUpdateClick} disabled={isUpdatePending}>
-              {isUpdatePending ? (
-                <LuLoader className="animate-spin text-foreground inline-block size-4" />
-              ) : (
-                <Send
-                  size={18}
-                  className="text-neutral-50 hover:text-primary-400"
+
+        {/* Content */}
+        <div>
+          <AnimatePresence mode="wait">
+            {isEditing ? (
+              <motion.div 
+                key="editing"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="flex items-center gap-2"
+              >
+                <input
+                  type="text"
+                  value={editedContent}
+                  onChange={(e) => setEditedContent(e.target.value)}
+                  className="flex-1 bg-neutral-600/50 text-neutral-100 text-sm outline-none rounded-lg px-3 py-2 border border-neutral-500/50 focus:border-primary-500/50"
+                  autoFocus
                 />
-              )}
-            </button>
-          </div>
-        ) : (
-          <p className="mt-2 mb-1 text-neutral-50 text-[13px]">{content}</p>
-        )}
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleUpdateClick} 
+                  disabled={isUpdatePending}
+                  className="p-2 rounded-lg bg-primary-500/20 hover:bg-primary-500/30 disabled:opacity-50 transition-colors"
+                >
+                  {isUpdatePending ? (
+                    <LuLoader className="animate-spin size-4 text-primary-400" />
+                  ) : (
+                    <Send size={16} className="text-primary-400" />
+                  )}
+                </motion.button>
+              </motion.div>
+            ) : (
+              <motion.p 
+                key="content"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="text-neutral-100 text-sm leading-relaxed"
+              >
+                {content}
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
 
         {/* Popup Menu */}
-        {showMenu && (
-          <>
-            <div
-              className="fixed inset-0 bg-black opacity-0 z-40"
-              onClick={() => setShowMenu(false)}
-            ></div>
-            <div className="absolute right-2 top-8 bg-neutral-800 shadow-md rounded-md p-2 w-40 text-neutral-50 z-50">
-              <div
-                className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
-                onClick={handleEditClick}
+        <AnimatePresence>
+          {showMenu && (
+            <>
+              <motion.div
+                className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowMenu(false)}
+              />
+              <motion.div 
+                className="absolute right-4 top-12 bg-neutral-800/95 backdrop-blur-md shadow-2xl rounded-xl p-2 w-44 text-neutral-100 z-50 border border-neutral-600/50"
+                initial={{ opacity: 0, scale: 0.8, y: -10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.8, y: -10 }}
+                transition={{ duration: 0.2 }}
               >
-                <Edit size={18} className="text-neutral-500" />
-                <div>Edit</div>
-              </div>
-              <div
-                className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer text-red-500"
-                onClick={handleDeleteClick}
-              >
-                {isDeletePending ? (
-                  <LuLoader className="animate-spin text-foreground inline-block size-4" />
-                ) : (
-                  <Trash2 size={18} className="text-red-500" />
-                )}
-                <div>{isDeletePending ? "Deleting..." : "Delete"}</div>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-
-      <div className="flex gap-4 mt-2 text-gray-600 text-[11px] px-4">
-        <div className="flex items-center gap-1">
-          <ThumbsUp
-            onClick={handleReact}
-            className={`size-4 hover:text-primary-400 hover:cursor-pointer ${
-              hasUserReacted || isCreateReactionSuccess
-                ? "fill-primary-400 text-primary-400"
-                : ""
-            }`}
-          />
-          {isCreateReactionPending ? (
-            <LuLoader className="animate-spin text-primary-400 inline-block mx-1" />
-          ) : (
-            "React"
-          )}{" "}
-          <span>• {reactionCount}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            className="flex items-center gap-1 hover:text-primary-400"
-            onClick={handleToggleLevelTwo}
-          >
-            <MessageCircle className="size-4" />
-            Reply • {replies?.length} replies
-          </button>
-          {isLevelTwoCommentOpen && (
-            <LuX
-              onClick={handleCloseLevelTwo}
-              className="size-4 hover:text-primary-400"
-            />
+                <motion.button
+                  whileHover={{ x: 4 }}
+                  className="flex items-center gap-3 px-3 py-2 w-full text-left hover:bg-neutral-700/50 rounded-lg transition-colors"
+                  onClick={handleEditClick}
+                >
+                  <Edit size={16} className="text-neutral-100" />
+                  <span className="text-sm text-neutral-100">Edit</span>
+                </motion.button>
+                <motion.button
+                  whileHover={{ x: 4 }}
+                  className="flex items-center gap-3 px-3 py-2 w-full text-left hover:bg-red-500/20 rounded-lg transition-colors text-red-400"
+                  onClick={handleDeleteClick}
+                >
+                  {isDeletePending ? (
+                    <LuLoader className="animate-spin size-4" />
+                  ) : (
+                    <Trash2 size={16} />
+                  )}
+                  <span className="text-sm text-neutral-100">{isDeletePending ? "Deleting..." : "Delete"}</span>
+                </motion.button>
+              </motion.div>
+            </>
           )}
-        </div>
-      </div>
+        </AnimatePresence>
+      </motion.div>
 
-      {isLevelTwoCommentOpen && (
-        <CommentSectionLevel2
-          article_id={article_id}
-          comment_id={comment_id}
-          comments={replies}
-          author_of_post={author_of_post}
-          isTabActive={activeLevelTwoCommentId === comment_id}
-          article={article}
-        />
-      )}
-    </div>
+      {/* Actions */}
+      <motion.div 
+        className="flex items-center gap-6 mt-3"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.1 }}
+      >
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleReact}
+          className={cn(
+            "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200",
+            hasUserReacted || isCreateReactionSuccess
+              ? "bg-primary-500/20 text-primary-400 border border-primary-500/30"
+              : "text-neutral-400 hover:text-primary-400 hover:bg-primary-500/10"
+          )}
+        >
+          {isCreateReactionPending ? (
+            <LuLoader className="animate-spin size-3" />
+          ) : (
+            <ThumbsUp className="size-3" />
+          )}
+          <span className="text-neutral-100">React</span>
+          {reactionCount > 0 && (
+          <span className="bg-neutral-600/50 px-1.5 py-0.5 rounded-full text-xs text-neutral-100">
+            {reactionCount}
+          </span>
+          )}
+        </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleToggleLevelTwo}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-neutral-100 hover:text-primary-400 hover:bg-primary-500/10 transition-all duration-200"
+        >
+          <MessageCircle className="size-3" />
+          <span className="text-neutral-100">Reply</span>
+          {replies?.length > 0 && (
+            <span className="bg-neutral-600/50 px-1.5 py-0.5 rounded-full text-xs text-neutral-100">
+              {replies.length}
+            </span>
+          )}
+          {isLevelTwoCommentOpen && (
+            <motion.div
+              initial={{ rotate: 0 }}
+              animate={{ rotate: 45 }}
+              transition={{ duration: 0.2 }}
+            >
+              <LuX className="size-3" />
+            </motion.div>
+          )}
+        </motion.button>
+      </motion.div>
+
+      {/* Level 2 Comments */}
+      <AnimatePresence>
+        {isLevelTwoCommentOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mt-3"
+          >
+            <CommentSectionLevel2
+              article_id={article_id}
+              comment_id={comment_id}
+              comments={replies}
+              author_of_post={author_of_post}
+              isTabActive={activeLevelTwoCommentId === comment_id}
+              article={article}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 
