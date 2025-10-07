@@ -8,6 +8,7 @@ import CommentSection from '../../../Comments/components/CommentSection';
 import ReactionModal from '../../../Interactions/components/ReactionModal';
 import { useGetArticleReactions } from '../../../Interactions/hooks';
 import { t } from 'i18next';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface BlogReactionSessionProps {
   message?: string;
@@ -126,22 +127,24 @@ const BlogArticleReactionSession: React.FC<BlogReactionSessionProps> = ({
       </div>
 
       {/* Comment Section */}
-      {commentTabState && (
-        <CommentSection
-          article_id={article_id}
-          setIsCommentSectionOpen={setIsCommentSectionOpen}
-          author_of_post={author_of_post}
-          article={article}
-        />
-      )}
-      {isCommentSectionOpen && (
-        <CommentSection
-          article_id={article_id}
-          setIsCommentSectionOpen={setIsCommentSectionOpen}
-          author_of_post={author_of_post}
-          article={article}
-        />
-      )}
+      <AnimatePresence mode="wait">
+        {(commentTabState || isCommentSectionOpen) && (
+          <motion.div
+            initial={{ opacity: 0, height: 0, y: -20 }}
+            animate={{ opacity: 1, height: "auto", y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="mt-4"
+          >
+            <CommentSection
+              article_id={article_id}
+              setIsCommentSectionOpen={setIsCommentSectionOpen}
+              author_of_post={author_of_post}
+              article={article}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

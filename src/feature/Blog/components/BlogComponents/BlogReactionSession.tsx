@@ -10,6 +10,7 @@ import BlogRepostModal from "./BlogRepostModal";
 import { t } from "i18next";
 import { useRepostArticle } from "../../../Repost/hooks/useRepost";
 import { LuLoader } from "react-icons/lu";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface BlogReactionSessionProps {
   message?: string;
@@ -337,22 +338,24 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
       </div>  
 
       {/* Comment Section */}
-      {commentTabState && (
-        <CommentSection
-          article_id={article_id}
-          setIsCommentSectionOpen={setIsCommentSectionOpen}
-          article={article}
-          author_of_post={author_of_post}
-        />
-      )}
-      {isCommentSectionOpen && (
-        <CommentSection
-          article_id={article_id}
-          setIsCommentSectionOpen={setIsCommentSectionOpen}
-          author_of_post={author_of_post}
-          article={article}
-        />
-      )}
+      <AnimatePresence mode="wait">
+        {(commentTabState || isCommentSectionOpen) && (
+          <motion.div
+            initial={{ opacity: 0, height: 0, y: -20 }}
+            animate={{ opacity: 1, height: "auto", y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="mt-4"
+          >
+            <CommentSection
+              article_id={article_id}
+              setIsCommentSectionOpen={setIsCommentSectionOpen}
+              article={article}
+              author_of_post={author_of_post}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

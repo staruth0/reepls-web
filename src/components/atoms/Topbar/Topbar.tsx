@@ -88,7 +88,7 @@ const Topbar: React.FC<TopbarProps> = ({ children }) => {
     : t("Cognitive Mode is off! Turn it on to hide images and focus better.");
 
   return (
-    <div className="w-full h-[90px] border-b border-neutral-500 sticky top-0 z-[9999] bg-background flex items-center justify-between px-4">
+    <div className="w-full h-[90px] border-b border-neutral-500 sticky top-0 z-[8100] bg-background flex items-center justify-between px-4">
       <div className={`${!location.pathname.includes('/search') || !location.pathname.includes('/post/create')? 'w-full flex-1 ': ''}`}>{children}
       </div>  
       {(!location.pathname.includes('/search') && !location.pathname.includes('/create')) && <div className='flex items-center gap-2 px-2'>

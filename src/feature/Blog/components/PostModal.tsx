@@ -122,8 +122,7 @@ const PostModal = ({
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+      .replace(/"/g, '&quot;');
 
   const buildHighlightedHtml = (text: string) => {
     if (!text) return '';
@@ -161,10 +160,10 @@ const PostModal = ({
     <Dialog
       open={isModalOpen}
       as="div"
-      className="relative z-[999] focus:outline-none"
+      className="relative z-[9999] focus:outline-none"
       onClose={() => setIsModalOpen(false)}
     >
-      <DialogBackdrop className="fixed inset-0 z-[99999] bg-black/20" />
+      <DialogBackdrop className="fixed inset-0 z-[9999] bg-black/20" />
 
       <div className="fixed inset-0 z-[99999] w-screen overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-4">

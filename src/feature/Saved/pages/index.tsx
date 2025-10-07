@@ -21,7 +21,7 @@ import SavedRepostsContainer from '../Components/SavedRepostsContainer'; // Add 
 import { useGetSavedReposts } from '../../Repost/hooks/useRepost';
 import MainContent from '../../../components/molecules/MainContent';
 import { LuArrowLeft } from 'react-icons/lu';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 interface Article {
   id: string;
@@ -40,6 +40,7 @@ interface SavedArticlesResponse {
 const Bookmarks: React.FC = () => {
   const { authUser } = useUser();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { data: savedArticlesData, isLoading: isLoadingSavedArticles, error: savedArticlesError } = useGetSavedArticles();
   const { data: followingsData, isLoading: isLoadingFollowings, error: followingsError } = useGetFollowing(authUser?.id || '');
   const { data: savedPodcastsData,  error: savedPodcastsError } = useGetMySavedPodcasts();
@@ -95,16 +96,26 @@ useEffect(() => {
   if (!savedArticlesData) return;
 
   const articles = (savedArticlesData as SavedArticlesResponse)?.articles || [];
-  setSavedPosts(
-    articles
-      .filter((item: SavedArticleWrapper) => item.article && !item.article.isArticle)
-      .map((item: SavedArticleWrapper) => item.article)
-  );
-  setSavedArticles(
-    articles
-      .filter((item: SavedArticleWrapper) => item.article && item.article.isArticle)
-      .map((item: SavedArticleWrapper) => item.article)
-  );
+  const posts = articles
+    .filter((item: SavedArticleWrapper) => item.article && !item.article.isArticle)
+    .map((item: SavedArticleWrapper) => item.article);
+  const articlesList = articles
+    .filter((item: SavedArticleWrapper) => item.article && item.article.isArticle)
+    .map((item: SavedArticleWrapper) => item.article);
+  
+  setSavedPosts(posts);
+  setSavedArticles(articlesList);
+
+  // Auto-switch to articles tab if there are articles and no posts, or if articles tab has more content
+  // Only auto-switch if no specific tab was requested via URL parameter
+  const requestedTab = searchParams.get('tab');
+  if (!requestedTab) {
+    if (articlesList.length > 0 && posts.length === 0) {
+      setActiveTab('articles');
+    } else if (articlesList.length > posts.length && articlesList.length > 0) {
+      setActiveTab('articles');
+    }
+  }
 }, [savedArticlesData]);
 
   useEffect(() => {
@@ -112,14 +123,14 @@ useEffect(() => {
   }, [followingsData]);
 
   const tabs = [
-    { id: 'posts', title: `${t("saved.tabs.posts")} (${savedPosts?.length})` },
-    { id: 'articles', title: `${t("saved.tabs.articles")} (${savedArticles?.length})` },
+    { id: 'posts', title: `${t("saved.tabs.posts")} (${savedPosts?.length || 0})` },
+    { id: 'articles', title: `${t("saved.tabs.articles")} (${savedArticles?.length || 0})` },
     { id: 'podcasts', title: `Podcasts (${savedPodcastsData?.data?.savedPodcasts.length || 0})` },
     { id: 'reposts', title: `Reposts (${Reposts?.reposts.length  || 0})` }, // Add this tab
     { id: 'history', title: `${t("saved.tabs.history")}` },
   ];
 
-  const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
+  const [activeTab, setActiveTab] = useState<number | string>(searchParams.get('tab') || 'posts');
 
   // Loading state for saved content
   if (isLoadingSavedArticles) {
@@ -255,12 +266,12 @@ useEffect(() => {
           <div className="px-2 mt-6 w-full">
             {activeTab === 'posts' && (
               <div className="pb-10">
-                <SavedPostsContainer posts={savedPosts} />
+                <SavedPostsContainer posts={savedPosts} isLoading={isLoadingSavedArticles} />
               </div>
             )}
             {activeTab === 'articles' && (
               <div className="pb-10">
-                <SavedArticlesContainer articles={savedArticles} />
+                <SavedArticlesContainer articles={savedArticles} isLoading={isLoadingSavedArticles} />
               </div>
             )}
             {activeTab === 'podcasts' && (

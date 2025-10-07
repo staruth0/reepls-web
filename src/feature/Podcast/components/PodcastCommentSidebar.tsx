@@ -156,7 +156,7 @@ const PodcastCommentSidebar: React.FC<PodcastCommentSidebarProps> = ({
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-full md:w-96 bg-background shadow-lg transform transition-transform duration-300 ease-in-out z-[1000]
+        className={`fixed top-0 right-0 h-full w-full md:w-96 bg-background shadow-lg transform transition-transform duration-300 ease-in-out z-[9999]
         ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
         aria-hidden={!isOpen}
       >
@@ -164,7 +164,7 @@ const PodcastCommentSidebar: React.FC<PodcastCommentSidebarProps> = ({
         {isOpen && (
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-neutral-300 hover:text-neutral-50 focus:outline-none z-50"
+            className="absolute top-4 right-4 text-neutral-300 hover:text-neutral-50 focus:outline-none z-[9999]"
             aria-label="Close comments sidebar"
             type="button"
           >

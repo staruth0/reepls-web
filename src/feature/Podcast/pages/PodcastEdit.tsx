@@ -422,9 +422,6 @@ const EditPodcast: React.FC= () => {
             ></textarea>
             <div className="absolute bottom-2 right-3 text-xs">
               <div className="text-right">
-                <div className={getWordCountColor(description, LIMITS.PODCAST.DESCRIPTION_MAX_WORDS)}>
-                  {getWordCountDisplay(description, LIMITS.PODCAST.DESCRIPTION_MAX_WORDS)} words
-                </div>
                 <div className={getCharacterCountColor(description, LIMITS.PODCAST.DESCRIPTION_MAX_CHARS)}>
                   {getCharacterCountDisplay(description, LIMITS.PODCAST.DESCRIPTION_MAX_CHARS)} chars
                 </div>

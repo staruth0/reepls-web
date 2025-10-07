@@ -37,7 +37,7 @@ const AddTagsModal: React.FC<AddTagsModalProps> = ({ isOpen, onClose, onSave, in
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
       <div className="bg-neutral-800 rounded-lg shadow-xl p-6 w-full max-w-md relative">
         <button
           onClick={onClose}
@@ -86,7 +86,7 @@ const AddTagsModal: React.FC<AddTagsModalProps> = ({ isOpen, onClose, onSave, in
 
         <button
           onClick={handleSave}
-          className="w-full py-2 bg-green-600 text-white font-bold rounded-md hover:bg-green-700 transition-colors duration-200"
+          className="w-full py-2 bg-primary-400 text-white font-bold rounded-md hover:bg-primary-500 transition-colors duration-200"
         >
           Save Tags
         </button>

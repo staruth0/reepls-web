@@ -14,14 +14,26 @@ const PostView: React.FC = () => {
   const [isClosing, setIsClosing] = useState(false);
 
   const handleClose = () => {
+    if (isClosing) return; // Prevent multiple close attempts
+    
     setIsClosing(true);
-    setTimeout(() => navigate(-1), 300); // Match the animation duration
+    setTimeout(() => {
+      try {
+        // Navigate to home page instead of browser back
+        // This ensures users always land on the home page when closing shared links
+        navigate('/feed', { replace: true });
+      } catch (error) {
+        console.error('Navigation failed:', error);
+        // Fallback: try to navigate to root
+        window.location.href = '/feed';
+      }
+    }, 300); // Match the animation duration
   };
 
   useEffect(() => {
     if (isError) {
       toast.error('Error fetching article.');
-      navigate('/feed');
+      navigate('/feed', { replace: true });
     }
   }, [isError, navigate]);
 
@@ -32,6 +44,18 @@ const PostView: React.FC = () => {
       document.body.style.overflow = 'auto';
     };
   }, []);
+
+  // Handle escape key to close modal
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isClosing) {
+        handleClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isClosing]);
 
   return (
     <div className={`post-view-container ${isClosing ? 'closing' : ''}`}>

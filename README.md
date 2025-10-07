@@ -102,4 +102,3 @@ Retrieves all publications where the user is a collaborator.
 # Get my collaborative publications - Default pagination
 # GET /api-v1/publications/my-publications
 GET {{baseUrl}}/publications/my-publications
-
