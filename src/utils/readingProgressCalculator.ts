@@ -142,7 +142,7 @@ export function formatTime(seconds: number): string {
  * Format progress as a readable string
  */
 export function formatProgress(result: ReadingProgressResult): string {
-  const { progressPercentage, timeRatio, scrollRatio, isTimeLimited, isScrollLimited } = result;
+  const { progressPercentage, isTimeLimited, isScrollLimited } = result;
   
   let status = `${progressPercentage}% complete`;
   

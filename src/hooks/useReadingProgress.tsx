@@ -3,8 +3,7 @@ import {
   calculateReadingProgress, 
   getScrollMetrics, 
   estimateArticleReadTime,
-  ReadingProgressResult,
-  ReadingProgressParams
+  ReadingProgressResult
 } from '../utils/readingProgressCalculator';
 
 interface UseReadingProgressOptions {

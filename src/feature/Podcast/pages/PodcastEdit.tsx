@@ -18,9 +18,7 @@ import {
   validatePodcastSubtitle, 
   validatePodcastDescription,
   getCharacterCountDisplay,
-  getWordCountDisplay,
   getCharacterCountColor,
-  getWordCountColor,
   LIMITS
 } from '../../../utils/validation';
 
