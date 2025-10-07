@@ -318,7 +318,7 @@ const Podcast: React.FC = () => {
               disabled={isPosting || isUploadingThumbnail}
               className="bg-primary-400 text-white font-bold text-md py-2 px-6 rounded-full transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Post
+              Publish
             </button>
           </div>
         </div>
@@ -467,18 +467,24 @@ const Podcast: React.FC = () => {
                 }
               }}
               rows={8}
-              className="w-full p-3 bg-neutral-700 text-neutral-50 placeholder-neutral-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 resize-y pr-20"
+              className="w-full p-3 bg-neutral-700 text-neutral-50 placeholder-neutral-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 resize-y pr-3 md:pr-32"
               maxLength={LIMITS.PODCAST.DESCRIPTION_MAX_CHARS}
               disabled={isPosting}
             ></textarea>
-            <div className="absolute bottom-2 right-3 text-xs">
+            {/* Desktop: Show count inside textarea */}
+            <div className="absolute bottom-3 right-4 text-xs hidden md:block">
               <div className="text-right">
-                <div className={getWordCountColor(description, LIMITS.PODCAST.DESCRIPTION_MAX_WORDS)}>
-                  {getWordCountDisplay(description, LIMITS.PODCAST.DESCRIPTION_MAX_WORDS)} words
-                </div>
                 <div className={getCharacterCountColor(description, LIMITS.PODCAST.DESCRIPTION_MAX_CHARS)}>
                   {getCharacterCountDisplay(description, LIMITS.PODCAST.DESCRIPTION_MAX_CHARS)} chars
                 </div>
+              </div>
+            </div>
+          </div>
+          {/* Mobile: Show count below textarea */}
+          <div className="flex justify-end mt-2 text-xs md:hidden">
+            <div className="text-right">
+              <div className={getCharacterCountColor(description, LIMITS.PODCAST.DESCRIPTION_MAX_CHARS)}>
+                {getCharacterCountDisplay(description, LIMITS.PODCAST.DESCRIPTION_MAX_CHARS)} chars
               </div>
             </div>
           </div>

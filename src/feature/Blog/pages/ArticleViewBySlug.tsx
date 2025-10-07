@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   Bookmark,
   FilePen,
@@ -16,11 +16,7 @@ import { useUser } from "../../../hooks/useUser";
 import { Article, Follow, MediaItem, User } from "../../../models/datamodels";
 import { timeAgo } from "../../../utils/dateFormater";
 import SignInPopUp from "../../AnonymousUser/components/SignInPopUp";
-import {
-  useFollowUser,
-  useGetFollowing,
-  useUnfollowUser,
-} from "../../Follow/hooks";
+import { useFollowUser, useGetFollowing, useUnfollowUser} from "../../Follow/hooks";
 import {
   useGetSavedArticles,
   useRemoveSavedArticle,
@@ -50,6 +46,13 @@ import { useGetPodcastById } from "../../Podcast/hooks";
 import AudioWave from "../../../components/molecules/Audio/AudiWave";
 import { useGetAllReactionsForTarget } from "../../Repost/hooks/useRepost";
 
+// Start of reading progress implementation
+import { useCreateReadingProgress, useGetReadingProgressByArticleId, useUpdateReadingProgress } from "../../ReadingProgress/hooks";
+import { useReadingProgress } from "../../../hooks/useReadingProgress";
+import ReadingProgressBar from "../../../components/atoms/ReadingProgressBar";
+import { estimateArticleReadTime } from "../../../utils/readingProgressCalculator";
+// reading progress implementation
+
 const ArticleViewBySlug: React.FC = () => {
   const navigate = useNavigate();
   const { articleUid, id, slug } = useParams();
@@ -62,6 +65,7 @@ const ArticleViewBySlug: React.FC = () => {
   const [htmlArticleContent, setHtmlArticleContent] = useState<string>(
     "*This article does not have any content*"
   );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setMedia] = useState<MediaItem[]>([]);
   const [isPreview] = useState<boolean>(articleUid === PREVIEW_SLUG);
   const [showSharePopup, setShowSharePopup] = useState<boolean>(false);
@@ -91,6 +95,39 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
   const [isCommentSectionOpen, setIsCommentSectionOpen] = useState<boolean>(true);
   const { mutate } = useUpdateReadingHistory();
 
+  // reading progress implementation
+  const [hasReadingProgress, setHasReadingProgress] = useState<boolean>(false);
+  const [isProgressSaving, setIsProgressSaving] = useState<boolean>(false);
+  const { mutate: createReadingProgress } = useCreateReadingProgress();
+  const { mutate: updateReadingProgress } = useUpdateReadingProgress();
+  const { data: readingProgress } = useGetReadingProgressByArticleId(article?._id || "");
+  
+  // New reading progress hook
+  const {
+    progress: readingProgressData,
+    isTracking,
+    startTracking,
+    stopTracking
+  } = useReadingProgress({
+    articleId: article?._id || "",
+    content: content || "",
+    isLoggedIn: !!isLoggedIn,
+    isPreview: isPreview,
+    onProgressChange: (progress) => {
+      console.log('Reading progress updated:', progress);
+    }
+  });
+  
+  // Initialize hasReadingProgress when data loads
+  useEffect(() => {
+    console.log('readingProgress', readingProgress)
+    if (readingProgress?.data) {
+      setHasReadingProgress(true);
+    } else {
+      setHasReadingProgress(false);
+    }
+  }, [readingProgress?.data,readingProgress]);
+
   // Podcast fetch and audio controls only if article has podcast
   const { data: podcastData } = useGetPodcastById(article?.podcastId || "");
   const podcast = podcastData?.data;
@@ -113,6 +150,89 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
   useEffect(()=>{
     console.log('article', article)
   },[article])
+
+  // reading progress implementation
+  // Start tracking when article loads
+  useEffect(() => {
+    if (article && !isPreview && !isPending && isLoggedIn) {
+      startTracking();
+    } else {
+      stopTracking();
+    }
+  }, [article, isPreview, isPending, isLoggedIn, startTracking, stopTracking]);
+
+  // Helper function to save reading progress with new calculation
+  const saveReadingProgress = useCallback((isUnload: boolean = false) => {
+    if (!article?._id || !isLoggedIn || isPreview || isProgressSaving || !isTracking) {
+      return;
+    }
+
+    setIsProgressSaving(true);
+    
+    // Use the new progress calculation
+    const progressData = {
+      read_time: Math.floor(readingProgressData.timeRatio * estimateArticleReadTime(content || "")),
+      scroll_length: readingProgressData.scrollRatio * 100, // Convert to percentage for API
+    };
+
+    const onSuccess = () => {
+      setHasReadingProgress(true);
+      setIsProgressSaving(false);
+    };
+
+    const onError = (error: Error) => {
+      console.error('Error saving reading progress:', error);
+      setIsProgressSaving(false);
+      if (!isUnload) {
+        toast.error("Failed to save reading progress");
+      }
+    };
+
+    if (hasReadingProgress) {
+      updateReadingProgress({
+        articleId: article._id,
+        readingProgress: progressData
+      }, {
+        onSuccess,
+        onError,
+      });
+    } else {
+      createReadingProgress({
+        article_id: article._id,
+        read_time: progressData.read_time,
+        scroll_length: progressData.scroll_length,
+      }, {
+        onSuccess,
+        onError,
+      });
+    }
+  }, [article?._id, isLoggedIn, isPreview, isProgressSaving, isTracking, readingProgressData, content, hasReadingProgress, updateReadingProgress, createReadingProgress]);
+
+  // Save reading progress when component unmounts or user navigates away
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      saveReadingProgress(true); // Pass true to suppress error toast on unload
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // Also save when component unmounts
+      handleBeforeUnload();
+    };
+  }, [saveReadingProgress]);
+
+  // Periodic save of reading progress (every 30 seconds)
+  useEffect(() => {
+    if (!isTracking || !article?._id || !isLoggedIn || isPreview) return;
+
+    const interval = setInterval(() => {
+      saveReadingProgress(false); // Allow error toasts during periodic saves
+    }, 30000); // Save every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [isTracking, article?._id, isLoggedIn, isPreview, saveReadingProgress]);
+  // End of reading progress implementation
 
   useEffect(() => {
     if (slug) {
@@ -196,7 +316,13 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
   };
 
   const handleGoBack = () => {
-    navigate(-1);
+    if (!isLoggedIn) {
+      // For non-signed in users, navigate to feed
+      navigate('/feed', { replace: true });
+    } else {
+      // For signed in users, use browser back
+      navigate(-1);
+    }
   };
 
   const handleShareClick = () => {
@@ -388,6 +514,17 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
                 <ArticleAudioControls article={article} />
               )}
             </div>
+
+            {/* Reading Progress Indicator */}
+            {!isPreview && isLoggedIn && isTracking && (
+              <div className="w-full mb-4">
+                <ReadingProgressBar 
+                  progress={readingProgressData} 
+                  showDetails={true}
+                  className="bg-neutral-800 p-3 rounded-lg"
+                />
+              </div>
+            )}
 
             {/* Article Content */}
             <div id="article-content" className="w-full mb-5">

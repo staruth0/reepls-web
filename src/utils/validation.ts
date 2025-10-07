@@ -88,15 +88,7 @@ export const validatePodcastSubtitle = (subtitle: string): { isValid: boolean; m
 };
 
 export const validatePodcastDescription = (description: string): { isValid: boolean; message?: string } => {
-  const wordCount = countWords(description);
   const charCount = countCharacters(description);
-  
-  if (wordCount > LIMITS.PODCAST.DESCRIPTION_MAX_WORDS) {
-    return {
-      isValid: false,
-      message: `Description must be ${LIMITS.PODCAST.DESCRIPTION_MAX_WORDS} words or less (${wordCount}/${LIMITS.PODCAST.DESCRIPTION_MAX_WORDS})`
-    };
-  }
   
   if (charCount > LIMITS.PODCAST.DESCRIPTION_MAX_CHARS) {
     return {
