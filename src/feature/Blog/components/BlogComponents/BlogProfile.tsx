@@ -1,6 +1,6 @@
-import { Bookmark, EllipsisVertical, Share2, UserPlus, X, Trash2, Edit, BarChart2, Flag } from "lucide-react";
+import { Bookmark, EllipsisVertical, Share2, X, Trash2, Edit, BarChart2} from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { LuBadgeCheck, LuLoader } from "react-icons/lu";
+import { LuBadgeCheck, LuLoader, LuEyeOff, LuUser } from "react-icons/lu";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import SharePopup from "../../../../components/molecules/share/SharePopup";
@@ -200,8 +200,8 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
   }, [savedArticles, article_id]);
 
   const getFollowStatusText = (isMenu = false) => {
-    if (!isLoggedIn) return t("follow");
-    if (isFollowPending) return `${t("following")}...`;
+    if (!isLoggedIn) return t("Follow");
+    if (isFollowPending) return `${t("Following")}...`;
     if (isUnfollowPending) return `${t("unfollowing")}...`;
     return isFollowing(user?._id || "") ? t("") : isMenu ? t("blog.Followauthor") : t("follow");
   };
@@ -319,28 +319,28 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                     onClick={handleSavedArticle}
                   >
-                    <Bookmark size={18} className="text-neutral-500" />
+                    <Bookmark size={22} className="text-neutral-500" />
                     <div>{getSaveStatusText()}</div>
                   </div>
                  <div
                   className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                   onClick={() => setShowReportPopup(true)}
                 >
-                  <Flag size={18} className="text-neutral-500" />
-                  {t("blog.ReportPost")}
+                  <LuEyeOff size={22} className="text-neutral-500" />
+                  {t("Hide Post")}
                 </div>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                     onClick={handleFollowClick}
                   >
-                    <UserPlus size={18} className="text-neutral-500" />
+                    <LuUser size={22} className="text-neutral-500" />
                     {getFollowMenuStatusText(true)}
                   </div>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                     onClick={handleShareClick}
                   >
-                    <Share2 size={18} className="text-neutral-500" /> {t("blog.Share")}
+                    <Share2 size={22} className="text-neutral-500" /> {t("blog.Share")}
                   </div>
                 </>
               )}

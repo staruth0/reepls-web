@@ -79,9 +79,13 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, article, isAr
         </button>
       ) : (
         showToggle && (
-          <button onClick={handleToggle} className="text-neutral-50 text-[14px] font-medium mt-1">
-            {isExpanded ? t('blog.seeLess') : t('blog.seeMore')}
-          </button>
+         <button
+  onClick={handleToggle}
+  className="text-[#57C016] text-[14px] font-medium mt-1"
+>
+  {isExpanded ? t('blog.seeLess') : t('readmore')}
+</button>
+
         )
       )}
     </div>

@@ -212,7 +212,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
         onRetry={handleRetryRepost}
       />
 
-      <div className="blog-reaction-session border-t border-neutral-400 flex gap-4">
+      <div className="blog-reaction-session border-t border-neutral-400 flex gap-6">
         {/* React Button */}
         <div className="relative">
           <button
