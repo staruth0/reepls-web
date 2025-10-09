@@ -1,6 +1,6 @@
 import { Bookmark, EllipsisVertical, Share2, X, Trash2, Edit, BarChart2} from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { LuBadgeCheck, LuLoader, LuEyeOff, LuUser } from "react-icons/lu";
+import { LuBadgeCheck, LuLoader, LuFlag, LuUser } from "react-icons/lu";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import SharePopup from "../../../../components/molecules/share/SharePopup";
@@ -326,8 +326,8 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
                   className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                   onClick={() => setShowReportPopup(true)}
                 >
-                  <LuEyeOff size={22} className="text-neutral-500" />
-                  {t("Hide Post")}
+                  <LuFlag size={22} className="text-neutral-500" />
+                  {t("Report Post")}
                 </div>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
