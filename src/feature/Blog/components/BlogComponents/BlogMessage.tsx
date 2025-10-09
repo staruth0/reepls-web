@@ -18,7 +18,7 @@ interface BlogMessageProps {
 const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, article, isArticle, article_id, slug }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showToggle, setShowToggle] = useState(false);
-  const [hasClicked, setHasClicked] = useState(false); // Added to prevent multiple updates
+  const [hasClicked, setHasClicked] = useState(false);
   const contentRef = useRef<HTMLParagraphElement>(null);
   const navigate = useNavigate();
   const { mutate } = useUpdateArticle();
@@ -29,12 +29,7 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, article, isAr
       const contentHeight = contentRef.current.scrollHeight;
       const lineHeight = parseInt(window.getComputedStyle(contentRef.current).lineHeight, 10);
       const maxHeight = lineHeight * 3;
-
-      if (contentHeight > maxHeight) {
-        setShowToggle(true);
-      } else {
-        setShowToggle(false);
-      }
+      setShowToggle(contentHeight > maxHeight);
     }
   }, [content]);
 
@@ -45,8 +40,8 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, article, isAr
         mutate({
           articleId: article._id || '',
           article: {
-            views_count:article.views_count! +1,
-            engagement_count: article.engagement_count! + 1, 
+            views_count: article.views_count! + 1,
+            engagement_count: article.engagement_count! + 1,
           },
         });
         navigate(slug ? `/posts/article/slug/${slug}` : `/posts/article/${article_id}`);
@@ -54,6 +49,20 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, article, isAr
     } else {
       setIsExpanded((prev) => !prev);
     }
+  };
+
+  // ✅ Highlight hashtags (#tag)
+  const formatContent = (text: string) => {
+    const parts = text.split(/(\#[a-zA-Z0-9_]+)/g); // split but keep hashtags
+    return parts.map((part, index) =>
+      part.startsWith('#') ? (
+        <span key={index} className="text-[#57C016] font-medium">
+          {part}
+        </span>
+      ) : (
+        <span key={index}>{part}</span>
+      )
+    );
   };
 
   return (
@@ -67,25 +76,24 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, article, isAr
           'whitespace-pre-wrap'
         )}
       >
-        {content}
+        {formatContent(content)}
       </p>
       {isArticle ? (
         <button
           onClick={handleToggle}
-          disabled={hasClicked} // Disable button after first click
+          disabled={hasClicked}
           className="text-primary-400 underline decoration-dotted underline-offset-4 text-[14px] font-medium mt-1 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {t("blog.Continuereading")}
+          {t('blog.Continuereading')}
         </button>
       ) : (
         showToggle && (
-         <button
-  onClick={handleToggle}
-  className="text-[#57C016] text-[14px] font-medium mt-1"
->
-  {isExpanded ? t('blog.seeLess') : t('readmore')}
-</button>
-
+          <button
+            onClick={handleToggle}
+            className="text-[#57C016] text-[14px] font-medium mt-1"
+          >
+            {isExpanded ? t('blog.seeLess') : t('readmore')}
+          </button>
         )
       )}
     </div>
