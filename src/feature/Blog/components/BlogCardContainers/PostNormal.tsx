@@ -70,12 +70,7 @@ const PostNormal: React.FC<articleprobs> = ({ article }) => {
         )}
       </ErrorBoundary>
 
-      <BlogReactionStats
-        toggleCommentSection={toggleCommentSection}
-        date={article.createdAt || ""}
-        article_id={article._id || ""}
-        article={article}
-      />
+      
       <BlogReactionSession
         isCommentSectionOpen={isCommentSectionOpen}
         message={article.content || ""}
