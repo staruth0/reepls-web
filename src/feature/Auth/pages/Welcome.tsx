@@ -18,6 +18,8 @@ function Welcome() {
     navigate("/feed");
   };
 
+
+
   return (
     <div className="welcome__container">
       <div className="welcome__text">{t("WelcomeMessage")}</div>
@@ -32,6 +34,8 @@ function Welcome() {
         <button className="btn__sign-up" onClick={navigateToSignIn}>
           {t("SignUpButton")}
         </button>
+        
+
       </div>
 
       <div className="welcome__link" onClick={navigateToFeed}>{t("ContinueWithoutSignIn")}</div>

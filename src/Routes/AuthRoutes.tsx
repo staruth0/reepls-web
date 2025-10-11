@@ -4,9 +4,10 @@ import Registerwithemail from "../feature/Auth/pages/EmailRegistration/Registerw
 import RegisterWithEmail1 from "../feature/Auth/pages/EmailRegistration/RegisterWithEmail1";
 import RegisterWithEmail2 from "../feature/Auth/pages/EmailRegistration/RegisterWithEmail2";
 import Interests from "../feature/Auth/pages/Interests";
-import ForgotPassword from "../feature/Auth/pages/ForgotPassword";
-import VerifyResetCode from "../feature/Auth/pages/VerifyResetCode";
-import ResetPassword from "../feature/Auth/pages/ResetPassword";
+import ForgotPassword from "../feature/Auth/pages/ForgotPassword/ForgotPassword";
+import VerifyResetCode from "../feature/Auth/pages/ForgotPassword/VerifyResetCode";
+import ResetPassword from "../feature/Auth/pages/ForgotPassword/ResetPassword";
+import GoogleAuthCallback from "../feature/Auth/pages/GoogleAuthCallback";
 
 import Loginwithemail from "../feature/Auth/pages/Loginwithemail";
 
@@ -76,6 +77,10 @@ const AuthRoutes =  {
       {
         path: "reset-password",
         element: <ResetPassword />,
+      },
+      {
+        path: "google/callback",
+        element: <GoogleAuthCallback />,
       },
     ],
   }

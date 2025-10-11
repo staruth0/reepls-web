@@ -19,6 +19,7 @@ import {
   forgotPassword,
   verifyResetPasswordCode,
   resetPassword,
+  checkGoogleAuthStatus,
 } from "../api";
 import { useTokenStorage } from './useTokenStorage';
 
@@ -40,22 +41,46 @@ export const useRegisterUser = () => {
   });
 };
 
-// Hook for registering a user with Google
+// Hook for registering/logging in a user with Google - this initiates the OAuth flow
 export const useRegisterUserWithGoogle = () => {
+  // const navigate = useNavigate();
 
-  return useQuery({
-    queryKey: ['registerWithGoogle'],
-    queryFn: () => registerWithGoogle(),
-  
+  return useMutation({
+    mutationFn: () => registerWithGoogle(),
+    onSuccess: () => {
+      // The registerWithGoogle function handles the redirect to Google
+      // No need to navigate here as the user will be redirected
+    },
+    onError: (error) => {
+      console.error('Google auth initiation error:', error);
+    },
   });
 };
-// Hook for registering a user with Google
-export const useLogOutUserWithGoogle = () => {
 
+// Hook for logging out a user with Google - this clears the Google session
+export const useLogOutUserWithGoogle = () => {
+  const { logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: () => logOutWithGoogle(),
+    onSuccess: () => {
+      logout(); // Clear local auth state
+      navigate('/auth'); // Redirect to auth page
+    },
+    onError: (error) => {
+      console.error('Google logout error:', error);
+    },
+  });
+};
+
+// Hook for checking Google authentication status
+export const useCheckGoogleAuthStatus = () => {
   return useQuery({
-    queryKey: ['registerWithGoogle'],
-    queryFn: () => logOutWithGoogle(),
-  
+    queryKey: ['googleAuthStatus'],
+    queryFn: () => checkGoogleAuthStatus(),
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 };
 

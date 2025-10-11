@@ -9,14 +9,22 @@ const registerUser = async (user: User) => {
   return data;
 };
 
-// Register user
+// Register user with Google - this initiates the OAuth flow
 const registerWithGoogle = async () => {
-  const { data } = await apiClient.get("/googleAuth/google");
-  return data;
+  // Redirect to Google OAuth - this will redirect the user to Google
+  window.location.href = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api-v1/googleAuth/google`;
+  return { success: true, message: 'Redirecting to Google...' };
 };
-// Register user
+
+// Logout user with Google - this clears the Google session
 const logOutWithGoogle = async () => {
   const { data } = await apiClient.get("/googleAuth/logout");
+  return data;
+};
+
+// Check Google authentication status - this helps determine if user is authenticated via Google
+const checkGoogleAuthStatus = async () => {
+  const { data } = await apiClient.get("/googleAuth/status");
   return data;
 };
 
@@ -111,12 +119,12 @@ const verifyResetPasswordCode = async (code: string, email: string) => {
 // Reset password
 const resetPassword = async (
   token: string,
-  email: string,
+  _email: string, // Prefixed with underscore to indicate intentionally unused
   password: string
 ) => {
   const { data } = await apiClient.post(
     `/auth/reset-password?token=${token}`,
-    { email, password }
+    { password }
   );
   return data;
 };
@@ -136,5 +144,6 @@ export {
   resetPassword,
   updateUser,
   loginUserWithPhone,
-  logOutWithGoogle
+  logOutWithGoogle,
+  checkGoogleAuthStatus
 };
