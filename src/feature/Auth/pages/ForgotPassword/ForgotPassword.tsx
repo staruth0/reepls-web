@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LuLoader } from 'react-icons/lu';
 import { toast } from 'react-toastify';
-import InputField from '../components/InputField';
-import { useAuthErrorHandler } from '../../../utils/errorHandler';
-import { useForgotPassword } from '../hooks/AuthHooks';
-import '../styles/authpages.scss';
+import InputField from '../../components/InputField';
+import { useAuthErrorHandler } from '../../../../utils/errorHandler';
+import { useForgotPassword } from '../../hooks/AuthHooks';
+import '../../styles/authpages.scss';
 
 function ForgotPassword() {
   const { t } = useTranslation();
