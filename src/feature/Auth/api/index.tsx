@@ -12,7 +12,7 @@ const registerUser = async (user: User) => {
 // Register user with Google - this initiates the OAuth flow
 const registerWithGoogle = async () => {
   // Redirect to Google OAuth - this will redirect the user to Google
-  window.location.href = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api-v1/googleAuth/google`;
+  window.location.href = `${import.meta.env.VITE_API_BASE_URL || 'https://reepls-app-vrosp.ondigitalocean.app'}/api-v1/googleAuth/google`;
   return { success: true, message: 'Redirecting to Google...' };
 };
 
