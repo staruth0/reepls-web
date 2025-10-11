@@ -3,11 +3,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LuLoader } from 'react-icons/lu';
 import { toast } from 'react-toastify';
-import InputField from '../components/InputField';
-import { useAuthErrorHandler } from '../../../utils/errorHandler';
-import { useResetPassword } from '../hooks/AuthHooks';
-import { validatePassword } from '../../../utils/validatePassword';
-import '../styles/authpages.scss';
+import InputField from '../../components/InputField';
+import { useAuthErrorHandler } from '../../../../utils/errorHandler';
+import { useResetPassword } from '../../hooks/AuthHooks';
+import { validatePassword } from '../../../../utils/validatePassword';
+import '../../styles/authpages.scss';
 
 function ResetPassword() {
   const { t } = useTranslation();
@@ -25,10 +25,13 @@ function ResetPassword() {
 
   useEffect(() => {
     // Get email and token from navigation state
+    console.log('ResetPassword - location.state:', location.state); // Debug log
     if (location.state?.email && location.state?.token) {
       setEmail(location.state.email);
       setToken(location.state.token);
+      console.log('ResetPassword - token set:', location.state.token); // Debug log
     } else {
+      console.log('ResetPassword - missing email or token, redirecting to forgot password'); // Debug log
       // If no email/token in state, redirect back to forgot password
       navigate('/auth/forgot-password', { replace: true });
     }
@@ -90,12 +93,15 @@ function ResetPassword() {
       return;
     }
 
+    console.log('ResetPassword - submitting with:', { token, email, password: '***' }); // Debug log
     resetPasswordMutation.mutate({ token, email, password }, {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        console.log('ResetPassword - success response:', data); // Debug log
         toast.success(t('PasswordResetSuccess', { defaultValue: 'Password reset successfully! You can now login with your new password.' }));
         navigate('/auth/login/email', { replace: true });
       },
       onError: (error: unknown) => {
+        console.log('ResetPassword - error:', error); // Debug log
         const errorMessage = getErrorMessage(error);
         toast.error(errorMessage);
       }

@@ -40,15 +40,10 @@ function Registerwithemail() {
   //  navigate('/googleAuth/register')
   // }
 
-    const handleGoogleLogin = () => {
-      // Construct the Google OAuth2 URL
-      const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=${encodeURIComponent(
-        'http://localhost:5000/api-v1/googleAuth/google/callback'
-      )}&scope=profile%20email&client_id=276268262458-4j71v7s7krk3h4j47d49gp5q72msvdh3.apps.googleusercontent.com`;
-  
-      // Redirect the user to the Google OAuth2 URL
-      window.location.href = googleAuthUrl;
-    };
+  const handleGoogleLogin = () => {
+    // Simply redirect to your backend Google auth route
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL}/api-v1/googleAuth/google`;
+  };
 
   return (
     <div className="register__phone__container">

@@ -3,9 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LuLoader } from 'react-icons/lu';
 import { toast } from 'react-toastify';
-import InputField from '../components/InputField';
-import { useVerifyResetPasswordCode } from '../hooks/AuthHooks';
-import '../styles/authpages.scss';
+import InputField from '../../components/InputField';
+import { useVerifyResetPasswordCode } from '../../hooks/AuthHooks';
+import '../../styles/authpages.scss';
 
 function VerifyResetCode() {
   const { t } = useTranslation();
@@ -60,21 +60,32 @@ function VerifyResetCode() {
     }
 
     verifyCodeMutation.mutate({ code, email }, {
-      onSuccess: (data: any) => {
+      onSuccess: (data: { resetPasswordToken?: string; token?: string; resetToken?: string }) => {
         toast.success(t('CodeVerified', { defaultValue: 'Code verified successfully' }));
+        console.log('Reset password verification response:', data); // Debug log
         navigate('/auth/reset-password', { 
           state: { 
             email, 
-            token: data.token || data.resetToken 
+            token: data.resetPasswordToken || data.token || data.resetToken 
           },
           replace: true 
         });
       },
-      onError: (error: any) => {
-        const errorMessage = error?.error?.message || 
-          error?.response?.data?.message || 
-          error?.message || 
-          t('CodeVerificationError', { defaultValue: 'Invalid verification code. Please try again.' });
+      onError: (error: unknown) => {
+        let errorMessage = t('CodeVerificationError', { defaultValue: 'Invalid verification code. Please try again.' });
+        
+        if (error && typeof error === 'object') {
+          const errorObj = error as Record<string, unknown>;
+          const errorMessageFromError = (errorObj?.error as Record<string, unknown>)?.message as string;
+          const responseMessage = (errorObj?.response as Record<string, unknown>)?.data as Record<string, unknown>;
+          const directMessage = errorObj?.message as string;
+          
+          errorMessage = errorMessageFromError || 
+            responseMessage?.message as string || 
+            directMessage || 
+            errorMessage;
+        }
+        
         toast.error(errorMessage);
       }
     });
