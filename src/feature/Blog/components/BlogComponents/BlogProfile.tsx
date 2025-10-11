@@ -267,7 +267,12 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
             )}
           </div>
           <p className="text-sm text-neutral-100 mt-1">
-            {user?.bio && <span>{user.bio}</span>}
+            {user?.bio && (
+  <span>
+    {user.bio.length > 100 ? user.bio.slice(0, 100) + "..." : user.bio}
+  </span>
+)}
+
             {user?.bio && <span className="mx-1">•</span>}
             <span>{timeAgo(article?.createdAt || '')}</span>
           </p>
