@@ -54,38 +54,39 @@ const PostNormalNoCommentary:React.FC<articleprobs> = ({article}) => {
           />
         </div>
        
-       <div className="m-2 border-[1px] border-neutral-500 rounded-sm">
-        <BlogArticleProfileRepost
-          title={article.title || ""}
-          user={article.author_id || {}}
-          content={article.content || ""}
-          date={article.createdAt || ""}
-          article_id={article._id || ""}
-          isArticle={article.isArticle || false}
-          article={article}
-        />
+      <div className="m-2 border-l-4 border-green-500 rounded-md p-2">
+  <BlogArticleProfileRepost
+    title={article.title || ""}
+    user={article.author_id || {}}
+    content={article.content || ""}
+    date={article.createdAt || ""}
+    article_id={article._id || ""}
+    isArticle={article.isArticle || false}
+    article={article}
+  />
 
-        <BlogMessage
-          title={article.title || ""}
-          content={article.content || ""}
-          article_id={article._id || ""}
-          isArticle={article.isArticle || false}
-          slug={article.slug || ""}
-          article={article}
-        />
+  <BlogMessage
+    title={article.title || ""}
+    content={article.content || ""}
+    article_id={article._id || ""}
+    isArticle={article.isArticle || false}
+    slug={article.slug || ""}
+    article={article}
+  />
 
-        <ErrorBoundary
-          FallbackComponent={ErrorFallback}
-          onError={(error, info) => {
-            void error;
-            void info;
-          }}
-        >
-          {!isCognitiveMode && article?.media && (
-            <BlogImagery article={article} media={article.media} />
-          )}
-        </ErrorBoundary>
-      </div>
+  <ErrorBoundary
+    FallbackComponent={ErrorFallback}
+    onError={(error, info) => {
+      void error;
+      void info;
+    }}
+  >
+    {!isCognitiveMode && article?.media && (
+      <BlogImagery article={article} media={article.media} />
+    )}
+  </ErrorBoundary>
+</div>
+
      
 
       <BlogReactionStats
