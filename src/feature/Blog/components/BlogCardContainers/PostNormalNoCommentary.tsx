@@ -54,7 +54,7 @@ const PostNormalNoCommentary:React.FC<articleprobs> = ({article}) => {
           />
         </div>
        
-      <div className="m-2 border-l-4 border-green-500 rounded-md p-2">
+      <div className="m-2 border-l-4 border-green-500 rounded-md p-2 bg-[#F9FAFB]">
   <BlogArticleProfileRepost
     title={article.title || ""}
     user={article.author_id || {}}
