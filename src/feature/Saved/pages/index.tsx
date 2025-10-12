@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 // import { LuHistory, LuHeadphones } from 'react-icons/lu';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
 import Tabs from '../../../components/molecules/Tabs/Tabs';
@@ -54,7 +54,7 @@ const Bookmarks: React.FC = () => {
   const {t} = useTranslation();
 
   // Function to get friendly error messages
-  const getFriendlyErrorMessage = (error: Error | { response?: { status: number }, message: string }, context: 'articles' | 'followings' | 'podcasts'): string => {
+  const getFriendlyErrorMessage = useCallback((error: Error | { response?: { status: number }, message: string }, context: 'articles' | 'followings' | 'podcasts'): string => {
     if (!error) return t("saved.errorMessages.default", {context});
 
     if (error.message.includes("Network Error")) {
@@ -76,7 +76,7 @@ const Bookmarks: React.FC = () => {
     }
 
     return t("saved.errorMessages.default", {context});
-  };
+  }, [t]);
 
   // Toast error notifications
   useEffect(() => {
@@ -89,7 +89,7 @@ const Bookmarks: React.FC = () => {
     if (savedPodcastsError) {
       toast.error(getFriendlyErrorMessage(savedPodcastsError, 'podcasts'));
     }
-  }, [savedArticlesError, followingsError, savedPodcastsError]);
+  }, [savedArticlesError, followingsError, savedPodcastsError, getFriendlyErrorMessage]);
 
   // Filter and separate saved articles into posts and articles
 useEffect(() => {
@@ -97,26 +97,26 @@ useEffect(() => {
 
   const articles = (savedArticlesData as SavedArticlesResponse)?.articles || [];
   const posts = articles
-    .filter((item: SavedArticleWrapper) => item.article && !item.article.isArticle)
+    .filter((item: SavedArticleWrapper) => item?.article && !item.article.isArticle)
     .map((item: SavedArticleWrapper) => item.article);
   const articlesList = articles
-    .filter((item: SavedArticleWrapper) => item.article && item.article.isArticle)
+    .filter((item: SavedArticleWrapper) => item?.article && item.article.isArticle)
     .map((item: SavedArticleWrapper) => item.article);
   
-  setSavedPosts(posts);
-  setSavedArticles(articlesList);
+  setSavedPosts(posts || []);
+  setSavedArticles(articlesList || []);
 
   // Auto-switch to articles tab if there are articles and no posts, or if articles tab has more content
   // Only auto-switch if no specific tab was requested via URL parameter
   const requestedTab = searchParams.get('tab');
   if (!requestedTab) {
-    if (articlesList.length > 0 && posts.length === 0) {
+    if ((articlesList?.length || 0) > 0 && (posts?.length || 0) === 0) {
       setActiveTab('articles');
-    } else if (articlesList.length > posts.length && articlesList.length > 0) {
+    } else if ((articlesList?.length || 0) > (posts?.length || 0) && (articlesList?.length || 0) > 0) {
       setActiveTab('articles');
     }
   }
-}, [savedArticlesData]);
+}, [savedArticlesData, searchParams]);
 
   useEffect(() => {
     setFollowings(followingsData?.data || []);
@@ -125,8 +125,8 @@ useEffect(() => {
   const tabs = [
     { id: 'posts', title: `${t("saved.tabs.posts")} (${savedPosts?.length || 0})` },
     { id: 'articles', title: `${t("saved.tabs.articles")} (${savedArticles?.length || 0})` },
-    { id: 'podcasts', title: `Podcasts (${savedPodcastsData?.data?.savedPodcasts.length || 0})` },
-    { id: 'reposts', title: `Reposts (${Reposts?.reposts.length  || 0})` }, // Add this tab
+    { id: 'podcasts', title: `Podcasts (${savedPodcastsData?.data?.savedPodcasts?.length || 0})` },
+    { id: 'reposts', title: `Reposts (${Reposts?.reposts?.length || 0})` }, // Add this tab
     { id: 'history', title: `${t("saved.tabs.history")}` },
   ];
 
@@ -232,7 +232,7 @@ useEffect(() => {
               <p className="text-neutral-50 text-center py-4">
                 {getFriendlyErrorMessage(followingsError, 'followings')}
               </p>
-            ) : followings.length > 0 ? (
+            ) : (followings?.length || 0) > 0 ? (
               followings.map((following: Follow, index: number) => (
                 <AuthorComponent
                   key={`${following?.followed_id?.id}-${index}`}

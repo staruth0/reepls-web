@@ -90,7 +90,7 @@ const FeedPodcasts: React.FC = () => {
   const podcasts: Podcast[] = podcastsAPI?.pages && podcastsAPI.pages.length > 0
     ? podcastsAPI.pages.flatMap(page => 
         page?.data?.results?.length > 0 
-          ? page.data.results.map(apiPodcastToCardPodcast)
+          ? (page?.data?.results || []).map(apiPodcastToCardPodcast)
           : []
       )
     : [];

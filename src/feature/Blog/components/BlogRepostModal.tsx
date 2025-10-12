@@ -186,18 +186,18 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
   const isPending = isReposting || isUpdating;
 
   const renderImageGrid = (images: ArticleMediaItem[]) => {
-    const imageCount = images.length;
+    const imageCount = images?.length || 0;
 
     if (imageCount === 0) return null;
 
     if (imageCount === 1) {
       return (
         <div className="mb-4">
-          <img
-            src={images[0].url}
-            alt="Post image"
-            className="w-full h-64 object-cover rounded-md"
-          />
+            <img
+              src={images?.[0]?.url || ''}
+              alt="Post image"
+              className="w-full h-64 object-cover rounded-md"
+            />
         </div>
       );
     }
@@ -221,12 +221,12 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
       return (
         <div className="mb-4 grid grid-cols-2 gap-2">
           <img
-            src={images[0].url}
+            src={images?.[0]?.url || ''}
             alt="Post image 1"
             className="w-full h-40 object-cover rounded-md row-span-2"
           />
           <div className="grid grid-rows-2 gap-2">
-            {images.slice(1, 3).map((mediaItem: ArticleMediaItem, index: number) => (
+            {(images || []).slice(1, 3).map((mediaItem: ArticleMediaItem, index: number) => (
               <img
                 key={mediaItem.url + index}
                 src={mediaItem.url}
@@ -242,7 +242,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
     if (imageCount >= 4) {
       return (
         <div className="mb-4 grid grid-cols-2 gap-2">
-          {images.slice(0, 3).map((mediaItem: ArticleMediaItem, index: number) => (
+          {(images || []).slice(0, 3).map((mediaItem: ArticleMediaItem, index: number) => (
             <img
               key={mediaItem.url + index}
               src={mediaItem.url}
@@ -252,7 +252,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
           ))}
           <div className="relative">
             <img
-              src={images[3].url}
+              src={images?.[3]?.url || ''}
               alt="Post image 4"
               className="w-full h-32 object-cover rounded-md"
             />
