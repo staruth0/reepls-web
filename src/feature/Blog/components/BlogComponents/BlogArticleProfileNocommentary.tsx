@@ -21,7 +21,7 @@ import ConfirmationModal from "../ConfirmationModal";
 import PostEditModal from "../PostEditModal";
 import { t } from "i18next";
 import ReportArticlePopup from "../../../Reports/components/ReportPostPopup";
-// import { timeAgo } from "../../../../utils/dateFormater";
+ import { timeAgo } from "../../../../utils/dateFormater";
 
 // Import only necessary icons for the simplified view
 import {
@@ -34,6 +34,7 @@ import {
   Share2,
   UserPlus,
   MessageSquare,
+  Radio
 } from "lucide-react";
 import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
 import BlogRepostModal from "../BlogRepostModal";
@@ -327,15 +328,19 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
     <div className=" relative flex items-center justify-between">
       {isRepostedView ? (
         <div className="flex w-full justify-between items-center ">
-          <div className="flex items-center gap-3">
-            <p
-              className="font-semibold cursor-pointer text-[14px] text-neutral-50"
-              onClick={() => goToProfile(user?.username || "")}
-            >
-              {user?.name? user?.name: <div className="w-20 h-4 bg-neutral-500 rounded-md animate-pulse" />}
-            </p>
-            <span className="text-neutral-300 text-sm">Reposted</span>
-          </div>
+             <div className="flex items-center gap-2 text-[14px]">
+  <Radio className="size-4 text-green-500" /> {/* Green icon */}
+  <span
+    className="text-gray-500 cursor-pointer hover:text-neutral-100"
+    onClick={() => goToProfile(user?.username || "")}
+  >
+    {user?.name || "Loading..."} republished
+  </span>
+  <span className="text-gray-400">• {timeAgo(article?.createdAt || '')}</span>
+</div>
+
+
+
           <div className="relative">
             {showMenu ? (
               <X
