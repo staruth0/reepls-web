@@ -43,10 +43,10 @@ const ArticleTab: React.FC<streamprops> = ({stream}) => {
 
   return (
     <div className="pb-10 space-y-6">
-      {articles.length === 0 ? (
+      {(articles?.length || 0) === 0 ? (
         <div className="text-center py-8 text-gray-500">No articles found for this publication</div>
       ) : (
-        articles.map((article:Article) => (
+        (articles || []).map((article:Article) => (
           <ArticleNormal key={article._id} article={article} />
         ))
       )}

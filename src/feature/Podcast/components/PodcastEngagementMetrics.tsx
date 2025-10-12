@@ -39,7 +39,7 @@ const getSavedPodcastIds = (savedPodcastsData: { data?: { savedPodcasts?: Array<
     return [];
   }
 
-  return savedPodcastsData.data.savedPodcasts
+  return (savedPodcastsData?.data?.savedPodcasts || [])
     .map((savedPodcast: { podcastId?: { _id?: string } | null }) =>
       savedPodcast.podcastId?._id
     )
