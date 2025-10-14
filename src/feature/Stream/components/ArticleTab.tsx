@@ -11,7 +11,7 @@ interface streamprops {
 
 const ArticleTab: React.FC<streamprops> = ({stream}) => {
 
-  const {data: articlesData, isLoading, error} = useGetPublicationArticles(stream._id || '');
+  const {data: articlesData, isLoading, error} = useGetPublicationArticles(stream._id || stream.id || '');
 
    useEffect(()=>{
     console.log('articles',articlesData)
@@ -47,7 +47,7 @@ const ArticleTab: React.FC<streamprops> = ({stream}) => {
         <div className="text-center py-8 text-gray-500">No articles found for this publication</div>
       ) : (
         (articles || []).map((article:Article) => (
-          <ArticleNormal key={article._id} article={article} />
+          <ArticleNormal key={article._id || article.id || Math.random()} article={article} />
         ))
       )}
     </div>

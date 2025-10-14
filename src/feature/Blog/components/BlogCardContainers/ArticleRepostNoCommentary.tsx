@@ -7,7 +7,7 @@ import ErrorFallback from "../../../../components/molecules/ErrorFallback/ErrorF
 import BlogArticleImagery from "../BlogComponents/BlogArticleImagery";
 import BlogArticleMessage from "../BlogComponents/BlogArticleMessage";
 import { calculateReadTime } from "../../../../utils/articles";
-import BlogReactionStats from "../BlogComponents/BlogReactionStats";
+//import BlogReactionStats from "../BlogComponents/BlogReactionStats";
 import BlogReactionSession from "../BlogComponents/BlogReactionSession";
 import BlogArticleProfileRepost from "../BlogComponents/BlogArticleProfileRepost";
 import BlogArticleProfileNoComment from "../BlogComponents/BlogArticleProfileNocommentary";
@@ -26,7 +26,7 @@ const ArticleNormalNoCommentary: React.FC<articleprobs> = ({ article }) => {
     useState<boolean>(false);
   const { mutate } = useUpdateArticle();
   const { user } = useGetUserByUsername(
-    article.repost?.repost_user.username || ""
+    article.repost?.repost_user?.username || ""
   );
 
   // Fetch podcast data if article has podcast
@@ -69,7 +69,7 @@ const ArticleNormalNoCommentary: React.FC<articleprobs> = ({ article }) => {
   }
 
   return (
-    <>
+    <div className="mt-5 border-[1px] border-neutral-500 p-2 md:p-4 max-w-2xl bg-background rounded-3xl ">
       <div className="mb-2 mx-2 border-b-1 border-[#E1E1E1] py-2">
         <BlogArticleProfileNoComment
           title={article.title || ""}
@@ -81,7 +81,7 @@ const ArticleNormalNoCommentary: React.FC<articleprobs> = ({ article }) => {
           article={article}
         />
       </div>
-      <div className="m-4 border-[1px] border-neutral-500 rounded-sm">
+      <div className="m-4 border-l-[5px] border-primary-300 p-2 md:p-3 bg-neutral-700 rounded-3xl">
         <BlogArticleProfileRepost
           title={article.title || ""}
           user={article.author_id || {}}
@@ -91,7 +91,7 @@ const ArticleNormalNoCommentary: React.FC<articleprobs> = ({ article }) => {
           isArticle={article.isArticle || false}
           article={article}
         />
-    
+         <div className="border-[1px] border-neutral-500  rounded-3xl p-2 md:p-3"> 
         <ErrorBoundary
           FallbackComponent={ErrorFallback}
           onError={(error, info) => {
@@ -127,14 +127,11 @@ const ArticleNormalNoCommentary: React.FC<articleprobs> = ({ article }) => {
             {calculateReadTime(article.content!, article.media || [])} mins Read
           </div>
         </div>
+
+        </div>
       </div>
 
-      <BlogReactionStats
-        toggleCommentSection={toggleCommentSection}
-        date={article.createdAt || ""}
-        article_id={article._id || ""}
-        article={article}
-      />
+    <div className="px-3 md:px-4">
       <BlogReactionSession
         isCommentSectionOpen={isCommentSectionOpen}
         message={article.content || ""}
@@ -144,7 +141,8 @@ const ArticleNormalNoCommentary: React.FC<articleprobs> = ({ article }) => {
         text_to_speech={article.text_to_speech || ""}
         article={article}
       />
-    </>
+    </div>
+    </div>
   );
 };
 

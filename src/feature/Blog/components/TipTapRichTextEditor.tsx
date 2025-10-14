@@ -193,7 +193,7 @@ function TipTapRichTextEditor({
 
         return new Promise((resolve) => {
           setTimeout(() => {
-            const blob = convertBase64ToBlob(reader.result as string);
+            const blob = convertBase64ToBlob(reader.result as string || '');
             resolve(URL.createObjectURL(blob));
           }, 300);
         });
@@ -206,7 +206,7 @@ function TipTapRichTextEditor({
 
         return new Promise((resolve) => {
           setTimeout(() => {
-            const blob = convertBase64ToBlob(reader.result as string);
+            const blob = convertBase64ToBlob(reader.result as string || '');
             resolve(URL.createObjectURL(blob));
           }, 300);
         });

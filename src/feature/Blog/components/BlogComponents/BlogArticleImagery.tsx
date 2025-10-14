@@ -60,46 +60,33 @@ const BlogArticleImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
 
   return (
     <>
-      {/* Thumbnail Gallery */}
-      <div className="relative w-full sm:max-w-[300px] md:max-w-[500px] lg:max-w-[700px] mx-auto transition-all duration-300 ">
+      {/* Thumbnail Display */}
+      <div className="relative w-full mx-auto">
         {displayMedia.length > 0 ? (
-          <Swiper
-            modules={[Navigation, Pagination]}
-            navigation
-            pagination={{ clickable: true }}
-            loop={true}
-            spaceBetween={20}
-            slidesPerView={1}
-            className="rounded-sm absolute w-full z-0 cursor-pointer"
+          <div 
+            className="cursor-pointer"
+            onClick={() => openModal(0)}
           >
-            {displayMedia.map((mediaItem, index) => (
-              <SwiperSlide 
-                key={index} 
-                className="flex justify-center"
-                onClick={() => openModal(index)}
-              >
-                {mediaItem.type === MediaType.Image ? (
-                  <img
-                    src={mediaItem.url}
-                    alt={`Blog Visual ${index}`}
-                    className="w-full max-h-[80vh] object-cover rounded-sm"
-                    loading="lazy"
-                  />
-                ) : (
-                  <video
-                    src={mediaItem.url}
-                    className="w-full max-h-[80vh] object-cover rounded-sm"
-                    controls
-                    muted
-                    autoPlay={false}
-                    loop
-                    playsInline
-                    controlsList="nodownload"
-                  />
-                )}
-              </SwiperSlide>
-            ))}
-          </Swiper>
+            {displayMedia[0].type === MediaType.Image ? (
+              <img
+                src={displayMedia[0].url}
+                alt={`Blog Visual`}
+                className="w-full h-auto object-contain rounded-lg"
+                loading="lazy"
+              />
+            ) : (
+              <video
+                src={displayMedia[0].url}
+                className="w-full h-auto object-contain rounded-lg"
+                controls
+                muted
+                autoPlay={false}
+                loop
+                playsInline
+                controlsList="nodownload"
+              />
+            )}
+          </div>
         ) : null}
       </div>
 
@@ -131,52 +118,86 @@ const BlogArticleImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
               )}
 
               <div className="w-full h-full flex items-center justify-center">
-                <Swiper
-                  modules={[Navigation, Pagination]}
-                  navigation
-                  pagination={{ clickable: true }}
-                  initialSlide={activeIndex}
-                  loop={true}
-                  spaceBetween={0}
-                  slidesPerView={1}
-                  className="h-full w-full"
-                >
-                  {displayMedia.map((mediaItem, index) => (
-                    <SwiperSlide key={index} className="flex items-center justify-center h-full w-full">
-                      <div className="relative w-full h-full flex items-center justify-center">
-                        {imageLoading && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                            <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                          </div>
-                        )}
-                        {mediaItem.type === MediaType.Image ? (
-                          <img
-                            src={mediaItem.url}
-                            alt={`Blog Visual ${index}`}
-                            className="max-w-full max-h-full w-auto h-auto object-contain transition-opacity duration-300"
-                            style={{ maxWidth: '100%', maxHeight: '100%' }}
-                            onLoad={() => setImageLoading(false)}
-                            onError={() => setImageLoading(false)}
-                          />
-                        ) : (
-                          <video
-                            src={mediaItem.url}
-                            className="max-w-full max-h-full w-auto h-auto object-contain"
-                            controls
-                            autoPlay
-                            muted
-                            loop
-                            playsInline
-                            controlsList="nodownload"
-                            style={{ maxWidth: '100%', maxHeight: '100%' }}
-                            onLoadedData={() => setImageLoading(false)}
-                            onError={() => setImageLoading(false)}
-                          />
-                        )}
+                {displayMedia.length > 1 ? (
+                  <Swiper
+                    modules={[Navigation, Pagination]}
+                    navigation
+                    pagination={{ clickable: true }}
+                    initialSlide={activeIndex}
+                    loop={true}
+                    spaceBetween={0}
+                    slidesPerView={1}
+                    className="h-full w-full"
+                  >
+                    {displayMedia.map((mediaItem, index) => (
+                      <SwiperSlide key={index} className="flex items-center justify-center h-full w-full">
+                        <div className="relative w-full h-full flex items-center justify-center">
+                          {imageLoading && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                              <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                            </div>
+                          )}
+                          {mediaItem.type === MediaType.Image ? (
+                            <img
+                              src={mediaItem.url}
+                              alt={`Blog Visual ${index}`}
+                              className="max-w-full max-h-full w-auto h-auto object-contain transition-opacity duration-300"
+                              style={{ maxWidth: '100%', maxHeight: '100%' }}
+                              onLoad={() => setImageLoading(false)}
+                              onError={() => setImageLoading(false)}
+                            />
+                          ) : (
+                            <video
+                              src={mediaItem.url}
+                              className="max-w-full max-h-full w-auto h-auto object-contain"
+                              controls
+                              autoPlay
+                              muted
+                              loop
+                              playsInline
+                              controlsList="nodownload"
+                              style={{ maxWidth: '100%', maxHeight: '100%' }}
+                              onLoadedData={() => setImageLoading(false)}
+                              onError={() => setImageLoading(false)}
+                            />
+                          )}
+                        </div>
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                ) : (
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    {imageLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                        <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                       </div>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+                    )}
+                    {displayMedia[0]?.type === MediaType.Image ? (
+                      <img
+                        src={displayMedia[0].url}
+                        alt={`Blog Visual`}
+                        className="max-w-full max-h-full w-auto h-auto object-contain transition-opacity duration-300"
+                        style={{ maxWidth: '100%', maxHeight: '100%' }}
+                        onLoad={() => setImageLoading(false)}
+                        onError={() => setImageLoading(false)}
+                      />
+                    ) : (
+                      <video
+                        src={displayMedia[0].url}
+                        className="max-w-full max-h-full w-auto h-auto object-contain"
+                        controls
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        controlsList="nodownload"
+                        style={{ maxWidth: '100%', maxHeight: '100%' }}
+                        onLoadedData={() => setImageLoading(false)}
+                        onError={() => setImageLoading(false)}
+                      />
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>

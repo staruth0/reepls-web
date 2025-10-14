@@ -1,11 +1,14 @@
-import { MessageCircle, ThumbsUp, Radio } from "lucide-react";
+import { MessageCircle, Radio } from "lucide-react";
+import { Icon } from "@iconify/react";
 import React, { useEffect, useState, useRef } from "react";
 import { useUser } from "../../../../hooks/useUser";
 import { Article, User, ReactionReceived } from "../../../../models/datamodels";
 import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
 import CommentSection from "../../../Comments/components/CommentSection";
 import ReactionModal from "../../../Interactions/components/ReactionModal";
-import { useGetAllReactionsForTarget } from "../../../Repost/hooks/useRepost";
+import ReactionsPopup from "../../../Interactions/components/ReactionsPopup";
+import { useGetAllReactionsForTarget, useGetCommentsTreeForRepost } from "../../../Repost/hooks/useRepost";
+import { useGetCommentsByArticleId } from "../../../Comments/hooks";
 import BlogRepostModal from "./BlogRepostModal";
 import { t } from "i18next";
 import { useRepostArticle } from "../../../Repost/hooks/useRepost";
@@ -91,15 +94,31 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   }>({ show: false, isSuccess: false });
   const repostRef = useRef<HTMLDivElement>(null);
   const [showRepostTooltip, setShowRepostTooltip] = useState(false);
+  const [showReactionsPopup, setShowReactionsPopup] = useState(false);
 
   const [isRepostModalOpen, setIsRepostModalOpen] = useState(false);
   const { mutate: repost, isPending: isReposting } = useRepostArticle();
 
   const target_type = article.type === "Repost" ? "Repost" : "Article";
-  const target_id = article.type === "Repost" && article.repost?.repost_id ? article.repost.repost_id : article_id;
+  const target_id = article.type === "Repost" && article.repost?.repost_id ? article.repost?.repost_id : article_id;
 
   // Get all reactions for this article
   const { data: allReactions } = useGetAllReactionsForTarget(target_type, target_id);
+  
+  // Get comment counts
+  const { data: articleComments, isLoading: commentsLoading } = useGetCommentsByArticleId(article_id);
+  const { data: repostComments } = useGetCommentsTreeForRepost(article.repost?.repost_id || "");
+  
+  // Calculate total comments (handle reposts vs regular articles)
+  const totalComments = article.type === "Repost"
+    ? repostComments?.parentCommentsCount ?? 0
+    : articleComments?.pages?.[0]?.data?.totalComments ?? 0;
+  
+  // Get reaction count
+  const reactionCount = allReactions?.data?.totalReactions || 0;
+  
+  // Get repost count (shares count)
+  const repostCount = article.shares_count || 0;
 
   // Check if the current user has reacted
   useEffect(() => {
@@ -158,6 +177,16 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
     setUserReaction(reaction);
   };
 
+  const handleReactionCountClick = () => {
+    if (reactionCount > 0) {
+      setShowReactionsPopup(true);
+    }
+  };
+
+  const handleCloseReactionsPopup = () => {
+    setShowReactionsPopup(false);
+  };
+
   const handleRepostClick = () => {
     if (!isLoggedIn) {
       // You can add a sign-in popup here if needed
@@ -212,27 +241,47 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
         onRetry={handleRetryRepost}
       />
 
-      <div className="blog-reaction-session border-t border-neutral-400 flex gap-4">
+      <div className={` ${ article.isArticle ? " ": "border-t border-neutral-600"}  flex items-center gap-4 sm:gap-6 md:gap-8 py-3`}>
         {/* React Button */}
-        <div className="relative">
+        <div className="relative flex items-center gap-2">
           <button
             onMouseEnter={() => isLoggedIn && setModalOpen(true)}
             onClick={handleReactClick}
-            className={`flex items-center gap-2 cursor-pointer group
-              ${userReaction ? "text-primary-400" : "text-neutral-50"} `}
+            className={`cursor-pointer group
+              ${userReaction ? "text-primary-400" : "text-neutral-100"} `}
           >
-            <ThumbsUp
-              className={`size-5
+            <Icon 
+              icon="pepicons-pencil:hands-clapping" 
+              className={`w-6 h-6 transform scale-x-[-1]
                 ${
                   userReaction
-                    ? "fill-primary-400 text-primary-400"
-                    : "text-neutral-50"
-                } group-hover:text-primary-400 group-hover:fill-primary-400`}
+                    ? "text-primary-400"
+                    : "text-neutral-100"
+                } group-hover:text-primary-400`} 
             />
-            <span className="group-hover:text-primary-400">
-              {userReaction ? t("blog.Reacted") : t("blog.React")}
-            </span>
           </button>
+          
+          <div className="relative">
+            <span 
+              className={`text-sm hover:text-primary-400 hover:underline underline-offset-1 cursor-pointer ${
+                userReaction ? "text-primary-400" : "text-neutral-100"
+              }`}
+              onClick={handleReactionCountClick}
+            >
+              {allReactions ? reactionCount : "..."}
+            </span>
+            
+            {/* Reactions Popup positioned relative to reaction count */}
+            {showReactionsPopup && reactionCount > 0 && (
+              <ReactionsPopup
+                isOpen={showReactionsPopup}
+                onClose={handleCloseReactionsPopup}
+                article_id={article_id}
+                article={article}
+                position={{ top: -200, right: 0 }}
+              />
+            )}
+          </div>
           {showReactPopup && (
             <SignInPopUp
               text={t("blog.React")}
@@ -245,13 +294,12 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
         {/* Comment Button */}
         <div className="relative">
           <button
-            className="text-neutral-50 cursor-pointer flex items-center gap-2 group"
+            className="text-neutral-100 cursor-pointer flex items-center gap-2 group"
             onClick={toggleCommentTab}
           >
-            <MessageCircle className="size-5 text-neutral-50 group-hover:text-primary-400" />
-            <span className="group-hover:text-primary-400">
-              {" "}
-              {t("blog.Comment")}{" "}
+            <MessageCircle className="size-5 text-neutral-100 group-hover:text-primary-400" />
+            <span className="text-sm text-neutral-100 group-hover:text-primary-400">
+              {commentsLoading ? "..." : totalComments}
             </span>
           </button>
           {showCommentPopup && (
@@ -271,12 +319,12 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
           onMouseLeave={() => setShowRepostTooltip(false)}
         >
           <button
-            className="flex gap-1 items-center text-neutral-50 cursor-pointer group"
+            className="flex gap-2 items-center text-neutral-100 cursor-pointer group"
             onClick={handleRepostClick}
           >
-            <Radio className="size-5 text-neutral-50 group-hover:text-primary-400" />
-            <span className="text-[14px] text-neutral-50 group-hover:text-primary-400">
-              Repost
+            <Radio className="size-5 text-neutral-100 group-hover:text-primary-400" />
+            <span className="text-sm text-neutral-100 group-hover:text-primary-400">
+              {repostCount}
             </span>
           </button>
 

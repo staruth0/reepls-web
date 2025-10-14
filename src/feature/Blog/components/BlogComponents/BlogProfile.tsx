@@ -61,8 +61,8 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
          mutate({
       articleId:article._id || '',
       article:{
-       author_profile_views_count:article.author_profile_views_count! +1,
-        engagement_count:article.engagement_count! +1
+       author_profile_views_count:(article.author_profile_views_count || 0) +1,
+        engagement_count:(article.engagement_count || 0) +1
       }
     })
     if (username) {
@@ -99,7 +99,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
       articleId:article._id || '',
       article:{
    
-        engagement_count:article.engagement_count! -1
+        engagement_count:(article.engagement_count || 0) -1
       }
     })
           setSaved(false);
@@ -115,7 +115,7 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
                mutate({
       articleId:article._id || '',
       article:{
-        engagement_count:article.engagement_count! +1
+        engagement_count:(article.engagement_count || 0) +1
       }
     })
         },
@@ -138,8 +138,8 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
             mutate({
       articleId:article._id || '',
       article:{
-        author_follower_count:article.author_follower_count! -1,
-        engagement_count:article.engagement_count! -1
+        author_follower_count:(article.author_follower_count || 0) -1,
+        engagement_count:(article.engagement_count || 0) -1
       }
     })
         },
@@ -152,8 +152,8 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
                 mutate({
       articleId:article._id || '',
       article:{
-        author_follower_count:article.author_follower_count! + 1,
-        engagement_count:article.engagement_count! +1
+        author_follower_count:(article.author_follower_count || 0) + 1,
+        engagement_count:(article.engagement_count || 0) +1
       }
     })
         },
@@ -230,24 +230,24 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
           src={user?.profile_picture}
           alt="avatar"
           onClick={() => handleProfileClick(user?.username || "")}
-          className="cursor-pointer size-14 rounded-full object-cover"
+          className="cursor-pointer size-12 rounded-full object-cover"
             loading="lazy"
         />
       ) : (
-        <span
-          className="flex justify-center items-center bg-purple-200 text-purple-800 text-base font-medium rounded-full w-14 h-14 text-center"
+        <p
+          className="flex justify-center items-center bg-purple-200 text-purple-800 text-[16px] font-medium rounded-full w-10 h-10 text-center"
           onClick={() => handleProfileClick(user?.username || "")}
         >
           {user?.name?.charAt(0).toUpperCase() || 'D'}
-        </span>
+        </p>
       )}
       <div className=" flex-1">
         <div className="profile-name flex items-center gap-1">
           <p
-            className="hover:underline cursor-pointer text-base font-semibold"
+            className="hover:underline cursor-pointer text-[15px] font-semibold"
             onClick={() => handleProfileClick(user?.username || "")}
           >
-            {user?.name || " "}
+            {user?.name ? user.name.split(' ').slice(0, 2).join(' ') : " "}
           </p>
           {user?.is_verified_writer && <LuBadgeCheck className="size-4 text-primary-400" />}
           {!location.pathname.includes("/feed/following") && (
@@ -265,9 +265,13 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
             </div>
           )}
         </div>
-        <p className="text-sm text-neutral-100">{user?.bio}</p>
-        <span className="text-sm text-neutral-100">{timeAgo(article?.createdAt || '')}</span>
-       
+        <div className="flex items-center gap-1">
+            <p className="text-sm text-neutral-100 truncate max-w-[120px] sm:max-w-[150px] md:max-w-[200px]" title={user?.bio}>
+              {user?.bio && user.bio.length > 30 ? `${user.bio.substring(0, 30)}...` : user?.bio}
+            </p>
+            <span className="text-sm text-neutral-100">•</span>
+            <span className="text-sm text-neutral-100">{timeAgo(article?.createdAt || '')}</span>
+          </div>
       </div>
       <div className="relative">
         {showMenu ? (

@@ -36,7 +36,7 @@ const AuthorsTab: React.FC<AuthorsTabProps> = ({ stream }) => {
   const handleRemoveCollaborator = async (collaboratorId: string) => {
     try {
       await removeCollaboratorMutation.mutateAsync({
-        publicationId: stream.id || '',
+        publicationId: stream.id || stream._id || '',
         collaboratorId: collaboratorId
       });
       // Refetch collaborators after successful removal

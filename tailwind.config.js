@@ -91,7 +91,8 @@ export default {
               200: '#868686', // Changed from #9E9E9E
               300: '#838383', // Changed from #B3B3B3
               400: '#cccccc', // Changed from #CCCCCC (same value, case normalized)
-              500: '#dedede', // Changed from #DEDEDE (same value, case normalized)
+              // 500: '#dedede', // Changed from #DEDEDE (same value, case normalized)
+              500: '#E5E7EB', // Changed from #DEDEDE (same value, case normalized)
               600: '#f2f2f2', // Changed from #F2F2F2 (same value, case normalized)
               700: '#f7f7f7', // Changed from #F7F7F7 (same value, case normalized)
               800: '#fcfcfc',
