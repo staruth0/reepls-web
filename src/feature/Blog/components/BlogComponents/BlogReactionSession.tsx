@@ -244,22 +244,35 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
       <div className={` ${ article.isArticle ? " ": "border-t border-neutral-600"}  flex items-center gap-4 sm:gap-6 md:gap-8 py-3`}>
         {/* React Button */}
         <div className="relative flex items-center gap-2">
-          <button
-            onMouseEnter={() => isLoggedIn && setModalOpen(true)}
-            onClick={handleReactClick}
-            className={`cursor-pointer group
-              ${userReaction ? "text-primary-400" : "text-neutral-100"} `}
-          >
-            <Icon 
-              icon="pepicons-pencil:hands-clapping" 
-              className={`w-6 h-6 transform scale-x-[-1]
-                ${
-                  userReaction
-                    ? "text-primary-400"
-                    : "text-neutral-100"
-                } group-hover:text-primary-400`} 
-            />
-          </button>
+          <div className="relative">
+            <button
+              onMouseEnter={() => isLoggedIn && setModalOpen(true)}
+              onClick={handleReactClick}
+              className={`cursor-pointer group
+                ${userReaction ? "text-primary-400" : "text-neutral-100"} `}
+            >
+              <Icon 
+                icon="pepicons-pencil:hands-clapping" 
+                className={`w-6 h-6 transform scale-x-[-1]
+                  ${
+                    userReaction
+                      ? "text-primary-400"
+                      : "text-neutral-100"
+                  } group-hover:text-primary-400`} 
+              />
+            </button>
+            
+            {/* Reaction Modal positioned relative to clap icon */}
+            {isModalOpen && (
+              <ReactionModal
+                isOpen={isModalOpen}
+                onClose={() => setModalOpen(false)}
+                onReact={handleReactionComplete}
+                article_id={article_id}
+                article={article}
+              />
+            )}
+          </div>
           
           <div className="relative">
             <span 
@@ -372,15 +385,6 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
           onClose={() => setIsRepostModalOpen(false)}
           article_id={article_id} // Always pass the current article_id
           author_of_post={author_of_post}
-          article={article}
-        />
-
-        {/* Reaction Modal */}
-        <ReactionModal
-          isOpen={isModalOpen}
-          onClose={() => setModalOpen(false)}
-          onReact={handleReactionComplete}
-          article_id={article_id}
           article={article}
         />
       </div>  

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { heart, sadface, smile, thumb, clap } from "../../../assets/icons";
+import { Icon } from "@iconify/react";
 
 import { useUser } from "../../../hooks/useUser";
 import { motion } from "framer-motion";
@@ -104,11 +104,11 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ article_id }) => {
   };
 
   const reactions = [
-    { icon: heart, name: "love" },
-    { icon: thumb, name: "like" },
-    { icon: smile, name: "smile" },
-    { icon: sadface, name: "cry" },
-    { icon: clap, name: "clap" },
+    { icon: "pepicons-pencil:hands-clapping", name: "clap" },
+    { icon: "heroicons:hand-thumb-up", name: "like" },
+    { icon: "heroicons:heart", name: "love" },
+    { icon: "heroicons:face-smile", name: "smile" },
+    { icon: "heroicons:face-frown", name: "cry" },
   ];
 
 
@@ -127,10 +127,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ article_id }) => {
             title={reaction.name}
             disabled={isPending && pendingReaction !== reaction.name}
           >
-            <motion.img
-              src={reaction.icon}
-              alt={reaction.name}
-              className="w-6 h-6"
+            <motion.div
               variants={{ ...bounceVariants, ...glowVariants }}
               animate={
                 successReaction === reaction.name
@@ -139,7 +136,14 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ article_id }) => {
                   ? "glow"
                   : ""
               }
-            />
+            >
+              <Icon 
+                icon={reaction.icon} 
+                className={`w-6 h-6 ${reaction.name === "clap" ? "transform scale-x-[-1]" : ""} ${
+                  isPending && pendingReaction === reaction.name ? "text-primary-400" : ""
+                }`}
+              />
+            </motion.div>
           </button>
         ))}
       </div>

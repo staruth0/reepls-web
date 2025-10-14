@@ -591,12 +591,25 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
                 </>
               )}
             </div>
-            <span
-              className="ml-1 text-sm hover:underline cursor-pointer"
-              onClick={() => setShowReactionsPopup(true)}
-            >
-              {reactionCount}
-            </span>
+            <div className="relative">
+              <span
+                className="ml-1 text-sm hover:underline cursor-pointer"
+                onClick={() => reactionCount > 0 && setShowReactionsPopup(true)}
+              >
+                {reactionCount}
+              </span>
+              
+              {/* Reactions Popup positioned relative to reaction count */}
+              {showReactionsPopup && reactionCount > 0 && (
+                <ReactionsPopup
+                  isOpen={showReactionsPopup}
+                  onClose={() => setShowReactionsPopup(false)}
+                  article_id={article?._id || ""}
+                  article={article}
+                  position={{ top: -200, right: 0 }}
+                />
+              )}
+            </div>
           </div>
 
           <button
@@ -652,14 +665,6 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
       )}
       {showSignInPopup && (
         <SignInPopUp text={showSignInPopup} position="above" onClose={() => setShowSignInPopup(null)} />
-      )}
-      {showReactionsPopup && (
-        <ReactionsPopup
-          isOpen={showReactionsPopup}
-          onClose={() => setShowReactionsPopup(false)}
-          article_id={article?._id || ""}
-          article={article}
-        />
       )}
 
       {/* Reposts Commentary Sidebar */}
