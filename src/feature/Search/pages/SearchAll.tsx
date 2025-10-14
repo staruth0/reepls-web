@@ -90,22 +90,22 @@ const SearchAll: React.FC<SearchAllProps> = ({ query }) => {
   // Success or empty state
   return (
     <div className="search-all">
-      {results?.length > 0 ? (
+      {(results?.length || 0) > 0 ? (
         <div className="px-1 sm:px-8 max-w-[680px] transition-all duration-300 ease-linear flex flex-col gap-7">
-          {results.map((item: User | Article, index: number) => {
+          {(results || []).map((item: User | Article, index: number) => {
             const result = getResultType(item);
             
             if (result.type === 'user') {
               const user = result.data as User;
               return (
                 <AuthorComponent
-                  key={`${user._id}-${index}`}
+                  key={`${user._id || user.id || index}-${index}`}
                   username={user.username || ''}
                 />
               );
             } else {
               const article = result.data as Article;
-              return <BlogPost key={article._id} article={article} />;
+              return <BlogPost key={article._id || article.id || index} article={article} />;
             }
           })}
         </div>

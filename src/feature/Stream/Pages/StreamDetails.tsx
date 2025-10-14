@@ -28,10 +28,10 @@ const StreamDetails: React.FC = () => {
   
   
   const tabContent: Record<string, React.ReactNode> = {
-    about: <AboutTab stream={streamData} />,
-    article: <ArticleTab stream={streamData} />,
-    media: <MediaTab stream={streamData} />,
-    authors: <AuthorsTab stream={streamData} />,
+    about: <AboutTab stream={streamData || {}} />,
+    article: <ArticleTab stream={streamData || {}} />,
+    media: <MediaTab stream={streamData || {}} />,
+    authors: <AuthorsTab stream={streamData || {}} />,
   };
   
   useEffect(() => {

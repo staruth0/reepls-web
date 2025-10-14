@@ -30,7 +30,7 @@ const ArticleView: React.FC = () => {
   const { mutate: createArticle } = useCreateArticle();
   const { mutate: saveArticle } = useSaveArticle();
   const { clearDraftArticle } = useDraft();
-  const { data: article, isError, isPending } = useGetArticleById(articleUid!);
+  const { data: article, isError, isPending } = useGetArticleById(articleUid || '');
 
   const onPublish = async () => {
     if (!title || !subtitle || !content) {
@@ -79,7 +79,7 @@ const ArticleView: React.FC = () => {
 
   const onSave = async () => {
     if (isPreview) return;
-    saveArticle(articleUid!, {
+    saveArticle(articleUid || '', {
       onSuccess: () => {
         toast.success('Article saved successfully');
       },
@@ -200,7 +200,7 @@ const ArticleView: React.FC = () => {
         {!isPreview && !isPending && (
           <div className="stats mx-auto">
             <div className="flex justify-center">
-              <BlogReactionStats article_id={articleUid!} article={article} date={new Date().toISOString()} />
+              <BlogReactionStats article_id={articleUid || ''} article={article || {}} date={new Date().toISOString()} />
             </div>
           </div>
         )}

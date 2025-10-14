@@ -56,9 +56,12 @@ export const useUpdateReaction = () => {
       updateReaction(reactionId, type),
     onSuccess: () => {
       // Invalidate queries that might be affected by the update of a reaction
-      queryClient.invalidateQueries({
-        queryKey: ["reaction"],
-      });
+              queryClient.invalidateQueries({
+                queryKey: ["reaction"],
+              });
+              queryClient.invalidateQueries({
+                queryKey: ["reactions"],
+              });
       queryClient.invalidateQueries({
         queryKey: ["articleReactions"],
       });
@@ -83,15 +86,10 @@ export const useDeleteReaction = () => {
     onSuccess: () => {
       // Invalidate queries that might be affected by the deletion of a reaction
       queryClient.invalidateQueries({ queryKey: ["reaction"] });
-      queryClient.invalidateQueries({
-        queryKey: ["articleReactions"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["reactionsPerType"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["reactedUsers"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["reactions"] });
+      queryClient.invalidateQueries({queryKey: ["articleReactions"]});
+      queryClient.invalidateQueries({queryKey: ["reactionsPerType"]});
+      queryClient.invalidateQueries({queryKey: ["reactedUsers"]});
     },
     onError: (error) => {
       void error;
@@ -123,7 +121,7 @@ export const useGetReactedUsers = (articleId: string) => {
 
 export const useGetArticleReactions = (articleId: string) => {
   return useQuery({
-    queryKey: ["articleReactions", articleId],
+    queryKey: ["articleReactions"],
     queryFn: () => getArticleReactions(articleId),
     staleTime: 10 * 60 * 1000, // 10 minutes
     refetchOnMount: false,
@@ -134,7 +132,7 @@ export const useGetArticleReactions = (articleId: string) => {
 
 export const useGetReactionsPerType = (articleId: string) => {
   return useQuery({
-    queryKey: ["reactionsPerType", articleId],
+    queryKey: ["reactionsPerType"],
     queryFn: () => getReactionsPerType(articleId),
     staleTime: 10 * 60 * 1000, // 10 minutes
     refetchOnMount: false,
@@ -165,7 +163,7 @@ export const useCreateCommentReaction = () => {
 // Hook to fetch all reactions of a comment
 export const useGetCommentReactions = (commentId: string) => {
   return useQuery({
-    queryKey: ["commentReactions", commentId],
+    queryKey: ["commentReactions"],
     queryFn: () => getCommentReactions(commentId),
     staleTime: 10 * 60 * 1000, // 10 minutes
     refetchOnMount: false,

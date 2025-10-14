@@ -90,7 +90,7 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
   const [showReactionsHoverPopup, setShowReactionsHoverPopup] = useState<boolean>(false);
 
   const articleUrl = `${window.location.origin}/posts/article/slug/${slug}`;
-  const articleTitle = title || content.split(" ").slice(0, 10).join(" ") + "...";
+  const articleTitle = title || (content ? content.split(" ").slice(0, 10).join(" ") + "..." : "Untitled Article");
 
   const [isCommentSectionOpen, setIsCommentSectionOpen] = useState<boolean>(true);
   const { mutate } = useUpdateReadingHistory();
@@ -252,7 +252,7 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
   useEffect(() => {
     const followedIds =
       followings?.data?.map((following: Follow) => following.followed_id?.id) || [];
-    setIsFollowing(followedIds.includes(article?.author_id?._id));
+    setIsFollowing(followedIds.includes(article?.author_id?._id || article?.author_id?.id));
   }, [followings, article?.author_id?._id]);
 
   const [isSaved, setIsSaved] = useState<boolean>(false);
@@ -268,10 +268,10 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
       setShowSignInPopup("follow");
       return;
     }
-    if (isFollowPending || isUnfollowPending || !article?.author_id?._id) return;
+    if (isFollowPending || isUnfollowPending || !article?.author_id?._id && !article?.author_id?.id) return;
 
     if (isFollowing) {
-      unfollowUser(article.author_id!._id, {
+      unfollowUser(article.author_id?._id || article.author_id?.id || '', {
         onSuccess: () => {
           toast.success("User unfollowed successfully");
           setIsFollowing(false);
@@ -279,7 +279,7 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
         onError: () => toast.error("Failed to unfollow user"),
       });
     } else {
-      followUser(article.author_id!._id, {
+      followUser(article.author_id?._id || article.author_id?.id || '', {
         onSuccess: () => {
           toast.success("User followed successfully");
           setIsFollowing(true);
@@ -591,12 +591,25 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
                 </>
               )}
             </div>
-            <span
-              className="ml-1 text-sm hover:underline cursor-pointer"
-              onClick={() => setShowReactionsPopup(true)}
-            >
-              {reactionCount}
-            </span>
+            <div className="relative">
+              <span
+                className="ml-1 text-sm hover:underline cursor-pointer"
+                onClick={() => reactionCount > 0 && setShowReactionsPopup(true)}
+              >
+                {reactionCount}
+              </span>
+              
+              {/* Reactions Popup positioned relative to reaction count */}
+              {showReactionsPopup && reactionCount > 0 && (
+                <ReactionsPopup
+                  isOpen={showReactionsPopup}
+                  onClose={() => setShowReactionsPopup(false)}
+                  article_id={article?._id || ""}
+                  article={article}
+                  position={{ top: -200, right: 0 }}
+                />
+              )}
+            </div>
           </div>
 
           <button
@@ -652,14 +665,6 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
       )}
       {showSignInPopup && (
         <SignInPopUp text={showSignInPopup} position="above" onClose={() => setShowSignInPopup(null)} />
-      )}
-      {showReactionsPopup && (
-        <ReactionsPopup
-          isOpen={showReactionsPopup}
-          onClose={() => setShowReactionsPopup(false)}
-          article_id={article?._id || ""}
-          article={article}
-        />
       )}
 
       {/* Reposts Commentary Sidebar */}

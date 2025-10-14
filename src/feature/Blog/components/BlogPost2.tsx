@@ -38,7 +38,7 @@ const BlogPost2: React.FC<BlogPostProps> = ({ article, isModalView = false }) =>
   }
 
   return (
-    <div className={`each_blog_post ${isModalView ? 'modal-view' : ''}`}>
+    <div className={` ${isModalView ? 'modal-view' : ''}`}>
       {isModalView && (
      <></>
       )}

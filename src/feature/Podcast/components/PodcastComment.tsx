@@ -12,7 +12,7 @@ interface PodcastComment {
   authorId: {
     _id: string;
     name: string;
-  };
+  } | null;
   podcastId: string;
   parentCommentId: string | null;
   isAudioComment: boolean;
@@ -45,6 +45,30 @@ const PodcastComment: React.FC<PodcastCommentProps> = ({
     setLikesCount((count) => (isLiked ? count - 1 : count + 1));
     onLike?.(comment._id);
   };
+
+  // Handle case where authorId might be null
+  if (!comment.authorId) {
+    return (
+      <div className="mb-4 px-4 py-3 bg-neutral-800 rounded-lg flex items-start gap-3">
+        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-neutral-600 flex items-center justify-center text-white font-bold text-lg uppercase">
+          ?
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-col mb-1">
+            <span className="font-semibold text-neutral-400 text-[15px]">
+              Unknown User
+            </span>
+            <span className="text-neutral-500 text-xs leading-tight">
+              {timeAgo(comment.createdAt)}
+            </span>
+          </div>
+          <div className="text-neutral-300 text-sm mb-2 break-words">
+            {comment.content}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mb-4 px-4 py-3 bg-neutral-800 rounded-lg flex items-start gap-3">

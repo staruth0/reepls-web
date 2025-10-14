@@ -10,7 +10,7 @@ import BlogArticleMessage from "../BlogComponents/BlogArticleMessage";
 import { calculateReadTime } from "../../../../utils/articles";
 import { useGetUserByUsername } from "../../../Profile/hooks";
 import BlogArticleProfileRepost from "../BlogComponents/BlogArticleProfileRepost";
-import BlogReactionStats from "../BlogComponents/BlogReactionStats";
+//import BlogReactionStats from "../BlogComponents/BlogReactionStats";
 import BlogReactionSession from "../BlogComponents/BlogReactionSession";
 import { useAudioControls } from "../../../../hooks/useMediaPlayer";
 import { LuMic } from "react-icons/lu";
@@ -26,7 +26,7 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
     useState<boolean>(false);
   const { mutate } = useUpdateArticle();
   const { user } = useGetUserByUsername(
-    article.repost?.repost_user.username || ""
+    article.repost?.repost_user?.username || ""
   );
 
   // Fetch podcast data if article has podcast
@@ -69,7 +69,7 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
   }
 
   return (
-    <>
+    <div className="mt-5  border-[1px] border-neutral-500 p-2 md:p-4 max-w-2xl  bg-background rounded-3xl">
       <div className="">
         <div className="">
           <BlogArticleProfile
@@ -86,7 +86,7 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
           </div>
         </div>
 
-        <div className="m-2 border-[1px] border-neutral-500 rounded-sm">
+        <div className="m-2 border-l-[5px] border-primary-300 p-2 md:p-3 bg-neutral-700 rounded-3xl">
           <BlogArticleProfileRepost
             title={article.title || ""}
             user={article.author_id || {}}
@@ -96,7 +96,7 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
             isArticle={article.isArticle || false}
             article={article}
           />
-          <div className={``}>
+          <div className={`border-[1px] border-neutral-500  rounded-3xl p-2 md:p-3`}>
             <ErrorBoundary
               FallbackComponent={ErrorFallback}
               onError={(error, info) => {
@@ -135,12 +135,12 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
             </div>
           </div>
         </div>
-        <BlogReactionStats
-          toggleCommentSection={toggleCommentSection}
-          date={article.createdAt || ""}
-          article_id={article._id || ""}
-          article={article}
-        />
+          {/* <BlogReactionStats
+            toggleCommentSection={toggleCommentSection}
+            date={article.createdAt || ""}
+            article_id={article._id || ""}
+            article={article}
+          /> */}
         <BlogReactionSession
           isCommentSectionOpen={isCommentSectionOpen}
           message={article.content || ""}
@@ -151,7 +151,7 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
           article={article}
         />
       </div>
-    </>
+    </div>
   );
 };
 

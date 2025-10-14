@@ -54,7 +54,7 @@ const BlogArticleProfileRepost: React.FC<BlogProfileProps> = ({ user, article })
           src={user?.profile_picture}
           alt="avatar"
           onClick={() => handleProfileClick(user?.username || "")}
-          className="cursor-pointer size-14 rounded-full object-cover"
+          className="cursor-pointer size-12 rounded-full object-cover"
           loading="lazy"
         />
       ) : (
@@ -76,8 +76,13 @@ const BlogArticleProfileRepost: React.FC<BlogProfileProps> = ({ user, article })
           {user?.is_verified_writer && <LuBadgeCheck className="size-4 text-primary-400" />}
           {/* Removed conditional rendering for follow button */}
         </div>
-        <p className="text-sm text-neutral-100">{user?.bio}</p>
-        <span className="text-sm text-neutral-100">{timeAgo(article?.createdAt || '')}</span>
+        <div className="flex items-center gap-1">
+            <p className="text-sm text-neutral-100 truncate max-w-[120px] sm:max-w-[150px] md:max-w-[200px]" title={user?.bio}>
+              {user?.bio && user.bio.length > 40 ? `${user.bio.substring(0, 40)}...` : user?.bio}
+            </p>
+            <span className="text-sm text-neutral-100">•</span>
+            <span className="text-sm text-neutral-100">{timeAgo(article?.createdAt || '')}</span>
+          </div>
       </div>
       {/* Removed all menu and popup related JSX */}
     </div>

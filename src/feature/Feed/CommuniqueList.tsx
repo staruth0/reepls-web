@@ -62,9 +62,9 @@ const CommuniqueList: React.FC = () => {
             <BlogSkeletonComponent />
           </div>
         ) : (
-          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col gap-7 pb-10">
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col items-center gap-7 pb-10">
             {data?.pages.map((page, i) => (
-              <div className="flex flex-col" key={i}>
+              <div className="flex flex-col items-center gap-7" key={i}>
                 {page.articles.map((article: Article) => (
                   <BlogPost key={article._id} article={article} />
                 ))}

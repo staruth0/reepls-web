@@ -111,11 +111,6 @@ useEffect(() => {
     setShowReactionModal(true);
   };
 
-  const handleReactionsCountClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowReactionsPopup(true);
-  };
-
   return (
     <>
       <div className="flex items-center justify-between gap-6">
@@ -128,12 +123,6 @@ useEffect(() => {
               title="React"
             >
               <LuThumbsUp className="size-4"  onMouseEnter={() => setShowReactionModal(true)} />
-              <span
-                className="hover:underline cursor-pointer"
-                onClick={handleReactionsCountClick}
-              >
-                {allReactions?.data?.totalReactions || 0}
-              </span>
             </button>
 
             {/* Reaction Modal - Positioned relative to the button */}
@@ -148,6 +137,25 @@ useEffect(() => {
                   onClose={() => setShowReactionModal(false)}
                 />
               </div>
+            )}
+          </div>
+          
+          <div className="relative">
+            <span
+              className="hover:underline cursor-pointer"
+              onClick={() => (allReactions?.data?.totalReactions || 0) > 0 && setShowReactionsPopup(true)}
+            >
+              {allReactions?.data?.totalReactions || 0}
+            </span>
+            
+            {/* Reactions Popup positioned relative to reaction count */}
+            {showReactionsPopup && (allReactions?.data?.totalReactions || 0) > 0 && (
+              <PodcastReactionsPopup
+                isOpen={showReactionsPopup}
+                onClose={() => setShowReactionsPopup(false)}
+                podcast_id={id}
+                position={{ top: -200 }}
+              />
             )}
           </div>
         </div>
@@ -174,12 +182,6 @@ useEffect(() => {
         </button>
       </div>
 
-      {/* Reactions Popup */}
-      <PodcastReactionsPopup
-        isOpen={showReactionsPopup}
-        onClose={() => setShowReactionsPopup(false)}
-        podcast_id={id}
-      />
     </>
   );
 };

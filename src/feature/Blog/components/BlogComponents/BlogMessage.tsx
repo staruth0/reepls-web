@@ -45,8 +45,8 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, article, isAr
         mutate({
           articleId: article._id || '',
           article: {
-            views_count:article.views_count! +1,
-            engagement_count: article.engagement_count! + 1, 
+            views_count:(article.views_count || 0) +1,
+            engagement_count: (article.engagement_count || 0) + 1, 
           },
         });
         navigate(slug ? `/posts/article/slug/${slug}` : `/posts/article/${article_id}`);
@@ -62,7 +62,7 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, article, isAr
       <p
         ref={contentRef}
         className={cn(
-          'text-neutral-100 text-[14px] leading-[20px] transition-all duration-300',
+          'text-neutral-100 text-[14px] leading-[20px] transition-all duration-500 ease-in-out',
           isExpanded ? 'line-clamp-none' : 'line-clamp-3',
           'whitespace-pre-wrap'
         )}
@@ -79,7 +79,10 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, article, isAr
         </button>
       ) : (
         showToggle && (
-          <button onClick={handleToggle} className="text-neutral-50 text-[14px] font-medium mt-1">
+          <button 
+            onClick={handleToggle} 
+            className="text-primary-400 hover:text-primary-300 text-[14px] font-medium mt-1 transition-colors duration-200 ease-in-out"
+          >
             {isExpanded ? t('blog.seeLess') : t('blog.seeMore')}
           </button>
         )

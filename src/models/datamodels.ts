@@ -162,6 +162,7 @@ export enum PubPermission {
 
 
 export interface Article {
+  id?: string;
   article_id?: string;
   title?: string;
   type?: 'ShortForm' | 'LongForm' | 'Repost';
@@ -200,6 +201,7 @@ export interface Article {
 }
 
 export interface ArticleDuplicate {
+  id?: string;
   article_id?: string;
   title?: string;
   type?: 'ShortForm' | 'LongForm' | 'Repost';

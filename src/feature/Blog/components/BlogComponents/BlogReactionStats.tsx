@@ -29,7 +29,7 @@ const BlogReactionStats: React.FC<BlogReactionStatsProps> = ({
 
   const { data: articleComments, isLoading: commentsLoading } = useGetCommentsByArticleId(article_id);
   const target_type = article.type === "Repost" ? "Repost" : "Article";
-  const target_id = article.type === "Repost" && article.repost?.repost_id ? article.repost.repost_id : article_id;
+  const target_id = article.type === "Repost" && article.repost?.repost_id ? article.repost?.repost_id : article_id;
 
   const { data: allReactions, isLoading: reactionsLoading } = useGetAllReactionsForTarget(target_type, target_id);
 const reactionCount = allReactions?.data?.totalReactions || 0;
