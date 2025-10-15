@@ -4,7 +4,7 @@ import BlogProfile from "../BlogComponents/BlogProfile";
 import { ErrorBoundary } from "react-error-boundary";
 import BlogImagery from "../BlogComponents/BlogImagery";
 import BlogMessage from "../BlogComponents/BlogMessage";
-import BlogReactionStats from "../BlogComponents/BlogReactionStats";
+// import BlogReactionStats from "../BlogComponents/BlogReactionStats";
 import BlogReactionSession from "../BlogComponents/BlogReactionSession";
 import { useUpdateArticle } from "../../hooks/useArticleHook";
 import { CognitiveModeContext } from "../../../../context/CognitiveMode/CognitiveModeContext";
@@ -28,7 +28,7 @@ const PostNormal: React.FC<articleprobs> = ({ article }) => {
     mutate({
       articleId: article._id || "",
       article: {
-        impression_count: article.impression_count! + 1,
+        impression_count: (article.impression_count || 0) + 1,
       },
     });
   }, [article, mutate]);
@@ -38,7 +38,7 @@ const PostNormal: React.FC<articleprobs> = ({ article }) => {
   }
 
   return (
-    <>
+    <div className="mt-5 border-[1px] border-neutral-500 p-2 md:p-4 max-w-2xl bg-background rounded-3xl ">
       <BlogProfile
         title={article.title || ""}
         user={article.author_id || {}}
@@ -70,7 +70,13 @@ const PostNormal: React.FC<articleprobs> = ({ article }) => {
         )}
       </ErrorBoundary>
 
-      
+      {/* <BlogReactionStats
+        toggleCommentSection={toggleCommentSection}
+        date={article.createdAt || ""}
+        article_id={article._id || ""}
+        article={article}
+      /> */}
+      <div className="mt-3 md:mt-6">  
       <BlogReactionSession
         isCommentSectionOpen={isCommentSectionOpen}
         message={article.content || ""}
@@ -79,8 +85,10 @@ const PostNormal: React.FC<articleprobs> = ({ article }) => {
         author_of_post={article.author_id || {}}
         text_to_speech={article.text_to_speech || ""}
         article={article}
-      />
-    </>
+        />
+        </div>
+      
+    </div>
   );
 };
 

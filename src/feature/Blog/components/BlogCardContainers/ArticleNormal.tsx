@@ -7,12 +7,13 @@ import ErrorFallback from '../../../../components/molecules/ErrorFallback/ErrorF
 import BlogArticleProfile from '../BlogComponents/BlogArticleProfile';
 import BlogArticleImagery from '../BlogComponents/BlogArticleImagery';
 import BlogArticleMessage from '../BlogComponents/BlogArticleMessage';
-import BlogArticleReactionStats from '../BlogComponents/BlogArticleReactionStats';
+//import BlogArticleReactionStats from '../BlogComponents/BlogArticleReactionStats';
 import { calculateReadTime } from '../../../../utils/articles';
 
 import { useAudioControls } from '../../../../hooks/useMediaPlayer';
 import { LuMic } from 'react-icons/lu';
 import { useGetPodcastById } from '../../../Podcast/hooks';
+import BlogReactionSession from '../BlogComponents/BlogReactionSession';
 
 interface articleprobs {
     article: Article;
@@ -46,7 +47,7 @@ const ArticleNormal: React.FC<articleprobs> = ({ article }) => {
         mutate({
             articleId: article._id || '',
             article: {
-                impression_count: article.impression_count! + 1,
+                impression_count: (article.impression_count || 0) + 1,
             }
         })
     }, [article, mutate]);
@@ -61,7 +62,7 @@ const ArticleNormal: React.FC<articleprobs> = ({ article }) => {
     }
 
     return (
-        <>
+        <div className="mt-5 border-[1px] border-neutral-500 p-2 md:p-4 max-w-2xl bg-background rounded-3xl ">
             <BlogArticleProfile
                 title={article.title || ''}
                 user={article.author_id || article.author || {}}
@@ -71,7 +72,7 @@ const ArticleNormal: React.FC<articleprobs> = ({ article }) => {
                 isArticle={article.isArticle || false}
                 article={article}
             />
-            <div className='m-4 rounded-sm'>
+            <div className='m-4 border-[1px] border-neutral-500  rounded-3xl'>
                 <ErrorBoundary
                     FallbackComponent={ErrorFallback}
                     onError={(error, info) => {
@@ -99,18 +100,23 @@ const ArticleNormal: React.FC<articleprobs> = ({ article }) => {
                         <div className='size-1 rounded-full bg-primary-400'></div>
                     </>}
                     <div className="text-neutral-70 text-xs mx-1">
-                        {calculateReadTime(article.content!, article.media || [])} mins Read
+                        {calculateReadTime(article.content || '', article.media || [])} mins Read
                     </div>
                 </div>
             </div>
-            <BlogArticleReactionStats
-                toggleCommentSection={toggleCommentSection}
-                date={article.createdAt || ''}
-                article_id={article._id || ''}
-                article={article}
-                author_of_post={article.author_id || article.author! || {}}
-            />
-        </>
+       
+       <div className='px-3 md:px-4'>
+             <BlogReactionSession
+        isCommentSectionOpen={isCommentSectionOpen}
+        message={article.content || ""}
+        article_id={article._id || ""}
+        setIsCommentSectionOpen={toggleCommentSection}
+        author_of_post={article.author_id || {}}
+        text_to_speech={article.text_to_speech || ""}
+        article={article}
+        />
+        </div>
+        </div>
     )
 }
 

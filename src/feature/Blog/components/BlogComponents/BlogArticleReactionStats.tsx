@@ -129,7 +129,7 @@ const BlogArticleReactionStats: React.FC<BlogReactionStatsProps> = ({
 
 
 const target_type = article.type === "Repost" ? "Repost" : "Article";
-const target_id = article.type === "Repost" && article.repost?.repost_id ? article.repost.repost_id : article_id;
+const target_id = article.type === "Repost" && article.repost?.repost_id ? article.repost?.repost_id : article_id;
 
 const { data: allReactions, isLoading: reactionsLoading } = useGetAllReactionsForTarget(
   target_type ,

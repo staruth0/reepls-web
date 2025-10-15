@@ -32,12 +32,12 @@ const SimilarProfiles: React.FC = () => {
     <div className="w-full flex flex-col gap-6 mt-4 py-1 px-4">
       {recommendedUsers?.slice(0, 4)?.map((user: User, index: number) => (
         <AuthorSuggestionComponent
-          key={`${user.id}-${index}`}
-          username={user.username!}
+          key={`${user.id || user._id || index}-${index}`}
+          username={user.username || ''}
           title={user.bio || 'no bio'}
-          id={user._id || ''}
-          isverified={user.is_verified_writer!}
-          name={user.name!}
+          id={user._id || user.id || ''}
+          isverified={user.is_verified_writer || false}
+          name={user.name || ''}
         />
       ))}
     </div>

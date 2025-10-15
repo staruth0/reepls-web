@@ -195,7 +195,7 @@ const PodcastCommentSidebar: React.FC<PodcastCommentSidebarProps> = ({
 
           {/* Comments List */}
           {!isLoading && !isError && commentsData?.data?.comments?.length > 0 ? (
-            commentsData.data.comments.map((comment: IPodcastComment) => (
+            (commentsData?.data?.comments || []).map((comment: IPodcastComment) => (
               <PodcastComment key={comment._id} comment={comment} podcastAuthor={podcastAuthor} />
             ))
           ) : (

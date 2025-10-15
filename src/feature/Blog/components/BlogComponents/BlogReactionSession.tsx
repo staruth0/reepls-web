@@ -1,23 +1,26 @@
-import { MessageCircle, ThumbsUp, Radio } from "lucide-react";
+import { MessageCircle, Radio } from "lucide-react";
+import { Icon } from "@iconify/react";
 import React, { useEffect, useState, useRef } from "react";
-import ReactionsPopup from "../../../Interactions/components/ReactionsPopup";
 import { useUser } from "../../../../hooks/useUser";
 import { Article, User, ReactionReceived } from "../../../../models/datamodels";
 import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
 import CommentSection from "../../../Comments/components/CommentSection";
 import ReactionModal from "../../../Interactions/components/ReactionModal";
-import { useGetAllReactionsForTarget, useRepostArticle } from "../../../Repost/hooks/useRepost";
+import ReactionsPopup from "../../../Interactions/components/ReactionsPopup";
+import { useGetAllReactionsForTarget, useGetCommentsTreeForRepost } from "../../../Repost/hooks/useRepost";
+import { useGetCommentsByArticleId } from "../../../Comments/hooks";
 import BlogRepostModal from "./BlogRepostModal";
 import { t } from "i18next";
+import { useRepostArticle } from "../../../Repost/hooks/useRepost";
 import { LuLoader } from "react-icons/lu";
 import { motion, AnimatePresence } from "framer-motion";
-//import { hand5, heart, thumb } from "../../../../assets/icons";
-//import { cn } from "../../../../utils";
 
 interface BlogReactionSessionProps {
+  message?: string;
   isCommentSectionOpen: boolean;
   setIsCommentSectionOpen: (isOpen: boolean) => void;
-  article_id: string;
+  article_id: string; // This is the ID of the currently displayed article
+  text_to_speech: string;
   author_of_post: User;
   article: Article;
 }
@@ -85,66 +88,72 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   const [showCommentPopup, setShowCommentPopup] = useState(false);
   const [showRepostModal, setShowRepostModal] = useState(false);
   const [userReaction, setUserReaction] = useState<string | null>(null);
-  const [repostStatus, setRepostStatus] = useState<{ show: boolean; isSuccess: boolean }>({
-    show: false,
-    isSuccess: false,
-  });
+  const [repostStatus, setRepostStatus] = useState<{
+    show: boolean;
+    isSuccess: boolean;
+  }>({ show: false, isSuccess: false });
   const repostRef = useRef<HTMLDivElement>(null);
   const [showRepostTooltip, setShowRepostTooltip] = useState(false);
+  const [showReactionsPopup, setShowReactionsPopup] = useState(false);
 
   const [isRepostModalOpen, setIsRepostModalOpen] = useState(false);
   const { mutate: repost, isPending: isReposting } = useRepostArticle();
 
-  const [holdTimer, setHoldTimer] = useState<NodeJS.Timeout | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const [showReactionPopupList, setShowReactionPopupList] = useState(false);
-  const reactionCountRef = useRef<HTMLSpanElement>(null);
-
   const target_type = article.type === "Repost" ? "Repost" : "Article";
-  const target_id =
-    article.type === "Repost" && article.repost?.repost_id
-      ? article.repost.repost_id
-      : article_id;
+  const target_id = article.type === "Repost" && article.repost?.repost_id ? article.repost?.repost_id : article_id;
 
-  const { data: allReactions, isLoading: reactionsLoading } = useGetAllReactionsForTarget(
-    target_type,
-    target_id
-  );
-
+  // Get all reactions for this article
+  const { data: allReactions } = useGetAllReactionsForTarget(target_type, target_id);
+  
+  // Get comment counts
+  const { data: articleComments, isLoading: commentsLoading } = useGetCommentsByArticleId(article_id);
+  const { data: repostComments } = useGetCommentsTreeForRepost(article.repost?.repost_id || "");
+  
+  // Calculate total comments (handle reposts vs regular articles)
+  const totalComments = article.type === "Repost"
+    ? repostComments?.parentCommentsCount ?? 0
+    : articleComments?.pages?.[0]?.data?.totalComments ?? 0;
+  
+  // Get reaction count
   const reactionCount = allReactions?.data?.totalReactions || 0;
-  const commentCount = article.comment_count || 0;
-  const repostCount = article.repost_count || 0;
+  
+  // Get repost count (shares count)
+  const repostCount = article.shares_count || 0;
 
-  useEffect(() => {
-    setIsMobile(window.innerWidth <= 768);
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
+  // Check if the current user has reacted
   useEffect(() => {
     if (isLoggedIn && authUser?.id && allReactions?.data?.reactions) {
       const userReact = allReactions.data.reactions.find(
         (r: ReactionReceived) => r.user_id === authUser.id
       );
-      setUserReaction(userReact ? userReact.type : null);
+
+      if (userReact) {
+        setUserReaction(userReact.type);
+      } else {
+        setUserReaction(null);
+      }
     }
   }, [isLoggedIn, authUser, allReactions]);
 
+  // Close repost modal when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         repostRef.current &&
-        !repostRef.current.contains(event.target as Node) &&
-        !reactionCountRef.current?.contains(event.target as Node)
+        !repostRef.current.contains(event.target as Node)
       ) {
         setShowRepostModal(false);
-        setShowReactionPopupList(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+
+    if (showRepostModal) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showRepostModal]);
 
   const toggleCommentTab = () => {
     if (!isLoggedIn) {
@@ -156,36 +165,40 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
     }
   };
 
-  const handleMouseDown = () => {
-    if (!isMobile) return;
-    const timer = setTimeout(() => setModalOpen(true), 1500);
-    setHoldTimer(timer);
-  };
-
-  const handleMouseUp = () => {
-    if (holdTimer) {
-      clearTimeout(holdTimer);
-      setHoldTimer(null);
-    }
-  };
-
-  const handleClick = () => {
-    if (isMobile) return;
+  const handleReactClick = () => {
     if (!isLoggedIn) {
       setShowReactPopup(true);
       return;
     }
-    setUserReaction(userReaction === "like" ? null : "like");
+    setModalOpen(true);
+  };
+
+  const handleReactionComplete = (reaction: string) => {
+    setUserReaction(reaction);
+  };
+
+  const handleReactionCountClick = () => {
+    if (reactionCount > 0) {
+      setShowReactionsPopup(true);
+    }
+  };
+
+  const handleCloseReactionsPopup = () => {
+    setShowReactionsPopup(false);
   };
 
   const handleRepostClick = () => {
-    if (!isLoggedIn) return;
+    if (!isLoggedIn) {
+      // You can add a sign-in popup here if needed
+      return;
+    }
+    // Always show the repost modal options when clicking the button
     setShowRepostModal(!showRepostModal);
   };
 
   const handleRepostOnly = () => {
     repost(
-      { articleId: article_id, comment: "" },
+      { articleId: article_id, comment: "" }, // Always use the current article_id
       {
         onSuccess: () => {
           setShowRepostModal(false);
@@ -214,17 +227,10 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   };
 
   useEffect(() => {
-    if (isCommentSectionOpen) setCommentTabState(false);
-  }, [isCommentSectionOpen]);
-
-  // ---------- Reaction Stats Helper ----------
-  const handleReactionPopupClick = () => {
-    if (reactionCount === 0 && !reactionsLoading) {
-      // optional: show a toast or popup
-      return;
+    if (isCommentSectionOpen) {
+      setCommentTabState(false);
     }
-    setShowReactionPopupList(true);
-  };
+  }, [isCommentSectionOpen]);
 
   return (
     <div className="relative">
@@ -235,53 +241,60 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
         onRetry={handleRetryRepost}
       />
 
-      <div className="blog-reaction-session border-t border-neutral-400 flex gap-8 py-2">
-        {/* Reaction Button */}
-        <div className="relative flex items-center gap-1">
-          <button
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
-            onClick={handleClick}
-            className={`flex items-center gap-2 cursor-pointer group ${
-              userReaction ? "text-primary-400" : "text-neutral-50"
-            }`}
-          >
-            <ThumbsUp
-              className={`size-5 ${
-                userReaction
-                  ? "fill-primary-400 text-primary-400"
-                  : "text-neutral-50"
-              } group-hover:text-primary-400 group-hover:fill-primary-400`}
-            />
-            <span className="group-hover:text-primary-400">{t("blog.React")}</span>
-           {reactionCount > 0 && (
-  <span
-  ref={reactionCountRef}
-  className="text-sm text-green-500 ml-2 cursor-pointer 
-             px-3 py-0.5 rounded-full  
-             hover:bg-green-200 transition-colors"
-  title={`${reactionCount} Reactions`}
->
-  {reactionCount >= 1000
-    ? `${(reactionCount / 1000).toFixed(1)}k`
-    : reactionCount}
-</span>
-
-)}
-
-          </button>
-
-          {showReactionPopupList && reactionCount > 0 && (
-            <div className="absolute bottom-full left-0 mb-2 z-50">
-              <ReactionsPopup
-                isOpen={showReactionPopupList}
-                onClose={() => setShowReactionPopupList(false)}
+      <div className={` ${ article.isArticle ? " ": "border-t border-neutral-600"}  flex items-center gap-4 sm:gap-6 md:gap-8 py-3`}>
+        {/* React Button */}
+        <div className="relative flex items-center gap-2">
+          <div className="relative">
+            <button
+              onMouseEnter={() => isLoggedIn && setModalOpen(true)}
+              onClick={handleReactClick}
+              className={`cursor-pointer group
+                ${userReaction ? "text-primary-400" : "text-neutral-100"} `}
+            >
+              <Icon 
+                icon="pepicons-pencil:hands-clapping" 
+                className={`w-6 h-6 transform scale-x-[-1]
+                  ${
+                    userReaction
+                      ? "text-primary-400"
+                      : "text-neutral-100"
+                  } group-hover:text-primary-400`} 
+              />
+            </button>
+            
+            {/* Reaction Modal positioned relative to clap icon */}
+            {isModalOpen && (
+              <ReactionModal
+                isOpen={isModalOpen}
+                onClose={() => setModalOpen(false)}
+                onReact={handleReactionComplete}
                 article_id={article_id}
                 article={article}
               />
-            </div>
-          )}
-
+            )}
+          </div>
+          
+          <div className="relative">
+            <span 
+              className={`text-sm hover:text-primary-400 hover:underline underline-offset-1 cursor-pointer ${
+                userReaction ? "text-primary-400" : "text-neutral-100"
+              }`}
+              onClick={handleReactionCountClick}
+            >
+              {allReactions ? reactionCount : "..."}
+            </span>
+            
+            {/* Reactions Popup positioned relative to reaction count */}
+            {showReactionsPopup && reactionCount > 0 && (
+              <ReactionsPopup
+                isOpen={showReactionsPopup}
+                onClose={handleCloseReactionsPopup}
+                article_id={article_id}
+                article={article}
+                position={{ top: -200, right: 0 }}
+              />
+            )}
+          </div>
           {showReactPopup && (
             <SignInPopUp
               text={t("blog.React")}
@@ -292,18 +305,16 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
         </div>
 
         {/* Comment Button */}
-        <div className="relative flex items-center gap-1">
+        <div className="relative">
           <button
-            className="text-neutral-50 cursor-pointer flex items-center gap-2 group"
+            className="text-neutral-100 cursor-pointer flex items-center gap-2 group"
             onClick={toggleCommentTab}
           >
-            <MessageCircle className="size-5 text-neutral-50 group-hover:text-primary-400" />
-            <span className="group-hover:text-primary-400">{t("blog.Comment")}</span>
-            {commentCount > 0 && (
-              <span className="text-sm text-neutral-400 ml-1">{commentCount}</span>
-            )}
+            <MessageCircle className="size-5 text-neutral-100 group-hover:text-primary-400" />
+            <span className="text-sm text-neutral-100 group-hover:text-primary-400">
+              {commentsLoading ? "..." : totalComments}
+            </span>
           </button>
-
           {showCommentPopup && (
             <SignInPopUp
               text={t("blog.Comment")}
@@ -315,33 +326,33 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
 
         {/* Repost Button */}
         <div
-          className="relative flex items-center gap-1"
+          className="relative"
           ref={repostRef}
           onMouseEnter={() => setShowRepostTooltip(true)}
           onMouseLeave={() => setShowRepostTooltip(false)}
         >
           <button
-            className="flex gap-1 items-center text-neutral-50 cursor-pointer group"
+            className="flex gap-2 items-center text-neutral-100 cursor-pointer group"
             onClick={handleRepostClick}
           >
-            <Radio className="size-5 text-neutral-50 group-hover:text-primary-400" />
-            <span className="text-[14px] text-neutral-50 group-hover:text-primary-400">
-              Repost
+            <Radio className="size-5 text-neutral-100 group-hover:text-primary-400" />
+            <span className="text-sm text-neutral-100 group-hover:text-primary-400">
+              {repostCount}
             </span>
-            {repostCount > 0 && (
-              <span className="text-sm text-neutral-400 ml-1">{repostCount}</span>
-            )}
           </button>
 
-          {showRepostTooltip && article.type === "Repost" && (
+          {/* Repost Tooltip (for reposted articles) */}
+          {article.type === "Repost" && showRepostTooltip && (
             <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-background border border-neutral-400 text-neutral-50 text-xs rounded-md py-1.5 px-2.5 whitespace-nowrap z-50 shadow-lg">
               Note: Reposting this article will share its original content
+              {/* Tooltip arrow */}
               <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-0 border-t-4 border-l-transparent border-r-transparent border-t-background" />
             </div>
           )}
 
+          {/* Repost Modal */}
           {showRepostModal && (
-            <div className="absolute bg-background bottom-full right-0 border border-neutral-700 rounded-md shadow-lg z-50 min-w-[190px] p-2">
+            <div className="absolute bg-background bottom-full right-0 mt- border border-neutral-700 rounded-md shadow-lg z-50 min-w-[190px] p-2">
               <div className="py-1">
                 <button
                   onClick={handleRepostOnly}
@@ -350,7 +361,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
                 >
                   {isReposting ? (
                     <>
-                      <LuLoader className="animate-spin inline-block mr-1" />
+                      <LuLoader className="animate-spin inline-block mr-1" />{" "}
                       Reposting...
                     </>
                   ) : (
@@ -368,23 +379,15 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
             </div>
           )}
         </div>
-      </div>
 
-      <BlogRepostModal
-        isOpen={isRepostModalOpen}
-        onClose={() => setIsRepostModalOpen(false)}
-        article_id={article_id}
-        author_of_post={author_of_post}
-        article={article}
-      />
-
-      <ReactionModal
-        isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
-        onReact={(reaction: string) => setUserReaction(reaction)}
-        article_id={article_id}
-        article={article}
-      />
+        <BlogRepostModal
+          isOpen={isRepostModalOpen}
+          onClose={() => setIsRepostModalOpen(false)}
+          article_id={article_id} // Always pass the current article_id
+          author_of_post={author_of_post}
+          article={article}
+        />
+      </div>  
 
       {/* Comment Section */}
       <AnimatePresence mode="wait">

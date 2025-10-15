@@ -61,7 +61,7 @@ const ArticleNormal: React.FC<articleprobs> = ({ article }) => {
     }
 
     return (
-        <>
+        <div className="mt-5 shadow-md p-2 max-w-2xl bg-background">
             <BlogArticleProfile
                 title={article.title || ''}
                 user={article.author_id || {}}
@@ -106,7 +106,7 @@ const ArticleNormal: React.FC<articleprobs> = ({ article }) => {
             </>
           )}
           <div className="text-neutral-70 text-xs mx-1">
-            {calculateReadTime(article.content!, article.media || [])} mins Read
+            {calculateReadTime(article.content || '', article.media || [])} mins Read
           </div>
         </div>
       </div>
@@ -117,7 +117,7 @@ const ArticleNormal: React.FC<articleprobs> = ({ article }) => {
                 article={article}
                 author_of_post={article.author_id!}
             />
-        </>
+        </div>
     )
 }
 

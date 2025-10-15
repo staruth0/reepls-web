@@ -15,7 +15,7 @@ const PostArticleAnalytics = () => {
   const { data: articleComments } = useGetCommentsByArticleId(id!);
   const { data: allReactions } = useGetArticleReactions(id!);
 
-  const totalComments = articleComments?.pages[0].data.totalComments;
+  const totalComments = articleComments?.pages?.[0]?.data?.totalComments || 0;
   const firstMedia = data?.media?.[0]; // Get the first media item, if it exists
 
   useEffect(() => {

@@ -61,7 +61,7 @@ const Communique: React.FC = () => {
   }
 
   // Check if there are communiques to display
-  const hasCommuniques = data?.pages[0]?.articles && data.pages[0].articles.length > 0;
+  const hasCommuniques = data?.pages?.[0]?.articles && (data.pages[0].articles?.length || 0) > 0;
 
   return (
     <>
@@ -69,7 +69,7 @@ const Communique: React.FC = () => {
       {hasCommuniques && (
         <>
           <TopRightComponent />
-          <RightRecentComponent communiqueList={data.pages[0].articles} />
+          <RightRecentComponent communiqueList={data?.pages?.[0]?.articles || []} />
         </>
       )}
       <Trending />

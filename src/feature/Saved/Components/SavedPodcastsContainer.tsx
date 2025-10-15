@@ -61,7 +61,7 @@ const SavedPodcastsContainer: React.FC<SavedPodcastsContainerProps> = ({ classNa
     );
   }
 
-  if (!savedPodcastsData?.data?.savedPodcasts || savedPodcastsData.data.savedPodcasts.length === 0) {
+  if (!savedPodcastsData?.data?.savedPodcasts || (savedPodcastsData.data.savedPodcasts?.length || 0) === 0) {
     return (
       <div className={`flex flex-col items-center justify-center h-64 ${className}`}>
         <p className="text-neutral-300 text-center">
@@ -86,7 +86,7 @@ const SavedPodcastsContainer: React.FC<SavedPodcastsContainerProps> = ({ classNa
   return (
     <div className={`w-full ${className}`}>
       <div className="grid grid-cols-1 gap-6">
-        {savedPodcastsData.data.savedPodcasts
+        {(savedPodcastsData?.data?.savedPodcasts || [])
           .filter((savedPodcast: { 
             _id: string;
             podcastId: {

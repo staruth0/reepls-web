@@ -71,7 +71,7 @@ const BlogMessage: React.FC<BlogMessageProps> = ({ title, content, article, isAr
       <p
         ref={contentRef}
         className={cn(
-          'text-neutral-100 text-[14px] leading-[20px] transition-all duration-300',
+          'text-neutral-100 text-[14px] leading-[20px] transition-all duration-500 ease-in-out',
           isExpanded ? 'line-clamp-none' : 'line-clamp-3',
           'whitespace-pre-wrap'
         )}

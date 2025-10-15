@@ -69,16 +69,16 @@ const Profile: React.FC = () => {
     {
       id: "posts",
       title: `Posts${
-        authorPostsData?.pages[0]?.totalPosts > 0 
-          ? ` (${authorPostsData?.pages[0].totalPosts})` 
+        (authorPostsData?.pages?.[0]?.totalPosts || 0) > 0 
+          ? ` (${authorPostsData?.pages?.[0]?.totalPosts || 0})` 
           : ""
       }`,
     },
     {
       id: "articles",
       title: `Articles${
-        authorArticlesData?.pages[0]?.totalArticles > 0 
-          ? ` (${authorArticlesData?.pages[0].totalArticles})` 
+        (authorArticlesData?.pages?.[0]?.totalArticles || 0) > 0 
+          ? ` (${authorArticlesData?.pages?.[0]?.totalArticles || 0})` 
           : ""
       }`,
     },

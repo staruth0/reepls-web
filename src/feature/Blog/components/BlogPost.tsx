@@ -35,7 +35,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ article }) => {
 
   return (
     <div
-      className={`each_blog_post mt-5 shadow-md p-2 max-w-[680px] self-center w-full bg-background`}>
+      className={`self-center w-full`}>
       {article.isArticle ? (
         <>
           {isRepost ? (

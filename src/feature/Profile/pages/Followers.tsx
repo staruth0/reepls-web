@@ -29,6 +29,8 @@ const Followers: React.FC = () => {
   const followers = followersData?.data || [];
   const followings = followingsData?.data || [];
 
+  console.log(followers, followings);
+
   
 
   return (

@@ -1,9 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import { Navigation, Pagination } from 'swiper/modules';
-import { Swiper, SwiperSlide } from 'swiper/react';
 import { Article, MediaItem, MediaType } from '../../../../models/datamodels';
 import { X } from 'lucide-react';
 
@@ -17,90 +12,168 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [imageLoading, setImageLoading] = useState(true);
 
-  // Create media array with thumbnail as first item if it exists
   const displayMedia = article.thumbnail
-    ? [
-        { url: article.thumbnail, type: MediaType.Image },
-        ...media.filter(item => item.url !== article.thumbnail)
-      ]
+    ? [{ url: article.thumbnail, type: MediaType.Image }, ...media.filter(item => item.url !== article.thumbnail)]
     : media;
 
   const openModal = (index: number) => {
     setActiveIndex(index);
     setIsModalOpen(true);
     setImageLoading(true);
-    document.body.style.overflow = 'hidden'; // Prevent scrolling
+    document.body.style.overflow = 'hidden';
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    document.body.style.overflow = ''; // Re-enable scrolling
+    document.body.style.overflow = '';
   };
 
-  // Keyboard navigation for modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeModal();
-      else if (e.key === 'ArrowLeft' && isModalOpen)
-        setActiveIndex(prev => (prev > 0 ? prev - 1 : displayMedia.length - 1));
-      else if (e.key === 'ArrowRight' && isModalOpen)
-        setActiveIndex(prev => (prev < displayMedia.length - 1 ? prev + 1 : 0));
+      if (e.key === 'Escape') {
+        closeModal();
+      } else if (e.key === 'ArrowLeft' && isModalOpen) {
+        setActiveIndex(prev => prev > 0 ? prev - 1 : displayMedia.length - 1);
+      } else if (e.key === 'ArrowRight' && isModalOpen) {
+        setActiveIndex(prev => prev < displayMedia.length - 1 ? prev + 1 : 0);
+      }
+    };
+
+    if (isModalOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
     };
     if (isModalOpen) window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isModalOpen, displayMedia.length]);
 
-  return (
-    <>
-      {/* Grid Preview */}
-      <div
-        className={`grid w-full gap-1 ${
-          displayMedia.length === 1
-            ? 'grid-cols-1'
-            : displayMedia.length === 2
-            ? 'grid-cols-2'
-            : 'grid-cols-2'
-        }`}
-      >
-        {displayMedia.slice(0, 4).map((mediaItem, index) => {
-          let cornerClass = '';
-          const total = displayMedia.slice(0, 4).length;
+  const mediaClass = "w-full h-full object-cover rounded-lg";
 
-          if (total === 1) cornerClass = 'rounded-xl';
-          if (total === 2) {
-            if (index === 0) cornerClass = 'rounded-l-xl';
-            if (index === 1) cornerClass = 'rounded-r-xl';
-          }
-          if (total >= 3) {
-            if (index === 0) cornerClass = 'rounded-tl-xl';
-            if (index === 1 && total === 3) cornerClass = 'rounded-tr-xl';
-            if (index === 1 && total === 4) cornerClass = '';
-            if (index === 2) cornerClass = 'rounded-bl-xl';
-            if (index === 3) cornerClass = 'rounded-br-xl';
-          }
+  const renderImage = (mediaItem: MediaItem, index: number, className: string = "", isSingleImage: boolean = false) => (
+    <div 
+      key={index} 
+      className={`relative cursor-pointer ${className} bg-background rounded-xl`}
+      onClick={() => openModal(index)}
+      style={isSingleImage ? {} : { aspectRatio: "1 / 1" }}
+    >
+      {mediaItem.type === MediaType.Image ? (
+        <img
+          src={mediaItem.url}
+          alt={`Blog Visual ${index}`}
+          className={isSingleImage ? "w-full h-auto object-contain rounded-xl" : mediaClass}
+          loading="lazy"
+        />
+      ) : (
+        <video
+          src={mediaItem.url}
+          className={isSingleImage ? "w-full h-auto object-contain rounded-lg" : mediaClass}
+          controls
+          muted
+          autoPlay={false}
+          loop
+          playsInline
+          controlsList="nodownload"
+        />
+      )}
+    </div>
+  );
 
-          return (
-            <div
-              key={index}
-              className={`relative overflow-hidden cursor-pointer ${cornerClass}`}
-              onClick={() => openModal(index)}
-            >
-              <img
-                src={mediaItem.url}
-                alt={`Blog Visual ${index}`}
-                className="w-full h-full object-cover"
-              />
-              {index === 3 && displayMedia.length > 4 && (
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-2xl font-semibold">
-                  +{displayMedia.length - 4}
-                </div>
+  const renderImageWithOverlay = (mediaItem: MediaItem, index: number, className: string = "", remainingCount: number) => (
+    <div 
+      key={index} 
+      className={`relative cursor-pointer ${className} bg-neutral-900`}
+      onClick={() => openModal(index)}
+      style={{ aspectRatio: "1 / 1" }}
+    >
+      {mediaItem.type === MediaType.Image ? (
+        <img
+          src={mediaItem.url}
+          alt={`Blog Visual ${index}`}
+          className={mediaClass}
+          loading="lazy"
+        />
+      ) : (
+        <video
+          src={mediaItem.url}
+          className={mediaClass}
+          controls
+          muted
+          autoPlay={false}
+          loop
+          playsInline
+          controlsList="nodownload"
+        />
+      )}
+      <div className="absolute inset-0 bg-black/60 rounded-lg flex items-center justify-center">
+        <span className="text-white text-2xl font-bold">+{remainingCount}</span>
+      </div>
+    </div>
+  );
+
+  const renderImageGallery = () => {
+    if (displayMedia.length === 0) return null;
+    switch (displayMedia.length) {
+      case 1:
+        return (
+          <div className="w-full mx-auto">
+            <div className="h-auto">
+              {renderImage(displayMedia[0], 0, "", true)}
+            </div>
+          </div>
+        );
+      case 2:
+        return (
+          <div className="w-full mx-auto">
+            <div className="grid grid-cols-2 gap-1 aspect-[2/1]">
+              {renderImage(displayMedia[0], 0)}
+              {renderImage(displayMedia[1], 1)}
+            </div>
+          </div>
+        );
+      case 3:
+        return (
+          <div className="w-full mx-auto">
+            <div className="grid grid-cols-2 gap-1 aspect-square">
+              {renderImage(displayMedia[0], 0)}
+              {renderImage(displayMedia[1], 1)}
+              {renderImageWithOverlay(displayMedia[2], 2, "col-span-2", 1)}
+            </div>
+          </div>
+        );
+      case 4:
+        return (
+          <div className="w-full mx-auto">
+            <div className="grid grid-cols-2 gap-1 aspect-square">
+              {displayMedia.map((mediaItem, index) =>
+                renderImage(mediaItem, index)
               )}
             </div>
-          );
-        })}
-      </div>
+          </div>
+        );
+      default: {
+        const remainingCount = displayMedia.length - 4;
+        return (
+          <div className="w-full mx-auto">
+            <div className="grid grid-cols-2 gap-1 aspect-square">
+              {displayMedia.slice(0, 3).map((mediaItem, index) =>
+                renderImage(mediaItem, index)
+              )}
+              {renderImageWithOverlay(displayMedia[3], 3, "", remainingCount)}
+            </div>
+          </div>
+        );
+      }
+    }
+  };
 
-      {/* Fullscreen Modal */}
+  return (
+    <>
+      {/* Image Gallery */}
+      <div className="mt-4">
+        {renderImageGallery()}
+      </div>
       {isModalOpen && (
         <>
           <div
@@ -108,71 +181,67 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
             onClick={closeModal}
           />
           <div className="fixed inset-0 flex items-center justify-center z-[9999] p-2">
-            <div className="relative bg-black/95 backdrop-blur-sm rounded-xl w-full h-full max-w-[95vw] max-h-[95vh] overflow-hidden shadow-2xl">
+            <div className="relative bg-black/95 backdrop-blur-sm rounded-xl w-full h-full max-w-[95vw] max-h-[95vh] overflow-hidden shadow-2xl flex items-center justify-center">
               <button
                 onClick={closeModal}
-                className="absolute top-4 right-4 z-[9999] p-3 rounded-full bg-black/60 text-white hover:bg-black/80 transition-all duration-200 backdrop-blur-sm"
+                className="absolute top-4 right-4 z-[10000] p-3 rounded-full bg-black/60 text-white hover:bg-black/80 transition-all duration-200"
                 aria-label="Close gallery"
               >
                 <X size={20} />
               </button>
-
               {displayMedia.length > 1 && (
-                <div className="absolute top-4 left-4 z-[9999] px-3 py-1 rounded-full bg-black/60 text-white text-sm backdrop-blur-sm">
+                <div className="absolute top-4 left-4 z-[10000] px-3 py-1 rounded-full bg-black/60 text-white text-sm">
                   {activeIndex + 1} / {displayMedia.length}
                 </div>
               )}
-
               <div className="w-full h-full flex items-center justify-center">
-                <Swiper
-                  modules={[Navigation, Pagination]}
-                  navigation
-                  pagination={{ clickable: true }}
-                  initialSlide={activeIndex}
-                  loop={true}
-                  spaceBetween={0}
-                  slidesPerView={1}
-                  className="h-full w-full"
-                >
-                  {displayMedia.map((mediaItem, index) => (
-                    <SwiperSlide
-                      key={index}
-                      className="flex items-center justify-center h-full w-full"
-                    >
-                      <div className="relative w-full h-full flex items-center justify-center">
-                        {mediaItem.type === MediaType.Image ? (
-                          <img
-                            src={mediaItem.url}
-                            alt={`Blog Visual ${index}`}
-                            className="max-w-full max-h-full w-auto h-auto object-contain transition-opacity duration-300"
-                            style={{ maxWidth: '100%', maxHeight: '100%' }}
-                            onLoad={() => setImageLoading(false)}
-                            onError={() => setImageLoading(false)}
-                          />
-                        ) : (
-                          <video
-                            src={mediaItem.url}
-                            className="max-w-full max-h-full w-auto h-auto object-contain"
-                            controls
-                            autoPlay
-                            muted
-                            loop
-                            playsInline
-                            controlsList="nodownload"
-                            style={{ maxWidth: '100%', maxHeight: '100%' }}
-                            onLoadedData={() => setImageLoading(false)}
-                            onError={() => setImageLoading(false)}
-                          />
-                        )}
-                        {imageLoading && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                            <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                          </div>
-                        )}
-                      </div>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+                <div className="relative w-full h-full flex items-center justify-center">
+                  {imageLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                      <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    </div>
+                  )}
+                  {displayMedia[activeIndex]?.type === MediaType.Image ? (
+                    <img
+                      src={displayMedia[activeIndex].url}
+                      alt={`Blog Visual ${activeIndex}`}
+                      className="max-w-full max-h-full w-auto h-auto object-contain transition-opacity duration-300"
+                      onLoad={() => setImageLoading(false)}
+                      onError={() => setImageLoading(false)}
+                    />
+                  ) : (
+                    <video
+                      src={displayMedia[activeIndex].url}
+                      className="max-w-full max-h-full w-auto h-auto object-contain"
+                      controls
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      controlsList="nodownload"
+                      onLoadedData={() => setImageLoading(false)}
+                      onError={() => setImageLoading(false)}
+                    />
+                  )}
+                  {displayMedia.length > 1 && (
+                    <>
+                      <button
+                        onClick={() => setActiveIndex(prev => prev > 0 ? prev - 1 : displayMedia.length - 1)}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition-all duration-200"
+                        aria-label="Previous image"
+                      >
+                        ←
+                      </button>
+                      <button
+                        onClick={() => setActiveIndex(prev => prev < displayMedia.length - 1 ? prev + 1 : 0)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition-all duration-200"
+                        aria-label="Next image"
+                      >
+                        →
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </div>

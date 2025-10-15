@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   useGetPodcastById,
@@ -42,10 +42,8 @@ const PodcastDetail: React.FC = () => {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [isCommentSidebarOpen, setIsCommentSidebarOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [showReactionModal, setShowReactionModal] = useState(false);
   const [showReactionsPopup, setShowReactionsPopup] = useState(false);
-
-  const modalRef = useRef<HTMLDivElement>(null);
+  const [showReactionsHoverPopup, setShowReactionsHoverPopup] = useState(false);
 
   const {
     data: podcastData,
@@ -74,7 +72,7 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
     return [];
   }
 
-  return savedPodcastsData.data.savedPodcasts
+  return (savedPodcastsData?.data?.savedPodcasts || [])
     .map(
       (savedPodcast: { podcastId?: { _id?: string } | null }) =>
         savedPodcast.podcastId && savedPodcast.podcastId._id
@@ -133,17 +131,7 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
   };
 
   const handleReact = () => {
-    setShowReactionModal(false);
-  };
-
-  const handleLikeClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowReactionModal(true);
-  };
-
-  const handleReactionsCountClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowReactionsPopup(true);
+    setShowReactionsHoverPopup(false);
   };
 
   const handleComment = () => setIsCommentSidebarOpen(true);
@@ -407,39 +395,57 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
 
       {/* Floating Toolbar */}
       <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 bg-neutral-800 rounded-full shadow-lg p-2 flex gap-4 items-center justify-center">
-        <div className="flex items-center relative">
-          <button
-            onClick={handleLikeClick}
-            className="flex items-center gap-1 hover:text-primary-400 transition-colors duration-200 p-2"
-            title="React"
+        {/* Reactions Button with Hover Popup */}
+        <div className="flex items-center">
+          <div
+            className="relative group"
+            onMouseEnter={() => setShowReactionsHoverPopup(true)}
+            onMouseLeave={() => setShowReactionsHoverPopup(false)}
           >
-            <LuThumbsUp
-              size={20}
-              onMouseEnter={() => setShowReactionModal(true)}
-              className={
-                allReactions?.data?.totalReactions ? "text-primary-400" : ""
-              }
-            />
+            <button
+              className={`p-2 rounded-full flex items-center ${
+                allReactions?.data?.totalReactions ? "text-primary-400" : "text-neutral-50 hover:bg-neutral-700"
+              }`}
+              title="React"
+              aria-label="React to podcast"
+            >
+              <LuThumbsUp size={20} />
+            </button>
+
+            {showReactionsHoverPopup && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setShowReactionsHoverPopup(false)} />
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-[999] rounded-lg p-2 min-w-[200px]">
+                  <div className="relative z-">
+                    <PodcastReactionModal
+                      podcast_id={id || ""}
+                      onReact={handleReact}
+                      onClose={() => setShowReactionsHoverPopup(false)}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+          <div className="relative">
             <span
-              className="hover:underline cursor-pointer ml-1"
-              onClick={handleReactionsCountClick}
+              className="ml-1 text-sm hover:text-primary-400 hover:underline cursor-pointer"
+              onClick={() => (allReactions?.data?.totalReactions || 0) > 0 && setShowReactionsPopup(true)}
             >
               {allReactions?.data?.totalReactions || 0}
             </span>
-          </button>
-
-          {showReactionModal && (
-            <div
-              ref={modalRef}
-              className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50 rounded-lg p-2 min-w-[200px] "
-            >
-              <PodcastReactionModal
-                podcast_id={id || ""}
-                onReact={handleReact}
-                onClose={() => setShowReactionModal(false)}
-              />
-            </div>
-          )}
+            
+            {/* Reactions Popup positioned relative to reaction count */}
+            {showReactionsPopup && (allReactions?.data?.totalReactions || 0) > 0 && (
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-[9999]">
+                <PodcastReactionsPopup
+                  isOpen={showReactionsPopup}
+                  onClose={() => setShowReactionsPopup(false)}
+                  podcast_id={id || ""}
+                />
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center">
@@ -527,12 +533,6 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
         podcastId={id || ""}
         podcastAuthor={podcast?.author}
         podcast={podcast}
-      />
-
-      <PodcastReactionsPopup
-        isOpen={showReactionsPopup}
-        onClose={() => setShowReactionsPopup(false)}
-        podcast_id={id || ""}
       />
     </div>
   );

@@ -4,7 +4,7 @@ import { Article } from "../../../../models/datamodels";
 import { ErrorBoundary } from "react-error-boundary";
 import BlogImagery from "../BlogComponents/BlogImagery";
 import BlogMessage from "../BlogComponents/BlogMessage";
-import BlogReactionStats from "../BlogComponents/BlogReactionStats";
+// import BlogReactionStats from "../BlogComponents/BlogReactionStats";
 import BlogReactionSession from "../BlogComponents/BlogReactionSession";
 import { useUpdateArticle } from "../../hooks/useArticleHook";
 import { CognitiveModeContext } from "../../../../context/CognitiveMode/CognitiveModeContext";
@@ -28,7 +28,7 @@ const PostNormalCommentary: React.FC<articleprobs> = ({ article }) => {
   };
 
   const { user } = useGetUserByUsername(
-    article.repost?.repost_user.username || ""
+    article.repost?.repost_user?.username || ""
   );
   useEffect(() => {
     mutate({
@@ -44,7 +44,7 @@ const PostNormalCommentary: React.FC<articleprobs> = ({ article }) => {
   }
 
   return (
-    <>
+    <div className="mt-5 border-[1px] border-neutral-500 p-2 md:p-4 max-w-2xl bg-background rounded-3xl ">
       <div className="">
         
         <BlogArticleProfile
@@ -56,21 +56,22 @@ const PostNormalCommentary: React.FC<articleprobs> = ({ article }) => {
           isArticle={article.isArticle || false}
           article={article}
         />
-        <div className="px-4 py-2 text-[14px]">
+        <div className="px-4 py-2 text-[14px]  ">
           {" "}
           {article.repost?.repost_comment}
         </div>
       </div>
-     <div className="m-2 border-l-4 border-green-500 rounded-xl overflow-hidden bg-[#F9FAFB]">
-  <BlogArticleProfileRepost
-    title={article.title || ""}
-    user={article.author_id || {}}
-    content={article.content || ""}
-    date={article.createdAt || ""}
-    article_id={article._id || ""}
-    isArticle={article.isArticle || false}
-    article={article}
-  />
+      <div className="mx-2">
+      <div className="m-2 p-1 border-l-[5px] border-primary-300 rounded-3xl bg-neutral-700">
+        <BlogArticleProfileRepost
+          title={article.title || ""}
+          user={article.author_id || {}}
+          content={article.content || ""}
+          date={article.createdAt || ""}
+          article_id={article._id || ""}
+          isArticle={article.isArticle || false}
+          article={article}
+        />
 
   <BlogMessage
     title={article.title || ""}
@@ -94,13 +95,27 @@ const PostNormalCommentary: React.FC<articleprobs> = ({ article }) => {
   </ErrorBoundary>
 </div>
 
+        <ErrorBoundary
+          FallbackComponent={ErrorFallback}
+          onError={(error, info) => {
+            void error;
+            void info;
+          }}
+        >
+          {!isCognitiveMode && article?.media && (
+            <BlogImagery article={article} media={article.media} />
+          )}
+        </ErrorBoundary>
+      </div>
+      
 
-      <BlogReactionStats
+      {/* <BlogReactionStats
         toggleCommentSection={toggleCommentSection}
         date={article.createdAt || ""}
         article_id={article._id || ""}
         article={article}
-      />
+      /> */}
+      <div className="mx-2">
       <BlogReactionSession
         isCommentSectionOpen={isCommentSectionOpen}
         message={article.content || ""}
@@ -110,7 +125,8 @@ const PostNormalCommentary: React.FC<articleprobs> = ({ article }) => {
         text_to_speech={article.text_to_speech || ""}
         article={article}
       />
-    </>
+      </div>
+    </div>
   );
 };
 
