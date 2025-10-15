@@ -10,6 +10,7 @@ import {
   Flag,
   MessageSquare,
   Book,
+  Radio,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { LuBadgeCheck, LuLoader } from "react-icons/lu";
@@ -187,7 +188,7 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
     // Check if the article is a repost and use the appropriate hooks
     if (article?.type === 'Repost' && article?.repost?.repost_id) {
         if (saved) {
-            removeRepost(article.repost.repost_id, {
+            removeRepost(article.repost?.repost_id, {
                 onSuccess: () => {
                     toast.success(t("blog.alerts.articleRemoved"));
                     mutate({
@@ -202,7 +203,7 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
                 },
             });
         } else {
-            saveRepost(article.repost.repost_id, {
+            saveRepost(article.repost?.repost_id, {
                 onSuccess: () => {
                     toast.success(t("blog.alerts.articleSaved"));
                     mutate({
@@ -435,7 +436,7 @@ useEffect(() => {
               src={user?.profile_picture}
               alt="avatar"
               onClick={() => handleProfileClick(user?.username || "")}
-              className="cursor-pointer size-14 rounded-full object-cover"
+              className="cursor-pointer size-12 rounded-full object-cover"
               loading="lazy"
             />
           ) : (
@@ -473,17 +474,26 @@ useEffect(() => {
 
                 <div>
                   {!isCurrentAuthorArticle && (
-                    <span
-                      className={cn( // Use cn utility for class concatenation
-                        `${article?.publication_id ?'hidden':""} cursor-pointer text-primary-400 hover:underline ml-2 text-sm`,
-                        !isLoggedIn ? "pointer-events-none opacity-50" : "", // Grey out if not logged in
-                        (isFollowPending || isUnfollowPending) ? "opacity-70" : "" // Subtle dim for pending
+                    <>
+                      {article?.type === 'Repost' ? (
+                        <div className="flex items-center gap-2 ml-2 text-sm text-neutral-100">
+                          <Radio className="size-4 text-primary-400" />
+                          <span className="hidden sm:block">Republished</span>
+                        </div>
+                      ) : (
+                        <span
+                          className={cn( // Use cn utility for class concatenation
+                            `${article?.publication_id ?'hidden':""} cursor-pointer text-primary-400 hover:underline ml-2 text-sm`,
+                            !isLoggedIn ? "pointer-events-none opacity-50" : "", // Grey out if not logged in
+                            (isFollowPending || isUnfollowPending) ? "opacity-70" : "" // Subtle dim for pending
+                          )}
+                          onClick={handleFollowClick}
+                        >
+                          {getFollowStatusText()}
+                          {(isFollowPending || isUnfollowPending) && <LuLoader className="animate-spin size-3 ml-1 inline-block" />} {/* Small loader next to text */}
+                        </span>
                       )}
-                      onClick={handleFollowClick}
-                    >
-                      {getFollowStatusText()}
-                      {(isFollowPending || isUnfollowPending) && <LuLoader className="animate-spin size-3 ml-1 inline-block" />} {/* Small loader next to text */}
-                    </span>
+                    </>
                   )}
                 </div>
               )}
@@ -512,14 +522,19 @@ useEffect(() => {
                 </button>
               )}
             </div>
-            <p className="text-[12px] text-neutral-100">{user?.bio}</p>
-            <span className="text-[12px] text-neutral-100">
-              {article?.createdAt ? (
-                timeAgo(article?.createdAt || "")
-              ) : (
-                <div className="w-24 h-3 bg-neutral-600 rounded-md animate-pulse mt-1" />
-              )}
-            </span>
+            <div className="flex items-center gap-1">
+              <p className="text-[12px] text-neutral-100 truncate max-w-[120px] sm:max-w-[150px] md:max-w-[200px]" title={user?.bio}>
+                {user?.bio && user.bio.length > 40 ? `${user.bio.substring(0, 40)}...` : user?.bio}
+              </p>
+              <span className="text-[12px] text-neutral-100">•</span>
+              <span className="text-[12px] text-neutral-100">
+                {article?.createdAt ? (
+                  timeAgo(article?.createdAt || "")
+                ) : (
+                  <div className="w-24 h-3 bg-neutral-600 rounded-md animate-pulse" />
+                )}
+              </span>
+            </div>
           </div>
         </>
       )}
