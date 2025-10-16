@@ -54,7 +54,6 @@ const REFRESH_TOKEN_KEY = 'RefreshToken';
 
 // Key for storing in localStorage
 const STORAGE_KEY = 'encryptedLoginData';
-
 export {
   ACCESS_TOKEN_KEY,
   allowedImageTypes,

@@ -76,7 +76,7 @@ const PostNormal: React.FC<articleprobs> = ({ article }) => {
         article_id={article._id || ""}
         article={article}
       /> */}
-      <div className="mt-3 md:mt-6">  
+      <div className="mt-3 px-4 md:px-4 md:mt-6">  
       <BlogReactionSession
         isCommentSectionOpen={isCommentSectionOpen}
         message={article.content || ""}

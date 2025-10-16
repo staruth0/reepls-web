@@ -20,6 +20,7 @@ import {
   ShareTargetType,
   getAllRepostComments,
   getCommentsByRepostId,
+  getRepostCount,
 
 } from "../api/";
 
@@ -38,6 +39,7 @@ export const useRepostArticle = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["recommended-articles"] });
       queryClient.invalidateQueries({ queryKey: ["articles"] });
+      queryClient.invalidateQueries({ queryKey: ["repost-count"] });
      
     },
     onError: (error) => {
@@ -331,6 +333,7 @@ export const useDeleteRepost = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["articles"] });
       queryClient.invalidateQueries({ queryKey: ["recommended-articles"] });
+      queryClient.invalidateQueries({ queryKey: ["repost-count"] });
     },
     onError: (error) => {
       console.error("Failed to delete repost:", error.message);
@@ -409,5 +412,21 @@ export const useGetSavedReposts = (page: number = 1, limit: number = 10) => {
   return useQuery({
     queryKey: ["saved-reposts", page, limit],
     queryFn: () => getSavedReposts(page, limit),
+  });
+};
+
+/**
+ * React Query hook to get the repost count for a specific article.
+ * @param articleId The ID of the article to get repost count for.
+ * @param enabled A boolean to control when the query runs (default: true).
+ */
+export const useGetRepostCount = (articleId: string, enabled: boolean = true) => {
+  return useQuery({
+    queryKey: ["repost-count"],
+    queryFn: () => getRepostCount(articleId),
+    enabled: enabled && !!articleId,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    retry: 1,
   });
 };
