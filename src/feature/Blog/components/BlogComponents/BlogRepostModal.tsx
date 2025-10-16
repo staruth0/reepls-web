@@ -40,13 +40,13 @@ const RepostStatusModal: React.FC<RepostStatusModalProps> = ({
       <div className="bg-background p-6 rounded-lg max-w-md w-full mx-4">
         <div className="text-center">
           <h3 className="text-lg font-medium mb-4 text-foreground">
-            {isSuccess ? (isEdit ? "Commentary Updated!" : "Repost Successful!") : (isEdit ? "Update Failed" : "Repost Failed")}
+            {isSuccess ? (isEdit ? "Commentary Updated!" : "Republish Successful!") : (isEdit ? "Update Failed" : "Republish Failed")}
           </h3>
           <p className="mb-6 text-neutral-100">
             {isSuccess
               ? (isEdit 
                   ? "Your commentary has been updated successfully."
-                  : "Your repost with thoughts has been shared successfully.")
+                  : "Your republish with thoughts has been shared successfully.")
               : "There was an error. Please try again."}
           </p>
           <div className="flex justify-center gap-4">
@@ -294,7 +294,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-[3000] flex items-center justify-center p-4"
+            className="fixed inset-0 z-[3000] flex items-start sm:items-center justify-start sm:justify-center p-4"
             variants={overlayVariants}
             initial="hidden"
             animate="visible"
@@ -306,7 +306,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
 
             {/* Modal */}
             <motion.div
-              className="relative w-full max-w-2xl max-h-[90vh] bg-background rounded-xl shadow-2xl overflow-hidden"
+              className="relative w-full max-w-2xl max-h-[90vh] bg-background rounded-xl shadow-2xl overflow-hidden sm:mx-auto lg:mx-0"
               variants={modalVariants}
               initial="hidden"
               animate="visible"
@@ -315,7 +315,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
               {/* Header */}
               <div className="flex items-center justify-between p-4 border-b border-neutral-400">
                 <h2 className="text-lg font-semibold text-foreground">
-                  {isEditMode ? 'Edit Commentary' : 'Repost'}
+                  {isEditMode ? 'Edit Commentary' : 'Republish'}
                 </h2>
                 <button
                   onClick={onClose}
@@ -435,10 +435,10 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
                     {isPending ? (
                       <>
                         <LuLoader className="animate-spin inline-block mr-2" size={16} />
-                        {isEditMode ? 'Updating...' : 'Reposting...'}
+                        {isEditMode ? 'Updating...' : 'Republishing...'}
                       </>
                     ) : (
-                      isEditMode ? 'Update Commentary' : 'Repost'
+                      isEditMode ? 'Update Commentary' : 'Republish'
                     )}
                   </button>
                 </div>

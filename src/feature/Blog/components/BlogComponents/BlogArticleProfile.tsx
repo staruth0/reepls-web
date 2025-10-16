@@ -422,7 +422,7 @@ useEffect(() => {
             onClick={() => goToProfile(user?.username || "")}
           >
             {user?.username || (
-              <div className="w-20 h-4 bg-neutral-500 rounded-md animate-pulse" />
+              <span className="w-20 h-4 bg-neutral-500 rounded-md animate-pulse inline-block" />
             )}
           </p>
           <span className="text-neutral-300 text-sm">Reposted</span>
@@ -461,7 +461,7 @@ useEffect(() => {
                 {(user?.name  || user?.username)? (
                   user?.name || user?.username
                 ) : (
-                  <div className="w-20 bg-neutral-500 rounded-md animate-pulse" />
+                  <span className="w-20 bg-neutral-500 rounded-md animate-pulse inline-block" />
                 )}
               </p>
 
@@ -531,7 +531,7 @@ useEffect(() => {
                 {article?.createdAt ? (
                   timeAgo(article?.createdAt || "")
                 ) : (
-                  <div className="w-24 h-3 bg-neutral-600 rounded-md animate-pulse" />
+                  <span className="w-24 h-3 bg-neutral-600 rounded-md animate-pulse inline-block" />
                 )}
               </span>
             </div>

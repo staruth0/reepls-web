@@ -59,6 +59,9 @@ const BlogArticleMessage: React.FC<BlogMessageProps> = ({ title, content, articl
   return (
     <div className="blog-message">
       <div className="text-[15px] font-semibold mb-2">{title}</div>
+      {article.subtitle && (
+        <div className="text-[14px] text-neutral-100 mb-2 font-medium">{article.subtitle}</div>
+      )}
       <p
         ref={contentRef}
         className={cn(
