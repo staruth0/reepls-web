@@ -100,9 +100,8 @@ const UserFeed: React.FC = () => {
         ) : (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col  gap-7 py-6">
             {data?.pages.map((page, i) => (
-              <div className=" self-center flex flex-col items-center gap-7" key={i}>
-                {page.articles.map((article: Article) => (
-                
+              <div className=" self-center flex flex-col items-center gap-2" key={i}>
+                {page.articles.map((article: Article) => (           
                   <BlogPost key={article._id} article={article} />
                 ))}
               </div>

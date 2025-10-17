@@ -488,6 +488,17 @@ export interface GetSavedRepostsResponse {
   totalPages: number;
 }
 
+export interface RepostCountResponse {
+  message: string;
+  data: {
+    articleId: string;
+    articleTitle: string;
+    repostCount: number;
+    actualRepostCount: number;
+    isCountAccurate: boolean;
+  };
+}
+
 /**
  * Saves a repost.
  * @param repostId The ID of the repost to save.
@@ -516,5 +527,15 @@ export const removeSavedRepost = async (repostId: string) => {
  */
 export const getSavedReposts = async (page: number = 1, limit: number = 10) => {
   const { data } = await apiClient.get(`/articles/saved-reposts?page=${page}&limit=${limit}`);
+  return data;
+};
+
+/**
+ * Retrieves the repost count for a specific article.
+ * @param articleId The ID of the article to get repost count for.
+ * @returns The repost count data including accuracy information.
+ */
+export const getRepostCount = async (articleId: string): Promise<RepostCountResponse> => {
+  const { data } = await apiClient.get(`/reposts/article/${articleId}/count`);
   return data;
 };

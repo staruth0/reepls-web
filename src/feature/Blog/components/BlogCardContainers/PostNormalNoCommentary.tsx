@@ -96,7 +96,7 @@ const PostNormalNoCommentary:React.FC<articleprobs> = ({article}) => {
         article_id={article._id || ''}
         article={article}
       /> */}
-      <div className="mx-2">
+      <div className="px-4 md:px-4">
       <BlogReactionSession
         isCommentSectionOpen={isCommentSectionOpen}
         message={article.content || ''}

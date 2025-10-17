@@ -141,6 +141,7 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
             article_id={article._id || ""}
             article={article}
           /> */}
+          <div className="px-4 md:px-4">
         <BlogReactionSession
           isCommentSectionOpen={isCommentSectionOpen}
           message={article.content || ""}
@@ -150,6 +151,7 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
           text_to_speech={article.text_to_speech || ""}
           article={article}
         />
+        </div>
       </div>
     </div>
   );

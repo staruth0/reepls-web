@@ -9,6 +9,7 @@ const registerUser = async (user: User) => {
   return data;
 };
 
+
 // Register user with Google - this initiates the OAuth flow
 const registerWithGoogle = async () => {
   // Redirect to Google OAuth - this will redirect the user to Google

@@ -131,7 +131,7 @@ const ArticleNormalNoCommentary: React.FC<articleprobs> = ({ article }) => {
         </div>
       </div>
 
-    <div className="px-3 md:px-4">
+    <div className="px-4 md:px-4">
       <BlogReactionSession
         isCommentSectionOpen={isCommentSectionOpen}
         message={article.content || ""}

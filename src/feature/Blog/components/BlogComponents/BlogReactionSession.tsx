@@ -45,12 +45,12 @@ const RepostStatusModal: React.FC<RepostStatusModalProps> = ({
       <div className="bg-background p-6 rounded-lg max-w-md w-full mx-4">
         <div className="text-center">
           <h3 className="text-lg font-medium mb-4">
-            {isSuccess ? "Repost Successful!" : "Repost Failed"}
+            {isSuccess ? "Republish Successful!" : "Republish Failed"}
           </h3>
           <p className="mb-6">
             {isSuccess
-              ? "Your repost has been shared successfully."
-              : "There was an error reposting. Please try again."}
+              ? "Your republish has been shared successfully."
+              : "There was an error republishing. Please try again."}
           </p>
           <div className="flex justify-center gap-4">
             {!isSuccess && onRetry && (
@@ -102,6 +102,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   const target_type = article.type === "Repost" ? "Repost" : "Article";
   const target_id = article.type === "Repost" && article.repost?.repost_id ? article.repost?.repost_id : article_id;
 
+  
   // Get all reactions for this article
   const { data: allReactions } = useGetAllReactionsForTarget(target_type, target_id);
   
@@ -241,9 +242,9 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
         onRetry={handleRetryRepost}
       />
 
-      <div className={` ${ article.isArticle ? " ": "border-t border-neutral-600"}  flex items-center gap-4 sm:gap-6 md:gap-8 py-3`}>
+      <div className={` ${ target_type === "Repost" || article.isArticle ? " " : "border-t border-neutral-600"}  flex items-center gap-4 sm:gap-6 md:gap-8 py-3`}>
         {/* React Button */}
-        <div className="relative flex items-center gap-2">
+        <div className={`relative flex items-center ${reactionCount > 0 ? " gap-2" : ""}`}>
           <div className="relative">
             <button
               onMouseEnter={() => isLoggedIn && setModalOpen(true)}
@@ -275,14 +276,14 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
           </div>
           
           <div className="relative">
-            <span 
+            {reactionCount > 0 && <span 
               className={`text-sm hover:text-primary-400 hover:underline underline-offset-1 cursor-pointer ${
                 userReaction ? "text-primary-400" : "text-neutral-100"
               }`}
               onClick={handleReactionCountClick}
             >
               {allReactions ? reactionCount : "..."}
-            </span>
+            </span>}
             
             {/* Reactions Popup positioned relative to reaction count */}
             {showReactionsPopup && reactionCount > 0 && (
@@ -311,9 +312,9 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
             onClick={toggleCommentTab}
           >
             <MessageCircle className="size-5 text-neutral-100 group-hover:text-primary-400" />
-            <span className="text-sm text-neutral-100 group-hover:text-primary-400">
+            {totalComments > 0 && <span className="text-sm text-neutral-100 group-hover:text-primary-400">
               {commentsLoading ? "..." : totalComments}
-            </span>
+            </span>}
           </button>
           {showCommentPopup && (
             <SignInPopUp
@@ -336,15 +337,15 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
             onClick={handleRepostClick}
           >
             <Radio className="size-5 text-neutral-100 group-hover:text-primary-400" />
-            <span className="text-sm text-neutral-100 group-hover:text-primary-400">
+           {repostCount > 0 && <span className="text-sm text-neutral-100 group-hover:text-primary-400">
               {repostCount}
-            </span>
+            </span>}
           </button>
 
           {/* Repost Tooltip (for reposted articles) */}
           {article.type === "Repost" && showRepostTooltip && (
             <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-background border border-neutral-400 text-neutral-50 text-xs rounded-md py-1.5 px-2.5 whitespace-nowrap z-50 shadow-lg">
-              Note: Reposting this article will share its original content
+              Note: Republishing this article will share its original content
               {/* Tooltip arrow */}
               <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-0 border-t-4 border-l-transparent border-r-transparent border-t-background" />
             </div>
@@ -352,28 +353,28 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
 
           {/* Repost Modal */}
           {showRepostModal && (
-            <div className="absolute bg-background bottom-full right-0 mt- border border-neutral-700 rounded-md shadow-lg z-50 min-w-[190px] p-2">
+            <div className="absolute bg-background bottom-full left-0 sm:left-auto sm:right-0 mt-2 border border-neutral-700 rounded-lg shadow-xl z-50 min-w-[200px] p-3">
               <div className="py-1">
                 <button
                   onClick={handleRepostOnly}
-                  className="py-2 text-s hover:text-primary-400 transition-colors w-full text-left"
+                  className="py-3 px-2 text-sm hover:text-primary-400 hover:bg-neutral-800 transition-colors w-full text-left rounded-md"
                   disabled={isReposting}
                 >
                   {isReposting ? (
                     <>
                       <LuLoader className="animate-spin inline-block mr-1" />{" "}
-                      Reposting...
+                      Republishing...
                     </>
                   ) : (
-                    "Repost only"
+                    "Republish only"
                   )}
                 </button>
-                <div className="w-full h-[.5px] bg-neutral-400"></div>
+                <div className="w-full h-px bg-neutral-600 my-1"></div>
                 <button
                   onClick={handleRepostWithThought}
-                  className="py-2 text-s hover:text-primary-400 transition-colors"
+                  className="py-3 px-2 text-sm hover:text-primary-400 hover:bg-neutral-800 transition-colors w-full text-left rounded-md"
                 >
-                  Repost with your thought
+                  Republish with your thought
                 </button>
               </div>
             </div>
