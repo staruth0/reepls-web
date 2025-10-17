@@ -602,7 +602,7 @@ useEffect(() => {
                     onClick={handleEditRepostCommentary}
                   >
                     <MessageSquare size={18} className="text-neutral-500" />
-                    <div>Edit Commentary</div>
+                    <div>{t("blog.EditCommentary")}</div>
                   </div>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
@@ -616,7 +616,7 @@ useEffect(() => {
                     onClick={() => setShowRepostDeleteConfirmation(true)}
                   >
                     <Trash2 size={18} className="text-red-500" />
-                    <div>Delete Repost</div>
+                    <div>{t("blog.Delete")}</div>
                   </div>
                 </>
               ) : (

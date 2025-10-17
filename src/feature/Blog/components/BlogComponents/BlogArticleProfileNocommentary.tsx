@@ -399,7 +399,7 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
                         onClick={handleEditRepostCommentary}
                       >
                         <MessageSquare size={18} className="text-neutral-500" />
-                        <div>Add Commentary</div>
+                        <div>{t("blog.AddCommentary")}</div>
                       </div>
                       <div
                         className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
@@ -413,7 +413,7 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
                         onClick={() => setShowRepostDeleteConfirmation(true)}
                       >
                         <Trash2 size={18} className="text-red-500" />
-                        <div>Delete Repost</div>
+                        <div>{t("blog.Delete")}</div>
                       </div>
                     </>
                   ) : (
