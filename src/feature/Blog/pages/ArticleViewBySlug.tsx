@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import {
   Bookmark,
   FilePen,
@@ -44,12 +44,12 @@ import { ArticleAudioControls } from "../../../components/atoms/ReadALoud/Articl
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetPodcastById } from "../../Podcast/hooks";
 import AudioWave from "../../../components/molecules/Audio/AudiWave";
+import ErrorBoundary from "../../../components/atoms/ErrorBoundary";
 import { useGetAllReactionsForTarget } from "../../Repost/hooks/useRepost";
 
 // Start of reading progress implementation
 import { useCreateReadingProgress, useGetReadingProgressByArticleId, useUpdateReadingProgress } from "../../ReadingProgress/hooks";
 import { useReadingProgress } from "../../../hooks/useReadingProgress";
-import ReadingProgressBar from "../../../components/atoms/ReadingProgressBar";
 import { estimateArticleReadTime } from "../../../utils/readingProgressCalculator";
 // reading progress implementation
 
@@ -87,10 +87,43 @@ const ArticleViewBySlug: React.FC = () => {
   const article = slug ? articleslug : articleid;
  const { data: allReactions } = useGetAllReactionsForTarget("Article", article?._id);
 const reactionCount = allReactions?.data?.totalReactions || 0;
-  const [showReactionsHoverPopup, setShowReactionsHoverPopup] = useState<boolean>(false);
 
-  const articleUrl = `${window.location.origin}/posts/article/slug/${slug}`;
-  const articleTitle = title || (content ? content.split(" ").slice(0, 10).join(" ") + "..." : "Untitled Article");
+  // Memoized values to prevent unnecessary recalculations
+  const memoizedArticleUrl = useMemo(() => 
+    `${window.location.origin}/posts/article/slug/${slug}`, 
+    [slug]
+  );
+  
+  const memoizedArticleTitle = useMemo(() => 
+    title || (content ? content.split(" ").slice(0, 10).join(" ") + "..." : "Untitled Article"),
+    [title, content]
+  );
+
+  const memoizedReadTime = useMemo(() => 
+    article ? calculateReadTime(article.content!, article.media || []) : 0,
+    [article?.content, article?.media]
+  );
+
+  const memoizedTimeAgo = useMemo(() => 
+    article?.createdAt ? timeAgo(article.createdAt) : "",
+    [article?.createdAt]
+  );
+
+  const memoizedAuthorName = useMemo(() => 
+    article?.author_id?.name || article?.author_id?.username || "Unknown",
+    [article?.author_id?.name, article?.author_id?.username]
+  );
+
+  const memoizedAuthorBio = useMemo(() => 
+    article?.author_id?.bio || "",
+    [article?.author_id?.bio]
+  );
+
+  const memoizedAuthorInitial = useMemo(() => 
+    memoizedAuthorName.charAt(0) || "A",
+    [memoizedAuthorName]
+  );
+  const [showReactionsHoverPopup, setShowReactionsHoverPopup] = useState<boolean>(false);
 
   const [isCommentSectionOpen, setIsCommentSectionOpen] = useState<boolean>(true);
   const { mutate } = useUpdateReadingHistory();
@@ -126,7 +159,7 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
     } else {
       setHasReadingProgress(false);
     }
-  }, [readingProgress?.data,readingProgress]);
+  }, [readingProgress?.data]);
 
   // Podcast fetch and audio controls only if article has podcast
   const { data: podcastData } = useGetPodcastById(article?.podcastId || "");
@@ -249,29 +282,43 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
   };
 
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
+  
+  // Memoize followed IDs to prevent unnecessary recalculations
+  const followedIds = useMemo(() => 
+    followings?.data?.map((following: Follow) => following.followed_id?.id) || [],
+    [followings?.data]
+  );
+  
+  const authorId = useMemo(() => 
+    article?.author_id?._id || article?.author_id?.id,
+    [article?.author_id?._id, article?.author_id?.id]
+  );
+  
   useEffect(() => {
-    const followedIds =
-      followings?.data?.map((following: Follow) => following.followed_id?.id) || [];
-    setIsFollowing(followedIds.includes(article?.author_id?._id || article?.author_id?.id));
-  }, [followings, article?.author_id?._id]);
+    setIsFollowing(followedIds.includes(authorId));
+  }, [followedIds, authorId]);
 
   const [isSaved, setIsSaved] = useState<boolean>(false);
+  
+  // Memoize saved article check
+  const isArticleSaved = useMemo(() => 
+    savedArticles?.articles?.some((a: Article) => a._id === article?._id) || false,
+    [savedArticles?.articles, article?._id]
+  );
+  
   useEffect(() => {
-    const isArticleSaved = savedArticles?.articles?.some(
-      (a: Article) => a._id === article?._id
-    );
-    setIsSaved(isArticleSaved || false);
-  }, [savedArticles, article?._id]);
+    setIsSaved(isArticleSaved);
+  }, [isArticleSaved]);
 
-  const handleFollowClick = () => {
+  const handleFollowClick = useCallback(() => {
     if (!isLoggedIn) {
       setShowSignInPopup("follow");
       return;
     }
-    if (isFollowPending || isUnfollowPending || !article?.author_id?._id && !article?.author_id?.id) return;
+    if (isFollowPending || isUnfollowPending || !authorId) return;
 
     if (isFollowing) {
-      unfollowUser(article.author_id?._id || article.author_id?.id || '', {
+      unfollowUser(authorId, {
         onSuccess: () => {
           toast.success("User unfollowed successfully");
           setIsFollowing(false);
@@ -279,7 +326,7 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
         onError: () => toast.error("Failed to unfollow user"),
       });
     } else {
-      followUser(article.author_id?._id || article.author_id?.id || '', {
+      followUser(authorId, {
         onSuccess: () => {
           toast.success("User followed successfully");
           setIsFollowing(true);
@@ -287,9 +334,9 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
         onError: () => toast.error("Failed to follow user"),
       });
     }
-  };
+  }, [isLoggedIn, isFollowPending, isUnfollowPending, authorId, isFollowing, unfollowUser, followUser]);
 
-  const handleSaveClick = () => {
+  const handleSaveClick = useCallback(() => {
     if (!isLoggedIn) {
       setShowSignInPopup("save");
       return;
@@ -313,9 +360,9 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
         onError: () => toast.error("Failed to save article"),
       });
     }
-  };
+  }, [isLoggedIn, isSavePending, isRemovePending, article?._id, isSaved, removeSavedArticle, saveArticle]);
 
-  const handleGoBack = () => {
+  const handleGoBack = useCallback(() => {
     if (!isLoggedIn) {
       // For non-signed in users, navigate to feed
       navigate('/feed', { replace: true });
@@ -323,31 +370,31 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
       // For signed in users, use browser back
       navigate(-1);
     }
-  };
+  }, [isLoggedIn, navigate]);
 
-  const handleShareClick = () => {
+  const handleShareClick = useCallback(() => {
     if (!isLoggedIn) {
       setShowSignInPopup("share");
       return;
     }
     setShowSharePopup(true);
-  };
+  }, [isLoggedIn]);
 
-  const handleCommentClick = () => {
+  const handleCommentClick = useCallback(() => {
     if (!isLoggedIn) {
       setShowSignInPopup("comment");
       return;
     }
     commentSectionRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  }, [isLoggedIn]);
 
-  const handleRepostCommentaryClick = () => {
+  const handleRepostCommentaryClick = useCallback(() => {
     if (!isLoggedIn) {
       setShowSignInPopup("repost");
       return;
     }
     setShowRepostsSidebar(true);
-  };
+  }, [isLoggedIn]);
 
   useEffect(() => {
     if (articleUid === PREVIEW_SLUG) {
@@ -380,7 +427,7 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
         setHtmlArticleContent(article.content);
       }
     }
-  }, [article, isPending]);
+  }, [article?.title, article?.subtitle, article?.content, article?.htmlContent]);
 
   useEffect(() => {
     if (isError) {
@@ -398,78 +445,111 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
     }
   }, [htmlArticleContent]);
 
-  const getFollowStatusText = () => {
+  const getFollowStatusText = useCallback(() => {
     if (!isLoggedIn) return "Follow";
     if (isFollowPending) return "Following...";
     if (isUnfollowPending) return "Unfollowing...";
     return isFollowing ? "Following" : "Follow";
-  };
+  }, [isLoggedIn, isFollowPending, isUnfollowPending, isFollowing]);
 
   return (
-    <div className="flex flex-col min-h-screen relative">
-      <div className="max-w-[800px] w-full mx-auto px-4 sm:px-6 lg:px-8 mb-56 flex-grow">
+    <ErrorBoundary
+      onError={(error, errorInfo) => {
+        console.error('ArticleViewBySlug Error:', error, errorInfo);
+      }}
+    >
+      <div className="flex flex-col min-h-screen relative">
+      <style>{`
+        /* Ensure Georgia font throughout article view */
+        .article-view-content {
+          font-family: Georgia, serif !important;
+        }
+        .article-view-content h1,
+        .article-view-content h2,
+        .article-view-content h3,
+        .article-view-content h4,
+        .article-view-content h5,
+        .article-view-content h6 {
+          font-family: Georgia, serif !important;
+        }
+      
+        .article-view-content div {
+          font-family: Georgia, serif !important;
+        }
+        .article-view-content span {
+          font-family: Georgia, serif !important;
+        }
+        /* Override any inherited fonts */
+        #article-content * {
+          font-family: Georgia, serif !important;
+          font-size:16px;
+          text-align:justify;
+        }
+    
+      `}</style>
+      <div className="max-w-[750px] w-full mx-auto px-4 sm:px-6 lg:px-8 mb-32 flex-grow article-view-content">
         {!isPreview && isPending ? (
-          <div className="w-full mt-10 flex flex-col justify-center items-center">
+          <div className="w-full mt-6 flex flex-col justify-center items-center">
             <ArticleViewSkeleton />
           </div>
         ) : (
-          <div className="w-full mx-auto mt-10 flex flex-col justify-center items-start">
+          <div className="w-full mx-auto mt-6 flex flex-col justify-center items-start">
             <button
               onClick={handleGoBack}
-              className="flex items-center gap-2 text-neutral-100 md:hidden hover:text-neutral-200 mb-6"
+              className="flex items-center gap-2 text-neutral-300 md:hidden hover:text-neutral-200 mb-4"
             >
-              <ArrowLeft className="size-5" />
-              <span>Back</span>
+              <ArrowLeft className="size-4" />
+              <span className="text-sm">Back</span>
             </button>
             {isPreview && (
-              <div className="mb-4">
-                <span className="text-sm font-semibold px-4 py-1 bg-foreground text-primary-500 rounded-full flex gap-2 items-center">
-                  <FilePen className="size-4" />
+              <div className="mb-3">
+                <span className="text-xs font-medium px-3 py-1 bg-foreground text-primary-500 rounded-full flex gap-1 items-center">
+                  <FilePen className="size-3" />
                   Draft
                 </span>
               </div>
             )}
 
-            <h1 className="text-[26px] md:text-4xl lg:text-5xl font-semibold leading-normal lg:leading-tight mb-2">
+            <h1 className="text-[22px] md:text-2xl lg:text-3xl font-medium leading-tight mb-3">
               {title}
             </h1>
-            {subtitle && <h3 className="text-xl my-4">{subtitle}</h3>}
+            {subtitle && <h3 className="text-lg text-neutral-300 mb-4">{subtitle}</h3>}
 
             {article?.thumbnail && (
-              <div className="my-6 w-full max-w-full mx-auto">
+              <div className="my-4 w-full max-w-full mx-auto">
                 <img
                   src={article.thumbnail}
                   alt={`Thumbnail for ${title}`}
-                  className="w-full h-auto rounded-lg object-cover max-h-[500px]"
+                  className="w-full h-auto rounded-lg object-cover max-h-[400px]"
                 />
               </div>
             )}
 
             {/* Author Profile Section */}
-            <div className="w-full flex my-4 items-center justify-between gap-4 mt-8 mb-4">
+            <div className="w-full flex my-3 items-center justify-between gap-3 mt-6 mb-3">
               <div className="flex gap-2">
                 {article?.author_id?.profile_picture ? (
                   <img
                     src={article.author_id.profile_picture}
-                    alt={article.author_id.username || "Author"}
+                    alt={article.author_id.name || article.author_id.username || "Author"}
                     className="rounded-full w-10 h-10 object-cover"
                   />
                 ) : (
-                  <div className="rounded-full w-10 h-10 bg-purple-500 flex items-center justify-center text-white font-bold">
-                    {article?.author_id?.username?.charAt(0) || "A"}
+                  <div className="rounded-full w-8 h-8 bg-purple-500 flex items-center justify-center text-white font-medium text-[16px]">
+                    {memoizedAuthorInitial}
                   </div>
                 )}
                 <div>
-                  <p className="font-semibold text-[16px]">
-                    {article?.author_id?.username || "Unknown"}
+                  <p className="font-medium text-[16px]">
+                    {memoizedAuthorName}
                   </p>
-                  <p className="text-sm text-neutral-100">{article?.author_id?.bio}</p>
+                  <p className="text-[12px] text-neutral-100">{memoizedAuthorBio}</p>
                 </div>
               </div>
               {!isPreview && (
                 <button
                   onClick={handleFollowClick}
-                  className={`ml-auto px-4 py-2 rounded-full text-sm ${
+                  className={`ml-auto px-3 py-1.5 rounded-full text-xs ${
                     isFollowing
                       ? "bg-neutral-600 text-neutral-50 hover:bg-neutral-700"
                       : "bg-main-green text-white hover:bg-primary-500"
@@ -480,26 +560,36 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
                 </button>
               )}
             </div>
-            {article && (
-              <span className="text-sm text-neutral-100">
-                {calculateReadTime(article.content!, article.media || [])} mins Read
-              </span>
-            )}
+            
+            {/* Read time and article stats */}
+            <div className="flex items-center gap-3 mb-3">
+              {article && (
+                <span className="text-[14px] text-neutral-200">
+                  {memoizedReadTime} mins Read
+                </span>
+              )}
+              {!isPreview && !isPending && (
+                <span className="text-[14px] text-neutral-200">•</span>
+              )}
+              {!isPreview && !isPending && (
+                <span className="text-[14px] text-neutral-200">{memoizedTimeAgo}</span>
+              )}
+            </div>
 
             {/* Podcast player or regular audio controls */}
-            <div className="my-6 w-full">
+            <div className="my-4 w-full">
               {article?.hasPodcast && podcast ? (
                 // Podcast player UI
-                <div className="flex items-center gap-4 my-6 p-4 bg-neutral-800 rounded-lg">
+                <div className="flex items-center gap-3 my-4 p-3 bg-neutral-800 rounded-lg">
                   <button
                     onClick={togglePlay}
-                    className="p-3 rounded-full bg-main-green hover:bg-green-600 flex-shrink-0"
+                    className="p-2 rounded-full bg-main-green hover:bg-green-600 flex-shrink-0"
                     aria-label={currentTrack?.id === podcast?.id && isPlaying ? "Pause podcast" : "Play podcast"}
                   >
                     {currentTrack?.id === podcast?.id && isPlaying ? (
-                      <LuPause size={20} />
+                      <LuPause size={16} />
                     ) : (
-                      <LuPlay size={20} />
+                      <LuPlay size={16} />
                     )}
                   </button>
 
@@ -507,7 +597,7 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
                     <AudioWave isPlaying={currentTrack?.id === podcast?.id && isPlaying} />
                   </div>
 
-                  <span className="text-sm text-neutral-400">{podcast?.duration || "0:00"}</span>
+                  <span className="text-xs text-neutral-400">{podcast?.duration || "0:00"}</span>
                 </div>
               ) : (
                 // Default article audio controls
@@ -515,19 +605,8 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
               )}
             </div>
 
-            {/* Reading Progress Indicator */}
-            {!isPreview && isLoggedIn && isTracking && (
-              <div className="w-full mb-4">
-                <ReadingProgressBar 
-                  progress={readingProgressData} 
-                  showDetails={true}
-                  className="bg-neutral-800 p-3 rounded-lg"
-                />
-              </div>
-            )}
-
             {/* Article Content */}
-            <div id="article-content" className="w-full mb-5">
+            <div id="article-content" className="w-full mb-4">
               <TipTapRichTextEditor
                 initialContent={htmlArticleContent}
                 editorRef={editorRef}
@@ -538,15 +617,10 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
               />
             </div>
 
-            {/* Article Stats */}
-            {!isPreview && !isPending && (
-              <div className="text-neutral-100 text-md mb-5">{timeAgo(article?.createdAt)}</div>
-            )}
-
             {/* Comments Section */}
             {!isPreview && !isPending && (
-              <div ref={commentSectionRef} className="w-full mx-auto mt-10">
-                <h2 className="text-2xl font-semibold mb-4">Comments</h2>
+              <div ref={commentSectionRef} className="w-full mx-auto mt-8">
+                <h2 className="text-lg font-medium mb-3">Comments</h2>
                 {isCommentSectionOpen && (
                   <CommentSection
                     article_id={article?._id || ""}
@@ -655,8 +729,8 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
       {/* Popups */}
       {showSharePopup && (
         <SharePopup 
-          url={articleUrl} 
-          title={articleTitle} 
+          url={memoizedArticleUrl} 
+          title={memoizedArticleTitle} 
           subtitle={article?.subtitle}
           thumbnail={article?.thumbnail}
           description={article?.subtitle || article?.content?.substring(0, 160) + "..."}
@@ -673,7 +747,8 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
         onClose={() => setShowRepostsSidebar(false)}
         articleId={article?._id || ""}
       />
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 };
 

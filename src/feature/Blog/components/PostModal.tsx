@@ -2,9 +2,10 @@ import {  Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/r
 import Picker, { Theme } from 'emoji-picker-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LuLoader } from 'react-icons/lu';
+import { LuLoader, LuTag } from 'react-icons/lu';
 import { X, MoreVertical, Star } from 'lucide-react';
 import { toast } from 'react-toastify';
+import TagsModal from './TagsModal';
 import {
   allowedImageTypes,
   allowedVideoTypes,
@@ -33,7 +34,8 @@ const PostModal = ({
     postContent: string,
     postImages: File[],
     postVideos: File[],
-    isCommunique: boolean
+    isCommunique: boolean,
+    tags: string[]
   ) => void;
   isPending: boolean;
 }) => {
@@ -45,7 +47,8 @@ const PostModal = ({
   const [showSignInPopup, setShowSignInPopup] = useState<string | null>(null);
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [showMenu, setShowMenu] = useState<boolean>(false);
-  const [tags, setTags] = useState<string>('');
+  const [tags, setTags] = useState<string[]>([]);
+  const [showTagsModal, setShowTagsModal] = useState<boolean>(false);
 
   const { theme } = useTheme();
   const { t } = useTranslation();
@@ -98,7 +101,7 @@ const PostModal = ({
 
   const handlePostClick = () => {
     if (handleActionBlocked('post')) return;
-    handlePost(postContent, postImages, postVideos, isCommunique);
+    handlePost(postContent, postImages, postVideos, isCommunique, tags);
   };
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -115,6 +118,10 @@ const PostModal = ({
     } else {
       setPostVideos((p) => p.filter((_, i) => i !== index));
     }
+  };
+
+  const handleSaveTags = (newTags: string[]) => {
+    setTags(newTags);
   };
 
   const escapeHtml = (str: string) =>
@@ -160,17 +167,22 @@ const PostModal = ({
     <Dialog
       open={isModalOpen}
       as="div"
-      className="relative z-[9999] focus:outline-none"
-      onClose={() => setIsModalOpen(false)}
+      className="relative z-[9990] focus:outline-none"
+      onClose={() => {
+        if (!showTagsModal) {
+          setIsModalOpen(false);
+        }
+      }}
     >
-      <DialogBackdrop className="fixed inset-0 z-[9999] bg-black/20" />
+      <DialogBackdrop className="fixed inset-0 z-[9990] bg-black/20" />
 
-      <div className="fixed inset-0 z-[99999] w-screen overflow-y-auto">
+      <div className="fixed inset-0 z-[9990] w-screen overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-4">
           <DialogPanel
             className={cn(
               'w-full md:max-w-xl lg:max-w-2xl xl:max-w-3xl rounded-xl bg-background p-6 backdrop-blur-2xl duration-300 ease-out',
-              isModalOpen ? 'opacity-100' : 'opacity-0'
+              isModalOpen ? 'opacity-100' : 'opacity-0',
+              showTagsModal ? 'pointer-events-none opacity-50' : ''
             )}
           >
             {/* Title */}
@@ -183,7 +195,11 @@ const PostModal = ({
                 size={32}
                 className="absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer bg-neutral-800 rounded-full p-2 shadow hover:bg-neutral-700"
                 style={{ marginRight: '0.25rem' }}
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => {
+                  if (!showTagsModal) {
+                    setIsModalOpen(false);
+                  }
+                }}
                 strokeWidth={2.5}
               />
             </DialogTitle>
@@ -230,26 +246,30 @@ const PostModal = ({
                     onClick={() => setShowMenu((v) => !v)}
                   />
                   {showMenu && (
-                    <div className="absolute right-0 mt-2 w-44 bg-white border rounded shadow-lg p-2 z-50">
+                    <div className="absolute right-0 mt-2 w-48 bg-background border border-neutral-600 rounded-lg shadow-lg p-3 z-50">
                       <button
-                        className="w-full text-left p-1 hover:bg-gray-100 flex items-center gap-2"
+                        className="w-full text-left p-2 hover:bg-neutral-700 rounded flex items-center gap-2 text-sm transition-colors"
                         onClick={() => {
                           setIsCommunique(!isCommunique);
                           setShowMenu(false);
                         }}
                       >
+                        <Star size={16} className={isCommunique ? "text-secondary-400 fill-secondary-400" : "text-neutral-400"} />
                         {isCommunique ? 'Undo Communiquer' : 'Set as Communiquer'}
                       </button>
-                      <div className="w-full flex flex-col gap-1 mt-2">
-                        <label className="text-xs text-neutral-200">Add tags</label>
-                        <input
-                          type="text"
-                          className="border rounded px-2 py-1 text-xs"
-                          placeholder="e.g. news, update"
-                          value={tags}
-                          onChange={e => setTags(e.target.value)}
-                        />
-                      </div>
+                      
+                      <div className="border-t border-neutral-600 my-2"></div>
+                      
+                      <button
+                        className="w-full text-left p-2 hover:bg-neutral-700 rounded flex items-center gap-2 text-sm transition-colors"
+                        onClick={() => {
+                          setShowTagsModal(true);
+                          setShowMenu(false);
+                        }}
+                      >
+                        <LuTag size={16} className="text-primary-400" />
+                        Add Tags {tags.length > 0 && `(${tags.length})`}
+                      </button>
                     </div>
                   )}
                 </div>
@@ -430,6 +450,14 @@ const PostModal = ({
       {showSignInPopup && (
         <SignInPopUp text={showSignInPopup} position="above" onClose={() => setShowSignInPopup(null)} />
       )}
+
+      {/* Tags Modal */}
+      <TagsModal
+        isOpen={showTagsModal}
+        onClose={() => setShowTagsModal(false)}
+        onSave={handleSaveTags}
+        selectedTags={tags}
+      />
     </Dialog>
   );
 };

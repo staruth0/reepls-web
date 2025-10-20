@@ -30,6 +30,7 @@ import {
 
 import PublicationSelectionModal from '../../Stream/components/PublicationSelectionModal';
 import { useGetMyPublications } from '../../Stream/Hooks';
+import TagsModal from '../components/TagsModal';
 
 
 interface PodcastData {
@@ -88,6 +89,8 @@ const CreatePost: React.FC = () => {
   const audioInputRef = useRef<HTMLInputElement>(null);
   const [selectedPublicationId, setSelectedPublicationId] = useState<string | null>(null);
   const [showPublicationModal, setShowPublicationModal] = useState<boolean>(false);
+  const [tags, setTags] = useState<string[]>([]);
+  const [showTagsModal, setShowTagsModal] = useState<boolean>(false);
   const { data: publications } = useGetMyPublications();
 
   useEffect(() => {
@@ -134,13 +137,12 @@ const CreatePost: React.FC = () => {
       },
     },
     {
-      label: 'Add Tags',
+      label: tags.length > 0 ? `Tags (${tags.length})` : 'Add Tags',
       ActionIcon: LuTag,
-      disabled: true,
+      disabled: !isLoggedIn,
       onClick: () => {
-        toast.info('Adding tags is not available yet', {
-          autoClose: 1500,
-        });
+        if (!isLoggedIn) return;
+        setShowTagsModal(true);
       },
     },
     {
@@ -220,6 +222,15 @@ const CreatePost: React.FC = () => {
     toast.info('Publication selection cleared');
   };
 
+  const handleSaveTags = (newTags: string[]) => {
+    setTags(newTags);
+  };
+
+  const handleClearTags = () => {
+    setTags([]);
+    toast.info('Tags cleared');
+  };
+
 
 const onPublish = async () => {
   if (!isLoggedIn) return;
@@ -276,6 +287,7 @@ const onPublish = async () => {
         htmlContent,
         thumbnail: thumbnailUrl, 
         media,
+        tags,
         status: 'Published',
         type: 'LongForm',
         isArticle: true,
@@ -321,6 +333,7 @@ const onPublish = async () => {
     if (selectedPublicationId) {
       formData.append('publication_id', selectedPublicationId);
     }
+    formData.append('tags', JSON.stringify(tags));
     
     // Add podcast data
     formData.append('podcastTitle', podcastData.title);
@@ -431,7 +444,7 @@ const onPublish = async () => {
         {isLoggedIn ? (
           <div className="md:px-4">
             <ImageSection onImageChange={(image) => setThumbnail(image as File)} />
-            <div className="mx-auto mt-3 px-5 sm:px-0 max-w-4xl">
+            <div className="mx-auto mt-3 px-5 sm:px-0 max-w-[800px]">
               <div className="">
                 <div className="relative">
                   <textarea
@@ -487,6 +500,34 @@ const onPublish = async () => {
                     <button
                       onClick={handleClearPublication}
                       className="ml-auto text-primary-400 hover:text-primary-300 transition-colors"
+                    >
+                      <LuX size={14} />
+                    </button>
+                  </div>
+                )}
+
+                {/* Selected Tags Indicator */}
+                {tags.length > 0 && (
+                  <div className="mt-3 flex items-start gap-2 p-2 bg-primary-500/10 rounded-lg border border-primary-500/20">
+                    <LuTag size={16} className="text-primary-400 mt-0.5" />
+                    <div className="flex-1">
+                      <span className="text-sm text-primary-300 block mb-1">
+                        Tags ({tags.length}):
+                      </span>
+                      <div className="flex flex-wrap gap-1">
+                        {tags.map((tag, index) => (
+                          <span
+                            key={index}
+                            className="text-xs bg-primary-500/20 text-primary-300 px-2 py-1 rounded border border-primary-500/30"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleClearTags}
+                      className="text-primary-400 hover:text-primary-300 transition-colors"
                     >
                       <LuX size={14} />
                     </button>
@@ -622,6 +663,14 @@ const onPublish = async () => {
           selectedPublicationId={selectedPublicationId}
         />
       )}
+
+      {/* Tags Modal */}
+      <TagsModal
+        isOpen={showTagsModal}
+        onClose={() => setShowTagsModal(false)}
+        onSave={handleSaveTags}
+        selectedTags={tags}
+      />
     </div>
   );
 };

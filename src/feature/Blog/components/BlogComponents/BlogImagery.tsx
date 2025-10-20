@@ -47,26 +47,24 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
     };
   }, [isModalOpen, displayMedia.length]);
 
-  const mediaClass = "w-full h-full object-cover rounded-lg";
-
   const renderImage = (mediaItem: MediaItem, index: number, className: string = "", isSingleImage: boolean = false) => (
     <div 
       key={index} 
-      className={`relative cursor-pointer ${className} bg-background rounded-xl`}
+      className={`relative cursor-pointer ${className} bg-neutral-800 rounded-lg overflow-hidden group hover:opacity-95 transition-opacity duration-200 w-full`}
       onClick={() => openModal(index)}
-      style={isSingleImage ? {} : { aspectRatio: "1 / 1" }}
+      style={isSingleImage ? { aspectRatio: "16 / 9" } : { aspectRatio: "1 / 1" }}
     >
       {mediaItem.type === MediaType.Image ? (
         <img
           src={mediaItem.url}
           alt={`Blog Visual ${index}`}
-          className={isSingleImage ? "w-full h-auto object-contain rounded-xl" : mediaClass}
+          className={isSingleImage ? "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" : "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"}
           loading="lazy"
         />
       ) : (
         <video
           src={mediaItem.url}
-          className={isSingleImage ? "w-full h-auto object-contain rounded-lg" : mediaClass}
+          className="w-full h-full object-cover"
           controls
           muted
           autoPlay={false}
@@ -81,7 +79,7 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
   const renderImageWithOverlay = (mediaItem: MediaItem, index: number, className: string = "", remainingCount: number) => (
     <div 
       key={index} 
-      className={`relative cursor-pointer ${className} bg-neutral-900`}
+      className={`relative cursor-pointer ${className} bg-neutral-800 rounded-lg overflow-hidden group hover:opacity-95 transition-opacity duration-200 w-full`}
       onClick={() => openModal(index)}
       style={{ aspectRatio: "1 / 1" }}
     >
@@ -89,13 +87,13 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
         <img
           src={mediaItem.url}
           alt={`Blog Visual ${index}`}
-          className={mediaClass}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
       ) : (
         <video
           src={mediaItem.url}
-          className={mediaClass}
+          className="w-full h-full object-cover"
           controls
           muted
           autoPlay={false}
@@ -116,7 +114,7 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
       case 1:
         return (
           <div className="w-full mx-auto">
-            <div className="h-auto">
+            <div className="w-full aspect-[16/9] sm:aspect-[16/9] md:aspect-[16/9]">
               {renderImage(displayMedia[0], 0, "", true)}
             </div>
           </div>
@@ -124,7 +122,7 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
       case 2:
         return (
           <div className="w-full mx-auto">
-            <div className="grid grid-cols-2 gap-1 aspect-[2/1]">
+            <div className="grid grid-cols-2 gap-1 sm:gap-2 aspect-[2/1] sm:aspect-[2/1] min-h-[120px] sm:min-h-[150px]">
               {renderImage(displayMedia[0], 0)}
               {renderImage(displayMedia[1], 1)}
             </div>
@@ -133,7 +131,7 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
       case 3:
         return (
           <div className="w-full mx-auto">
-            <div className="grid grid-cols-2 gap-1 aspect-square">
+            <div className="grid grid-cols-2 gap-1 sm:gap-2 aspect-[4/3] sm:aspect-square min-h-[150px] sm:min-h-[200px]">
               {renderImage(displayMedia[0], 0)}
               {renderImage(displayMedia[1], 1)}
               {renderImageWithOverlay(displayMedia[2], 2, "col-span-2", 1)}
@@ -143,7 +141,7 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
       case 4:
         return (
           <div className="w-full mx-auto">
-            <div className="grid grid-cols-2 gap-1 aspect-square">
+            <div className="grid grid-cols-2 gap-1 sm:gap-2 aspect-[4/3] sm:aspect-square min-h-[150px] sm:min-h-[200px]">
               {displayMedia.map((mediaItem, index) =>
                 renderImage(mediaItem, index)
               )}
@@ -154,7 +152,7 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
         const remainingCount = displayMedia.length - 4;
         return (
           <div className="w-full mx-auto">
-            <div className="grid grid-cols-2 gap-1 aspect-square">
+            <div className="grid grid-cols-2 gap-1 sm:gap-2 aspect-[4/3] sm:aspect-square min-h-[150px] sm:min-h-[200px]">
               {displayMedia.slice(0, 3).map((mediaItem, index) =>
                 renderImage(mediaItem, index)
               )}
@@ -169,7 +167,7 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
   return (
     <>
       {/* Image Gallery */}
-      <div className="mt-4">
+      <div className="mt-4 w-full">
         {renderImageGallery()}
       </div>
       {isModalOpen && (

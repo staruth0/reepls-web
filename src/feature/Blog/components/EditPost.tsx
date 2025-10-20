@@ -19,6 +19,7 @@ import { apiClient1 } from '../../../services/apiClient';
 import UploadProgressModal from '../components/UploadProgressModal';
 import { useGetMyPublications } from '../../Stream/Hooks';
 import PublicationSelectionModal from '../../Stream/components/PublicationSelectionModal';
+import TagsModal from '../components/TagsModal';
 import { 
   validateArticleTitle, 
   validateArticleSubtitle, 
@@ -92,6 +93,10 @@ const EditPost: React.FC = () => {
   const [showPublicationModal, setShowPublicationModal] = useState<boolean>(false);
   const { data: publications } = useGetMyPublications();
 
+  // Tags related state
+  const [tags, setTags] = useState<string[]>([]);
+  const [showTagsModal, setShowTagsModal] = useState<boolean>(false);
+
   const actions = [
     {
       label: 'Preview',
@@ -128,11 +133,12 @@ const EditPost: React.FC = () => {
       },
     },
     {
-      label: 'Add Tags',
+      label: tags.length > 0 ? `Tags (${tags.length})` : 'Add Tags',
       ActionIcon: LuTag,
-      disabled: true,
+      disabled: !isLoggedIn || isUpdating,
       onClick: () => {
-        toast.info('Adding tags is not available yet', { autoClose: 1500 });
+        if (!isLoggedIn) return;
+        setShowTagsModal(true);
       },
     },
     {
@@ -165,6 +171,7 @@ const EditPost: React.FC = () => {
       setMedia(article.media || []);
       setIsCommunique(article.is_communiquer || false);
       setSelectedPublicationId(article.publication_id || null);
+      setTags(article.tags || []);
       
       if (article.thumbnail) {
         setThumbnailImage(article.thumbnail);
@@ -219,6 +226,15 @@ const EditPost: React.FC = () => {
   const handleClearPublication = () => {
     setSelectedPublicationId(null);
     toast.info('Publication selection cleared');
+  };
+
+  const handleSaveTags = (newTags: string[]) => {
+    setTags(newTags);
+  };
+
+  const handleClearTags = () => {
+    setTags([]);
+    toast.info('Tags cleared');
   };
 
   const handleCreateAndAttachPodcast = async () => {
@@ -418,6 +434,7 @@ const EditPost: React.FC = () => {
         htmlContent,
         thumbnail: updatedThumbnail,
         media: updatedMedia,
+        tags,
         status: 'Published',
         type: 'LongForm',
         isArticle: true,
@@ -546,6 +563,34 @@ const EditPost: React.FC = () => {
                       <button
                         onClick={handleClearPublication}
                         className="ml-auto text-primary-400 hover:text-primary-300 transition-colors"
+                      >
+                        <LuX size={14} />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Selected Tags Indicator */}
+                  {tags.length > 0 && (
+                    <div className="mt-3 flex items-start gap-2 p-2 bg-primary-500/10 rounded-lg border border-primary-500/20">
+                      <LuTag size={16} className="text-primary-400 mt-0.5" />
+                      <div className="flex-1">
+                        <span className="text-sm text-primary-300 block mb-1">
+                          Tags ({tags.length}):
+                        </span>
+                        <div className="flex flex-wrap gap-1">
+                          {tags.map((tag, index) => (
+                            <span
+                              key={index}
+                              className="text-xs bg-primary-500/20 text-primary-300 px-2 py-1 rounded border border-primary-500/30"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleClearTags}
+                        className="text-primary-400 hover:text-primary-300 transition-colors"
                       >
                         <LuX size={14} />
                       </button>
@@ -832,6 +877,14 @@ const EditPost: React.FC = () => {
           selectedPublicationId={selectedPublicationId}
         />
       )}
+
+      {/* Tags Modal */}
+      <TagsModal
+        isOpen={showTagsModal}
+        onClose={() => setShowTagsModal(false)}
+        onSave={handleSaveTags}
+        selectedTags={tags}
+      />
     </div>
   );
 };
