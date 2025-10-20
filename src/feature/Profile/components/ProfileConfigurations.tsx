@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import ConfigurationWrapper from "./ConfigurationWrapper";
 import { useTranslation } from "react-i18next";
 import useTheme from "../../../hooks/useTheme";
-import { VoiceLanguageContext } from "../../../context/VoiceLanguageContext/VoiceLanguageContext";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../hooks/useUser";
 import { apiClient } from "../../../services/apiClient";
@@ -38,8 +37,7 @@ const ProfileConfigurations: React.FC = () => {
   const [showLanguageMenu, setShowLanguageMenu] = useState<boolean>(false);
   const [showLogoutPopup, setShowLogoutPopup] = useState<boolean>(false);
   const { t, i18n } = useTranslation();
-  const [voiceLanguages, setVoiceLanguages] = useState<SpeechSynthesisVoice[]>([]);
-  const { setVoiceLanguage } = useContext(VoiceLanguageContext);
+
   const navigate = useNavigate();
   const { authUser, logout: manualLogout } = useUser();
   const { data: vapidData, isLoading: vapidLoading, error: vapidError } = useFetchVapidPublicKey();
@@ -168,17 +166,6 @@ const ProfileConfigurations: React.FC = () => {
     setShowLanguageMenu(false);
   };
 
-  const handleLanguageChangeVoice = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedVoice = voiceLanguages.find(
-      (voice) => voice.name === event.target.value
-    );
-    if (selectedVoice) {
-      setVoiceLanguage(selectedVoice);
-    }
-  };
-
   const handleLogoutClick = () => {
     setShowLogoutPopup(true);
   };
@@ -217,22 +204,6 @@ const ProfileConfigurations: React.FC = () => {
   const handleTermsClick = () => {
     navigate(`/Terms&Policies`);
   };
-
-  useEffect(() => {
-    const loadVoices = () => {
-      const voices = window.speechSynthesis.getVoices();
-      if (voices.length > 0) {
-        setVoiceLanguages(voices);
-      }
-    };
-
-    loadVoices();
-    window.speechSynthesis.onvoiceschanged = loadVoices;
-
-    return () => {
-      window.speechSynthesis.onvoiceschanged = null;
-    };
-  }, []);
 
   // Handle VAPID key loading and errors
   useEffect(() => {
@@ -326,26 +297,6 @@ const ProfileConfigurations: React.FC = () => {
         </ConfigurationWrapper>
 
         <ConfigurationWrapper>
-          <div>{t(`profile.voiceLanguage`)}</div>
-          <div className="relative">
-            <select
-              className="bg-neutral-800 text-neutral-50 p-2 rounded-md outline-none"
-              onChange={handleLanguageChangeVoice}
-            >
-              {voiceLanguages.length === 0 ? (
-                <option disabled>Loading voices...</option>
-              ) : (
-                voiceLanguages.map((voice, index) => (
-                  <option key={index} value={voice.name}>
-                    ({voice.lang})
-                  </option>
-                ))
-              )}
-            </select>
-          </div>
-        </ConfigurationWrapper>
-
-        <ConfigurationWrapper>
           <div>{t(`profile.notifications`)}</div>
           <div className="flex gap-2 items-center">
             {t(isNotificationsEnabled ? "On" : "Off")}
@@ -405,6 +356,12 @@ const ProfileConfigurations: React.FC = () => {
         <ConfigurationWrapper>
           <div className="cursor-pointer w-full" onClick={handleTermsClick}>
             {t(`profile.TermsandPolicies`)}
+          </div>
+        </ConfigurationWrapper>
+
+        <ConfigurationWrapper>
+          <div className="cursor-pointer w-full" onClick={() => window.open('https://donations-ashy.vercel.app/', '_blank')}>
+            {t(`Donate`)}
           </div>
         </ConfigurationWrapper>
 

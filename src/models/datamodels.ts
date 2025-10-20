@@ -173,6 +173,7 @@ export interface Article {
   htmlContent?: string;
   category?: string[];
   keywords?: string[];
+  tags?: string[];
   media?: MediaItem[];
   text_to_speech?: string;
   thumbnail?: string;

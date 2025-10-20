@@ -404,7 +404,11 @@ useEffect(() => {
     if (isSavePending || isSaveRepostPending) return t("blog.saving");
     if (isRemovePending || isRemoveRepostPending) return t("blog.removing");
     return saved ? t("blog.UnsavePost") : t("blog.AddToSaved");
+
+
   };
+
+  console.log("user", user);
 
   // Initial loader for the entire component if user data isn't loaded yet.
   // This is fine as it indicates data fetching for the profile.

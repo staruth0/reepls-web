@@ -1,53 +1,15 @@
-import 'katex/dist/katex.min.css';
 import { useCallback } from 'react';
 import { toast } from 'react-toastify';
 import RichTextEditor, {
-  Attachment,
   BaseKit,
-  Blockquote,
   Bold,
-  BulletList,
-  Clear,
-  Code,
   CodeBlock,
-  Color,
-  ColumnActionButton,
   Editor,
-  Emoji,
-  Excalidraw,
-  ExportPdf,
-  ExportWord,
-  FontFamily,
-  FontSize,
-  FormatPainter,
   Heading,
-  Highlight,
   History,
-  HorizontalRule,
-  Iframe,
   Image,
-  ImageGif,
-  ImportWord,
-  Indent,
   Italic,
-  Katex,
-  LineHeight,
-  Link, // Import the Editor type
   locale,
-  Mention,
-  Mermaid,
-  MoreMark,
-  OrderedList,
-  SearchAndReplace,
-  SlashCommand,
-  Strike,
-  Table,
-  TableOfContents,
-  TaskList,
-  TextAlign,
-  TextDirection,
-  Twitter,
-  Underline,
   Video,
 } from 'reactjs-tiptap-editor';
 import 'reactjs-tiptap-editor/style.css';
@@ -55,11 +17,10 @@ import useTheme from '../../../hooks/useTheme';
 import { useUser } from '../../../hooks/useUser';
 import { MediaType } from '../../../models/datamodels';
 import '../../../styles/shadcn.scss';
-import { convertBase64ToBlob, debounce } from '../../../utils';
+import { debounce } from '../../../utils';
 import { uploadArticleImage, uploadArticleVideo } from '../../../utils/media';
 import '../styles/editor.scss';
-import { t } from 'i18next';
-// Type for editor content (assuming HTML string output)
+
 type EditorContent = string;
 
 function TipTapRichTextEditor({
@@ -93,38 +54,20 @@ function TipTapRichTextEditor({
       characterCount: false,
     }),
     History,
-    SearchAndReplace,
-    TableOfContents,
-    FormatPainter.configure({ spacer: true }),
-    Clear,
-    FontFamily,
-    Heading.configure({ spacer: true }),
-    FontSize,
+    Heading.configure({ 
+      spacer: true,
+      levels: [1, 2, 3] // Only H1, H2, H3 as required
+    }),
     Bold,
     Italic,
-    Underline,
-    Strike,
-    MoreMark,
-    Katex,
-    Emoji,
-    Color.configure({ spacer: true }),
-    Highlight,
-    BulletList,
-    OrderedList,
-    TextAlign.configure({ types: ['heading', 'paragraph'], spacer: true }),
-    Indent,
-    LineHeight,
-    TaskList.configure({
-      spacer: true,
-      taskItem: {
-        nested: true,
-      },
+    CodeBlock.configure({ 
+      defaultTheme: 'dracula',
+      spacer: true 
     }),
-    Link,
     Image.configure({
       upload: async (file: File): Promise<string> => {
         if (!authUser?.id) {
-          toast.error(t('You must be logged in to upload images'));
+          toast.error('You must be logged in to upload images');
           return Promise.reject(new Error('User ID is required'));
         }
         try {
@@ -132,7 +75,7 @@ function TipTapRichTextEditor({
           handleMediaUpload?.(url, MediaType.Image);
           return Promise.resolve(url);
         } catch (error) {
-          toast.error(t('Failed to upload image'));
+          toast.error('Failed to upload image');
           return Promise.reject(error);
         }
       },
@@ -140,7 +83,7 @@ function TipTapRichTextEditor({
     Video.configure({
       upload: async (file: File): Promise<string> => {
         if (!authUser?.id) {
-          toast.error(t('You must be logged in to upload videos'));
+          toast.error('You must be logged in to upload videos');
           return Promise.reject(new Error('User ID is required'));
         }
         try {
@@ -148,71 +91,11 @@ function TipTapRichTextEditor({
           handleMediaUpload?.(url, MediaType.Video);
           return Promise.resolve(url);
         } catch (error) {
-          toast.error(t('Failed to upload video'));
+          toast.error('Failed to upload video');
           return Promise.reject(error);
         }
       },
     }),
-    ImageGif.configure({
-      GIPHY_API_KEY: import.meta.env.VITE_GIPHY_API_KEY as string,
-    }),
-    Blockquote,
-    SlashCommand,
-    HorizontalRule,
-    Code.configure({
-      toolbar: false,
-    }),
-    CodeBlock.configure({ defaultTheme: 'dracula' }),
-    ColumnActionButton,
-    Table,
-    Iframe,
-    ExportPdf.configure({ spacer: true }),
-    ImportWord.configure({
-      upload: async (): Promise<{ src: string; alt: string }[]> => {
-        toast.error(t('We do not support uploading documents yet!'));
-        throw new Error('Not implemented');
-        // if (!authUser?.id) {
-        //   toast.error('You must be logged in to upload documents');
-        //   return Promise.reject(new Error('User ID is required'));
-        // }
-        // const f = files.map((file) => ({
-        //   src: URL.createObjectURL(file),
-        //   alt: file.name,
-        // }));
-        // return Promise.resolve(f);
-      },
-    }),
-    ExportWord,
-    Excalidraw,
-    TextDirection,
-    Mention,
-    Attachment.configure({
-      upload: (file: File): Promise<string> => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            const blob = convertBase64ToBlob(reader.result as string || '');
-            resolve(URL.createObjectURL(blob));
-          }, 300);
-        });
-      },
-    }),
-    Mermaid.configure({
-      upload: (file: File): Promise<string> => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            const blob = convertBase64ToBlob(reader.result as string || '');
-            resolve(URL.createObjectURL(blob));
-          }, 300);
-        });
-      },
-    }),
-    Twitter,
   ];
 
   const { theme } = useTheme();
@@ -233,14 +116,60 @@ function TipTapRichTextEditor({
     <div
       className={`${className}`}
       style={{
-        maxWidth: 1024,
+        maxWidth: 800,
       }}>
+      <style>{`
+        .ProseMirror {
+          font-family: Georgia, serif !important;
+          font-size: 20px !important;
+          line-height: 1.6 !important;
+        }
+        .ProseMirror p {
+          font-family: Georgia, serif !important;
+          font-size: 20px !important;
+          line-height: 1.6 !important;
+        }
+        .ProseMirror h1 {
+          font-family: Georgia, serif !important;
+          font-size: 32px !important;
+          font-weight: 700 !important;
+          line-height: 1.2 !important;
+        }
+        .ProseMirror h2 {
+          font-family: Georgia, serif !important;
+          font-size: 28px !important;
+          font-weight: 600 !important;
+          line-height: 1.3 !important;
+        }
+        .ProseMirror h3 {
+          font-family: Georgia, serif !important;
+          font-size: 24px !important;
+          font-weight: 600 !important;
+          line-height: 1.4 !important;
+        }
+        .ProseMirror pre {
+          background-color: #f6f8fa !important;
+          border-radius: 6px !important;
+          padding: 16px !important;
+          margin: 16px 0 !important;
+          overflow-x: auto !important;
+          font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+          font-size: 14px !important;
+          line-height: 1.45 !important;
+        }
+        .ProseMirror code {
+          background-color: #f6f8fa !important;
+          padding: 2px 4px !important;
+          border-radius: 3px !important;
+          font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+          font-size: 14px !important;
+        }
+      `}</style>
       <RichTextEditor
         ref={editorRef}
         output="html"
         content={initialContent}
         onChangeContent={onValueChange}
-        // onChangeContent={handleContentChange}
         extensions={extensions}
         dark={theme === 'dark'}
         hideToolbar={hideToolbar}

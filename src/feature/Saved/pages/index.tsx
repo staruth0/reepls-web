@@ -263,7 +263,7 @@ useEffect(() => {
           <div className="w-[88%]">
             <Tabs activeTab={activeTab} setActiveTab={setActiveTab} scale={false} tabs={tabs} borderBottom={true} />
           </div>
-          <div className="px-2 mt-6 w-full">
+          <div className="px-2 mt-6 w-full min-h-screen flex flex-col items-center ">
             {activeTab === 'posts' && (
               <div className="pb-10">
                 <SavedPostsContainer posts={savedPosts} isLoading={isLoadingSavedArticles} />

@@ -14,6 +14,9 @@ import { useAudioControls } from '../../../../hooks/useMediaPlayer';
 import { LuMic } from 'react-icons/lu';
 import { useGetPodcastById } from '../../../Podcast/hooks';
 import BlogReactionSession from '../BlogComponents/BlogReactionSession';
+import { useGetReadingProgressByArticleId } from '../../../ReadingProgress/hooks';
+import { useUser } from '../../../../hooks/useUser';
+import { useLocation } from 'react-router-dom';
 
 interface articleprobs {
     article: Article;
@@ -25,6 +28,15 @@ const ArticleNormal: React.FC<articleprobs> = ({ article }) => {
     const { mutate } = useUpdateArticle();
     const { data: podcastData } = useGetPodcastById(article.podcastId || "");
     const podcast = podcastData?.data;
+    
+    // Reading progress data
+    const { isLoggedIn } = useUser();
+    const location = useLocation();
+    const { data: readingProgress } = useGetReadingProgressByArticleId(article._id || "");
+    const progressPercentage = readingProgress?.data?.scroll_length || 0;
+    
+    // Only show progress on bookmarks page
+    const isBookmarksPage = location.pathname === '/bookmarks';
 
     // Audio controls for the podcast
     const { 
@@ -89,19 +101,36 @@ const ArticleNormal: React.FC<articleprobs> = ({ article }) => {
                     slug={article.slug || ''}
                     article={article}
                 />
-                <div className='flex p-3 gap-1 items-center'>
-                    {article.hasPodcast && <>
-                        <button 
-                            onClick={handlePodcastPlay}
-                            className={`p-2 rounded-full ${currentTrack?.id === podcast?.id && isPlaying ? 'bg-main-green' : 'bg-neutral-700'}`}
-                        >
-                            <LuMic size={18} className={currentTrack?.id === podcast?.id && isPlaying ? 'text-white' : 'text-neutral-300'} />
-                        </button>
-                        <div className='size-1 rounded-full bg-primary-400'></div>
-                    </>}
-                    <div className="text-neutral-70 text-xs mx-1">
-                        {calculateReadTime(article.content || '', article.media || [])} mins Read
+                <div className='flex p-3 gap-1 items-center justify-between'>
+                    <div className='flex items-center gap-1'>
+                        {article.hasPodcast && <>
+                            <button 
+                                onClick={handlePodcastPlay}
+                                className={`p-2 rounded-full ${currentTrack?.id === podcast?.id && isPlaying ? 'bg-main-green' : 'bg-neutral-700'}`}
+                            >
+                                <LuMic size={18} className={currentTrack?.id === podcast?.id && isPlaying ? 'text-white' : 'text-neutral-300'} />
+                            </button>
+                            <div className='size-1 rounded-full bg-primary-400'></div>
+                        </>}
+                        <div className="text-neutral-70 text-xs mx-1">
+                            {calculateReadTime(article.content || '', article.media || [])} mins Read
+                        </div>
                     </div>
+                    
+                    {/* Reading Progress Indicator - Only on Bookmarks page */}
+                    {isLoggedIn && progressPercentage > 0 && isBookmarksPage && (
+                        <div className="flex items-center gap-2">
+                            <div className="w-20 h-1.5 bg-neutral-700 rounded-full overflow-hidden">
+                                <div 
+                                    className="h-full bg-primary-400 transition-all duration-300 ease-out"
+                                    style={{ width: `${Math.min(100, Math.max(0, progressPercentage))}%` }}
+                                />
+                            </div>
+                            <span className="text-primary-400 text-xs font-medium min-w-[2.5rem] text-right">
+                                {Math.round(progressPercentage)}%
+                            </span>
+                        </div>
+                    )}
                 </div>
             </div>
        

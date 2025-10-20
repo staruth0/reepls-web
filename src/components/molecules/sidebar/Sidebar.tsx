@@ -91,7 +91,8 @@ const Sidebar: React.FC = () => {
     postContent: string,
     postImages: File[],
     postVideos: File[],
-    isCommunique: boolean
+    isCommunique: boolean,
+    tags: string[]
   ) => {
     if (!authUser?.id) {
       toast.error("You must be logged in to create a post");
@@ -142,6 +143,7 @@ const Sidebar: React.FC = () => {
       status: "Published",
       isArticle: false,
       is_communiquer: isCommunique,
+      tags: tags,
     };
 
     createPost(post, {

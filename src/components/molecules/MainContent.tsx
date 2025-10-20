@@ -21,12 +21,12 @@ export const MainContent: React.FC<MainContentProps> = ({ children }) => {
   const { authUser: user, isLoggedIn } = useUser();
   const decryptedUser = getDecryptedUser();
   const { mutate: createPost, isPending } = useSendNewArticleNotification();
-
   const handlePost = async (
     postContent: string,
     postImages: File[],
     postVideos: File[],
-    isCommunique: boolean
+    isCommunique: boolean,
+    tags: string[]
   ) => {
     if (!decryptedUser?.id) {
       toast.error("You must be logged in to create a post");
@@ -77,6 +77,7 @@ export const MainContent: React.FC<MainContentProps> = ({ children }) => {
       status: "Published",
       isArticle: false,
       is_communiquer: isCommunique,
+      tags: tags,
     };
 
     createPost(post, {
