@@ -21,6 +21,7 @@ import {
   getAllRepostComments,
   getCommentsByRepostId,
   getRepostCount,
+  getRepostCountSimple,
 
 } from "../api/";
 
@@ -428,5 +429,21 @@ export const useGetRepostCount = (articleId: string, enabled: boolean = true) =>
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     retry: 1,
+  });
+};
+
+/**
+ * React Query hook to get the simplified repost count for a specific article.
+ * @param articleId The ID of the article to get repost count for.
+ * @param enabled A boolean to control when the query runs (default: true).
+ */
+export const useGetRepostCountSimple = (articleId: string, enabled: boolean = true) => {
+  return useQuery({
+    queryKey: ["repost-count-simple", articleId],
+    queryFn: () => getRepostCountSimple(articleId),
+    enabled: enabled && !!articleId,
+    staleTime: 5 * 60 * 1000, // 5 minutes - repost counts don't change frequently
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 };

@@ -22,6 +22,45 @@ import video from '../../../assets/images/video-02.png';
 
 const CHAR_LIMIT = 2500; // Updated name
 
+// localStorage keys for auto-save
+const AUTOSAVE_KEYS = {
+  POST_CONTENT: 'reepls_draft_post_content',
+  POST_IMAGES: 'reepls_draft_post_images',
+  POST_VIDEOS: 'reepls_draft_post_videos',
+  POST_COMMUNIQUE: 'reepls_draft_post_communique',
+  POST_TAGS: 'reepls_draft_post_tags',
+  POST_TIMESTAMP: 'reepls_draft_post_timestamp'
+};
+
+// Helper functions for localStorage operations
+const saveToLocalStorage = (key: string, data: any) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (error) {
+    console.warn('Failed to save to localStorage:', error);
+  }
+};
+
+const loadFromLocalStorage = (key: string) => {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
+  } catch (error) {
+    console.warn('Failed to load from localStorage:', error);
+    return null;
+  }
+};
+
+const clearDraftFromLocalStorage = () => {
+  try {
+    Object.values(AUTOSAVE_KEYS).forEach(key => {
+      localStorage.removeItem(key);
+    });
+  } catch (error) {
+    console.warn('Failed to clear localStorage:', error);
+  }
+};
+
 const PostModal = ({
   isModalOpen,
   setIsModalOpen,
@@ -49,6 +88,8 @@ const PostModal = ({
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [tags, setTags] = useState<string[]>([]);
   const [showTagsModal, setShowTagsModal] = useState<boolean>(false);
+  const [isAutoSaved, setIsAutoSaved] = useState<boolean>(false);
+  const [lastSavedTime, setLastSavedTime] = useState<string>('');
 
   const { theme } = useTheme();
   const { t } = useTranslation();
@@ -56,6 +97,58 @@ const PostModal = ({
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const highlightRef = useRef<HTMLDivElement | null>(null);
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Auto-save functionality
+  const autoSaveDraft = () => {
+    if (!isLoggedIn) return;
+    
+    saveToLocalStorage(AUTOSAVE_KEYS.POST_CONTENT, postContent);
+    saveToLocalStorage(AUTOSAVE_KEYS.POST_COMMUNIQUE, isCommunique);
+    saveToLocalStorage(AUTOSAVE_KEYS.POST_TAGS, tags);
+    saveToLocalStorage(AUTOSAVE_KEYS.POST_TIMESTAMP, Date.now());
+
+    setIsAutoSaved(true);
+    setLastSavedTime(new Date().toLocaleTimeString());
+    
+    // Hide the auto-saved indicator after 3 seconds
+    setTimeout(() => setIsAutoSaved(false), 3000);
+  };
+
+  const loadDraftFromStorage = () => {
+    if (!isLoggedIn) return;
+
+    const savedContent = loadFromLocalStorage(AUTOSAVE_KEYS.POST_CONTENT);
+    const savedCommunique = loadFromLocalStorage(AUTOSAVE_KEYS.POST_COMMUNIQUE);
+    const savedTags = loadFromLocalStorage(AUTOSAVE_KEYS.POST_TAGS);
+    const savedTimestamp = loadFromLocalStorage(AUTOSAVE_KEYS.POST_TIMESTAMP);
+
+    if (savedContent || savedCommunique || savedTags) {
+      if (savedContent) setPostContent(savedContent);
+      if (savedCommunique !== null) setIsCommunique(savedCommunique);
+      if (savedTags) setTags(savedTags);
+      
+      if (savedTimestamp) {
+        const savedDate = new Date(savedTimestamp);
+        const now = new Date();
+        const diffInHours = (now.getTime() - savedDate.getTime()) / (1000 * 60 * 60);
+        
+        if (diffInHours < 24) { // Only restore if saved within 24 hours
+          setLastSavedTime(savedDate.toLocaleTimeString());
+        }
+      }
+    }
+  };
+
+  const scheduleAutoSave = () => {
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+    
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      autoSaveDraft();
+    }, 2000); // Auto-save after 2 seconds of inactivity
+  };
 
   const handleActionBlocked = (action: string) => {
     if (!isLoggedIn) {
@@ -80,6 +173,7 @@ const PostModal = ({
       }
     }
     setPostImages((p) => [...p, ...newImages]);
+    scheduleAutoSave(); // Trigger auto-save when images are added
   };
 
   const onPickVideo = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,19 +191,28 @@ const PostModal = ({
       }
     }
     setPostVideos((p) => [...p, ...newVideos]);
+    scheduleAutoSave(); // Trigger auto-save when videos are added
   };
 
   const handlePostClick = () => {
     if (handleActionBlocked('post')) return;
+    
+    // Clear localStorage when post is published
+    clearDraftFromLocalStorage();
+    
     handlePost(postContent, postImages, postVideos, isCommunique, tags);
   };
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (handleActionBlocked('write a post')) return;
     setPostContent(e.target.value);
+    scheduleAutoSave(); // Trigger auto-save
   };
 
-  const handleEmojiClick = () => setIsEmojiPickerOpen((v) => !v);
+  const handleEmojiClick = () => {
+    setIsEmojiPickerOpen((v) => !v);
+    scheduleAutoSave(); // Trigger auto-save when emoji picker opens
+  };
 
   const handleRemoveMedia = (type: 'image' | 'video', index: number) => {
     if (handleActionBlocked('remove media')) return;
@@ -118,10 +221,12 @@ const PostModal = ({
     } else {
       setPostVideos((p) => p.filter((_, i) => i !== index));
     }
+    scheduleAutoSave(); // Trigger auto-save when media is removed
   };
 
   const handleSaveTags = (newTags: string[]) => {
     setTags(newTags);
+    scheduleAutoSave(); // Trigger auto-save when tags are saved
   };
 
   const escapeHtml = (str: string) =>
@@ -150,6 +255,22 @@ const PostModal = ({
     };
     ta.addEventListener('scroll', onScroll);
     return () => ta.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Load draft when modal opens
+  useEffect(() => {
+    if (isModalOpen && isLoggedIn) {
+      loadDraftFromStorage();
+    }
+  }, [isModalOpen, isLoggedIn]);
+
+  // Cleanup auto-save timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
   }, []);
 
   // const highlightedHtml = postContent ? buildHighlightedHtml(postContent) : '';
@@ -252,6 +373,7 @@ const PostModal = ({
                         onClick={() => {
                           setIsCommunique(!isCommunique);
                           setShowMenu(false);
+                          scheduleAutoSave(); // Trigger auto-save when communique status changes
                         }}
                       >
                         <Star size={16} className={isCommunique ? "text-secondary-400 fill-secondary-400" : "text-neutral-400"} />
@@ -378,12 +500,28 @@ const PostModal = ({
                 </label>
               </div>
 
-              <span className="text-sm font-medium">
-                <span className={cn(charCount <= CHAR_LIMIT ? 'text-primary-400' : 'text-red-500')}>
-                  {charCount}
+              <div className="flex flex-col items-end gap-1">
+                <span className="text-sm font-medium">
+                  <span className={cn(charCount <= CHAR_LIMIT ? 'text-primary-400' : 'text-red-500')}>
+                    {charCount}
+                  </span>
+                  <span className="text-plain-a">/{CHAR_LIMIT} characters</span>
                 </span>
-                <span className="text-plain-a">/{CHAR_LIMIT} characters</span>
-              </span>
+                
+                {/* Auto-save indicator */}
+                {isAutoSaved && (
+                  <span className="text-xs text-primary-400 flex items-center gap-1">
+                    <div className="w-2 h-2 bg-primary-400 rounded-full animate-pulse"></div>
+                    Auto-saved
+                  </span>
+                )}
+                
+                {lastSavedTime && !isAutoSaved && (
+                  <span className="text-xs text-neutral-400">
+                    Last saved: {lastSavedTime}
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* Media Preview */}

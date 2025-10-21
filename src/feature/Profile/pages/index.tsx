@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import Topbar from "../../../components/atoms/Topbar/Topbar";
@@ -22,7 +22,9 @@ import { getDecryptedUser } from "../../Auth/api/Encryption";
 import ProfileReposts from "../components/ProfileReposts";
 import ProfilePodcasts from "../components/ProfilePodcasts";
 import MainContent from "../../../components/molecules/MainContent";
-// import { useGetMyReposts } from "../../Repost/hooks/useRepost";
+import { useGetUserMedia } from "../hooks";
+import { useGetMyReposts } from "../../Repost/hooks/useRepost";
+import { useGetPodcastsByUser } from "../../Podcast/hooks";
 
 const Profile: React.FC = () => {
   const { t } = useTranslation();
@@ -62,7 +64,43 @@ const Profile: React.FC = () => {
     isFetchingNextPage: isFetchingNextArticles,
   } = useGetAuthorArticles(authorId);
 
+  // Get counts for other tabs
+  const { data: userMediaData } = useGetUserMedia(authorId);
+  const { data: repostsData } = useGetMyReposts(authorId);
+  const { data: podcastsData } = useGetPodcastsByUser({ userId: authorId, page: 1, limit: 1 });
+
   const isAuthUser = username?.trim() === authUser?.username?.trim();
+
+  // Memoized counts to avoid recalculating on every render
+  const mediaCount = useMemo(() => {
+    try {
+      if (!userMediaData?.pages?.[0]) return 0;
+      return userMediaData.pages[0].totalMedia || 0;
+    } catch (error) {
+      console.warn('Error getting media count:', error);
+      return 0;
+    }
+  }, [userMediaData]);
+
+  const repostsCount = useMemo(() => {
+    try {
+      if (!repostsData?.reposts) return 0;
+      return repostsData.reposts.length || 0;
+    } catch (error) {
+      console.warn('Error getting reposts count:', error);
+      return 0;
+    }
+  }, [repostsData]);
+
+  const podcastsCount = useMemo(() => {
+    try {
+      if (!podcastsData?.data?.totalResults) return 0;
+      return podcastsData.data.totalResults || 0;
+    } catch (error) {
+      console.warn('Error getting podcasts count:', error);
+      return 0;
+    }
+  }, [podcastsData]);
 
   const tabs = [
     { id: "about", title: "About" },
@@ -82,9 +120,30 @@ const Profile: React.FC = () => {
           : ""
       }`,
     },
-    { id: "media", title: "Media" },
-    { id: "reposts", title: "Reposts" },
-    { id: "podcasts", title: "Podcasts" },
+    {
+      id: "media",
+      title: `Media${
+        mediaCount > 0 
+          ? ` (${mediaCount})` 
+          : ""
+      }`,
+    },
+    {
+      id: "reposts",
+      title: `Reposts${
+        repostsCount > 0 
+          ? ` (${repostsCount})` 
+          : ""
+      }`,
+    },
+    {
+      id: "podcasts",
+      title: `Podcasts${
+        podcastsCount > 0 
+          ? ` (${podcastsCount})` 
+          : ""
+      }`,
+    },
   ];
   
   const [activeTab, setActiveTab] = useState<number | string>(tabs[0].id);
