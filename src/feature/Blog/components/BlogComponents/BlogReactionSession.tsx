@@ -7,7 +7,7 @@ import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
 import CommentSection from "../../../Comments/components/CommentSection";
 import ReactionModal from "../../../Interactions/components/ReactionModal";
 import ReactionsPopup from "../../../Interactions/components/ReactionsPopup";
-import { useGetAllReactionsForTarget, useGetCommentsTreeForRepost } from "../../../Repost/hooks/useRepost";
+import { useGetAllReactionsForTarget, useGetCommentsTreeForRepost, useGetRepostCountSimple } from "../../../Repost/hooks/useRepost";
 import { useGetCommentsByArticleId } from "../../../Comments/hooks";
 import BlogRepostModal from "./BlogRepostModal";
 import { t } from "i18next";
@@ -110,6 +110,9 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   const { data: articleComments, isLoading: commentsLoading } = useGetCommentsByArticleId(article_id);
   const { data: repostComments } = useGetCommentsTreeForRepost(article.repost?.repost_id || "");
   
+  // Get repost count using the new API
+  const { data: repostCountData, isLoading: repostCountLoading } = useGetRepostCountSimple(article_id);
+  
   // Calculate total comments (handle reposts vs regular articles)
   const totalComments = article.type === "Repost"
     ? repostComments?.parentCommentsCount ?? 0
@@ -118,8 +121,8 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
   // Get reaction count
   const reactionCount = allReactions?.data?.totalReactions || 0;
   
-  // Get repost count (shares count)
-  const repostCount = article.shares_count || 0;
+  // Get repost count from API
+  const repostCount = repostCountData?.repostCount || 0;
 
   // Check if the current user has reacted
   useEffect(() => {
@@ -338,7 +341,7 @@ const BlogReactionSession: React.FC<BlogReactionSessionProps> = ({
           >
             <Radio className="size-5 text-neutral-100 group-hover:text-primary-400" />
            {repostCount > 0 && <span className="text-sm text-neutral-100 group-hover:text-primary-400">
-              {repostCount}
+              {repostCountLoading ? "..." : repostCount}
             </span>}
           </button>
 

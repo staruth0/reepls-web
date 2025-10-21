@@ -539,3 +539,21 @@ export const getRepostCount = async (articleId: string): Promise<RepostCountResp
   const { data } = await apiClient.get(`/reposts/article/${articleId}/count`);
   return data;
 };
+
+// New interface for the simplified repost count response
+export interface SimpleRepostCountResponse {
+  success: boolean;
+  articleId: string;
+  repostCount: number;
+  message: string;
+}
+
+/**
+ * Retrieves the repost count for a specific article using the new endpoint.
+ * @param articleId The ID of the article to get repost count for.
+ * @returns The simplified repost count data.
+ */
+export const getRepostCountSimple = async (articleId: string): Promise<SimpleRepostCountResponse> => {
+  const { data } = await apiClient.get(`/reposts/count/${articleId}`);
+  return data;
+};
