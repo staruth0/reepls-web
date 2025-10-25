@@ -485,7 +485,6 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
           font-size:16px;
           text-align:justify;
         }
-    
       `}</style>
       <div className="max-w-[750px] w-full mx-auto px-4 sm:px-6 lg:px-8 mb-32 flex-grow article-view-content">
         {!isPreview && isPending ? (
@@ -599,10 +598,10 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
 
                   <span className="text-xs text-neutral-400">{podcast?.duration || "0:00"}</span>
                 </div>
-              ) : (
-                // Default article audio controls
+              ) : article?.text_to_speech ? (
+                // Only show TTS controls if audio is already available
                 <ArticleAudioControls article={article} />
-              )}
+              ) : null}
             </div>
 
             {/* Article Content */}
