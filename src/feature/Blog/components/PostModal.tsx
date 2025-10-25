@@ -250,11 +250,21 @@ const PostModal = ({
     if (!ta || !hl) return;
 
     const onScroll = () => {
-      hl.scrollTop = ta.scrollTop;
-      hl.scrollLeft = ta.scrollLeft;
+      // Use requestAnimationFrame for smoother scrolling on mobile
+      requestAnimationFrame(() => {
+        hl.scrollTop = ta.scrollTop;
+        hl.scrollLeft = ta.scrollLeft;
+      });
     };
-    ta.addEventListener('scroll', onScroll);
-    return () => ta.removeEventListener('scroll', onScroll);
+
+    // Add both scroll and touchmove events for better mobile support
+    ta.addEventListener('scroll', onScroll, { passive: true });
+    ta.addEventListener('touchmove', onScroll, { passive: true });
+    
+    return () => {
+      ta.removeEventListener('scroll', onScroll);
+      ta.removeEventListener('touchmove', onScroll);
+    };
   }, []);
 
   // Load draft when modal opens
@@ -301,7 +311,7 @@ const PostModal = ({
         <div className="flex min-h-full items-center justify-center p-4">
           <DialogPanel
             className={cn(
-              'w-full md:max-w-xl lg:max-w-2xl xl:max-w-3xl rounded-xl bg-background p-6 backdrop-blur-2xl duration-300 ease-out',
+              'w-full max-w-[95vw] sm:max-w-xl lg:max-w-2xl xl:max-w-3xl rounded-xl bg-background p-4 sm:p-6 backdrop-blur-2xl duration-300 ease-out',
               isModalOpen ? 'opacity-100' : 'opacity-0',
               showTagsModal ? 'pointer-events-none opacity-50' : ''
             )}
@@ -328,10 +338,10 @@ const PostModal = ({
             {/* User Preview */}
             {isLoggedIn && authUser && (
               <div
-                className="flex items-center mb-2 justify-between w-[90%] max-w-[600px] mx-auto mb-2"
+                className="flex items-center mb-2 justify-between w-[95%] max-w-[600px] mx-auto mb-2"
                 style={{ marginTop: '0.5rem' }}
               >
-                <div className="flex items-center gap-3" style={{ marginLeft: '-32px' }}>
+                <div className="flex items-center gap-3">
                   {authUser.profile_picture ? (
                     <img
                       src={authUser.profile_picture}
@@ -352,10 +362,10 @@ const PostModal = ({
                     <span className="font-semibold text-base">{authUser.name}</span>
                     {authUser.bio && (
                       <span
-                        className="text-neutral-200 text-sm break-words"
+                        className="text-neutral-200 text-sm truncate max-w-[120px] sm:max-w-[150px] md:max-w-[200px]"
                         title={authUser.bio}
                       >
-                        {authUser.bio}
+                        {authUser.bio.length > 30 ? `${authUser.bio.substring(0, 30)}...` : authUser.bio}
                       </span>
                     )}
                   </div>
@@ -401,11 +411,11 @@ const PostModal = ({
             {/* Text area */}
             <div className="flex flex-col items-center mb-6 relative">
               <div
-                className="rounded-lg  relative overflow-hidden"
+                className="rounded-lg relative overflow-hidden"
                 style={{
-                  width: '90%',
+                  width: '95%',
                   height: '344px',
-                  minHeight: '250px',
+                  minHeight: '200px',
                   borderRadius: '16px',
                   maxWidth: '600px',
                 }}
@@ -437,19 +447,40 @@ const PostModal = ({
                   onChange={handleTextChange}
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setIsFocused(false)}
+                  onPaste={(e) => {
+                    // Handle paste events properly on mobile
+                    e.preventDefault();
+                    const pastedText = e.clipboardData.getData('text');
+                    if (pastedText) {
+                      setPostContent(prev => prev + pastedText);
+                      scheduleAutoSave();
+                    }
+                  }}
+                  onInput={(e) => {
+                    // Additional input handler for mobile compatibility
+                    const target = e.target as HTMLTextAreaElement;
+                    if (target.value !== postContent) {
+                      setPostContent(target.value);
+                      scheduleAutoSave();
+                    }
+                  }}
                   className={cn(
-                    'absolute inset-0 w-full h-full resize-none bg-transparent  p-3 text-base leading-relaxed outline-none z-10 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300',
+                    'absolute inset-0 w-full h-full resize-none bg-transparent p-3 text-base leading-relaxed outline-none z-10 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300',
                     !isLoggedIn ? 'cursor-not-allowed' : '',
                     'text-transparent caret-black'
                   )}
                   placeholder={''}
                   disabled={!isLoggedIn}
+                  autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  spellCheck="false"
                 />
               </div>
             </div>
 
             {/* Emoji / Media / Character Count */}
-            <div className="w-[90%] max-w-[600px] mx-auto mt-6 flex justify-between items-center">
+            <div className="w-[95%] max-w-[600px] mx-auto mt-6 flex justify-between items-center">
               <div className="flex items-center gap-4 md:gap-8">
                 {/* Communique indicator */}
                 {isCommunique && (
@@ -574,8 +605,8 @@ const PostModal = ({
     <LuLoader className="animate-spin inline-block mr-2" />
   ) : (
     <>
-      <span className="block md:hidden">{t('Post')}</span>
-      <span className="hidden md:block">{t('Publish')}</span>
+      <span className="block md:hidden">{t('Publish')}</span>
+    
     </>
   )}
 </button>
