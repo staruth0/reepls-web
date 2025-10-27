@@ -605,7 +605,7 @@ const PostModal = ({
     <LuLoader className="animate-spin inline-block mr-2" />
   ) : (
     <>
-      <span className="block md:hidden">{t('Publish')}</span>
+      <span className="block">{t('Publish')}</span>
     
     </>
   )}
