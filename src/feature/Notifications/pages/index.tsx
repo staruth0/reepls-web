@@ -17,14 +17,16 @@ const Notifications: React.FC = () => {
   const { notifications } = useNotificationsValues();
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  console.log("notifications", notifications);
   return (
     <MainContent> 
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
       <div className="profile border-r-[1px] min-h-screen border-neutral-500">
         <Topbar>
-          <div className="flex items-center gap-2"><button
+          <div className=" flex  items-center gap-2"><button
               onClick={() => navigate(-1)}
-              className="p-2 hover:bg-neutral-700 rounded-full transition-colors"
+              className="p-2 md:hidden block hover:bg-neutral-700 rounded-full transition-colors"
             >
               <LuArrowLeft className="size-5 text-neutral-300" />
             </button>
@@ -45,7 +47,7 @@ const Notifications: React.FC = () => {
               </p>
             </div>
           ) : (
-            <div className="mt-6 flex flex-col gap-5">
+            <div className="mt-6 flex max-w-2xl mx-auto flex-col gap-5">
               {notifications.map((notification, index) => {
                 const { type, sender_id, content, created_at, is_read, _id, slug, article_id, isArticle } = notification;
 
@@ -89,6 +91,21 @@ const Notifications: React.FC = () => {
                       />
                     );
                   case 'post':
+                    return (
+                      <PostNotificationContainer
+                        key={index}
+                        username={sender_id}
+                        timestamp={timeAgo(created_at)}
+                        communique={content}
+                        is_read={is_read}
+                        id={_id}
+                        slug={slug}
+                        article_id={article_id!}
+                        type={type}
+                        isArticle={isArticle!}
+                      />
+                    );
+                  case 'article':
                     return (
                       <PostNotificationContainer
                         key={index}

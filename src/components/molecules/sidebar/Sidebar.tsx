@@ -48,6 +48,7 @@ const Sidebar: React.FC = () => {
   const { theme } = useTheme();
 
   const unreadCount = unreadNotifications.length;
+  console.log("unreadNotifications", unreadNotifications);
 
   const handleToggleSidebar = () => {
     toggleSidebar();

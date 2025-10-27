@@ -54,7 +54,7 @@ const SearchResults: React.FC = () => {
         <Topbar>
           <div className="flex items-center gap-2"><button
               onClick={() => navigate(-1)}
-              className="p-2 hover:bg-neutral-700 rounded-full transition-colors"
+              className="p-2 md:hidden block hover:bg-neutral-700 rounded-full transition-colors"
             >
               <LuArrowLeft className="size-5 text-neutral-300" />
             </button>
