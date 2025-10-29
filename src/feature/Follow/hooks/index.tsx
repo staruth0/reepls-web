@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { followUser, getFollowers, getFollowing, unfollowUser } from '../api';
+import { handleMutationError } from '../../../utils/mutationErrorHandler';
 
 export const useFollowUser = () => {
   const queryClient = useQueryClient();
@@ -13,7 +14,7 @@ export const useFollowUser = () => {
       });
     },
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };
@@ -31,7 +32,7 @@ export const useUnfollowUser = () => {
       });
     },
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };

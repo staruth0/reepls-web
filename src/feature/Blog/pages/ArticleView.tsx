@@ -83,7 +83,6 @@ const ArticleView: React.FC = () => {
       onSuccess: () => {
         toast.success('Article saved successfully');
       },
-      onError: () => toast.error('Failed to save article'),
     });
   };
 

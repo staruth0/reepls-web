@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { createReport, deleteReport, getAllReports, getReportById, getReportsWithFilters, updateReportStatus } from "../api";
 import { Report } from "../../../models/datamodels";
+import { handleMutationError } from "../../../utils/mutationErrorHandler";
 
 export const useCreateReport = () => {
   return useMutation({
@@ -8,7 +9,7 @@ export const useCreateReport = () => {
     onSuccess: () => {
     },
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };
@@ -43,7 +44,7 @@ export const useUpdateReportStatus = () => {
     mutationFn: ({ reportId, status }: { reportId: string; status: string }) =>
       updateReportStatus(reportId, status),
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };
@@ -53,7 +54,7 @@ export const useDeleteReport = () => {
     mutationFn: (reportId: string) => deleteReport(reportId),
     
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };

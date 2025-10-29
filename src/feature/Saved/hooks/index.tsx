@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import { saveArticle, removeSavedArticle, getSavedArticles, getSavedArticle, getSavedPosts, getReadingHistory, updateReadingHistory, deleteReadingHistory } from "../api";
+import { handleMutationError } from "../../../utils/mutationErrorHandler";
 
 // Assuming your getSavedArticles API returns an object like { articles: [...] }
 // where each item in articles is an object potentially like { article: { _id: "..." } }
@@ -82,8 +83,7 @@ export const useSaveArticle = () => {
     // onError is called if the mutation (saveArticle) fails.
     // This is where we implement the rollback logic using the context from onMutate.
     onError: (error) => {
-      console.error("Failed to save article:", error);
-     
+      handleMutationError(error);
     },
     // onSettled is called regardless of success or failure.
     // It's often used for final invalidation or cleanup.
@@ -133,8 +133,7 @@ export const useRemoveSavedArticle = () => {
 
     // onError for failed removal, implement rollback.
     onError: (error) => {
-      console.error("Failed to remove saved article:", error);
-   
+      handleMutationError(error);
     },
   });
 };

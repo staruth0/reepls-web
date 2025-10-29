@@ -145,7 +145,6 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
           toast.success("Removed from bookmarks");
           refetch();
         },
-        onError: () => toast.error("Failed to remove from bookmarks"),
       });
     } else {
       savePodcast(
@@ -158,7 +157,6 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
             toast.success("Added to bookmarks");
             refetch();
           },
-          onError: () => toast.error("Failed to add to bookmarks"),
         }
       );
     }

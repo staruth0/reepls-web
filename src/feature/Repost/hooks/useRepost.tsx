@@ -24,6 +24,7 @@ import {
   getRepostCountSimple,
 
 } from "../api/";
+import { handleMutationError } from "../../../utils/mutationErrorHandler";
 
 import {
   saveRepost,
@@ -44,7 +45,7 @@ export const useRepostArticle = () => {
      
     },
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };
@@ -65,16 +66,15 @@ export const useAddCommentToRepost = () => {
       content: string;
       parent_comment_id?: string;
     }) => addCommentToRepost(repostId, { content, parent_comment_id }),
+    retry: false,
     onSuccess: ( ) => {
       queryClient.invalidateQueries({
         queryKey: ["repost-comments-tree"],
       });
-      // Optionally, invalidate general reposts if comments affect their display
       queryClient.invalidateQueries({ queryKey: ["my-reposts"] });
     },
     onError: (error) => {
-      console.error("Failed to add comment to repost:", error);
-      // TODO: Implement user-facing error handling
+      handleMutationError(error);
     },
   });
 };
@@ -160,8 +160,7 @@ export const useCreateReactionRepost = () => {
       }
     },
     onError: (error) => {
-      console.error("Failed to create or update reaction:", error);
-      // TODO: Implement user-facing error handling
+      handleMutationError(error);
     },
   });
 };
@@ -212,8 +211,7 @@ export const useUpdateReactionRepost = () => {
       // E.g., queryClient.invalidateQueries({ queryKey: ["reactions-by-target"] });
     },
     onError: (error) => {
-      console.error("Failed to update reaction:", error);
-      // TODO: Implement user-facing error handling
+      handleMutationError(error);
     },
   });
 };
@@ -232,8 +230,7 @@ export const useDeleteReaction = () => {
       // E.g., queryClient.invalidateQueries({ queryKey: ["reactions-by-target"] });
     },
     onError: (error) => {
-      console.error("Failed to delete reaction:", error);
-      // TODO: Implement user-facing error handling
+      handleMutationError(error);
     },
   });
 };
@@ -297,8 +294,7 @@ export const useShareTarget = () => {
       shareTarget(target_type, id),
   
     onError: (error) => {
-      console.error("Failed to share target:", error);
-      // TODO: Implement user-facing error handling
+      handleMutationError(error);
     },
   });
 };
@@ -317,8 +313,7 @@ export const useUpdateRepost = () => {
       queryClient.invalidateQueries({ queryKey: ["recommended-articles"] });
     },
     onError: (error) => {
-      console.error("Failed to update repost:", error);
-      // TODO: Implement user-facing error handling
+      handleMutationError(error);
     },
   });
 };
@@ -337,8 +332,7 @@ export const useDeleteRepost = () => {
       queryClient.invalidateQueries({ queryKey: ["repost-count"] });
     },
     onError: (error) => {
-      console.error("Failed to delete repost:", error.message);
-      // TODO: Implement user-facing error handling
+      handleMutationError(error);
     },
   });
 };
@@ -356,8 +350,7 @@ export const useCleanupOrphanedReposts = () => {
       queryClient.invalidateQueries({ queryKey: ["recommended-articles"] });
     },
     onError: (error) => {
-      console.error("Failed to cleanup orphaned reposts:", error);
-      // TODO: Implement user-facing error handling
+      handleMutationError(error);
     },
   });
 };
@@ -389,7 +382,7 @@ export const useSaveRepost = () => {
       queryClient.invalidateQueries({ queryKey: ["my-reposts"] });
     },
     onError: (error) => {
-      console.error("Failed to save repost:", error);
+      handleMutationError(error);
     },
   });
 };
@@ -404,7 +397,7 @@ export const useRemoveSavedRepost = () => {
       queryClient.invalidateQueries({ queryKey: ["my-reposts"] });
     },
     onError: (error) => {
-      console.error("Failed to remove saved repost:", error);
+      handleMutationError(error);
     },
   });
 };

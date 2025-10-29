@@ -105,7 +105,6 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
           setSaved(false);
           
         },
-        onError: () => toast.error(t("blog.alerts.articleRemoveFailed")),
       });
     } else {
       saveArticle(article_id, {
@@ -119,7 +118,6 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
       }
     })
         },
-        onError: () => toast.error(t("blog.alerts.articleSaveFailed")),
       });
     }
   };
@@ -143,7 +141,6 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
       }
     })
         },
-        onError: () => toast.error(t("blog.alerts.userUnfollowFailed")),
       });
     } else {
       followUser({ receiver_id: user?._id }, {
@@ -157,7 +154,6 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
       }
     })
         },
-        onError: () => toast.error(t("blog.alerts.userFollowFailed")),
       });
     }
   };

@@ -12,6 +12,7 @@ import {
   getAuthorStatistics,
   AuthorStatistics,
 } from "../api";
+import { handleMutationError } from "../../../utils/mutationErrorHandler";
 
 // Hook for fetching a single user by ID
 export const useGetUserById = (
@@ -62,7 +63,7 @@ export const useUpdateUser = (): {
      
     },
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
   return { mutate, isPending, error, isError, isSuccess };
@@ -85,7 +86,7 @@ export const useDeleteUser = (): {
       navigate("/users");
     },
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
   return { mutate, isPending, error };

@@ -12,6 +12,7 @@ import {
   getCommentReactions,
 } from "../api";
 import { Reaction } from "../../../models/datamodels";
+import { handleMutationError } from "../../../utils/mutationErrorHandler";
 
 // Reactions Hooks
 export const useCreateReaction = () => {
@@ -32,7 +33,7 @@ export const useCreateReaction = () => {
       });
     },
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };
@@ -73,7 +74,7 @@ export const useUpdateReaction = () => {
       });
     },
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };
@@ -92,7 +93,7 @@ export const useDeleteReaction = () => {
       queryClient.invalidateQueries({queryKey: ["reactedUsers"]});
     },
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };
@@ -155,7 +156,7 @@ export const useCreateCommentReaction = () => {
       });
     },
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };

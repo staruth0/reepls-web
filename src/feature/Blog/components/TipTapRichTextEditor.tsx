@@ -11,6 +11,16 @@ import RichTextEditor, {
   Italic,
   locale,
   Video,
+  Underline,
+  Strike,
+  Highlight,
+  BulletList,
+  OrderedList,
+  TaskList,
+  Link,
+  Blockquote,
+  HorizontalRule,
+  Table,
 } from 'reactjs-tiptap-editor';
 import 'reactjs-tiptap-editor/style.css';
 import useTheme from '../../../hooks/useTheme';
@@ -52,18 +62,38 @@ function TipTapRichTextEditor({
         showOnlyCurrent: true,
       },
       characterCount: false,
+      bubble: {
+        // Ensure headings are available in the bubble menu
+        exclude: [],
+      },
     }),
     History,
     Heading.configure({ 
       spacer: true,
-      levels: [1, 2, 3] // Only H1, H2, H3 as required
+      levels: [1, 2, 3], // Only H1, H2, H3 as required
     }),
     Bold,
     Italic,
+    Underline,
+    Strike,
+    Highlight,
     CodeBlock.configure({ 
       defaultTheme: 'dracula',
       spacer: true 
     }),
+    BulletList,
+    OrderedList,
+    TaskList,
+    Link.configure({
+      openOnClick: false,
+    }),
+    Table.configure({
+      HTMLAttributes: {
+        class: 'my-4 border-collapse border border-neutral-600',
+      },
+    }),
+    Blockquote,
+    HorizontalRule,
     Image.configure({
       upload: async (file: File): Promise<string> => {
         if (!authUser?.id) {

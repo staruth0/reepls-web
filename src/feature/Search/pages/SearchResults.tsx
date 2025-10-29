@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import Topbar from "../../../components/atoms/Topbar/Topbar";
 import Tabs from "../../../components/molecules/Tabs/Tabs";
 import Communique from "../../Feed/components/Communique/Communique";
@@ -11,8 +11,6 @@ import SearchAll from "./SearchAll";
 import { useUser } from "../../../hooks/useUser";
 import { useStoreSearchSuggestion } from "../hooks";
 import MainContent from "../../../components/molecules/MainContent";
-import { LuArrowLeft } from "react-icons/lu";
-import { useTranslation } from "react-i18next";
 
 
 const tabs = [
@@ -26,10 +24,9 @@ const SearchResults: React.FC = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
   const [activeTab, setActiveTab] = useState<string | number>(tabs[0].id);
-  const navigate = useNavigate();
   const { authUser } = useUser();
   const { mutate } = useStoreSearchSuggestion();
-  const {t} = useTranslation();
+
   useEffect(() => {
     if (!authUser?.id || !query) return;
 
@@ -39,7 +36,6 @@ const SearchResults: React.FC = () => {
         searchSuggestions: query,
       },
       {
-       
         onError: (error) => {
           void error;
         },
@@ -52,14 +48,14 @@ const SearchResults: React.FC = () => {
     <div className="lg:grid font-roboto grid-cols-[4fr_1.65fr]">
       <div className="search lg:border-r-[1px] border-neutral-500">
         <Topbar>
-          <div className="flex items-center gap-2"><button
+          {/* <div className="flex items-center gap-2"><button
               onClick={() => navigate(-1)}
               className="p-2 md:hidden block hover:bg-neutral-700 rounded-full transition-colors"
             >
               <LuArrowLeft className="size-5 text-neutral-300" />
             </button>
             <p className="text-neutral-50 font-semibold">{t("search.recentSearches")}</p>
-          </div>
+          </div> */}
           <SearchTopBar initialSearchTerm={query} />
         </Topbar>
         <div className="flex flex-col min-h-screen items-center">

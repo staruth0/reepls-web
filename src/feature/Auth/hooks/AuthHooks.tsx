@@ -22,6 +22,7 @@ import {
   checkGoogleAuthStatus,
 } from "../api";
 import { useTokenStorage } from './useTokenStorage';
+import { handleMutationError } from '../../../utils/mutationErrorHandler';
 
 
 // Hook for registering a user with email
@@ -35,8 +36,7 @@ export const useRegisterUser = () => {
       login(data); 
     },
     onError: (error) => {
-      void error;
-      return 'Error registering user';
+      handleMutationError(error);
     },
   });
 };
@@ -52,7 +52,7 @@ export const useRegisterUserWithGoogle = () => {
       // No need to navigate here as the user will be redirected
     },
     onError: (error) => {
-      console.error('Google auth initiation error:', error);
+      handleMutationError(error);
     },
   });
 };
@@ -69,7 +69,7 @@ export const useLogOutUserWithGoogle = () => {
       navigate('/auth'); // Redirect to auth page
     },
     onError: (error) => {
-      console.error('Google logout error:', error);
+      handleMutationError(error);
     },
   });
 };
@@ -94,7 +94,7 @@ export const usePhoneRegisterUser = () => {
       login(data); // Pass the full LoginResponse to encrypt and store
     },
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };
@@ -138,7 +138,7 @@ export const useLoginUserWithPhone = () => {
       navigateToFeed();
     },
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };
@@ -157,7 +157,7 @@ export const useUpdateUser = () => {
       navigateToUserProfile();
     },
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };
@@ -167,7 +167,7 @@ export const useGetEmailCode = () => {
   return useMutation({
     mutationFn: (emailCode: EmailCode) => getEmailVerificationCode(emailCode),
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };
@@ -178,7 +178,7 @@ export const useVerifyEmailCode = () => {
   return useMutation({
     mutationFn: (codeVerify: CodeVerify) => verifyEmailCode(codeVerify),
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };
@@ -189,7 +189,7 @@ export const useGetPhoneCode = () => {
     mutationFn: (phoneCode: PhoneCode) => getPhoneVerificationCode(phoneCode),
    
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };
@@ -200,7 +200,7 @@ export const useVerifyPhoneCode = () => {
   return useMutation({
     mutationFn: (phoneVerify: PhoneVerify) => verifyPhoneCode(phoneVerify),
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };
@@ -225,7 +225,7 @@ export const useLogoutUser = (token: string) => {
   return useMutation({
     mutationFn: () => logoutUser(token), 
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };

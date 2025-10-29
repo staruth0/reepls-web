@@ -30,7 +30,6 @@ export function useFollowUser({ targetUserId }: UseFollowUserProps) {
       { receiver_id: targetUserId },
       {
         onSuccess: () => toast.success(t("blog.alerts.userFollowed")),
-        onError: () => toast.error(t("blog.alerts.userFollowFailed")),
       }
     );
   }, [isLoggedIn, targetUserId, followUser]);
@@ -44,7 +43,6 @@ export function useFollowUser({ targetUserId }: UseFollowUserProps) {
 
     unfollowUser(targetUserId, {
       onSuccess: () => toast.success(t("blog.alerts.userUnfollowed")),
-      onError: () => toast.error(t("blog.alerts.userUnfollowFailed")),
     });
   }, [isLoggedIn, targetUserId, unfollowUser]);
 

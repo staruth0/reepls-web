@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useUser } from "../../../hooks/useUser";
-import { Article, Comment } from "../../../models/datamodels";
+import { Article } from "../../../models/datamodels";
 import { LuLoader, LuSend, LuSmile } from "react-icons/lu";
 import { FaRegUserCircle } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -13,6 +14,8 @@ import { useSendCommentNotification } from "../../Notifications/hooks/useNotific
 import { useAddCommentToRepost } from "../../Repost/hooks/useRepost";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../../utils";
+import { useCommentInput } from "../hooks/useCommentInput";
+import { isRepostType } from "../utils";
 
 interface CommentTabProps {
   article_id: string;
@@ -26,88 +29,49 @@ const CommentTab: React.FC<CommentTabProps> = ({
   article,
 }) => {
   const { isLoggedIn } = useUser();
-  const [comment, setComment] = useState<string>("");
-  const [isEmojiPickerVisible, setEmojiPickerVisible] = useState(false);
-  const [isPendingRepost, setIsPendingRepost] = useState(false);
-  const CommentTabRef = useRef<HTMLInputElement | null>(null);
-  const emojiPickerRef = useRef<HTMLDivElement | null>(null);
-  const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const { theme } = useTheme();
-  const { mutate: addCommentToRepost } = useAddCommentToRepost();
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const { mutate: sendComment, isPending } = useSendCommentNotification();
+  const { mutate: addCommentToRepost, isPending: isPendingRepost } = useAddCommentToRepost();
+  const [isPendingRepostLocal, setIsPendingRepostLocal] = useState(false);
+  
+  const CommentTabRef = useRef<HTMLInputElement | null>(null);
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter" && isLoggedIn) {
-      handleCommentSubmit();
+  const handleCommentSubmit = (content: string) => {
+    if (!isLoggedIn) {
+      navigate("/auth");
+      return;
     }
-  };
 
-  const { mutate, isPending } = useSendCommentNotification();
-
-  const validateCommentData = (commentData: Comment): boolean => {
-    if (!commentData.article_id) {
-      return false;
+    if (!content || content.trim() === "") {
+      return;
     }
-    if (!commentData.content?.trim()) {
-      return false;
-    }
-    return true;
-  };
 
-  const validateRepostCommentData = (commentData: { repostId: string; content: string }): boolean => {
-    if (!commentData.repostId) {
-      return false;
-    }
-    if (!commentData.content?.trim()) {
-      return false;
-    }
-    return true;
-  };
-
-  const handleCommentSubmit = () => {
-    if (!isLoggedIn) return;
-
-    if (article.type === "Repost") {
-      const repostId = article.repost?.repost_id;
-      if (!repostId) return;
-
-      const commentValuesRepost = {
-        repostId,
-        content: comment,
-      };
-
-      if (!validateRepostCommentData(commentValuesRepost)) {
-        return;
-      }
-
-      setIsPendingRepost(true);
-      addCommentToRepost(commentValuesRepost, {
+    if (isRepostType(article)) {
+      const repostId = article.repost.repost_id;
+      setIsPendingRepostLocal(true);
+      
+      addCommentToRepost({ repostId, content }, {
         onSuccess: () => {
           setIsCommentSectionOpen(true);
+          queryClient.invalidateQueries({ queryKey: ["repost-comments-tree", repostId] });
           toast.success(t("You added 1 comment."));
-          setComment("");
-          setIsPendingRepost(false);
+          setIsPendingRepostLocal(false);
         },
         onError: () => {
           toast.error(t("Failed to post comment. Please try again later."));
-          setIsPendingRepost(false);
+          setIsPendingRepostLocal(false);
         },
       });
     } else {
-      const commentValues = {
-        article_id,
-        content: comment,
-      };
-
-      if (!validateCommentData(commentValues)) {
-        return;
-      }
-
-      mutate(commentValues, {
+      sendComment({ article_id, content }, {
         onSuccess: () => {
           setIsCommentSectionOpen(true);
+          queryClient.invalidateQueries({ queryKey: ["comments", article_id] });
           toast.success(t("You added 1 comment."));
-          setComment("");
         },
         onError: () => {
           toast.error(t("Failed to post comment. Please try again later."));
@@ -116,28 +80,21 @@ const CommentTab: React.FC<CommentTabProps> = ({
     }
   };
 
-  const handleEmojiClick = (emojiObject: { emoji: string }) => {
-    setComment((prevComment) => prevComment + emojiObject.emoji);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        emojiPickerRef.current &&
-        !emojiPickerRef.current.contains(event.target as Node)
-      ) {
-        setEmojiPickerVisible(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const location = useLocation();
+  const {
+    comment,
+    setComment,
+    isEmojiPickerVisible,
+    setEmojiPickerVisible,
+    emojiPickerRef,
+    handleEmojiClick,
+    handleSubmit,
+    handleKeyDown,
+  } = useCommentInput({
+    article,
+    article_id,
+    parentCommentId: undefined,
+    onSubmit: handleCommentSubmit,
+  });
 
   useEffect(() => {
     if (CommentTabRef.current && isLoggedIn && !location.pathname.includes("/posts/article/")) {
@@ -145,7 +102,7 @@ const CommentTab: React.FC<CommentTabProps> = ({
     }
   }, [isLoggedIn, location.pathname]);
 
-  const isSending = isPending || isPendingRepost;
+  const isSending = isPending || isPendingRepost || isPendingRepostLocal;
 
   return (
     <motion.div 
@@ -216,7 +173,7 @@ const CommentTab: React.FC<CommentTabProps> = ({
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleCommentSubmit}
+                onClick={handleSubmit}
                 disabled={isSending || comment.trim() === ""}
                 className={cn(
                   "p-2 rounded-full transition-all duration-200",

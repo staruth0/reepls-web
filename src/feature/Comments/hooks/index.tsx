@@ -8,6 +8,7 @@ import {
   getRepliesForComment,
 } from "../api";
 import { Comment } from "../../../models/datamodels";
+import { handleMutationError } from "../../../utils/mutationErrorHandler";
 
 // Hook to create a new comment
 export const useCreateComment = () => {
@@ -15,14 +16,33 @@ export const useCreateComment = () => {
 
   return useMutation({
     mutationFn: (comment: Comment) => createComment(comment),
-    onSuccess: () => {
-     
-      queryClient.invalidateQueries({
-        queryKey: ["comments"],
+    onMutate: async (newComment) => {
+      await queryClient.cancelQueries({ queryKey: ["comments"] });
+      const previousComments = queryClient.getQueryData(["comments", newComment.article_id]);
+      
+      queryClient.setQueryData(["comments", newComment.article_id], (old: any) => {
+        if (!old) return old;
+        const newData = { ...old };
+        if (newData.pages && newData.pages[0]?.data?.commentsTree) {
+          newData.pages[0].data.commentsTree = [
+            newComment,
+            ...newData.pages[0].data.commentsTree
+          ];
+          newData.pages[0].data.totalComments = (newData.pages[0].data.totalComments || 0) + 1;
+        }
+        return newData;
       });
+      
+      return { previousComments };
     },
-    onError: (error) => {
-      void error;
+    onError: (err, variables, context) => {
+      if (context?.previousComments) {
+        queryClient.setQueryData(["comments", variables.article_id], context.previousComments);
+      }
+      handleMutationError(err);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["comments"] });
     },
   });
 };
@@ -75,7 +95,7 @@ export const useUpdateComment = () => {
       });
     },
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };
@@ -97,7 +117,7 @@ export const useDeleteComment = () => {
       });
     },
     onError: (error) => {
-      void error;
+      handleMutationError(error);
     },
   });
 };

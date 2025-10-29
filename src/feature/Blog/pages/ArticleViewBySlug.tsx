@@ -323,7 +323,6 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
           toast.success("User unfollowed successfully");
           setIsFollowing(false);
         },
-        onError: () => toast.error("Failed to unfollow user"),
       });
     } else {
       followUser(authorId, {
@@ -331,7 +330,6 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
           toast.success("User followed successfully");
           setIsFollowing(true);
         },
-        onError: () => toast.error("Failed to follow user"),
       });
     }
   }, [isLoggedIn, isFollowPending, isUnfollowPending, authorId, isFollowing, unfollowUser, followUser]);
@@ -349,7 +347,6 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
           toast.success("Article removed from saved");
           setIsSaved(false);
         },
-        onError: () => toast.error("Failed to remove article"),
       });
     } else {
       saveArticle(article._id, {
@@ -357,7 +354,6 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
           toast.success("Article saved successfully");
           setIsSaved(true);
         },
-        onError: () => toast.error("Failed to save article"),
       });
     }
   }, [isLoggedIn, isSavePending, isRemovePending, article?._id, isSaved, removeSavedArticle, saveArticle]);
@@ -509,7 +505,7 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
               </div>
             )}
 
-            <h1 className="text-[22px] md:text-2xl lg:text-3xl font-medium leading-tight mb-3">
+            <h1 className="text-[22px] md:text-2xl lg:text-3xl font-bold leading-tight mb-3">
               {title}
             </h1>
             {subtitle && <h3 className="text-lg text-neutral-300 mb-4">{subtitle}</h3>}
@@ -545,7 +541,7 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
                   <p className="text-[12px] text-neutral-100">{memoizedAuthorBio}</p>
                 </div>
               </div>
-              {!isPreview && (
+              {!isPreview && authUser?.id !== authorId && (
                 <button
                   onClick={handleFollowClick}
                   className={`ml-auto px-3 py-1.5 rounded-full text-xs ${
@@ -599,7 +595,6 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
                   <span className="text-xs text-neutral-400">{podcast?.duration || "0:00"}</span>
                 </div>
               ) : article?.text_to_speech ? (
-                // Only show TTS controls if audio is already available
                 <ArticleAudioControls article={article} />
               ) : null}
             </div>

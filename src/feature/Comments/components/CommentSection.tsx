@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { LuX, LuLoader, LuCircleAlert, LuMessageCircle } from "react-icons/lu";
 import { Article, Comment, User } from "../../../models/datamodels";
 import { useGetCommentsByArticleId } from "../hooks";
@@ -6,7 +6,7 @@ import CommentMessage from "./CommentMessage";
 import CommentTab from "./CommentTab";
 import { useGetCommentsTreeForRepost } from "../../Repost/hooks/useRepost";
 import { motion, AnimatePresence } from "framer-motion";
-// import { cn } from "../../../utils";
+import { useMemo } from "react";
 
 interface CommentSectionProps {
   article_id: string;
@@ -42,18 +42,17 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   const isError = article.type === "Repost" ? isRepostCommentsError : isArticleCommentsError;
 
 
-    const commentsToRender =
+  const commentsToRender = useMemo(() => 
     article.type === "Repost" && repostComments
       ? repostComments.commentsTree
       : articleComments?.pages
-          ?.flatMap((page) => page.data.commentsTree) || [];
+          ?.flatMap((page) => page.data.commentsTree) || [],
+    [article.type, repostComments, articleComments]
+  );
 
   const [hasOpenLevelTwo, setHasOpenLevelTwo] = useState(false);
   const [activeLevelTwoCommentId, setActiveLevelTwoCommentId] = useState<string | null>(null);
 
-  useEffect(() => {
-    console.log("Repost comments:", repostComments);
-  }, [article_id, articleComments, repostComments]);
 
     const handleLevelTwoToggle = (commentId: string, isOpen: boolean) => {
     setHasOpenLevelTwo(isOpen);
@@ -151,7 +150,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
   return (
     <motion.div 
-      className="overflow-hidden"
+      className="overflow-visible"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -192,7 +191,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       </AnimatePresence>
 
       {/* Comments List */}
-      <div className="max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-600 scrollbar-track-transparent">
+      <div className="max-h-96 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-neutral-600 scrollbar-track-transparent">
         <AnimatePresence mode="popLayout">
           {commentsToRender.length === 0 ? (
             <motion.div 

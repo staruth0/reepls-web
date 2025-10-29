@@ -49,12 +49,10 @@ const ProfileHeroButtons: React.FC<ProfileHeroButtonsProps> = ({
     if (isUserFollowing(userId)) {
       unFollow(userId, {
         onSuccess: () => toast.success(t("profile.alerts.unfollowSuccess")),
-        onError: () => toast.error(t("profile.alerts.unfollowFailed")),
       });
     } else {
       follow({receiver_id:userId}, {
         onSuccess: () => toast.success(t("profile.alerts.followSuccess")),
-        onError: () => toast.error(t("profile.alerts.followFailed")),
       });
     }
   };

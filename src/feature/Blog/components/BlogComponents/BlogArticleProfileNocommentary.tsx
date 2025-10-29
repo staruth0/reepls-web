@@ -136,9 +136,7 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
           setShowRepostDeleteConfirmation(false);
           navigate("/feed");
         },
-        onError: (error) => {
-          toast.error("An error occurred while trying to delete repost");
-          console.error("Failed to delete repost:", error.message);
+        onError: () => {
           setShowRepostDeleteConfirmation(false);
         },
       });
@@ -166,9 +164,6 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
                         },
                     });
                 },
-                onError: () => {
-                    toast.error(t("blog.alerts.articleRemoveFailed"));
-                },
             });
         } else {
             saveRepost(article.repost?.repost_id, {
@@ -180,9 +175,6 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
                             engagement_count: (article.engagement_count || 0) + 1,
                         },
                     });
-                },
-                onError: () => {
-                    toast.error(t("blog.alerts.articleSaveFailed"));
                 },
             });
         }
@@ -199,9 +191,6 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
                         },
                     });
                 },
-                onError: () => {
-                    toast.error(t("blog.alerts.articleRemoveFailed"));
-                },
             });
         } else {
             saveArticle(article_id, {
@@ -213,9 +202,6 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
                             engagement_count: (article.engagement_count || 0) + 1,
                         },
                     });
-                },
-                onError: () => {
-                    toast.error(t("blog.alerts.articleSaveFailed"));
                 },
             });
         }
@@ -241,7 +227,6 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
             },
           });
         },
-        onError: () => toast.error(t("blog.alerts.userUnfollowFailed")),
       });
     } else {
       followUser(
@@ -257,7 +242,6 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
               },
             });
           },
-          onError: () => toast.error(t("blog.alerts.userFollowFailed")),
         }
       );
     }

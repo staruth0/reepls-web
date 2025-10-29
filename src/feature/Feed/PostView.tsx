@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { LuLoader, LuX } from 'react-icons/lu';
 import Topbar from '../../components/atoms/Topbar/Topbar';
 import { useGetArticleById } from '../Blog/hooks/useArticleHook';
-import { toast } from 'react-toastify';
 import './PostView.scss';
 import BlogPost2 from '../Blog/components/BlogPost2';
 
@@ -32,7 +31,6 @@ const PostView: React.FC = () => {
 
   useEffect(() => {
     if (isError) {
-      toast.error('Error fetching article.');
       navigate('/feed', { replace: true });
     }
   }, [isError, navigate]);

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useUser } from "../../../hooks/useUser";
 import { LuSend, LuLoader } from "react-icons/lu";
@@ -8,6 +9,7 @@ import { smile } from "../../../assets/icons";
 import { useSendCommentNotification } from "../../Notifications/hooks/useNotification";
 import { Article } from "../../../models/datamodels";
 import { useAddCommentToRepost } from "../../Repost/hooks/useRepost";
+import { validateComment } from "../utils";
 
 interface CommentTabProps {
   article_id: string;
@@ -21,6 +23,7 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
   article,
 }) => {
   const { authUser } = useUser();
+  const queryClient = useQueryClient();
   const [comment, setComment] = useState<string>("");
   const [isEmojiPickerVisible, setEmojiPickerVisible] = useState(false);
   const CommentTabLevel2ref = useRef<HTMLInputElement | null>(null);
@@ -70,8 +73,19 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
       return;
     }
 
-    if (comment.trim() === "") {
-      toast.error("Comment cannot be empty.");
+    if (!isRepost && !article_id) {
+      toast.error("Invalid article ID.");
+      return;
+    }
+
+    if (isRepost && !article.repost?.repost_id) {
+      toast.error("Invalid repost ID.");
+      return;
+    }
+
+    const validation = validateComment(comment);
+    if (!validation.valid) {
+      if (validation.message) toast.error(validation.message);
       return;
     }
 
@@ -90,6 +104,7 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
 
       addCommentToRepost(repostCommentValues, {
         onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["repost-comments-tree"] });
           toast.success("Replied to repost comment successfully");
           setComment("");
           setEmojiPickerVisible(false);
@@ -107,6 +122,7 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
 
       addCommentToArticle(articleCommentValues, {
         onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["comments", article_id] });
           toast.success("Replied to comment successfully");
           setComment("");
           setEmojiPickerVisible(false);
@@ -124,7 +140,7 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
 
   return (
     <div className="px-4 self-end w-[90%]">
-      <div className="flex items-center w-full p-2 border border-neutral-300 rounded-full bg-background transition-colors mb-2">
+      <div className="flex items-center w-full border border-neutral-300 rounded-full bg-background transition-colors mb-2 pl-3 pr-1 py-1.5">
         <input
           type="text"
           placeholder="What are your thoughts..."
@@ -135,14 +151,14 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
           ref={CommentTabLevel2ref}
           spellCheck={false}
         />
-        <div className="relative" ref={emojiPickerRef}>
+        <div className="relative flex-shrink-0 hidden md:block" ref={emojiPickerRef}>
           <button
             onClick={() => setEmojiPickerVisible(!isEmojiPickerVisible)}
-            className="ml-2 p-1 text-neutral-100 hover:text-primary-400 transition-colors"
+            className="p-1 text-neutral-100 hover:text-primary-400 transition-colors"
             type="button"
             aria-label="Toggle emoji picker"
           >
-            <img src={smile} alt="Emoji Picker" className="w-6 h-6" />
+            <img src={smile} alt="Emoji Picker" className="w-5 h-5" />
           </button>
           {isEmojiPickerVisible && (
             <div className="absolute z-10 right-0 mt-2 bg-background rounded-lg shadow-lg">
@@ -155,15 +171,15 @@ const CommentTabLevel2: React.FC<CommentTabProps> = ({
         </div>
         <button
           onClick={handleCommentSubmit}
-          className="ml-2 p-1 text-neutral-100 hover:text-primary-400 transition-colors"
+          className="p-1 text-neutral-100 hover:text-primary-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={isPending || comment.trim() === ""}
           type="button"
           aria-label="Send comment"
         >
           {isPending ? (
-            <LuLoader className="animate-spin inline-block mx-1" />
+            <LuLoader className="animate-spin" size={18} />
           ) : (
-            <LuSend size={20} />
+            <LuSend size={18} />
           )}
         </button>
       </div>

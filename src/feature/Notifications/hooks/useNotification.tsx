@@ -48,6 +48,7 @@ export const useSendCommentNotification = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: sendCommentNotification,
+    retry: false,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userNotifications"] });
       queryClient.invalidateQueries({
