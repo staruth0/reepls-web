@@ -183,7 +183,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   return (
     <motion.div
       className={cn(
-        "w-full p-3 relative",
+        "w-full p-3 relative overflow-visible",
         isSameAuthorAsPrevious ? "self-end" : "self-start"
       )}
       initial={{ opacity: 0, y: 10 }}
@@ -366,6 +366,8 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleReact}
+          aria-label={`React to ${author.username}'s comment`}
+          aria-pressed={hasUserReacted || isCreateReactionSuccess}
           className={cn(
             "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200",
             hasUserReacted || isCreateReactionSuccess
@@ -390,6 +392,8 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleToggleLevelTwo}
+          aria-label={`Reply to ${author.username}'s comment`}
+          aria-expanded={isLevelTwoCommentOpen}
           className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-neutral-100 hover:text-primary-400 hover:bg-primary-500/10 transition-all duration-200"
         >
           <MessageCircle className="size-3" />
@@ -419,7 +423,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="mt-3"
+            className="mt-3 overflow-visible"
           >
             <CommentSectionLevel2
               article_id={article_id}

@@ -33,12 +33,10 @@ const AuthorSuggestionComponent: React.FC<AuthorSuggestionProps> = ({ username,n
     if (isUserFollowing(id)) {
       unfollowUser(id, {
         onSuccess: () => toast.success('User unfollowed successfully'),
-        onError: () => toast.error('Failed to unfollow user'),
       });
     } else {
       followUser({ receiver_id: id }, {
         onSuccess: () => toast.success('User followed successfully'),
-        onError: () => toast.error('Failed to follow user'),
       });
     }
   };

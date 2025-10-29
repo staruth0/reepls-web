@@ -21,7 +21,7 @@ const CommentSectionLevel2: React.FC<CommentSectionProps> = ({
   article
 }) => {
   return (
-    <div className="flex flex-col border-l border-neutral-400 mt-3">
+    <div className="flex flex-col border-l border-neutral-400 mt-3 overflow-visible">
       {comments?.map((comment: Comment, index: number) => (
         <CommentMessageLevel2
           key={`${comment._id}-${index}`}

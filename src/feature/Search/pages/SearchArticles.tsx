@@ -3,8 +3,9 @@ import { Article } from '../../../models/datamodels';
 import BlogPost from '../../Blog/components/BlogPost';
 import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
 import { useGetArticleResults } from '../hooks';
-import { toast } from 'react-toastify'; // Added for toast notifications
+import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import { getBackendErrorMessage } from '../../../utils/errorHandler';
 
 interface SearchArticlesProps {
   query: string;
@@ -12,36 +13,14 @@ interface SearchArticlesProps {
 
 const SearchArticles: React.FC<SearchArticlesProps> = ({ query }) => {
   const { data: articles, isLoading, error } = useGetArticleResults(query);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
-  // Function to get friendly error messages specific to article search results
-  const getFriendlyErrorMessage = (error: any, query?: string): string => {
-    if (!error) return t("search.errors.default");
-  
-    if (error.message.includes("Network Error")) {
-      return t("search.errors.network");
-    }
-    if (error.response) {
-      const status = error.response.status;
-      if (status === 404) {
-        return t("search.errors.notFound", { query }); // Dynamic query
-      }
-      if (status === 500) {
-        return t("search.errors.server");
-      }
-      if (status === 429) {
-        return t("search.errors.rateLimit");
-      }
-    }
-    return t("search.errors.default");
-  };
-
-  // Toast error notification
   useEffect(() => {
     if (error) {
-      toast.error(getFriendlyErrorMessage(error));
+      const errorMessage = getBackendErrorMessage(error, t);
+      toast.error(errorMessage);
     }
-  }, [error]);
+  }, [error, t]);
 
  
 
@@ -63,7 +42,7 @@ const SearchArticles: React.FC<SearchArticlesProps> = ({ query }) => {
       <div className="search-articles">
         <div className="px-1 sm:px-8 transition-all duration-300 ease-linear">
           <p className="text-neutral-50 text-center py-4">
-            {getFriendlyErrorMessage(error)}
+            {getBackendErrorMessage(error, t)}
           </p>
         </div>
       </div>

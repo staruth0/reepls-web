@@ -168,9 +168,7 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
           setShowRepostDeleteConfirmation(false);
           navigate("/feed");
         },
-        onError: (error) => {
-          toast.error("An error occurred while trying to delete repost");
-          console.error("Failed to delete repost:", error.message);
+        onError: () => {
           setShowRepostDeleteConfirmation(false);
         },
       });
@@ -198,9 +196,6 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
                         },
                     });
                 },
-                onError: () => {
-                    toast.error(t("blog.alerts.articleRemoveFailed"));
-                },
             });
         } else {
             saveRepost(article.repost?.repost_id, {
@@ -212,9 +207,6 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
                             engagement_count: (article.engagement_count || 0) + 1,
                         },
                     });
-                },
-                onError: () => {
-                    toast.error(t("blog.alerts.articleSaveFailed"));
                 },
             });
         }
@@ -231,9 +223,6 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
                         },
                     });
                 },
-                onError: () => {
-                    toast.error(t("blog.alerts.articleRemoveFailed"));
-                },
             });
         } else {
             saveArticle(article_id, {
@@ -245,9 +234,6 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
                             engagement_count: (article.engagement_count || 0) + 1,
                         },
                     });
-                },
-                onError: () => {
-                    toast.error(t("blog.alerts.articleSaveFailed"));
                 },
             });
         }
@@ -273,7 +259,6 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
             },
           });
         },
-        onError: () => toast.error(t("blog.alerts.userUnfollowFailed")),
       });
     } else {
       followUser(
@@ -289,7 +274,6 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
               },
             });
           },
-          onError: () => toast.error(t("blog.alerts.userFollowFailed")),
         }
       );
     }
@@ -327,10 +311,6 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
               ? "Successfully subscribed to publication!" 
               : "Successfully unsubscribed from publication!"
           );
-        },
-        onError: (error) => {
-          toast.error("Failed to update subscription");
-          console.error("Subscription error:", error);
         },
       }
     );
