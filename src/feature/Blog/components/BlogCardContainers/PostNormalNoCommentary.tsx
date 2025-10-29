@@ -66,27 +66,28 @@ const PostNormalNoCommentary:React.FC<articleprobs> = ({article}) => {
           article={article}
         />
 
-        <BlogMessage
-          title={article.title || ""}
-          content={article.content || ""}
-          article_id={article._id || ""}
-          isArticle={article.isArticle || false}
-          slug={article.slug || ""}
-          article={article}
-        />
+  <BlogMessage
+    title={article.title || ""}
+    content={article.content || ""}
+    article_id={article._id || ""}
+    isArticle={article.isArticle || false}
+    slug={article.slug || ""}
+    article={article}
+  />
 
-        <ErrorBoundary
-          FallbackComponent={ErrorFallback}
-          onError={(error, info) => {
-            void error;
-            void info;
-          }}
-        >
-          {!isCognitiveMode && article?.media && (
-            <BlogImagery article={article} media={article.media} />
-          )}
-        </ErrorBoundary>
-      </div>
+  <ErrorBoundary
+    FallbackComponent={ErrorFallback}
+    onError={(error, info) => {
+      void error;
+      void info;
+    }}
+  >
+    {!isCognitiveMode && article?.media && (
+      <BlogImagery article={article} media={article.media} />
+    )}
+  </ErrorBoundary>
+</div>
+
      
 
       {/* <BlogReactionStats

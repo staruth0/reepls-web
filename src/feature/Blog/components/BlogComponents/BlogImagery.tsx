@@ -45,6 +45,8 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
+    if (isModalOpen) window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isModalOpen, displayMedia.length]);
 
   const renderImage = (mediaItem: MediaItem, index: number, className: string = "", isSingleImage: boolean = false) => (

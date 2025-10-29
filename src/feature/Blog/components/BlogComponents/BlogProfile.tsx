@@ -1,6 +1,6 @@
-import { Bookmark, EllipsisVertical, Share2, UserPlus, X, Trash2, Edit, BarChart2, Flag } from "lucide-react";
+import { Bookmark, EllipsisVertical, Share2, X, Trash2, Edit, BarChart2} from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { LuBadgeCheck, LuLoader } from "react-icons/lu";
+import { LuBadgeCheck, LuLoader, LuFlag, LuUser } from "react-icons/lu";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import SharePopup from "../../../../components/molecules/share/SharePopup";
@@ -49,11 +49,11 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
   const [saved, setSaved] = useState(false);
   const { mutate: followUser, isPending: isFollowPending } = useSendFollowNotification();
   const { mutate: deleteArticle, isPending: isDeletePending } = useDeleteArticle();
-    const [showReportPopup, setShowReportPopup] = useState(false);
+  const [showReportPopup, setShowReportPopup] = useState(false);
 
   const articleTitle = title || (content ? content.split(" ").slice(0, 10).join(" ") + "..." : "Untitled Post");
   const articleUrl = `${window.location.origin}/posts/${isArticle ? "article" : "post"}/${isArticle?'slug/'+article.slug: article_id}`;
-     const {mutate} = useUpdateArticle()
+  const {mutate} = useUpdateArticle()
 
   const isCurrentAuthorArticle = user?._id === authUser?.id;
 
@@ -196,8 +196,8 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
   }, [savedArticles, article_id]);
 
   const getFollowStatusText = (isMenu = false) => {
-    if (!isLoggedIn) return t("follow");
-    if (isFollowPending) return `${t("following")}...`;
+    if (!isLoggedIn) return t("Follow");
+    if (isFollowPending) return `${t("Following")}...`;
     if (isUnfollowPending) return `${t("unfollowing")}...`;
     return isFollowing(user?._id || "") ? t("") : isMenu ? t("blog.Followauthor") : t("follow");
   };
@@ -245,21 +245,6 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
           >
             {user?.name ? user.name.split(' ').slice(0, 2).join(' ') : " "}
           </p>
-          {user?.is_verified_writer && <LuBadgeCheck className="size-4 text-primary-400" />}
-          {!location.pathname.includes("/feed/following") && (
-            <div>
-              {!isCurrentAuthorArticle && (
-                <span
-                  className={`cursor-pointer text-primary-400 hover:underline ml-2 text-sm ${
-                    !isLoggedIn ? "pointer-events-none opacity-50" : ""
-                  }`}
-                  onClick={handleFollowClick}
-                >
-                  {getFollowStatusText()}
-                </span>
-              )}
-            </div>
-          )}
         </div>
         <div className="flex items-center gap-1">
             <p className="text-sm text-neutral-100 truncate max-w-[120px] sm:max-w-[150px] md:max-w-[200px]" title={user?.bio}>
@@ -319,28 +304,28 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                     onClick={handleSavedArticle}
                   >
-                    <Bookmark size={18} className="text-neutral-500" />
+                    <Bookmark size={22} className="text-neutral-500" />
                     <div>{getSaveStatusText()}</div>
                   </div>
                  <div
                   className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                   onClick={() => setShowReportPopup(true)}
                 >
-                  <Flag size={18} className="text-neutral-500" />
-                  {t("blog.ReportPost")}
+                  <LuFlag size={22} className="text-neutral-500" />
+                  {t("Report Post")}
                 </div>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                     onClick={handleFollowClick}
                   >
-                    <UserPlus size={18} className="text-neutral-500" />
+                    <LuUser size={22} className="text-neutral-500" />
                     {getFollowMenuStatusText(true)}
                   </div>
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                     onClick={handleShareClick}
                   >
-                    <Share2 size={18} className="text-neutral-500" /> {t("blog.Share")}
+                    <Share2 size={22} className="text-neutral-500" /> {t("blog.Share")}
                   </div>
                 </>
               )}

@@ -1,7 +1,7 @@
 {
   "Welcome to REEPLS": "Bienvenue sur REEPLS",
   "Get Started": "Commencer",
-  "WelcomeMessage": "Bienvenue, ceci est REEPLS",
+  "WelcomeMessage": "Bienvenue, voici REEPLS",
   "SignInButton": "Se connecter",
   "OrDivider": "OU",
   "Please login to write an article": "Veuillez vous connecter pour écrire un article",
@@ -527,7 +527,9 @@
     "removing": "Suppression...",
     "removed": "Supprimé",
     "UnsavePost": "Retirer le post des enregistrés",
+    "AddCommentary": "Ajouter un commentaire",
     "EditPost": "Modifier le post",
+    "EditCommentary": "Modifier le commentaire",
     "Analytics": "Analytiques",
     "Share": "Partager",
     "ReportPost": "Signaler le post",

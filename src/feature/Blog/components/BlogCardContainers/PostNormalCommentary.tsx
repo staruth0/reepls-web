@@ -46,6 +46,7 @@ const PostNormalCommentary: React.FC<articleprobs> = ({ article }) => {
   return (
     <div className="mt-5 border-[1px] border-neutral-500 p-2 md:p-4 max-w-2xl bg-background rounded-3xl ">
       <div className="">
+        
         <BlogArticleProfile
           title={article.title || ""}
           user={user || {}}
@@ -72,14 +73,27 @@ const PostNormalCommentary: React.FC<articleprobs> = ({ article }) => {
           article={article}
         />
 
-        <BlogMessage
-          title={article.title || ""}
-          content={article.content || ""}
-          article_id={article._id || ""}
-          isArticle={article.isArticle || false}
-          slug={article.slug || ""}
-          article={article}
-        />
+  <BlogMessage
+    title={article.title || ""}
+    content={article.content || ""}
+    article_id={article._id || ""}
+    isArticle={article.isArticle || false}
+    slug={article.slug || ""}
+    article={article}
+  />
+
+  <ErrorBoundary
+    FallbackComponent={ErrorFallback}
+    onError={(error, info) => {
+      void error;
+      void info;
+    }}
+  >
+    {!isCognitiveMode && article?.media && (
+      <BlogImagery article={article} media={article.media} />
+    )}
+  </ErrorBoundary>
+</div>
 
         <ErrorBoundary
           FallbackComponent={ErrorFallback}
@@ -93,7 +107,7 @@ const PostNormalCommentary: React.FC<articleprobs> = ({ article }) => {
           )}
         </ErrorBoundary>
       </div>
-      </div>
+      
 
       {/* <BlogReactionStats
         toggleCommentSection={toggleCommentSection}
