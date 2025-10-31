@@ -27,9 +27,7 @@ const UserFeed: React.FC = () => {
     isFetchingNextPage,
   } = useGetAllArticles();
 
-  useEffect(() => {
-    console.log('data', data);
-  }, [data]);
+  // Removed console.log for production performance
 
   // Infinite scroll observer
   useEffect(() => {

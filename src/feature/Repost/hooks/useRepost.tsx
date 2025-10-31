@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient,useQuery } from "@tanstack/react-query";
+import { useUser } from "../../../hooks/useUser";
 
 import {
   repostArticle,
@@ -124,6 +125,7 @@ export const useGetMyReposts = (
  */
 export const useCreateReactionRepost = () => {
   const queryClient = useQueryClient();
+  const { authUser } = useUser();
 
   return useMutation({
     mutationFn: (variables: {
@@ -131,6 +133,63 @@ export const useCreateReactionRepost = () => {
       target_type: TargetType;
       type: string;
     }) => createUpdateReaction(variables),
+    onMutate: async (variables) => {
+      const currentUserId = authUser?.id;
+      await queryClient.cancelQueries({ queryKey: ["all-reactions-for-target"] });
+      await queryClient.cancelQueries({ queryKey: ["reactions-by-target"] });
+      await queryClient.cancelQueries({ queryKey: ["reactions-grouped-by-type"] });
+
+      const affected = queryClient.getQueriesData({ queryKey: ["all-reactions-for-target"] });
+      const previousStates: Array<{ queryKey: any[]; data: unknown }> = [];
+
+      affected.forEach(([key, oldData]) => {
+        previousStates.push({ queryKey: key as any[], data: oldData });
+
+        const [, keyTargetType, keyTargetId] = (key as any[]);
+        if (keyTargetType !== variables.target_type || keyTargetId !== variables.target_id) return;
+
+        const draft: any = oldData || { data: { reactions: [], totalReactions: 0 } };
+        const reactions = Array.isArray(draft?.data?.reactions) ? [...draft.data.reactions] : [];
+        const total = typeof draft?.data?.totalReactions === "number" ? draft.data.totalReactions : reactions.length;
+
+        if (!currentUserId) return;
+
+        const idx = reactions.findIndex((r: any) => r?.user_id === currentUserId);
+        let nextReactions = reactions;
+        let nextTotal = total;
+
+        if (idx >= 0) {
+          const existing = reactions[idx];
+          if (existing?.type === variables.type) {
+            nextReactions = reactions.filter((_: any, i: number) => i !== idx);
+            nextTotal = Math.max(0, total - 1);
+          } else {
+            nextReactions = reactions.slice();
+            nextReactions[idx] = { ...existing, type: variables.type };
+          }
+        } else {
+          nextReactions = [
+            ...reactions,
+            {
+              user_id: currentUserId,
+              target_id: variables.target_id,
+              target_type: variables.target_type,
+              type: variables.type,
+            },
+          ];
+          nextTotal = total + 1;
+        }
+
+        queryClient.setQueryData(key, {
+          data: {
+            reactions: nextReactions,
+            totalReactions: nextTotal,
+          },
+        });
+      });
+
+      return { previousStates };
+    },
     onSuccess: ( variables) => {
        queryClient.invalidateQueries({
         queryKey: ["all-reactions-for-target"],
@@ -159,8 +218,19 @@ export const useCreateReactionRepost = () => {
         queryClient.invalidateQueries({ queryKey: ["repost", variables.target_id] });
       }
     },
-    onError: (error) => {
+    onError: (error, _variables, context) => {
+      const prev = (context as any)?.previousStates as Array<{ queryKey: any[]; data: unknown }> | undefined;
+      if (prev) {
+        prev.forEach(({ queryKey, data }) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
       handleMutationError(error);
+    },
+    onSettled: (variables) => {
+      if (variables) {
+        queryClient.invalidateQueries({ queryKey: ["all-reactions-for-target", variables.target_type, variables.target_id] });
+      }
     },
   });
 };

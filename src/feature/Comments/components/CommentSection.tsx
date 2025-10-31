@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback, memo } from "react";
 import { LuX, LuLoader, LuCircleAlert, LuMessageCircle } from "react-icons/lu";
 import { Article, Comment, User } from "../../../models/datamodels";
 import { useGetCommentsByArticleId } from "../hooks";
@@ -6,7 +6,6 @@ import CommentMessage from "./CommentMessage";
 import CommentTab from "./CommentTab";
 import { useGetCommentsTreeForRepost } from "../../Repost/hooks/useRepost";
 import { motion, AnimatePresence } from "framer-motion";
-import { useMemo } from "react";
 
 interface CommentSectionProps {
   article_id: string;
@@ -53,15 +52,18 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   const [hasOpenLevelTwo, setHasOpenLevelTwo] = useState(false);
   const [activeLevelTwoCommentId, setActiveLevelTwoCommentId] = useState<string | null>(null);
 
-
-    const handleLevelTwoToggle = (commentId: string, isOpen: boolean) => {
+  const handleLevelTwoToggle = useCallback((commentId: string, isOpen: boolean) => {
     setHasOpenLevelTwo(isOpen);
     if (isOpen) {
       setActiveLevelTwoCommentId(commentId);
     } else if (activeLevelTwoCommentId === commentId) {
       setActiveLevelTwoCommentId(null);
     }
-  };
+  }, [activeLevelTwoCommentId]);
+
+  const handleCloseCommentSection = useCallback(() => {
+    setIsCommentSectionOpen(false);
+  }, [setIsCommentSectionOpen]);
 
   
 
@@ -164,7 +166,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         <motion.button
           whileHover={{ scale: 1.1, rotate: 90 }}
           whileTap={{ scale: 0.9 }}
-          onClick={() => setIsCommentSectionOpen(false)}
+          onClick={handleCloseCommentSection}
           className="p-2 rounded-full hover:bg-neutral-700/50 transition-colors group"
         >
           <LuX className="text-neutral-400 group-hover:text-neutral-100 transition-colors" />
@@ -210,30 +212,18 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                 index > 0 && comment.author_id === commentsToRender[index - 1].author_id;
 
               return (
-                <motion.div
+                <CommentItem
                   key={comment._id}
-                  variants={itemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  layout
-                  className=""
-                >
-                  <CommentMessage
-                    content={comment.content!}
-                    createdAt={comment.createdAt!}
-                    author_id={comment.author_id!}
-                    isSameAuthorAsPrevious={isSameAuthorAsPrevious}
-                    article_id={article_id}
-                    comment_id={comment._id!}
-                    replies={comment.replies!}
-                    author={comment.author!}
-                    author_of_post={author_of_post}
-                    onLevelTwoToggle={(isOpen) => handleLevelTwoToggle(comment._id!, isOpen)}
-                    activeLevelTwoCommentId={activeLevelTwoCommentId}
-                    article={article}
-                  />
-                </motion.div>
+                  comment={comment}
+                  index={index}
+                  commentsToRender={commentsToRender}
+                  isSameAuthorAsPrevious={isSameAuthorAsPrevious}
+                  article_id={article_id}
+                  author_of_post={author_of_post}
+                  onLevelTwoToggle={handleLevelTwoToggle}
+                  activeLevelTwoCommentId={activeLevelTwoCommentId}
+                  article={article}
+                />
               );
             })
           )}
@@ -269,4 +259,72 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   );
 };
 
-export default CommentSection;
+// Memoized comment item component to prevent unnecessary re-renders
+interface CommentItemProps {
+  comment: Comment;
+  index: number;
+  commentsToRender: Comment[];
+  isSameAuthorAsPrevious: boolean;
+  article_id: string;
+  author_of_post: User;
+  onLevelTwoToggle: (commentId: string, isOpen: boolean) => void;
+  activeLevelTwoCommentId: string | null;
+  article: Article;
+}
+
+// Animation variants - moved outside component for reuse
+const commentItemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.2,
+      ease: "easeOut"
+    }
+  }
+};
+
+const CommentItem = memo(({
+  comment,
+  isSameAuthorAsPrevious,
+  article_id,
+  author_of_post,
+  onLevelTwoToggle,
+  activeLevelTwoCommentId,
+  article,
+}: CommentItemProps) => {
+  const handleToggle = useCallback((isOpen: boolean) => {
+    onLevelTwoToggle(comment._id!, isOpen);
+  }, [comment._id, onLevelTwoToggle]);
+
+  return (
+    <motion.div
+      variants={commentItemVariants}
+      initial="hidden"
+      animate="visible"
+      exit="hidden"
+      layout
+      className=""
+    >
+      <CommentMessage
+        content={comment.content!}
+        createdAt={comment.createdAt!}
+        author_id={comment.author_id!}
+        isSameAuthorAsPrevious={isSameAuthorAsPrevious}
+        article_id={article_id}
+        comment_id={comment._id!}
+        replies={comment.replies!}
+        author={comment.author!}
+        author_of_post={author_of_post}
+        onLevelTwoToggle={handleToggle}
+        activeLevelTwoCommentId={activeLevelTwoCommentId}
+        article={article}
+      />
+    </motion.div>
+  );
+});
+
+CommentItem.displayName = 'CommentItem';
+
+export default memo(CommentSection);

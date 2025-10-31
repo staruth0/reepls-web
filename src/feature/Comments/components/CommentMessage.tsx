@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo, useCallback, memo } from "react";
 import {
   ThumbsUp,
   MessageCircle,
@@ -93,7 +93,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   
   const reactionCount = reactionsData?.data?.totalReactions || 0;
 
-  const formatDate = () => {
+  const formattedDate = useMemo(() => {
     try {
       if (typeof createdAt === "string") {
         return timeAgo(createdAt);
@@ -101,13 +101,14 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
       return timeAgo(createdAt.toISOString());
     } catch (error) {
       void error;
+      return "";
     }
-  };
+  }, [createdAt]);
 
-  const isAuthor = author?._id === author_of_post?._id;
-  const isAuthAuthor = author?._id === authUser?.id;
+  const isAuthor = useMemo(() => author?._id === author_of_post?._id, [author?._id, author_of_post?._id]);
+  const isAuthAuthor = useMemo(() => author?._id === authUser?.id, [author?._id, authUser?.id]);
 
-  const handleReact = () => {
+  const handleReact = useCallback(() => {
     if (!authUser?.id) return;
     createReactionRepost(
       {
@@ -126,12 +127,12 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
         },
       }
     );
-  };
+  }, [authUser?.id, comment_id, article, mutate, createReactionRepost]);
 
-  const handleToggleLevelTwo = () => {
+  const handleToggleLevelTwo = useCallback(() => {
     onLevelTwoToggle?.(true);
     setIsLevelTwoCommentOpen(true);
-  };
+  }, [onLevelTwoToggle]);
 
   // const handleCloseLevelTwo = () => {
   //   setIsLevelTwoCommentOpen(false);
@@ -139,12 +140,12 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   // };
 
   // Handlers for popup actions
-  const handleEditClick = () => {
+  const handleEditClick = useCallback(() => {
     setIsEditing(true);
     setShowMenu(false);
-  };
+  }, []);
 
-  const handleUpdateClick = () => {
+  const handleUpdateClick = useCallback(() => {
     updateComment(
       { commentId: comment_id, content: editedContent },
       {
@@ -155,13 +156,15 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
         onError: (error) => {
           toast.error(t("Failed to update comment"));
           setIsEditing(false);
+          if (process.env.NODE_ENV === 'development') {
           console.error("Update comment error:", error.message);
+        }
         },
       }
     );
-  };
+  }, [comment_id, editedContent, updateComment, t]);
 
-  const handleDeleteClick = () => {
+  const handleDeleteClick = useCallback(() => {
     deleteComment(comment_id, {
       onSuccess: () => {
         toast.success("Comment deleted successfully");
@@ -170,15 +173,18 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
       onError: (error) => {
         toast.error("Failed to delete comment");
         setShowMenu(false);
-        console.error("Delete comment error:", error.message);
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Delete comment error:", error.message);
+        }
       },
     });
-  };
-  const handleProfileClick = () => {
-    if (author.username) goToProfile(author?.username);
-  };
+  }, [comment_id, deleteComment]);
 
-  useEffect(() => {}, [isAuthor, author, author_of_post]);
+  const handleProfileClick = useCallback(() => {
+    if (author.username) goToProfile(author?.username);
+  }, [author.username, goToProfile]);
+
+  // Remove empty useEffect
 
   return (
     <motion.div
@@ -245,7 +251,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
               </motion.div>
               
               <div className="absolute right-2 text-[12px] font-light flex items-center gap-2 text-neutral-100">
-                <span>{formatDate()}</span>
+                <span>{formattedDate}</span>
                 {isAuthAuthor && (
                   <motion.button
                     whileHover={{ scale: 1.1, rotate: 90 }}
@@ -440,4 +446,4 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   );
 };
 
-export default CommentMessage;
+export default memo(CommentMessage);

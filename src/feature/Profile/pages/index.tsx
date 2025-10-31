@@ -41,9 +41,7 @@ const Profile: React.FC = () => {
   const isLoading = isLoadingUsername;
   const authorId = user?.id || "";
 
-  useEffect(() => {
-    console.log('user', user);
-  }, [user]);
+  // Removed console.log for production performance
 
   // Infinite scrolling hooks
   const {

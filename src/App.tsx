@@ -10,7 +10,6 @@ import { WebRoutes } from './Routes/WebRoutes';
 import { apiClient } from './services/apiClient';
 import { useFetchVapidPublicKey } from './feature/Notifications/hooks/useNotification';
 import { useUser } from './hooks/useUser';
-import { getDecryptedAccessToken } from './feature/Auth/api/Encryption';
 import FloatingAudioPlayer from './components/molecules/Audio/FloatingAudioPlayer';
 import { AudioPlayerProvider } from './context/AudioContext/AudioContextPlayer';
 
@@ -45,9 +44,7 @@ function App() {
   const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null);
   const [permissionGranted, setPermissionGranted] = useState<boolean>(false);
 
-  useEffect(()=>{
-    console.log("access token", getDecryptedAccessToken())
-  },[])
+  // Removed console.log for production performance
 
 
   function urlBase64ToUint8Array(base64String: string): BufferSource {
