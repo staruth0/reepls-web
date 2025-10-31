@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { ThumbsUp, Edit, Trash2, EllipsisVertical, Send } from "lucide-react"; // Added Send
 import { LuBadgeCheck, LuLoader } from "react-icons/lu";
 import { timeAgo } from "../../../utils/dateFormater";
-import { User, ReactionReceived } from "../../../models/datamodels";
-import { useCreateCommentReaction, useGetCommentReactions } from "../../Interactions/hooks";
+import { User } from "../../../models/datamodels";
+import { useCreateReactionRepost, useGetAllReactionsForTarget } from "../../Repost/hooks/useRepost";
 import { useUser } from "../../../hooks/useUser";
 import { useDeleteComment, useUpdateComment } from "../hooks"; // Added useUpdateComment
 import { toast } from "react-toastify";
@@ -31,25 +31,32 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
   const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false); // State for edit mode
   const [editedContent, setEditedContent] = useState(content); // State for input value
-  const { mutate: createReaction, isPending, isSuccess } = useCreateCommentReaction();
-  const { data: reactions } = useGetCommentReactions(comment_id);
+  // Align with CommentMessage: use target-based reaction hooks
+  const target_type = "Comment" as const;
+  const target_id = comment_id;
+  const { mutate: createReactionRepost, isPending } = useCreateReactionRepost();
+  const { data: reactionsData } = useGetAllReactionsForTarget(target_type, target_id);
   const { mutate: deleteComment, isPending: isDeletePending } = useDeleteComment();
   const { mutate: updateComment, isPending: isUpdatePending } = useUpdateComment(); // Added update hook
   const { authUser } = useUser();
   const {goToProfile} = useRoute()
+  // Track pending state for animation
+  const [pendingUserAction, setPendingUserAction] = useState<null | 'like'>(null);
 
   useEffect(() => {
-    if (reactions?.reactions && Array.isArray(reactions.reactions)) {
-      const userIds = reactions.reactions.map((reaction: ReactionReceived) =>
-        reaction.user_id.id?.trim()
-      );
-      setReactedids(userIds);
+    const list = reactionsData?.data?.reactions;
+    if (Array.isArray(list)) {
+      const userIds = list
+        .map((reaction: { user_id: string }) => reaction.user_id?.trim?.() || reaction.user_id)
+        .filter(Boolean);
+      setReactedids(userIds as string[]);
     }
-  }, [reactions]);
+  }, [reactionsData]);
 
   // Check if the current user has reacted
   const hasUserReacted = authUser?.id ? reactedid.includes(authUser.id) : false;
-  const reactionCount = reactions?.reactions?.length || 0;
+  const reactionCount = reactionsData?.data?.totalReactions || 0;
+  // Only animate while loading; do not update visuals until settled.
 
   const formatDate = () => {
     try {
@@ -67,10 +74,15 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
 
   const handleReact = () => {
     if (!authUser?.id) return;
-    createReaction({
+    setPendingUserAction('like');
+    createReactionRepost({
+      target_id: comment_id,
+      target_type: "Comment",
       type: "like",
-      user_id: authUser.id,
-      comment_id: comment_id,
+    },{
+      onSettled: () => {
+        setPendingUserAction(null);
+      },
     });
   };
 
@@ -230,19 +242,27 @@ const CommentMessageLevel2: React.FC<MessageComponentProps> = ({
 
         {/* Actions (React) */}
         <div className="flex gap-4 mt-3 text-neutral-400 text-[11px]">
-          <button 
+          <button
             className={`flex items-center gap-1 hover:text-primary-400 transition-colors ${
-              hasUserReacted || isSuccess ? "text-primary-400" : ""
+              hasUserReacted ? "text-primary-400" : ""
             }`}
             onClick={handleReact}
+            disabled={isPending}
           >
-            <ThumbsUp className="size-4" />
+            <span className={
+              pendingUserAction && isPending
+                ? "animate-bounce"
+                : ""
+            }>
+              <ThumbsUp className="size-4" />
+            </span>
             {isPending ? (
               <LuLoader className="animate-spin inline-block size-3" />
             ) : (
               <span>React</span>
             )}
-            {reactionCount > 0 && (
+            {/* Show updated count from cache only after mutation settles */}
+            {reactionCount > 0 && !isPending && (
               <span className="ml-1">• {reactionCount}</span>
             )}
           </button>

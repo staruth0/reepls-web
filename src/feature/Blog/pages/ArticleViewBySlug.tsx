@@ -23,7 +23,7 @@ import {
   useSaveArticle,
   useUpdateReadingHistory,
 } from "../../Saved/hooks";
-import ReactionModal from "../components/BlogReactionModal";
+import ReactionModal from "../../Interactions/components/ReactionModal";
 import TipTapRichTextEditor from "../components/TipTapRichTextEditor";
 import {
   useGetArticleById,
@@ -46,6 +46,7 @@ import { useGetPodcastById } from "../../Podcast/hooks";
 import AudioWave from "../../../components/molecules/Audio/AudiWave";
 import ErrorBoundary from "../../../components/atoms/ErrorBoundary";
 import { useGetAllReactionsForTarget } from "../../Repost/hooks/useRepost";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Start of reading progress implementation
 import { useCreateReadingProgress, useGetReadingProgressByArticleId, useUpdateReadingProgress } from "../../ReadingProgress/hooks";
@@ -86,7 +87,19 @@ const ArticleViewBySlug: React.FC = () => {
 
   const article = slug ? articleslug : articleid;
  const { data: allReactions } = useGetAllReactionsForTarget("Article", article?._id);
-const reactionCount = allReactions?.data?.totalReactions || 0;
+ const reactionCount = allReactions?.data?.totalReactions || 0;
+ 
+ // State for tracking user's reaction
+ const [userReaction, setUserReaction] = useState<string | null>(null);
+ 
+ // See if current user has reacted
+ const currentUserId = authUser?.id;
+ const hasUserReacted = useMemo(() => {
+   if (!currentUserId) return false;
+   // Check if user has any reaction (check both userReaction state and API data)
+   if (userReaction) return true;
+   return Boolean(allReactions?.data?.reactions?.some((r: any) => r.user_id === currentUserId));
+ }, [currentUserId, allReactions?.data?.reactions, userReaction]);
 
   // Memoized values to prevent unnecessary recalculations
   const memoizedArticleUrl = useMemo(() => 
@@ -153,7 +166,6 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
   
   // Initialize hasReadingProgress when data loads
   useEffect(() => {
-    console.log('readingProgress', readingProgress)
     if (readingProgress?.data) {
       setHasReadingProgress(true);
     } else {
@@ -180,9 +192,7 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
       : undefined
   );
 
-  useEffect(()=>{
-    console.log('article', article)
-  },[article])
+  // Removed console.log for production performance
 
   // reading progress implementation
   // Start tracking when article loads
@@ -410,9 +420,7 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
 
   useEffect(() => {
     if (article) {
-      console.log('article by slug', article)
-      console.log('article.htmlContent:', article.htmlContent)
-      console.log('article.content:', article.content)
+      // Removed console.logs for production performance
       if (article.title) setTitle(article.title);
       if (article.subtitle) setSubtitle(article.subtitle);
       if (article.content) setContent(article.content);
@@ -447,6 +455,26 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
     if (isUnfollowPending) return "Unfollowing...";
     return isFollowing ? "Following" : "Follow";
   }, [isLoggedIn, isFollowPending, isUnfollowPending, isFollowing]);
+
+  const queryClient = useQueryClient();
+  
+  // Reaction handler for when reaction is completed from modal
+  const handleReactionComplete = useCallback((reaction: string) => {
+    setUserReaction(reaction);
+    // Invalidate reactions query to refresh the count
+    if (article?._id) {
+      queryClient.invalidateQueries({ queryKey: ['all-reactions-for-target', 'Article', article._id] });
+    }
+  }, [queryClient, article?._id]);
+
+  // Handle click on reaction button to show modal
+  const handleArticleReact = useCallback(() => {
+    if (!isLoggedIn) {
+      setShowSignInPopup("react");
+      return;
+    }
+    setShowReactionsHoverPopup(true);
+  }, [isLoggedIn]);
 
   return (
     <ErrorBoundary
@@ -594,7 +622,9 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
 
                   <span className="text-xs text-neutral-400">{podcast?.duration || "0:00"}</span>
                 </div>
-              ) : article?.text_to_speech ? (
+              ) : !isPreview && article ? (
+                // Show TTS controls if article exists and not a preview
+                // ArticleAudioControls can generate TTS on demand even if text_to_speech doesn't exist yet
                 <ArticleAudioControls article={article} />
               ) : null}
             </div>
@@ -644,17 +674,21 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
                 }`}
                 title="React"
                 aria-label="React to article"
+                onClick={handleArticleReact}
               >
-                <ThumbsUp size={20} />
+                <ThumbsUp size={20} className={hasUserReacted ? "text-primary-400" : ""} />
               </button>
-
               {showReactionsHoverPopup && isLoggedIn && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setShowReactionsHoverPopup(false)} />
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-[999] rounded-lg p-2 min-w-[200px]">
-                    <div className="relative z-">
-                      <ReactionModal article_id={article?._id || ""} />
-                    </div>
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-14 z-[999]">
+                    <ReactionModal
+                      isOpen={showReactionsHoverPopup}
+                      onClose={() => setShowReactionsHoverPopup(false)}
+                      onReact={handleReactionComplete}
+                      article_id={article?._id || ""}
+                      article={article}
+                    />
                   </div>
                 </>
               )}
@@ -666,7 +700,6 @@ const reactionCount = allReactions?.data?.totalReactions || 0;
               >
                 {reactionCount}
               </span>
-              
               {/* Reactions Popup positioned relative to reaction count */}
               {showReactionsPopup && reactionCount > 0 && (
                 <ReactionsPopup

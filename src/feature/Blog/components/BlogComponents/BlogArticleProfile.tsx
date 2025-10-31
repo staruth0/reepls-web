@@ -605,8 +605,6 @@ useEffect(() => {
                 </>
               ) : (
                 <>
-                  {(!isArticle ||
-                    (isArticle && article?.type === "Repost")) && (
                     <div
                       className={cn( // Apply conditional styling to the div for disabling click
                         "flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer",
@@ -627,7 +625,6 @@ useEffect(() => {
                         {(isSavePending || isRemovePending || isSaveRepostPending || isRemoveRepostPending) && <LuLoader className="animate-spin size-3 ml-1 inline-block" />} {/* Small loader next to text */}
                       </div>
                     </div>
-                  )}
                   <div
                     className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700 cursor-pointer"
                     onClick={() => setShowReportPopup(true)}
