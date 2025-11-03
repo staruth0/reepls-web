@@ -115,7 +115,7 @@ const ProfileConfigurations: React.FC = () => {
         }
       } catch (error: any) {
         void error;
-        toast.error(t('Failed to disable notifications: ') );
+        toast.error(t('Failed to disable notifications.'));
       }
     } else {
       // Subscribe to notifications
@@ -148,7 +148,7 @@ const ProfileConfigurations: React.FC = () => {
         toast.success(t('Notifications enabled successfully!'));
       } catch (error: any) {
         void error;
-        toast.error(t('Failed to enable notifications: ') );
+        toast.error(t('Failed to enable notifications.'));
       }
     }
   };

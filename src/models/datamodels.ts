@@ -1,7 +1,7 @@
 export enum UserRole {
-  Admin = 'Admin',
-  Reader = 'Reader',
-  Writer = 'Writer',
+  Admin = 'admin',
+  Reader = 'reader',
+  Writer = 'writer'
 }
 
 export enum MediaType {

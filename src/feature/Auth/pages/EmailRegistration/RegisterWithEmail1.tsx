@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuLoader } from 'react-icons/lu';
 import { useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
 import { RootState } from '../../../../store';
 import { validatePassword } from '../../../../utils/validatePassword';
 import { useAuthErrorHandler } from '../../../../utils/errorHandler';
@@ -26,6 +25,7 @@ function RegisterWithEmail1() {
   // States
   const [passwords, setPassword] = useState<string>('');
   const [passwordInputError, setPasswordInputError] = useState<boolean>(false);
+  const [shouldShowVerifyButton, setShouldShowVerifyButton] = useState<boolean>(false);
 
   // Initialize form with stored data
   useEffect(() => {
@@ -34,10 +34,18 @@ function RegisterWithEmail1() {
     }
   }, [password]);
 
-  // Toast error notification
+  // Check for unverified email error
   useEffect(() => {
     if (error) {
-      toast.error(getErrorMessage(error));
+      const errorMessage = getErrorMessage(error);
+      
+      // Check if error message indicates user exists but email not verified
+      if (errorMessage.includes('User exist but email not verified so verify to continue') || 
+          errorMessage.toLowerCase().includes('email not verified')) {
+        setShouldShowVerifyButton(true);
+      } else {
+        setShouldShowVerifyButton(false);
+      }
     }
   }, [error, getErrorMessage]);
 
@@ -46,6 +54,11 @@ function RegisterWithEmail1() {
     const passwordValue = e.target.value;
     setPassword(passwordValue);
     storePassword(passwordValue);
+
+    // Reset verify button state when user changes password
+    if (shouldShowVerifyButton) {
+      setShouldShowVerifyButton(false);
+    }
 
     if (validatePassword(passwordValue) || passwordValue === '') {
       setPasswordInputError(false);
@@ -64,6 +77,12 @@ function RegisterWithEmail1() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // If we're in verify mode, navigate to verification page
+    if (shouldShowVerifyButton) {
+      navigate("/auth/register/checkemail", { state: { email } });
+      return;
+    }
+
     if (!validatePassword(passwords)) {
       setPasswordInputError(true);
       return;
@@ -81,8 +100,13 @@ function RegisterWithEmail1() {
         },
         onError: (error: unknown) => {
           const errorMessage = getErrorMessage(error);
-          toast.error(errorMessage);
           console.log("Error message:", errorMessage);
+          
+          // Check if this is the unverified email error
+          if (errorMessage.includes('User exist but email not verified so verify to continue') || 
+              errorMessage.toLowerCase().includes('email not verified')) {
+            setShouldShowVerifyButton(true);
+          }
         }
       }
     );
@@ -114,7 +138,7 @@ function RegisterWithEmail1() {
         )}
         <button type="submit" disabled={isPending}>
           {isPending && <LuLoader className="animate-spin inline-block mx-4" />}
-          {t('ContinueButton')}
+          {shouldShowVerifyButton ? t('ContinueToVerify', { defaultValue: 'Continue to Verify' }) : t('ContinueButton')}
         </button>
       </form>
     </div>

@@ -20,6 +20,7 @@
   "NameLabel": "Username",
   "NamePlaceholder": "John Doe",
   "ContinueButton": "Continue",
+  "ContinueToVerify": "Continue to Verify",
   "LoginPrompt": "Already have an Account?",
   "LoginLink": "Login",
   "AlternateSignInWithPhone": "Continue with phone instead",
@@ -458,7 +459,10 @@
     "explicitContent": "Explicit Content",
     "videoAutoPlay": "Video Auto Play",
     "TermsandPolicies": "Terms and Policies",
-    "logout": "Logout",
+    "logout": "Log out",
+    "role": "Role",
+    "reader": "Reader",
+    "writer": "Writer",
 
     "alerts": {
       "bannerSuccess": "Successfully updated banner image",

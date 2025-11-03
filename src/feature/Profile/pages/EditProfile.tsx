@@ -10,6 +10,7 @@ import { useGetUserByUsername, useUpdateUser } from '../hooks';
 import { useTranslation } from 'react-i18next';
 import { updateUsernameInStorage } from '../../Auth/api/Encryption';
 import MainContent from '../../../components/molecules/MainContent';
+import { UserRole } from '../../../models/datamodels';
 import { 
   validateProfileName, 
   validateProfileUsername, 
@@ -27,6 +28,7 @@ type Action =
   | { type: 'SET_BIO'; payload: string }
   | { type: 'SET_ABOUT'; payload: string }
   | { type: 'SET_LOCATION'; payload: string }
+  | { type: 'SET_ROLE'; payload: UserRole }
   | { type: 'SET_ALL'; payload: State }
   | { type: 'RESET' };
 
@@ -36,6 +38,7 @@ interface State {
   bio: string;
   about: string;
   location: string;
+  role: UserRole;
 }
 
 const profileReducer = (state: State, action: Action): State => {
@@ -50,10 +53,12 @@ const profileReducer = (state: State, action: Action): State => {
       return { ...state, about: action.payload };
     case 'SET_LOCATION':
       return { ...state, location: action.payload };
+    case 'SET_ROLE':
+      return { ...state, role: action.payload };
     case 'SET_ALL':
       return { ...action.payload };
     case 'RESET':
-      return { name: '', username: '', bio: '', about: '', location: '' };
+      return { name: '', username: '', bio: '', about: '', location: '', role: UserRole.Reader };
     default:
       return state;
   }
@@ -73,6 +78,7 @@ const EditProfile: React.FC = () => {
     bio: '',
     about: '',
     location: '',
+    role: UserRole.Reader,
   });
 
   useEffect(() => {
@@ -85,6 +91,7 @@ const EditProfile: React.FC = () => {
         bio: user.bio || '',
         about: user.about || '',
         location: user.address || '',
+        role: user.role || UserRole.Reader,
       },
     });
   }, [user]);
@@ -145,6 +152,7 @@ const EditProfile: React.FC = () => {
       bio: state.bio,
       about: state.about,
       address: state.location,
+      role: state.role,
     });
   };
 
@@ -224,6 +232,35 @@ const EditProfile: React.FC = () => {
                 maxLength={LIMITS.PROFILE.LOCATION_MAX_CHARS}
                 showCharCount={true}
               />
+              <div className="bg-neutral-700 rounded-[5px] px-2 py-1 flex flex-col gap-1 mt-3">
+                <div className="flex justify-between items-center">
+                  <label className="text-neutral-400 text-[15px]">{t("profile.role") || "Role"}</label>
+                </div>
+                <div className="flex flex-col gap-3 mt-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="role"
+                      value={UserRole.Reader}
+                      checked={state.role === UserRole.Reader}
+                      onChange={(e) => dispatch({ type: 'SET_ROLE', payload: e.target.value as UserRole })}
+                      className="w-4 h-4 accent-primary-400 cursor-pointer"
+                    />
+                    <span className="text-neutral-100 text-[14px]">{t("profile.reader") || "Reader"}</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="role"
+                      value={UserRole.Writer}
+                      checked={state.role === UserRole.Writer}
+                      onChange={(e) => dispatch({ type: 'SET_ROLE', payload: e.target.value as UserRole })}
+                      className="w-4 h-4 accent-primary-400 cursor-pointer"
+                    />
+                    <span className="text-neutral-100 text-[14px]">{t("profile.writer") || "Writer"}</span>
+                  </label>
+                </div>
+              </div>
               <button
                 className="outline-none border-none bg-primary-400 text-white px-4 py-2 mt-8 rounded-full self-center cursor-pointer w-[320px] h-[40px] flex justify-center items-center"
                 onClick={handleUpdateProfile}

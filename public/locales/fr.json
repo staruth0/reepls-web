@@ -24,6 +24,7 @@
   "NameLabel": "Nom",
   "NamePlaceholder": "John Doe",
   "ContinueButton": "Continuer",
+  "ContinueToVerify": "Continuer pour vérifier",
   "LoginPrompt": "Vous avez déjà un compte?",
   "LoginLink": "Connexion",
   "AlternateSignInWithPhone": "Continuer avec un numéro de téléphone",
@@ -154,8 +155,8 @@
   "Dark": "Sombre",
   "Copied": "Copié",
   "Copy": "Copier",
-  "English": "Englais",
-  "French": "Francais",
+  "English": "Anglais",
+  "French": "Français",
   "On": "Activé",
   "No Trending Topics avaliable": "Aucun sujet tendance disponible",
   "REEPLS SUGGESTIONS": "SUGGESTIONS REEPLS",
@@ -457,6 +458,9 @@
     "videoAutoPlay": "Lecture automatique",
     "TermsandPolicies": "Conditions et politiques",
     "logout": "Déconnexion",
+    "role": "Rôle",
+    "reader": "Lecteur",
+    "writer": "Écrivain",
 
     "alerts": {
       "bannerSuccess": "Image de bannière mise à jour avec succès",
