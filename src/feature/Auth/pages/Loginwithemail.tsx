@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import InputField from '../components/InputField';
 import '../styles/authpages.scss';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +10,6 @@ import { validatePassword } from '../../../utils/validatePassword';
 import { useAuthErrorHandler } from '../../../utils/errorHandler';
 import { useLoginUser } from '../hooks/AuthHooks';
 import { useStoreCredential } from '../hooks/useStoreCredential';
-import { toast } from 'react-toastify'; // Added for toast notifications
 import { Link } from 'react-router-dom';
 
 function Loginwithemail() {
@@ -27,12 +26,6 @@ function Loginwithemail() {
   const [password, setPassword] = useState<string>('');
   const [passwordInputError, setPasswordInputError] = useState<boolean>(false);
 
-  // Toast error notification
-  useEffect(() => {
-    if (Login.error) {
-      toast.error(getErrorMessage(Login.error));
-    }
-  }, [Login.error, getErrorMessage]);
 
   // Functions to handle DOM events
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,12 +57,7 @@ function Loginwithemail() {
 
   const handleGoogleLogin = () => {
     // Construct the Google OAuth2 URL
-    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=${encodeURIComponent(
-      'http://localhost:5000/api-v1/googleAuth/google/callback'
-    )}&scope=profile%20email&client_id=276268262458-4j71v7s7krk3h4j47d49gp5q72msvdh3.apps.googleusercontent.com`;
-
-    // Redirect the user to the Google OAuth2 URL
-    window.location.href = googleAuthUrl;
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL}/api-v1/googleAuth/google`;
   };
 
   return (

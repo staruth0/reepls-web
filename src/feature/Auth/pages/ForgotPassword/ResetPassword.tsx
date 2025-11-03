@@ -71,25 +71,21 @@ function ResetPassword() {
     
     if (!password) {
       setPasswordError(true);
-      toast.error(t('PasswordRequired', { defaultValue: 'Password is required' }));
       return;
     }
 
     if (!validatePassword(password)) {
       setPasswordError(true);
-      toast.error(t('IncorrectPasswordMessage', { defaultValue: 'Password must be at least 8 characters with uppercase, lowercase, number and special character' }));
       return;
     }
 
     if (!confirmPassword) {
       setConfirmPasswordError(true);
-      toast.error(t('ConfirmPasswordRequired', { defaultValue: 'Please confirm your password' }));
       return;
     }
 
     if (password !== confirmPassword) {
       setConfirmPasswordError(true);
-      toast.error(t('PasswordsDoNotMatch', { defaultValue: 'Passwords do not match' }));
       return;
     }
 
@@ -100,10 +96,8 @@ function ResetPassword() {
         toast.success(t('PasswordResetSuccess', { defaultValue: 'Password reset successfully! You can now login with your new password.' }));
         navigate('/auth/login/email', { replace: true });
       },
-      onError: (error: unknown) => {
-        console.log('ResetPassword - error:', error); // Debug log
-        const errorMessage = getErrorMessage(error);
-        toast.error(errorMessage);
+      onError: () => {
+        // Error is already displayed on the page
       }
     });
   };

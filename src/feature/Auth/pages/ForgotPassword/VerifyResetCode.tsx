@@ -49,13 +49,11 @@ function VerifyResetCode() {
     
     if (!code) {
       setCodeError(true);
-      toast.error(t('CodeRequired', { defaultValue: 'Verification code is required' }));
       return;
     }
 
     if (!validateCode(code)) {
       setCodeError(true);
-      toast.error(t('InvalidCode', { defaultValue: 'Please enter a valid 6-digit code' }));
       return;
     }
 
@@ -71,22 +69,8 @@ function VerifyResetCode() {
           replace: true 
         });
       },
-      onError: (error: unknown) => {
-        let errorMessage = t('CodeVerificationError', { defaultValue: 'Invalid verification code. Please try again.' });
-        
-        if (error && typeof error === 'object') {
-          const errorObj = error as Record<string, unknown>;
-          const errorMessageFromError = (errorObj?.error as Record<string, unknown>)?.message as string;
-          const responseMessage = (errorObj?.response as Record<string, unknown>)?.data as Record<string, unknown>;
-          const directMessage = errorObj?.message as string;
-          
-          errorMessage = errorMessageFromError || 
-            responseMessage?.message as string || 
-            directMessage || 
-            errorMessage;
-        }
-        
-        toast.error(errorMessage);
+      onError: () => {
+        // Error is already displayed on the page
       }
     });
   };

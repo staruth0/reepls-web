@@ -38,13 +38,11 @@ function ForgotPassword() {
     
     if (!email) {
       setEmailError(true);
-      toast.error(t('EmailRequired', { defaultValue: 'Email is required' }));
       return;
     }
 
     if (!validateEmail(email)) {
       setEmailError(true);
-      toast.error(t('InvalidEmail', { defaultValue: 'Please enter a valid email address' }));
       return;
     }
 
@@ -56,9 +54,8 @@ function ForgotPassword() {
           replace: true 
         });
       },
-      onError: (error: unknown) => {
-        const errorMessage = getErrorMessage(error);
-        toast.error(errorMessage);
+      onError: () => {
+        // Error is already displayed on the page
       }
     });
   };
