@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { t } from "i18next";
 import Topbar from "../../../components/atoms/Topbar/Topbar";
@@ -13,6 +13,7 @@ const topicsList = ['politics', 'education', 'tech', 'art', 'data', 'history', '
 
 const StreamEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { data: streamData, isLoading, error } = useGetPublicationById(id || '');
   const { mutate: editPublication, isPending: isUpdating } = useEditPublication();
   const { authUser } = useUser();
@@ -61,7 +62,7 @@ const StreamEdit: React.FC = () => {
       submitCoverImage(file)
         .then((data) => {
           setCoverImg(data);
-          toast.success(t("Cover image updated successfully"));
+          toast.success("Success uploading image, now save the changes please");
         })
         .catch(() => {
           toast.error(t("Failed to update cover image"));
@@ -80,7 +81,7 @@ const StreamEdit: React.FC = () => {
       submitBannerImage(file)
         .then((data) => {
           setBannerImg(data);
-          toast.success(t("Banner image updated successfully"));
+          toast.success("Success uploading image, now save the changes please");
         })
         .catch(() => {
           toast.error(t("Failed to update banner image"));
@@ -128,9 +129,6 @@ const StreamEdit: React.FC = () => {
     setCustomTopic(e.target.value);
   };
 
-  const handleBannerImageClick = () => {
-    toast.info(t("Banner image feature not available now"));
-  };
 
   const handleSave = () => {
     const validationErrors = validate();
@@ -153,6 +151,7 @@ const StreamEdit: React.FC = () => {
       title: name,
       short_description: shortDescription,
       cover_image: coverImg || '',
+      ...(bannerImg && { banner_image: bannerImg }),
       ...(finalTopics.length > 0 && { tags: finalTopics }),
     };
 
@@ -163,6 +162,8 @@ const StreamEdit: React.FC = () => {
       {
         onSuccess: () => {
           toast.success("Stream updated successfully!");
+          // Navigate to stream detail page
+          navigate(`/stream/${id}`);
         },
         onError: (error: Error) => {
           console.error("Error updating stream:", error);
@@ -202,7 +203,7 @@ const StreamEdit: React.FC = () => {
           </Topbar>
           <div className="w-full">
             <div className="p-8">
-              <div onClick={() => handleBannerImageChange} className="text-center text-red-400">Error loading stream. Please try again.</div>
+              <div className="text-center text-red-400">Error loading stream. Please try again.</div>
             </div>
           </div>
         </div>
@@ -224,17 +225,42 @@ const StreamEdit: React.FC = () => {
           <div className="p-8">
             <div className="max-w-xl mx-auto space-y-6">
               {/* Banner and Profile Upload Section */}
-              <div className="relative w-full h-36 bg-neutral-200 rounded-lg ">
+              <div className=" w-full h-36 bg-neutral-200 rounded-lg overflow-hidden">
                 {/* Banner upload area */}
-                <div 
-                  className="flex items-center justify-center w-full h-full text-neutral-400 text-sm cursor-pointer hover:bg-neutral-300 transition-colors"
-                  onClick={handleBannerImageClick}
-                >
-                  <ImagePlus className="w-6 h-6 mr-2" />
-                  Upload banner
+                <div className="relative w-full h-full cursor-pointer hover:bg-neutral-300 transition-colors">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleBannerImageChange}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    id="banner-image-input"
+                  />
+                  {bannerImg ? (
+                    <img 
+                      src={bannerImg} 
+                      alt="Banner preview" 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center w-full h-full text-neutral-400 text-sm">
+                      <ImagePlus className="w-6 h-6 mr-2" />
+                      Upload banner
+                    </div>
+                  )}
+                  {/* Overlay for better UX */}
+                  {bannerImg && (
+                    <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all flex items-center justify-center">
+                      <div className="text-white opacity-0 hover:opacity-100 transition-opacity">
+                        <ImagePlus className="w-6 h-6 mr-2 inline" />
+                        <span className="text-sm">Change banner</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 {/* Profile picture overlay */}
-                <div className="w-36 h-36 absolute -bottom-16 left-4 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 text-sm border-4 border-white cursor-pointer hover:bg-neutral-200 transition-colors">
+                
+              </div>
+              <div className="w-36 h-36 -mt-16  rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 text-sm border-4 border-white cursor-pointer hover:bg-neutral-200 transition-colors">
                   <input
                     type="file"
                     accept="image/*"
@@ -255,8 +281,7 @@ const StreamEdit: React.FC = () => {
                     </div>
                   )}
                 </div>
-              </div>
-              <div className="h-12"></div> {/* Spacer */}
+              
 
               {/* Stream Name Input */}
               <div

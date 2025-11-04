@@ -19,7 +19,6 @@ import { toast } from "react-toastify";
 import SharePopup from "../../../../components/molecules/share/SharePopup";
 import { useRoute } from "../../../../hooks/useRoute";
 import { useUser } from "../../../../hooks/useUser";
-import { useSubscriptionStatus } from "../../../../hooks/useSubscriptionStatus";
 import { Article, ArticleDuplicate, User } from "../../../../models/datamodels";
 import { useUnfollowUser } from "../../../Follow/hooks";
 import { useKnowUserFollowings } from "../../../Follow/hooks/useKnowUserFollowings";
@@ -40,7 +39,7 @@ import { timeAgo } from "../../../../utils/dateFormater";
 import { cn } from "../../../../utils"; // Make sure cn utility is imported if you use it
 import BlogRepostModal from "../BlogRepostModal";
 import { useDeleteRepost, useGetSavedReposts, useRemoveSavedRepost, useSaveRepost } from "../../../Repost/hooks/useRepost";
-import { useGetMyPublications, usePushArticleToPublication, useToggleSubscription, useGetPublicationById,  } from "../../../Stream/Hooks";
+import { useGetMyPublications, usePushArticleToPublication, useSubscribeToPublication, useUnsubscribeFromPublication, useGetPublicationSubscriptionStatus, useGetPublicationById,  } from "../../../Stream/Hooks";
 import PublicationModal from "../../../Stream/components/PublicationModal";
 
 
@@ -95,20 +94,21 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   const { mutate: removeRepost, isPending: isRemoveRepostPending } = useRemoveSavedRepost();
 
   const { mutate: pushArticleToPublication} = usePushArticleToPublication();
-  const { mutate: toggleSubscription, isPending: isSubscriptionPending } = useToggleSubscription();
+  const { mutate: subscribeToPublication, isPending: isSubscribing } = useSubscribeToPublication();
+  const { mutate: unsubscribeFromPublication, isPending: isUnsubscribing } = useUnsubscribeFromPublication();
 
   const {data:publications} = useGetMyPublications();
   const [showPublicationModal, setShowPublicationModal] = useState(false);
  
   const {data} = useGetSavedReposts();
 
-  // Use the subscription status hook for cleaner subscription checking
-  const { 
-    isSubscribed, 
-    isLoading: isSubscriptionLoading, 
-    error: subscriptionError
-  } = useSubscriptionStatus(article?.publication_id || "");
+  // Get subscription status from API
+  const { data: subscriptionStatusData } = useGetPublicationSubscriptionStatus(article?.publication_id || "");
   const {data: publication} = useGetPublicationById(article?.publication_id || "");
+  
+  // Use subscription status from API
+  const isSubscribed = subscriptionStatusData?.is_subscribed || false;
+  const isSubscriptionPending = isSubscribing || isUnsubscribing;
 
   // Check if current user is the reposted user
   const isCurrentUserReposted = article?.repost?.repost_user?._id === authUser?.id;
@@ -124,6 +124,9 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
   const { mutate } = useUpdateArticle(); 
 
   const isCurrentAuthorArticle = user?._id === authUser?.id;
+
+  // Check if we're on a stream route - if so, hide publication-related UI
+  const isStreamRoute = location.pathname.includes('/stream');
 
   const handleProfileClick = (username: string) => {
     if (user?._id !== authUser?.id) {
@@ -293,27 +296,30 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
       toast.error("No publication ID available");
       return;
     }
-    if (subscriptionError) {
-      toast.error("Cannot toggle subscription due to loading error");
-      return;
-    }
 
-    const newStatus = isSubscribed ? "unsubscribed" : "subscribed";
-    
-    toggleSubscription(
-      { 
-        id: article.publication_id, 
-      },
-      {
+    if (isSubscribed) {
+      // Unsubscribe
+      unsubscribeFromPublication(article.publication_id, {
         onSuccess: () => {
-          toast.success(
-            newStatus === "subscribed" 
-              ? "Successfully subscribed to publication!" 
-              : "Successfully unsubscribed from publication!"
-          );
+          toast.success("Successfully unsubscribed from publication!");
         },
-      }
-    );
+        onError: (error) => {
+          console.error('Unsubscribe failed:', error);
+          toast.error("Failed to unsubscribe from publication");
+        }
+      });
+    } else {
+      // Subscribe
+      subscribeToPublication(article.publication_id, {
+        onSuccess: () => {
+          toast.success("Successfully subscribed to publication!");
+        },
+        onError: (error) => {
+          console.error('Subscribe failed:', error);
+          toast.error("Failed to subscribe to publication");
+        }
+      });
+    }
   };
 
   const handleEllipsisClick = () => {
@@ -434,7 +440,7 @@ useEffect(() => {
           <div className="flex-1 ml-3 ">
             <div className=" flex items-center gap-1">
               <div className="lg:flex gap-1 ">
-              {article?.publication_id && (
+              {article?.publication_id && !isStreamRoute && (
                 <div className="text-neutral-50 text-sm">
                 From Stream  <span className="text-neutral-50 font-semibold text-[15px] hover:underline cursor-pointer" onClick={() => navigate(`/stream/${article?.publication_id}`)}>{publication?.title}</span> by </div>
               )} 
@@ -467,7 +473,7 @@ useEffect(() => {
                       ) : (
                         <span
                           className={cn( // Use cn utility for class concatenation
-                            `${article?.publication_id ?'hidden':""} cursor-pointer text-primary-400 hover:underline ml-2 text-sm`,
+                            `${article?.publication_id && !isStreamRoute ?'hidden':""} cursor-pointer text-primary-400 hover:underline ml-2 text-sm`,
                             !isLoggedIn ? "pointer-events-none opacity-50" : "", // Grey out if not logged in
                             (isFollowPending || isUnfollowPending) ? "opacity-70" : "" // Subtle dim for pending
                           )}
@@ -482,24 +488,21 @@ useEffect(() => {
                 </div>
               )}
 
-              {article?.publication_id && (
+              {article?.publication_id && !isStreamRoute && (
                 <button
                   onClick={handleSubscriptionToggle}
-                  disabled={isSubscriptionPending || isSubscriptionLoading || !!subscriptionError}
+                  disabled={isSubscriptionPending}
                   className={cn(
                     "text-primary-400 hover:underline ml-2 text-sm cursor-pointer transition-colors",
-                    (isSubscriptionPending || isSubscriptionLoading || !!subscriptionError) ? "opacity-50 cursor-not-allowed" : "",
+                    isSubscriptionPending ? "opacity-50 cursor-not-allowed" : "",
                     isSubscribed ? "text-green-400" : "text-primary-400"
                   )}
-                  title={subscriptionError ? "Error loading subscription status" : ""}
                 >
-                  {(isSubscriptionPending || isSubscriptionLoading) ? (
+                  {isSubscriptionPending ? (
                     <>
                       <LuLoader className="animate-spin size-3 inline-block mr-1" />
-                      {isSubscriptionLoading ? "Loading..." : (isSubscribed ? "Unsubscribing..." : "Subscribing...")}
+                      {isSubscribing ? "Subscribing..." : "Unsubscribing..."}
                     </>
-                  ) : subscriptionError ? (
-                    "Error"
                   ) : (
                     isSubscribed ? " " : "Subscribe"
                   )}

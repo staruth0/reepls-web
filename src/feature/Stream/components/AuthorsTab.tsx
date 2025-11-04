@@ -1,117 +1,105 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Publication } from '../../../models/datamodels';
-import { LuUserPlus } from 'react-icons/lu';
-import AddAuthorModal from './AddAuthorModal';
-import AuthorCard from './AuthorCard';
-import { useGetCollaborators, useRemoveCollaborator } from '../Hooks';
-import { useUser } from '../../../hooks/useUser';
-
-interface Collaborator {
-  _id: string;
-  collaborator_id: string;
-  username: string;
-  name: string | null;
-  bio: string | null;
-  permission: string;
-  role: string;
-  is_verified_writer: boolean;
-  joinedAt: string;
-}
+import { LuBadgeCheck } from 'react-icons/lu';
+import { useGetPublicationAuthor } from '../Hooks';
 
 interface AuthorsTabProps {
   stream: Publication;
 }
 
 const AuthorsTab: React.FC<AuthorsTabProps> = ({ stream }) => {
-  const [isAddAuthorModalOpen, setIsAddAuthorModalOpen] = useState(false);
-  const { data: collaboratorsData, isLoading, error, refetch } = useGetCollaborators(stream._id || '');
-  const removeCollaboratorMutation = useRemoveCollaborator();
+  // Get publication author
+  const { data: authorData, isLoading, error } = useGetPublicationAuthor(stream._id || '');
 
-  const {authUser} = useUser()
+  console.log('Author data:', authorData);
 
-  console.log('Collaborators data:', collaboratorsData);
+  const author = authorData?.author;
 
-  const collaborators = collaboratorsData?.collaborators || [];
-
-  const handleRemoveCollaborator = async (collaboratorId: string) => {
-    try {
-      await removeCollaboratorMutation.mutateAsync({
-        publicationId: stream.id || stream._id || '',
-        collaboratorId: collaboratorId
-      });
-      // Refetch collaborators after successful removal
-      refetch();
-    } catch (error) {
-      console.error('Error removing collaborator:', error);
-    }
+  const getInitials = (name: string) => {
+    if (!name) return 'U';
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
-  const handleChangeAccessRights = (collaboratorId: string) => {
-    // TODO: Implement change access rights functionality
-    console.log('Change access rights for collaborator:', collaboratorId);
-  };
+  if (isLoading) {
+    return (
+      <div className="pb-10 space-y-6">
+        <div className="bg-neutral-800 rounded-lg p-6 animate-pulse">
+          <div className="flex items-start gap-4">
+            <div className="w-16 h-16 bg-neutral-700 rounded-full"></div>
+            <div className="flex-1">
+              <div className="h-4 bg-neutral-700 rounded w-1/3 mb-2"></div>
+              <div className="h-3 bg-neutral-700 rounded w-1/2 mb-4"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  const isCurrentAuthorstream = authUser?.id === stream?.owner_id;
+  if (error || !author) {
+    return (
+      <div className="pb-10 space-y-6">
+        <div className="bg-neutral-800 rounded-lg p-6">
+          <div className="flex items-center justify-center py-8">
+            <div className="text-neutral-400 text-center">
+              <p>Error loading author</p>
+              <p className="text-sm mt-1">Unable to load author information</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const displayName = author?.name || author?.username || 'Unknown';
+  const displayBio = author?.bio || 'No bio available';
+  const profilePicture = author?.profile_picture;
+  const isVerified = author?.is_verified_writer || false;
 
   return (
     <div className="pb-10 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-center">
-      
-        {isCurrentAuthorstream && (
-          <div
-          onClick={() => setIsAddAuthorModalOpen(true)}
-          className="text-primary-400 cursor-pointer hover:text-primary-500 transition-colors text-sm"
-        >
-          <LuUserPlus className="w-4 h-4 inline mr-2" />
-          Add Author
+      <div className="bg-neutral-800 rounded-lg p-6 hover:bg-neutral-750 transition-colors">
+        <div className="flex items-start gap-4">
+          {/* Profile Picture */}
+          <div className="relative flex-shrink-0">
+            {profilePicture ? (
+              <img
+                src={profilePicture}
+                alt={displayName}
+                className="w-16 h-16 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-primary-400 flex items-center justify-center text-white font-semibold text-lg">
+                {getInitials(displayName)}
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
-      {/* Authors List */}
-      <div className="space-y-4">
-        {isLoading ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="text-neutral-400">Loading collaborators...</div>
-          </div>
-        ) : error ? (
-          <div className="flex flex-col items-center justify-center py-8 gap-4">
-            <div className="text-red-400 text-center">Error loading collaborators</div>
-            <button
-              onClick={() => refetch()}
-              className="bg-primary-400 text-white px-4 py-2 rounded-full hover:bg-primary-500 transition-colors"
-            >
-              Retry
-            </button>
-          </div>
-        ) : collaborators.length === 0 ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="text-neutral-400 text-center">
-              <p>No collaborators yet</p>
-              <p className="text-sm mt-1">Add authors to start collaborating</p>
+          {/* Author Info */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-2">
+              <h4 className="text-lg font-semibold text-neutral-50 truncate">{displayName}</h4>
+              {isVerified && (
+                <LuBadgeCheck className="w-4 h-4 text-primary-400 flex-shrink-0" />
+              )}
             </div>
+            
+            <p className="text-neutral-300 text-sm mb-2">@{author?.username}</p>
+            <p className="text-neutral-200 text-sm mb-2 line-clamp-2">{displayBio}</p>
+            
+            {author?.address && (
+              <div className="flex items-center gap-2 text-xs text-neutral-400 mt-2">
+                <span>📍 {author.address}</span>
+              </div>
+            )}
           </div>
-        ) : (
-          collaborators.map((collaborator: Collaborator) => (
-            <AuthorCard
-              key={collaborator._id}
-              collaborator={collaborator}
-              onRemoveCollaborator={handleRemoveCollaborator}
-              onChangeAccessRights={handleChangeAccessRights}
-              isOwner={collaborator.role === 'owner'}
-              isRemoving={removeCollaboratorMutation.isPending}
-            />
-          ))
-        )}
+        </div>
       </div>
-
-      {/* Add Author Modal */}
-      <AddAuthorModal
-        isOpen={isAddAuthorModalOpen}
-        onClose={() => setIsAddAuthorModalOpen(false)}
-        streamId={stream._id || stream.id || ''}
-      />
     </div>
   );
 };
