@@ -38,17 +38,28 @@ const ArticleTab: React.FC<streamprops> = ({stream}) => {
     );
   }
 
-  // Extract articles from the response data
-  const articles = articlesData?.data || [];
+  // Extract articles from the response data with null safety
+  const articles = Array.isArray(articlesData?.data) ? articlesData.data : [];
+
+  // Check if articles array is empty
+  const hasArticles = articles && articles.length > 0;
 
   return (
     <div className="pb-10 space-y-6">
-      {(articles?.length || 0) === 0 ? (
+      {!hasArticles ? (
         <div className="text-center py-8 text-gray-500">No articles found for this publication</div>
       ) : (
-        (articles || []).map((article:Article) => (
-          <ArticleNormal key={article._id || article.id || Math.random()} article={article} />
-        ))
+        articles
+          .filter((article: Article) => article && (article._id || article.id)) // Filter out null/undefined articles and articles without IDs
+          .map((article: Article) => {
+            const articleId = article._id || article.id;
+            return (
+              <ArticleNormal 
+                key={articleId} 
+                article={article} 
+              />
+            );
+          })
       )}
     </div>
   );

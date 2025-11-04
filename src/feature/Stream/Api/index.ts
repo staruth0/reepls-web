@@ -137,6 +137,36 @@ const getAllUserPublications = async () => {
   return data;
 };
 
+// 24. Subscribe to publication
+const subscribeToPublication = async (publicationId: string) => {
+  const { data } = await apiClient.post(`/publications/${publicationId}/subscribe-only`);
+  return data;
+};
+
+// 25. Unsubscribe from publication
+const unsubscribeFromPublication = async (publicationId: string) => {
+  const { data } = await apiClient.delete(`/publications/${publicationId}/unsubscribe`);
+  return data;
+};
+
+// 26. Get my subscriptions
+const getMySubscriptions = async () => {
+  const { data } = await apiClient.get(`/publications/me/subscriptions`);
+  return data;
+};
+
+// 27. Get publication subscription status
+const getPublicationSubscriptionStatus = async (publicationId: string) => {
+  const { data } = await apiClient.get(`/publications/${publicationId}/subscription-status`);
+  return data;
+};
+
+// 28. Get publication author
+const getPublicationAuthor = async (publicationId: string) => {
+  const { data } = await apiClient.get(`/publications/${publicationId}/author`);
+  return data;
+};
+
 export {
   getPublicationById,
   createPublication,
@@ -160,4 +190,9 @@ export {
   getPublicationMedia,
   getPublicationArticles,
   getAllUserPublications,
+  subscribeToPublication,
+  unsubscribeFromPublication,
+  getMySubscriptions,
+  getPublicationSubscriptionStatus,
+  getPublicationAuthor,
 };

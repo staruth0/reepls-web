@@ -22,6 +22,11 @@ import {
   getPublicationMedia,
   getPublicationArticles,
   getAllUserPublications,
+  subscribeToPublication,
+  unsubscribeFromPublication,
+  getMySubscriptions,
+  getPublicationSubscriptionStatus,
+  getPublicationAuthor,
 } from "../Api/";
 import { Article, Publication } from "../../../models/datamodels";
 
@@ -351,6 +356,68 @@ export const useGetAllUserPublications = () => {
   return useQuery({
     queryKey: ["allUserPublications"],
     queryFn: () => getAllUserPublications(),
+  });
+};
+
+// Subscribe to publication
+export const useSubscribeToPublication = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (publicationId: string) => subscribeToPublication(publicationId),
+    onSuccess: () => {
+      // Invalidate subscription-related queries
+      queryClient.invalidateQueries({ queryKey: ["userSubscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ["publication"] });
+      queryClient.invalidateQueries({ queryKey: ["publicationSubscribers"] });
+      queryClient.invalidateQueries({ queryKey: ["suggestedPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["mySubscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ["subscriptionStatus"] });
+    },
+  });
+};
+
+// Unsubscribe from publication
+export const useUnsubscribeFromPublication = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (publicationId: string) => unsubscribeFromPublication(publicationId),
+    onSuccess: () => {
+      // Invalidate subscription-related queries
+      queryClient.invalidateQueries({ queryKey: ["userSubscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ["publication"] });
+      queryClient.invalidateQueries({ queryKey: ["publicationSubscribers"] });
+      queryClient.invalidateQueries({ queryKey: ["suggestedPublications"] });
+      queryClient.invalidateQueries({ queryKey: ["mySubscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ["subscriptionStatus"] });
+    },
+  });
+};
+
+// Get my subscriptions
+export const useGetMySubscriptions = () => {
+  return useQuery({
+    queryKey: ["mySubscriptions"],
+    queryFn: () => getMySubscriptions(),
+  });
+};
+
+// Get publication subscription status
+export const useGetPublicationSubscriptionStatus = (publicationId: string) => {
+  return useQuery({
+    queryKey: ["subscriptionStatus", publicationId],
+    queryFn: () => getPublicationSubscriptionStatus(publicationId),
+    enabled: !!publicationId,
+  });
+};
+
+// Get publication author
+export const useGetPublicationAuthor = (publicationId: string) => {
+  return useQuery({
+    queryKey: ["publicationAuthor", publicationId],
+    queryFn: () => getPublicationAuthor(publicationId),
+    enabled: !!publicationId,
   });
 };
 
