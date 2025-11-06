@@ -90,6 +90,7 @@ const PostModal = ({
   const [showTagsModal, setShowTagsModal] = useState<boolean>(false);
   const [isAutoSaved, setIsAutoSaved] = useState<boolean>(false);
   const [lastSavedTime, setLastSavedTime] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const { theme } = useTheme();
   const { t } = useTranslation();
@@ -197,6 +198,12 @@ const PostModal = ({
   const handlePostClick = () => {
     if (handleActionBlocked('post')) return;
     
+    // Prevent multiple submissions
+    if (isSubmitting || isPending) return;
+    
+    // Set submitting state immediately to prevent multiple clicks
+    setIsSubmitting(true);
+    
     // Clear localStorage when post is published
     clearDraftFromLocalStorage();
     
@@ -282,6 +289,20 @@ const PostModal = ({
       }
     };
   }, []);
+
+  // Reset submitting state when pending becomes false (submission completed)
+  useEffect(() => {
+    if (!isPending && isSubmitting) {
+      setIsSubmitting(false);
+    }
+  }, [isPending, isSubmitting]);
+
+  // Reset submitting state when modal closes
+  useEffect(() => {
+    if (!isModalOpen) {
+      setIsSubmitting(false);
+    }
+  }, [isModalOpen]);
 
   // const highlightedHtml = postContent ? buildHighlightedHtml(postContent) : '';
   const placeholderText = isLoggedIn ? t("What's on your mind ?") : t('Sign in to post');
@@ -588,29 +609,28 @@ const PostModal = ({
             {/* Publish / Post Button */}
             <div className="flex justify-center mt-4">
               <button
-  className={cn(
-    'py-2 px-10 rounded-full font-semibold transition-all duration-300',
-    charCount === 0 || charCount > CHAR_LIMIT
-      ? 'border-2 border-neutral-400 text-neutral-300 cursor-not-allowed bg-neutral-600'
-      : isButtonGreen
-      ? 'border-2 border-primary-400 bg-primary-400 text-white cursor-pointer'
-      : canPost
-      ? 'border-2 border-primary-400 text-neutral-50 hover:bg-primary-400 hover:text-white cursor-pointer'
-      : 'border-2 border-neutral-400 text-neutral-300 cursor-not-allowed'
-  )}
-  onClick={handlePostClick}
-  disabled={charCount === 0 || charCount > CHAR_LIMIT} // disables when empty or over limit
->
-  {isPending ? (
-    <LuLoader className="animate-spin inline-block mr-2" />
-  ) : (
-    <>
-      <span className="block">{t('Publish')}</span>
-    
-    </>
-  )}
-</button>
-
+                className={cn(
+                  'py-2 px-10 rounded-full font-semibold transition-all duration-300',
+                  charCount === 0 || charCount > CHAR_LIMIT || isSubmitting || isPending
+                    ? 'border-2 border-neutral-400 text-neutral-300 cursor-not-allowed bg-neutral-600'
+                    : isButtonGreen
+                    ? 'border-2 border-primary-400 bg-primary-400 text-white cursor-pointer'
+                    : canPost
+                    ? 'border-2 border-primary-400 text-neutral-50 hover:bg-primary-400 hover:text-white cursor-pointer'
+                    : 'border-2 border-neutral-400 text-neutral-300 cursor-not-allowed'
+                )}
+                onClick={handlePostClick}
+                disabled={charCount === 0 || charCount > CHAR_LIMIT || isSubmitting || isPending}
+              >
+                {isSubmitting || isPending ? (
+                  <>
+                    <LuLoader className="animate-spin inline-block mr-2" />
+                    <span className="block">{t('Publishing')}...</span>
+                  </>
+                ) : (
+                  <span className="block">{t('Publish')}</span>
+                )}
+              </button>
             </div>
           </DialogPanel>
         </div>

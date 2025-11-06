@@ -294,7 +294,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-[3000] flex items-start sm:items-center justify-start sm:justify-center p-4"
+            className="fixed inset-0 z-[9999] flex items-start sm:items-center justify-start sm:justify-center p-4"
             variants={overlayVariants}
             initial="hidden"
             animate="visible"
@@ -306,14 +306,14 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
 
             {/* Modal */}
             <motion.div
-              className="relative w-full max-w-2xl max-h-[90vh] bg-background rounded-xl shadow-2xl overflow-hidden sm:mx-auto lg:mx-0"
+              className="relative w-full max-w-2xl h-[90vh] sm:h-auto sm:max-h-[90vh] bg-background rounded-xl shadow-2xl overflow-hidden sm:mx-auto lg:mx-0 flex flex-col"
               variants={modalVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-4 border-b border-neutral-400">
+              <div className="flex items-center justify-between p-4 border-b border-neutral-400 flex-shrink-0">
                 <h2 className="text-lg font-semibold text-foreground">
                   {isEditMode ? 'Edit Commentary' : 'Republish'}
                 </h2>
@@ -326,7 +326,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
               </div>
 
               {/* Scrollable Content */}
-              <div className="overflow-y-auto max-h-[calc(90vh-140px)]">
+              <div className="overflow-y-auto flex-1 min-h-0">
                 {/* Thoughts Section */}
                 <div className="p-4 border-b border-neutral-400">
                   <label htmlFor="thoughts" className="block text-sm font-medium text-neutral-50 mb-2">
@@ -419,7 +419,7 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
               </div>
 
               {/* Footer */}
-              <div className="p-4 border-t border-neutral-400 bg-neutral-700">
+              <div className="p-4 border-t border-neutral-400 bg-neutral-700 flex-shrink-0">
                 <div className="flex items-center justify-end space-x-3">
                   <button
                     onClick={onClose}

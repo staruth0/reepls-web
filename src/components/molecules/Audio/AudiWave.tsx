@@ -1,20 +1,30 @@
 // Create a new file called AudioWave.tsx
-import React from "react";
+import React, { useMemo } from "react";
 
 interface AudioWaveProps {
   isPlaying: boolean;
   barCount?: number;
 }
 
-const AudioWave: React.FC<AudioWaveProps> = ({ isPlaying, barCount = 60 }) => {
-  const bars = Array.from({ length: barCount }, (_, i) => i);
+const AudioWave: React.FC<AudioWaveProps> = ({ isPlaying, barCount }) => {
+  // Responsive bar count based on screen size
+  const responsiveBarCount = useMemo(() => {
+    if (barCount) return barCount;
+    // Default to 60 on larger screens, fewer on smaller screens
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 640 ? 90 : window.innerWidth < 1024 ? 90 : 90;
+    }
+    return 60;
+  }, [barCount]);
+
+  const bars = Array.from({ length: responsiveBarCount }, (_, i) => i);
 
   return (
-    <div className="flex items-end h-6 gap-1">
+    <div className="flex items-end h-6 gap-0.5 sm:gap-1 min-w-0 w-full">
       {bars.map((_, index) => (
         <div
           key={index}
-          className={`w-full bg-primary-400 rounded-full ${
+          className={`flex-shrink-0 min-w-[2px] bg-primary-400 rounded-full ${
             isPlaying
               ? `animate-audio-wave-${index % 2 === 0 ? "even" : "odd"}`
               : "h-1"
