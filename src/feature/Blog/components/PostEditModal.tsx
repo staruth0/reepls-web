@@ -46,6 +46,7 @@ const PostEditModal = ({
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [tags, setTags] = useState<string[]>([]);
   const [showTagsModal, setShowTagsModal] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const { theme } = useTheme();
   const { t } = useTranslation();
@@ -94,6 +95,20 @@ const PostEditModal = ({
       ta.removeEventListener('touchmove', onScroll);
     };
   }, []);
+
+  // Reset submitting state when pending becomes false (submission completed)
+  useEffect(() => {
+    if (!isPending && isSubmitting) {
+      setIsSubmitting(false);
+    }
+  }, [isPending, isSubmitting]);
+
+  // Reset submitting state when modal closes
+  useEffect(() => {
+    if (!isModalOpen) {
+      setIsSubmitting(false);
+    }
+  }, [isModalOpen]);
 
   const escapeHtml = (str: string) =>
     str
@@ -155,12 +170,19 @@ const PostEditModal = ({
   const handleUpdatePost = async () => {
     if (handleActionBlocked('update post')) return;
 
+    // Prevent multiple submissions
+    if (isSubmitting || isPending) return;
+
+    // Set submitting state immediately to prevent multiple clicks
+    setIsSubmitting(true);
+
     const images: MediaItem[] = [];
     const videos: MediaItem[] = [];
     const userId = article?.author_id?._id;
 
     if (!userId) {
       toast.error('User ID not found');
+      setIsSubmitting(false);
       return;
     }
 
@@ -170,6 +192,7 @@ const PostEditModal = ({
         images.push({ url, type: MediaType.Image });
       } catch (error) {
         toast.error('Failed to upload image');
+        setIsSubmitting(false);
         return;
       }
     }
@@ -180,6 +203,7 @@ const PostEditModal = ({
         videos.push({ url, type: MediaType.Video });
       } catch (error) {
         toast.error('Failed to upload video');
+        setIsSubmitting(false);
         return;
       }
     }
@@ -204,10 +228,12 @@ const PostEditModal = ({
     updateArticle(updatedPostData, {
       onSuccess: () => {
         toast.success('Post updated successfully');
+        setIsSubmitting(false);
         setIsModalOpen(false);
       },
       onError: (error: any) => {
         toast.error('Error updating post: ' + (error?.response?.data?.message || error?.message));
+        setIsSubmitting(false);
       },
     });
   };
@@ -535,7 +561,7 @@ const PostEditModal = ({
                   <button
                     className={cn(
                       'py-2 px-10 rounded-full font-semibold transition-all duration-300',
-                      postContent.length === 0 || postContent.length > SHORT_POST_LENGTH
+                      postContent.length === 0 || postContent.length > SHORT_POST_LENGTH || isSubmitting || isPending
                         ? 'border-2 border-neutral-400 text-neutral-300 cursor-not-allowed bg-neutral-600'
                         : postContent.length >= 1000
                         ? 'border-2 border-primary-400 bg-primary-400 text-white cursor-pointer'
@@ -544,10 +570,13 @@ const PostEditModal = ({
                         : 'border-2 border-neutral-400 text-neutral-300 cursor-not-allowed'
                     )}
                     onClick={handleUpdatePost}
-                    disabled={postContent.length === 0 || postContent.length > SHORT_POST_LENGTH || isPending}
+                    disabled={postContent.length === 0 || postContent.length > SHORT_POST_LENGTH || isSubmitting || isPending}
                   >
-                    {isPending ? (
-                      <LuLoader className="animate-spin inline-block mr-2" />
+                    {isSubmitting || isPending ? (
+                      <>
+                        <LuLoader className="animate-spin inline-block mr-2" />
+                        <span className="block">{t('Updating')}...</span>
+                      </>
                     ) : (
                       <>
                         <span className="block md:hidden">{t('Update')}</span>

@@ -176,6 +176,21 @@ const ArticleViewBySlug: React.FC = () => {
   // Podcast fetch and audio controls only if article has podcast
   const { data: podcastData } = useGetPodcastById(article?.podcastId || "");
   const podcast = podcastData?.data;
+  
+  // Format duration helper function
+  const formatDuration = useCallback((seconds?: number): string => {
+    if (!seconds || isNaN(seconds)) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  }, []);
+  
+  // Memoized podcast duration
+  const memoizedPodcastDuration = useMemo(() => 
+    formatDuration(podcast?.audio?.duration),
+    [podcast?.audio?.duration, formatDuration]
+  );
+  
   const {
     isPlaying,
     togglePlay,
@@ -603,7 +618,7 @@ const ArticleViewBySlug: React.FC = () => {
             <div className="my-4 w-full">
               {article?.hasPodcast && podcast ? (
                 // Podcast player UI
-                <div className="flex items-center gap-3 my-4 p-3 bg-neutral-800 rounded-lg">
+                <div className="flex items-center gap-2 sm:gap-3 my-4 p-3 bg-neutral-800 rounded-lg">
                   <button
                     onClick={togglePlay}
                     className="p-2 rounded-full bg-main-green hover:bg-green-600 flex-shrink-0"
@@ -616,11 +631,11 @@ const ArticleViewBySlug: React.FC = () => {
                     )}
                   </button>
 
-                  <div className="flex-grow w-full">
+                  <div className="flex-grow min-w-0 overflow-hidden">
                     <AudioWave isPlaying={currentTrack?.id === podcast?.id && isPlaying} />
                   </div>
 
-                  <span className="text-xs text-neutral-400">{podcast?.duration || "0:00"}</span>
+                  <span className="text-xs text-neutral-400 flex-shrink-0">{memoizedPodcastDuration}</span>
                 </div>
               ) : !isPreview && article ? (
                 // Show TTS controls if article exists and not a preview

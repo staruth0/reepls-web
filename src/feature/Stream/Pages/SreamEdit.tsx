@@ -1,16 +1,230 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { t } from "i18next";
+import { ImagePlus, Loader2 } from "lucide-react";
 import Topbar from "../../../components/atoms/Topbar/Topbar";
 import StreamSidebar from "../components/StreamSidebar";
-import { ImagePlus } from "lucide-react";
 import { useGetPublicationById, useEditPublication } from "../Hooks";
 import { useUser } from "../../../hooks/useUser";
-import { uploadUserProfile,uploadUserBanner } from "../../../utils/media";
+import { uploadUserProfile, uploadUserBanner } from "../../../utils/media";
 
-const topicsList = ['politics', 'education', 'tech', 'art', 'data', 'history', 'international affairs', 'agriculture', 'science', 'health', 'business'];
+// Constants
+const TOPICS_LIST = [
+  'politics',
+  'education',
+  'tech',
+  'art',
+  'data',
+  'history',
+  'international affairs',
+  'agriculture',
+  'science',
+  'health',
+  'business'
+] as const;
 
+const MAX_SHORT_DESCRIPTION = 250;
+const MAX_DESCRIPTION = 750;
+
+// Types
+interface FormErrors {
+  name?: string;
+  shortDescription?: string;
+  description?: string;
+}
+
+interface FormData {
+  name: string;
+  shortDescription: string;
+  description: string;
+  topics: string[];
+  customTopic: string;
+  coverImg: string | undefined;
+  bannerImg: string | undefined;
+}
+
+// Image Upload Component
+interface ImageUploadProps {
+  imageUrl?: string;
+  onChange: (file: File) => void;
+  isUploading?: boolean;
+  label: string;
+  required?: boolean;
+  className?: string;
+  shape?: 'rectangular' | 'circular';
+}
+
+const ImageUpload: React.FC<ImageUploadProps> = ({
+  imageUrl,
+  onChange,
+  isUploading = false,
+  label,
+  required = false,
+  className = "",
+  shape = 'rectangular'
+}) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error(t("Please select a valid image file"));
+        return;
+      }
+      onChange(file);
+    }
+    // Reset input value to allow selecting the same file again
+    event.target.value = '';
+  };
+
+  const isCircular = shape === 'circular';
+  const baseClasses = isCircular
+    ? "relative w-36 h-36 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 text-sm border-4 border-white cursor-pointer hover:bg-neutral-200 transition-colors"
+    : "relative w-full h-full cursor-pointer hover:bg-neutral-300 transition-colors";
+
+  return (
+    <div className={`${baseClasses} ${className}`}>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+        disabled={isUploading}
+        aria-label={label}
+      />
+      {isUploading ? (
+        <div className="flex flex-col items-center justify-center w-full h-full">
+          <Loader2 className="w-6 h-6 animate-spin text-primary-400" />
+          <span className="text-xs mt-2 text-neutral-400">Uploading...</span>
+        </div>
+      ) : imageUrl ? (
+        <>
+          <img
+            src={imageUrl}
+            alt={label}
+            className={`w-full h-full ${isCircular ? 'rounded-full' : ''} object-cover`}
+          />
+          {!isCircular && (
+            <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all flex items-center justify-center pointer-events-none">
+              <div className="text-white opacity-0 hover:opacity-100 transition-opacity flex items-center">
+                <ImagePlus className="w-6 h-6 mr-2" />
+                <span className="text-sm">Change {label.toLowerCase()}</span>
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        <div className={`flex ${isCircular ? 'flex-col' : 'items-center justify-center'} w-full h-full text-neutral-400 text-sm`}>
+          <ImagePlus className={`w-6 h-6 ${isCircular ? 'mb-1' : 'mr-2'}`} />
+          {isCircular ? (
+            <>
+              <span className="text-xs">
+                {label} {required && <span className="text-red-500">*</span>}
+              </span>
+            </>
+          ) : (
+            <span>Upload {label.toLowerCase()}</span>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Form Field Component
+interface FormFieldProps {
+  label: string;
+  required?: boolean;
+  error?: string;
+  children: React.ReactNode;
+  className?: string;
+}
+
+const FormField: React.FC<FormFieldProps> = ({
+  label,
+  required = false,
+  error,
+  children,
+  className = ""
+}) => {
+  return (
+    <div className={`w-full ${className}`}>
+      <label className="block text-neutral-100 mb-2 text-sm font-medium">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      <div
+        className={`p-3 border rounded-md transition-colors ${
+          error ? "border-red-500 focus-within:border-red-600" : "border-neutral-300 focus-within:border-primary-400"
+        }`}
+      >
+        {children}
+      </div>
+      {error && (
+        <p className="text-red-500 text-sm mt-1.5" role="alert">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+};
+
+// Topic Selector Component
+interface TopicSelectorProps {
+  topics: string[];
+  customTopic: string;
+  onTopicToggle: (topic: string) => void;
+  onCustomTopicChange: (value: string) => void;
+}
+
+const TopicSelector: React.FC<TopicSelectorProps> = ({
+  topics,
+  customTopic,
+  onTopicToggle,
+  onCustomTopicChange
+}) => {
+  return (
+    <div className="space-y-4">
+      <label className="block text-neutral-100 mb-3 text-sm font-medium">
+        What will you Write About?
+      </label>
+      <div className="flex flex-wrap gap-2">
+        {TOPICS_LIST.map((topic) => (
+          <button
+            key={topic}
+            type="button"
+            onClick={() => onTopicToggle(topic)}
+            className={`px-4 py-2 rounded-full border transition-all ${
+              topics.includes(topic)
+                ? 'bg-primary-500 text-white border-primary-500 hover:bg-primary-600'
+                : 'border-neutral-200 text-neutral-200 hover:border-primary-400 hover:text-primary-400'
+            }`}
+            aria-pressed={topics.includes(topic)}
+          >
+            {topic}
+          </button>
+        ))}
+      </div>
+      {topics.length === 0 && (
+        <div className="mt-6">
+          <h4 className="text-neutral-100 text-sm mb-2 font-medium">Some other topic?</h4>
+          <div className="flex items-center p-3 border-b border-neutral-300 focus-within:border-primary-400 transition-colors">
+            <span className="text-neutral-400 mr-2 font-bold text-xl">#</span>
+            <input
+              type="text"
+              className="w-full bg-transparent text-neutral-50 placeholder-neutral-400 outline-none"
+              placeholder="Enter your custom topic"
+              value={customTopic}
+              onChange={(e) => onCustomTopicChange(e.target.value)}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Main Component
 const StreamEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -18,172 +232,222 @@ const StreamEdit: React.FC = () => {
   const { mutate: editPublication, isPending: isUpdating } = useEditPublication();
   const { authUser } = useUser();
 
-  // Local state for the form values and errors
-  const [name, setName] = useState("");
-  const [shortDescription, setShortDescription] = useState("");
-  const [description, setDescription] = useState("");
-  const [topics, setTopics] = useState<string[]>([]);
-  const [customTopic, setCustomTopic] = useState("");
-  const [coverImg, setCoverImg] = useState<string | undefined>(undefined);
-  const [bannerImg, setBannerImg] = useState<string | undefined>(undefined);
-  const [errors, setErrors] = useState<{ name?: string; shortDescription?: string; description?: string }>({});
+  // Form state
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    shortDescription: "",
+    description: "",
+    topics: [],
+    customTopic: "",
+    coverImg: undefined,
+    bannerImg: undefined,
+  });
+
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [isUploadingBanner, setIsUploadingBanner] = useState(false);
 
   // Load data when streamData is available
   useEffect(() => {
     if (streamData) {
-      console.log('Stream data received:', streamData);
-      setName(streamData.title || '');
-      setShortDescription(streamData.short_description || '');
-      setDescription(streamData.description || '');
-      setTopics(streamData.tags || []);
-      setCoverImg(streamData.cover_image || undefined);
-      setBannerImg(streamData.banner_image || undefined);
+      setFormData({
+        name: streamData.title || '',
+        shortDescription: streamData.short_description || '',
+        description: streamData.description || '',
+        topics: streamData.tags || [],
+        customTopic: '',
+        coverImg: streamData.cover_image || undefined,
+        bannerImg: streamData.banner_image || undefined,
+      });
     }
   }, [streamData]);
 
-  const validate = () => {
-    const newErrors: { name?: string; shortDescription?: string; description?: string } = {};
-    if (name.trim() === "") newErrors.name = "Stream name is required.";
-    if (shortDescription.trim() === "") newErrors.shortDescription = "Short description is required.";
-    if (shortDescription.length > 250) newErrors.shortDescription = "Short description should not exceed 250 characters.";
-    if (description.length > 750) newErrors.description = "Description should not exceed 750 characters.";
+  // Validation
+  const validate = useCallback((): FormErrors => {
+    const newErrors: FormErrors = {};
+    
+    if (formData.name.trim() === "") {
+      newErrors.name = t("Stream name is required");
+    }
+    
+    if (formData.shortDescription.trim() === "") {
+      newErrors.shortDescription = t("Short description is required");
+    } else if (formData.shortDescription.length > MAX_SHORT_DESCRIPTION) {
+      newErrors.shortDescription = t("Short description should not exceed {{count}} characters", { count: MAX_SHORT_DESCRIPTION });
+    }
+    
+    if (formData.description.length > MAX_DESCRIPTION) {
+      newErrors.description = t("Description should not exceed {{count}} characters", { count: MAX_DESCRIPTION });
+    }
+    
     return newErrors;
-  };
+  }, [formData]);
 
-  const handleCoverImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Show preview immediately
-      const reader = new FileReader();
-      reader.onload = (e) => setCoverImg(e.target?.result as string);
-      reader.readAsDataURL(file);
-      
-      // Upload the image
-      submitCoverImage(file)
-        .then((data) => {
-          setCoverImg(data);
-          toast.success("Success uploading image, now save the changes please");
-        })
-        .catch(() => {
-          toast.error(t("Failed to update cover image"));
-        });
-    }
-  };
-  const handleBannerImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Show preview immediately
-      const reader = new FileReader();
-      reader.onload = (e) => setBannerImg(e.target?.result as string);
-      reader.readAsDataURL(file);
-      
-      // Upload the image
-      submitBannerImage(file)
-        .then((data) => {
-          setBannerImg(data);
-          toast.success("Success uploading image, now save the changes please");
-        })
-        .catch(() => {
-          toast.error(t("Failed to update banner image"));
-        });
-    }
-  };
-
-  const submitCoverImage = async (file: File) => {
+  // Image upload handlers
+  const handleCoverImageChange = useCallback(async (file: File) => {
     if (!authUser?.id) {
       toast.error(t("You must be logged in to upload a cover image"));
       return;
     }
-    const url = await uploadUserProfile(file);
-    setCoverImg(url);
-    return url;
-  };
 
-  console.log('coverImg', bannerImg);
+    setIsUploadingCover(true);
+    
+    try {
+      // Show preview immediately
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setFormData(prev => ({ ...prev, coverImg: e.target?.result as string }));
+      };
+      reader.readAsDataURL(file);
 
-  const submitBannerImage = async (file: File) => {
+      // Upload the image
+      const url = await uploadUserProfile(file);
+      setFormData(prev => ({ ...prev, coverImg: url }));
+      toast.success(t("Cover image uploaded successfully. Please save your changes."));
+    } catch (error) {
+      console.error("Error uploading cover image:", error);
+      toast.error(t("Failed to upload cover image. Please try again."));
+      setFormData(prev => ({ ...prev, coverImg: undefined }));
+    } finally {
+      setIsUploadingCover(false);
+    }
+  }, [authUser?.id]);
+
+  const handleBannerImageChange = useCallback(async (file: File) => {
     if (!authUser?.id) {
       toast.error(t("You must be logged in to upload a banner image"));
       return;
     }
-    const url = await uploadUserBanner(file);
-    setBannerImg(url);
-    return url;
-  };
 
-  const handleTopicClick = (topic: string) => {
-    // Clear custom topic when a pre-defined topic is selected
-    if (!topics.includes(topic)) {
-      setCustomTopic("");
+    setIsUploadingBanner(true);
+    
+    try {
+      // Show preview immediately
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setFormData(prev => ({ ...prev, bannerImg: e.target?.result as string }));
+      };
+      reader.readAsDataURL(file);
+
+      // Upload the image
+      const url = await uploadUserBanner(file);
+      setFormData(prev => ({ ...prev, bannerImg: url }));
+      toast.success(t("Banner image uploaded successfully. Please save your changes."));
+    } catch (error) {
+      console.error("Error uploading banner image:", error);
+      toast.error(t("Failed to upload banner image. Please try again."));
+      setFormData(prev => ({ ...prev, bannerImg: undefined }));
+    } finally {
+      setIsUploadingBanner(false);
     }
-    setTopics((prevTopics) =>
-      prevTopics.includes(topic) ? prevTopics.filter((t) => t !== topic) : [...prevTopics, topic]
-    );
-  };
+  }, [authUser?.id]);
 
-  const handleCustomTopicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Clear pre-defined topics when a custom topic is being typed
-    if (topics.length > 0) {
-      setTopics([]);
+  // Topic handlers
+  const handleTopicToggle = useCallback((topic: string) => {
+    setFormData(prev => {
+      const isSelected = prev.topics.includes(topic);
+      const newTopics = isSelected
+        ? prev.topics.filter(t => t !== topic)
+        : [...prev.topics, topic];
+      
+      return {
+        ...prev,
+        topics: newTopics,
+        customTopic: isSelected ? prev.customTopic : "", // Clear custom topic when selecting predefined
+      };
+    });
+  }, []);
+
+  const handleCustomTopicChange = useCallback((value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      customTopic: value,
+      topics: value.trim() !== "" ? [] : prev.topics, // Clear predefined topics when typing custom
+    }));
+  }, []);
+
+  // Form input handlers
+  const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({ ...prev, name: e.target.value }));
+    if (errors.name) {
+      setErrors(prev => ({ ...prev, name: undefined }));
     }
-    setCustomTopic(e.target.value);
-  };
+  }, [errors.name]);
 
+  const handleShortDescriptionChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFormData(prev => ({ ...prev, shortDescription: e.target.value }));
+    if (errors.shortDescription) {
+      setErrors(prev => ({ ...prev, shortDescription: undefined }));
+    }
+  }, [errors.shortDescription]);
 
-  const handleSave = () => {
+  const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFormData(prev => ({ ...prev, description: e.target.value }));
+    if (errors.description) {
+      setErrors(prev => ({ ...prev, description: undefined }));
+    }
+  }, [errors.description]);
+
+  // Save handler
+  const handleSave = useCallback(() => {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      toast.error(t("Please fix the errors before saving"));
       return;
     }
 
     if (!id) {
-      toast.error("Stream ID not found");
+      toast.error(t("Stream ID not found"));
       return;
     }
-    
-    let finalTopics = [...topics];
-    if (topics.length === 0 && customTopic.trim() !== "") {
-      finalTopics = [customTopic.trim()];
+
+    // Determine final topics
+    let finalTopics = [...formData.topics];
+    if (formData.topics.length === 0 && formData.customTopic.trim() !== "") {
+      finalTopics = [formData.customTopic.trim()];
     }
 
     const updateData = {
-      title: name,
-      short_description: shortDescription,
-      cover_image: coverImg || '',
-      ...(bannerImg && { banner_image: bannerImg }),
+      title: formData.name.trim(),
+      short_description: formData.shortDescription.trim(),
+      cover_image: formData.coverImg || '',
+      ...(formData.bannerImg && { banner_image: formData.bannerImg }),
       ...(finalTopics.length > 0 && { tags: finalTopics }),
+      ...(formData.description.trim() && { description: formData.description.trim() }),
     };
-
-    console.log('Update data:', updateData);
 
     editPublication(
       { id, payload: updateData },
       {
         onSuccess: () => {
-          toast.success("Stream updated successfully!");
-          // Navigate to stream detail page
+          toast.success(t("Stream updated successfully!"));
           navigate(`/stream/${id}`);
         },
         onError: (error: Error) => {
           console.error("Error updating stream:", error);
-          const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || "Failed to update stream. Please try again.";
+          const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message 
+            || t("Failed to update stream. Please try again.");
           toast.error(errorMessage);
         },
       }
     );
-  };
+  }, [id, formData, validate, editPublication, navigate]);
 
+  // Loading state
   if (isLoading) {
     return (
       <div className="lg:grid grid-cols-[4fr_1.65fr]">
         <div className="min-h-screen lg:border-r-[1px] border-neutral-500">
           <Topbar>
-            <div>Edit Stream</div>
+            <div>{t("Edit Stream")}</div>
           </Topbar>
           <div className="w-full">
             <div className="p-8">
-              <div className="text-center text-neutral-400">Loading stream data...</div>
+              <div className="text-center text-neutral-400 flex items-center justify-center gap-2">
+                <Loader2 className="w-5 h-5 animate-spin" />
+                {t("Loading stream data...")}
+              </div>
             </div>
           </div>
         </div>
@@ -194,16 +458,19 @@ const StreamEdit: React.FC = () => {
     );
   }
 
+  // Error state
   if (error) {
     return (
       <div className="lg:grid grid-cols-[4fr_1.65fr]">
         <div className="min-h-screen lg:border-r-[1px] border-neutral-500">
           <Topbar>
-            <div>Edit Stream</div>
+            <div>{t("Edit Stream")}</div>
           </Topbar>
           <div className="w-full">
             <div className="p-8">
-              <div className="text-center text-red-400">Error loading stream. Please try again.</div>
+              <div className="text-center text-red-400">
+                {t("Error loading stream. Please try again.")}
+              </div>
             </div>
           </div>
         </div>
@@ -214,193 +481,133 @@ const StreamEdit: React.FC = () => {
     );
   }
 
+  // Main render
   return (
     <div className="lg:grid grid-cols-[4fr_1.65fr]">
       <div className="min-h-screen lg:border-r-[1px] border-neutral-500">
         <Topbar>
-          <div>Edit Stream</div>
+          <div>{t("Edit Stream")}</div>
         </Topbar>
 
         <div className="w-full">
           <div className="p-8">
             <div className="max-w-xl mx-auto space-y-6">
-              {/* Banner and Profile Upload Section */}
-              <div className=" w-full h-36 bg-neutral-200 rounded-lg overflow-hidden">
-                {/* Banner upload area */}
-                <div className="relative w-full h-full cursor-pointer hover:bg-neutral-300 transition-colors">
-                  <input
-                    type="file"
-                    accept="image/*"
+              {/* Banner and Cover Image Section */}
+              <div className="space-y-4">
+                {/* Banner Upload */}
+                <div className="w-full h-36 bg-neutral-200 rounded-lg overflow-hidden">
+                  <ImageUpload
+                    imageUrl={formData.bannerImg}
                     onChange={handleBannerImageChange}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                    id="banner-image-input"
+                    isUploading={isUploadingBanner}
+                    label="Banner"
+                    shape="rectangular"
                   />
-                  {bannerImg ? (
-                    <img 
-                      src={bannerImg} 
-                      alt="Banner preview" 
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center w-full h-full text-neutral-400 text-sm">
-                      <ImagePlus className="w-6 h-6 mr-2" />
-                      Upload banner
-                    </div>
-                  )}
-                  {/* Overlay for better UX */}
-                  {bannerImg && (
-                    <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all flex items-center justify-center">
-                      <div className="text-white opacity-0 hover:opacity-100 transition-opacity">
-                        <ImagePlus className="w-6 h-6 mr-2 inline" />
-                        <span className="text-sm">Change banner</span>
-                      </div>
-                    </div>
-                  )}
                 </div>
-                {/* Profile picture overlay */}
-                
-              </div>
-              <div className="w-36 h-36 -mt-16  rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 text-sm border-4 border-white cursor-pointer hover:bg-neutral-200 transition-colors">
-                  <input
-                    type="file"
-                    accept="image/*"
+
+                {/* Cover Image Upload */}
+                <div className="flex justify-start">
+                  <ImageUpload
+                    imageUrl={formData.coverImg}
                     onChange={handleCoverImageChange}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    id="cover-image-input"
+                    isUploading={isUploadingCover}
+                    label="Cover Image"
+                    required
+                    shape="circular"
+                    className="-mt-16 ml-4"
                   />
-                  {coverImg ? (
-                    <img 
-                      src={coverImg} 
-                      alt="Cover preview" 
-                      className="w-full h-full rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center">
-                      <ImagePlus className="w-6 h-6 mb-1" />
-                      <span className="text-xs">Cover Image <span className="text-red-500">*</span></span>
-                    </div>
-                  )}
                 </div>
-              
+                <div className="h-12" /> {/* Spacer to prevent content overlap */}
+              </div>
 
               {/* Stream Name Input */}
-              <div
-                className={`w-full p-2 border rounded-md ${
-                  errors.name ? "border-red-500" : "border-neutral-300"
-                }`}
+              <FormField
+                label={t("Stream Name")}
+                required
+                error={errors.name}
               >
-                <label className="block text-neutral-100 mb-1">
-                  Stream Name <span className="text-red-500">*</span>
-                </label>
                 <input
                   type="text"
                   className="w-full bg-transparent text-neutral-50 placeholder-neutral-400 outline-none"
-                  placeholder="e.g., The Daily Legal Handbook for Student Lawyers"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  placeholder={t("e.g., The Daily Legal Handbook for Student Lawyers")}
+                  value={formData.name}
+                  onChange={handleNameChange}
+                  aria-invalid={!!errors.name}
                 />
-                {errors.name && (
-                  <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-                )}
-              </div>
+              </FormField>
 
               {/* Short Description Input */}
-              <div
-                className={`p-2 border rounded-md ${
-                  errors.shortDescription ? "border-red-500" : "border-neutral-300"
-                }`}
+              <FormField
+                label={t("Short Description")}
+                required
+                error={errors.shortDescription}
               >
-                <label className="block text-neutral-100 mb-1">
-                  Short Description <span className="text-red-500">*</span>
-                </label>
                 <textarea
-                  className="w-full bg-transparent text-neutral-50 placeholder-neutral-400 outline-none h-16"
-                  placeholder="e.g., Exploring data science frontiers and AI insights"
-                  value={shortDescription}
-                  onChange={(e) => setShortDescription(e.target.value)}
+                  className="w-full bg-transparent text-neutral-50 placeholder-neutral-400 outline-none h-20 resize-none"
+                  placeholder={t("e.g., Exploring data science frontiers and AI insights")}
+                  value={formData.shortDescription}
+                  onChange={handleShortDescriptionChange}
+                  maxLength={MAX_SHORT_DESCRIPTION}
+                  aria-invalid={!!errors.shortDescription}
                 />
-                <div className="text-right text-xs text-neutral-400 mt-1">
-                  {shortDescription.length}/250 characters
+                <div className="text-right text-xs text-neutral-400 mt-2">
+                  {formData.shortDescription.length}/{MAX_SHORT_DESCRIPTION} {t("characters")}
                 </div>
-                {errors.shortDescription && (
-                  <p className="text-red-500 text-sm mt-1">{errors.shortDescription}</p>
-                )}
-              </div>
+              </FormField>
 
-              {/* Long Description Input */}
-              <div
-                className={`p-2 border rounded-md ${
-                  errors.description ? "border-red-500" : "border-neutral-300"
-                }`}
+              {/* Full Description Input */}
+              <FormField
+                label={t("Full Description")}
+                error={errors.description}
               >
-                <label className="block text-neutral-100 mb-1">
-                  Full Description
-                </label>
                 <textarea
-                  className="w-full bg-transparent text-neutral-50 placeholder-neutral-400 outline-none h-24"
-                  placeholder="Optional: Add a detailed description of your stream (up to 750 characters)..."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  className="w-full bg-transparent text-neutral-50 placeholder-neutral-400 outline-none h-24 resize-none"
+                  placeholder={t("Optional: Add a detailed description of your stream (up to {{count}} characters)...", { count: MAX_DESCRIPTION })}
+                  value={formData.description}
+                  onChange={handleDescriptionChange}
+                  maxLength={MAX_DESCRIPTION}
+                  aria-invalid={!!errors.description}
                 />
-                <div className="text-right text-xs text-neutral-400 mt-1">
-                  {description.length}/750 characters
+                <div className="text-right text-xs text-neutral-400 mt-2">
+                  {formData.description.length}/{MAX_DESCRIPTION} {t("characters")}
                 </div>
-                {errors.description && (
-                  <p className="text-red-500 text-sm mt-1">{errors.description}</p>
-                )}
-              </div>
+              </FormField>
 
               {/* Topics Section */}
-              <div className="mb-6">
-                <label className="block text-neutral-100 mb-2">What will you Write About?</label>
-                <div className="flex flex-wrap gap-2">
-                  {topicsList.map((topic) => (
-                    <button
-                      key={topic}
-                      type="button"
-                      className={`px-4 py-2 rounded-full border ${
-                        topics.includes(topic) ? 'bg-primary-500 text-white' : 'border-neutral-200 text-neutral-200'
-                      }`}
-                      onClick={() => handleTopicClick(topic)}
-                    >
-                      {topic}
-                    </button>
-                  ))}
-                </div>
-                {/* Custom topic input, shown when no pre-defined topic is selected */}
-                {topics.length === 0 && (
-                  <div className="mt-6">
-                    <h4 className="text-neutral-100 text-sm mb-2">Some other topic?</h4>
-                    <div className="flex items-center p-2 border-b border-neutral-300 ">
-                      <span className="text-neutral-400 mr-2 font-bold text-xl">#</span>
-                      <input
-                        type="text"
-                        className="w-full bg-transparent text-neutral-50 placeholder-neutral-400 outline-none"
-                        placeholder=""
-                        value={customTopic}
-                        onChange={handleCustomTopicChange}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
+              <TopicSelector
+                topics={formData.topics}
+                customTopic={formData.customTopic}
+                onTopicToggle={handleTopicToggle}
+                onCustomTopicChange={handleCustomTopicChange}
+              />
 
               {/* Save Button */}
-              <div className="flex justify-end mt-8">
+              <div className="flex justify-end gap-3 pt-4">
                 <button
-                  className={`bg-primary-400 text-white px-8 py-2 rounded-full font-bold flex items-center gap-2 ${
-                    isUpdating ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
-                  onClick={handleSave}
+                  type="button"
+                  onClick={() => navigate(-1)}
+                  className="px-6 py-2 rounded-full border border-neutral-300 text-neutral-200 hover:bg-neutral-800 transition-colors font-medium"
                   disabled={isUpdating}
+                >
+                  {t("Cancel")}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={isUpdating || isUploadingCover || isUploadingBanner}
+                  className={`bg-primary-400 text-white px-8 py-2 rounded-full font-bold flex items-center gap-2 transition-all ${
+                    isUpdating || isUploadingCover || isUploadingBanner
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:bg-primary-500'
+                  }`}
                 >
                   {isUpdating ? (
                     <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Updating Stream...
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      {t("Updating Stream...")}
                     </>
                   ) : (
-                    'Save Changes'
+                    t("Save Changes")
                   )}
                 </button>
               </div>
