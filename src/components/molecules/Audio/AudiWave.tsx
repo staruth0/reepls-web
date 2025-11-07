@@ -12,7 +12,7 @@ const AudioWave: React.FC<AudioWaveProps> = ({ isPlaying, barCount }) => {
     if (barCount) return barCount;
     // Default to 60 on larger screens, fewer on smaller screens
     if (typeof window !== 'undefined') {
-      return window.innerWidth < 640 ? 90 : window.innerWidth < 1024 ? 90 : 90;
+      return window.innerWidth < 640 ? 50 : window.innerWidth < 1024 ? 90 : 90;
     }
     return 60;
   }, [barCount]);
