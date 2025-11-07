@@ -18,11 +18,18 @@ interface ApiError extends Error {
 const CreateStream: React.FC = () => {
   const navigate = useNavigate();
   const { mutate: createPublication, isPending: isCreating, error } = useCreatePublication();
-  const [streamDetails, setStreamDetails] = useState({
+  const [streamDetails, setStreamDetails] = useState<{
+    name: string;
+    description: string;
+    topics: string[];
+    coverImage: string;
+    bannerImage?: string;
+  }>({
     name: '',
     description: '',
-    topics: [] as string[],
+    topics: [],
     coverImage: '',
+    bannerImage: undefined,
   });
 
   const handleCreateStream = (details: typeof streamDetails) => {
@@ -33,6 +40,8 @@ const CreateStream: React.FC = () => {
       title: details.name,
       short_description: details.description,
       cover_image: details.coverImage || '',
+      // Only include banner_image if provided
+      ...(details.bannerImage && { banner_image: details.bannerImage }),
       // Only include tags if the array is not empty
       ...(details.topics.length > 0 && { tags: details.topics }),
     };
@@ -79,6 +88,7 @@ const CreateStream: React.FC = () => {
                 description: streamDetails.description,
                 topics: streamDetails.topics,
                 coverImage: streamDetails.coverImage,
+                ...(streamDetails.bannerImage && { bannerImage: streamDetails.bannerImage }),
               }}
               isLoading={isCreating}
             />

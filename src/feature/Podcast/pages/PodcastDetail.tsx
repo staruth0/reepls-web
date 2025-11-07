@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   useGetPodcastById,
@@ -186,6 +186,20 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
           author: podcast.author?.name,
         }
       : undefined
+  );
+
+  // Format duration helper function
+  const formatDuration = useCallback((seconds?: number): string => {
+    if (!seconds || isNaN(seconds)) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  }, []);
+
+  // Memoized podcast duration
+  const memoizedPodcastDuration = useMemo(() => 
+    formatDuration(podcast?.audio?.duration),
+    [podcast?.audio?.duration, formatDuration]
   );
 
   const getFollowStatusText = () => {
@@ -378,7 +392,7 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
           </div>
 
           <span className="text-sm text-neutral-400">
-            {podcast?.duration || "0:00"}
+            {memoizedPodcastDuration}
           </span>
         </div>
 
