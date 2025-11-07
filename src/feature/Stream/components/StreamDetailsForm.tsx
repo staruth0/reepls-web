@@ -94,7 +94,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const isCircular = shape === 'circular';
   const baseClasses = isCircular
-    ? "relative w-36 h-36 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 text-sm border-4 border-white cursor-pointer hover:bg-neutral-200 transition-colors"
+    ? "relative w-36 h-36 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 text-sm border-4 border-white cursor-pointer hover:bg-neutral-200 transition-colors overflow-hidden"
     : "relative w-full h-full cursor-pointer hover:bg-neutral-300 transition-colors";
 
   return (
@@ -129,14 +129,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           )}
         </>
       ) : (
-        <div className={`flex ${isCircular ? 'flex-col' : 'items-center justify-center'} w-full h-full text-neutral-400 text-sm`}>
-          <ImagePlus className={`w-6 h-6 ${isCircular ? 'mb-1' : 'mr-2'}`} />
+        <div className={`flex ${isCircular ? 'flex-col items-center justify-center' : 'items-center justify-center'} w-full h-full text-neutral-400 text-sm`}>
+          <ImagePlus className={`${isCircular ? 'w-6 h-6 mb-1' : 'w-6 h-6 mr-2'}`} />
           {isCircular ? (
-            <>
-              <span className="text-xs">
-                {label} {required && <span className="text-red-500">*</span>}
-              </span>
-            </>
+            <span className="text-xs text-center">
+              {label} {required && <span className="text-red-500">*</span>}
+            </span>
           ) : (
             <span>Upload {label.toLowerCase()}</span>
           )}
@@ -476,7 +474,7 @@ const StreamDetailsForm: React.FC<StreamDetailsFormProps> = ({
             className="-mt-16 ml-4"
           />
         </div>
-        <div className="h-12" /> {/* Spacer to prevent content overlap */}
+        <div className="h-2" /> {/* Spacer to prevent content overlap */}
       </div>
 
       {/* Stream Name Input */}
