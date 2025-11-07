@@ -9,7 +9,7 @@ import Communique from './components/Communique/Communique';
 import ToggleFeed from './components/ToogleFeed';
 import './feed.scss';
 import MainContent from '../../components/molecules/MainContent';
-import { LucideLoader } from 'lucide-react';
+
 
 const FeedFollowing: React.FC = () => {
     // const [isBrainActive, setIsBrainActive] = useState<boolean>(false);
@@ -122,9 +122,10 @@ const FeedFollowing: React.FC = () => {
 
         {/* Show loading skeletons while fetching next page */}
         {isFetchingNextPage && (
-          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse mt-8">
-          <LucideLoader className="animate-spin text-primary-400 self-center size-10 inline-block mx-4" />
-        </div>
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col gap-7 py-6">
+            <BlogSkeletonComponent />
+            <BlogSkeletonComponent />
+          </div>
         )}
 
         {/* Bottom trigger for infinite scroll */}

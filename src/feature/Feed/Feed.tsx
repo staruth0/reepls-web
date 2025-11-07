@@ -10,9 +10,6 @@ import ToggleFeed from './components/ToogleFeed';
 import MainContent from '../../components/molecules/MainContent';
 
 
-import { LuLoader } from 'react-icons/lu';
-
-
 
 const UserFeed: React.FC = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -108,8 +105,9 @@ const UserFeed: React.FC = () => {
         )}
         {/* Loading indicator for next page */}
         {isFetchingNextPage && (
-          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse mt-8">
-            <LuLoader className="animate-spin text-primary-400 self-center size-10 inline-block mx-4" />
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col gap-7 py-6">
+            <BlogSkeletonComponent />
+            <BlogSkeletonComponent />
           </div>
         )}
         <div ref={bottomRef} style={{ height: '100px' }} />
