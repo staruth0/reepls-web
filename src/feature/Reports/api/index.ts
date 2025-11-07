@@ -1,9 +1,14 @@
 import { apiClient } from "../../../services/apiClient";
 
-import { Report } from "../../../models/datamodels";
+// Payload type for creating a report (only required fields for API)
+export interface CreateReportPayload {
+  article_id: string;
+  reporter_id: string;
+  reason: string;
+}
 
 // Create a new report
-const createReport = async (report: Report) => {
+const createReport = async (report: CreateReportPayload) => {
   const { data } = await apiClient.post("/report", report);
   return data;
 };

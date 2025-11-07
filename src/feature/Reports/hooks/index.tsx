@@ -1,11 +1,10 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { createReport, deleteReport, getAllReports, getReportById, getReportsWithFilters, updateReportStatus } from "../api";
-import { Report } from "../../../models/datamodels";
+import { createReport, deleteReport, getAllReports, getReportById, getReportsWithFilters, updateReportStatus, CreateReportPayload } from "../api";
 import { handleMutationError } from "../../../utils/mutationErrorHandler";
 
 export const useCreateReport = () => {
   return useMutation({
-    mutationFn: (report: Report) => createReport(report),
+    mutationFn: (report: CreateReportPayload) => createReport(report),
     onSuccess: () => {
     },
     onError: (error) => {

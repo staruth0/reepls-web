@@ -12,9 +12,7 @@ import { useGetUserByUsername } from "../../../Profile/hooks";
 import BlogArticleProfileRepost from "../BlogComponents/BlogArticleProfileRepost";
 //import BlogReactionStats from "../BlogComponents/BlogReactionStats";
 import BlogReactionSession from "../BlogComponents/BlogReactionSession";
-import { useAudioControls } from "../../../../hooks/useMediaPlayer";
-import { LuMic } from "react-icons/lu";
-import { useGetPodcastById } from "../../../Podcast/hooks";
+import PodcastPlayer from "../BlogComponents/PodcastPlayer";
 
 interface articleprobs {
   article: Article;
@@ -29,30 +27,8 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
     article.repost?.repost_user?.username || ""
   );
 
-  // Fetch podcast data if article has podcast
-  const { data: podcastData } = useGetPodcastById(article.podcastId || "");
-  const podcast = podcastData?.data;
-
-  // Audio controls for the podcast
-  const { 
-    isPlaying, 
-    togglePlay, 
-    currentTrack 
-  } = useAudioControls(podcast ? {
-    id: podcast.id,
-    title: podcast.title,
-    url: podcast.audio.url,
-    thumbnail: podcast.thumbnailUrl,
-    author: podcast.author?.name,
-  } : undefined);
-
   const toggleCommentSection = () => {
     setIsCommentSectionOpen(!isCommentSectionOpen);
-  };
-
-  const handlePodcastPlay = () => {
-    if (!podcast) return;
-    togglePlay();
   };
 
   useEffect(() => {
@@ -96,6 +72,12 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
             isArticle={article.isArticle || false}
             article={article}
           />
+          
+          {/* Podcast Player */}
+          {article.hasPodcast && (
+            <PodcastPlayer podcastId={article.podcastId} articleId={article._id} />
+          )}
+
           <div className={`border-[1px] border-neutral-500  rounded-3xl p-2 md:p-3`}>
             <ErrorBoundary
               FallbackComponent={ErrorFallback}
@@ -117,17 +99,6 @@ const ArticleNormalCommentary: React.FC<articleprobs> = ({ article }) => {
               article={article}
             />
             <div className="flex p-3 gap-1 items-center">
-              {article.hasPodcast && (
-                <>
-                  <button 
-                    onClick={handlePodcastPlay}
-                    className={`p-2 rounded-full ${currentTrack?.id === podcast?.id && isPlaying ? 'bg-main-green' : 'bg-neutral-700'}`}
-                  >
-                    <LuMic size={18} className={currentTrack?.id === podcast?.id && isPlaying ? 'text-white' : 'text-neutral-300'} />
-                  </button>
-                  <div className="size-1 rounded-full bg-primary-400"></div>
-                </>
-              )}
               <div className="text-neutral-70 text-xs mx-1">
                 {calculateReadTime(article.content!, article.media || [])} mins
                 Read
