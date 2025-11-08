@@ -65,10 +65,10 @@ const PodcastPlayer: React.FC<PodcastPlayerProps> = ({ podcastId }) => {
   if (!podcast) return null;
 
   return (
-    <div className="mx-2 sm:mx-3 md:mx-4 mb-2 sm:mb-2.5 md:mb-3 p-[2%] sm:p-[2.5%] md:p-[3%] bg-primary-400 rounded-lg sm:rounded-xl">
+    <div className="w-[calc(100%-1rem)] sm:w-[calc(100%-1.5rem)] md:w-[calc(100%-2rem)] mx-auto mb-2 sm:mb-2.5 md:mb-3 p-[2%] sm:p-[2.5%] md:p-[3%] bg-primary-400 rounded-lg sm:rounded-xl">
       <div className="flex items-center gap-[1.5%] sm:gap-[2%] md:gap-[2.5%] w-full">
         {/* Podcast Icon/Thumbnail */}
-        <div className="w-[10%] sm:w-[9%] md:w-[8%] aspect-square rounded-md sm:rounded-lg bg-primary-500 flex items-center justify-center flex-shrink-0">
+        <div className="w-[9%] sm:w-[8.5%] md:w-[8%] aspect-square rounded-md sm:rounded-lg bg-primary-500 flex items-center justify-center flex-shrink-0">
           {podcast.thumbnailUrl ? (
             <img 
               src={podcast.thumbnailUrl} 
@@ -76,18 +76,18 @@ const PodcastPlayer: React.FC<PodcastPlayerProps> = ({ podcastId }) => {
               className="w-full h-full rounded-md sm:rounded-lg object-cover"
             />
           ) : (
-            <Radio className="w-[55%] h-[55%] text-white" />
+            <Radio className="w-[50%] h-[50%] text-white" />
           )}
         </div>
 
         {/* Podcast Info */}
-        <div className="flex-1 min-w-0 flex flex-col" style={{ width: 'calc(100% - 10% - 10% - 1.5%)' }}>
+        <div className="flex-1 min-w-0 flex flex-col" style={{ width: 'calc(100% - 9% - 9% - 1.5%)' }}>
           <div className="mb-[1%] sm:mb-[1.5%] md:mb-[2%]">
-            <h3 className="text-white font-semibold text-[clamp(0.65rem,1.5vw,0.8rem)] mb-[0.3%] truncate leading-tight">
+            <h3 className="text-white font-bold text-sm line-clamp-1 text-ellipsis overflow-hidden">
               {podcast.title}
             </h3>
             {podcast.description && (
-              <p className="text-white/90 text-[clamp(0.55rem,1.3vw,0.7rem)] truncate mt-[0.3%] leading-tight">
+              <p className="text-white/90 text-xs line-clamp-1 text-ellipsis overflow-hidden">
                 {podcast.description}
               </p>
             )}
@@ -95,16 +95,16 @@ const PodcastPlayer: React.FC<PodcastPlayerProps> = ({ podcastId }) => {
           
           {/* Progress Bar */}
           <div className="flex items-center gap-[0.8%] sm:gap-[1%] md:gap-[1.5%] w-full">
-            <span className="text-white text-[clamp(0.5rem,1.2vw,0.65rem)] font-medium whitespace-nowrap flex-shrink-0">
+            <span className="text-white text-[clamp(0.5rem,1.3vw,0.65rem)] font-medium whitespace-nowrap flex-shrink-0">
               {memoizedCurrentTime}
             </span>
             <div className="flex-1 h-[1.5px] sm:h-[2px] md:h-[2.5px] bg-white/30 rounded-full overflow-hidden min-w-0">
               <div 
-                className="h-full bg-white transition-all duration-300 rounded-full"
+                className="h-full bg-white transition-all duration-300"
                 style={{ width: `${Math.min(100, Math.max(0, podcastProgressPercentage))}%` }}
               />
             </div>
-            <span className="text-white text-[clamp(0.5rem,1.2vw,0.65rem)] font-medium whitespace-nowrap flex-shrink-0">
+            <span className="text-white text-[clamp(0.5rem,1.3vw,0.65rem)] font-medium whitespace-nowrap flex-shrink-0">
               {memoizedPodcastDuration}
             </span>
           </div>
@@ -113,13 +113,13 @@ const PodcastPlayer: React.FC<PodcastPlayerProps> = ({ podcastId }) => {
         {/* Play Button */}
         <button
           onClick={handlePodcastPlay}
-          className="w-[10%] sm:w-[9%] md:w-[8%] aspect-square rounded-full bg-primary-300 hover:bg-primary-200 flex items-center justify-center flex-shrink-0 transition-colors"
+          className="w-[9%] sm:w-[8.5%] md:w-[8%] aspect-square rounded-full bg-primary-300 hover:bg-primary-200 flex items-center justify-center flex-shrink-0 transition-colors"
           aria-label={currentTrack?.id === podcast?.id && isPlaying ? "Pause podcast" : "Play podcast"}
         >
           {currentTrack?.id === podcast?.id && isPlaying ? (
-            <Pause className="w-[35%] h-[35%] text-white" fill="white" />
+            <Pause className="w-[32%] h-[32%] text-white" fill="white" />
           ) : (
-            <Play className="w-[35%] h-[35%] text-white" fill="white" />
+            <Play className="w-[32%] h-[32%] text-white" fill="white" />
           )}
         </button>
       </div>

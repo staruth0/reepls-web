@@ -62,8 +62,24 @@ const ArticleNormal: React.FC<articleprobs> = ({ article }) => {
                 isArticle={article.isArticle || false}
                 article={article}
             />
+
+          {/* <div className='p-3'>
+            <div className='w-full flex items-center justify-between gap-2 bg-primary-400 rounded-lg p-2'>
+                <div className='flex items-center gap-2'>
+                    <div className='text-neutral-70 text-xs mx-1'>
+                        {calculateReadTime(article.content || '', article.media || [])} mins Read
+                    </div>
+                </div>
+                <div className='flex items-center gap-2'>
+                    <div className='text-neutral-70 text-xs mx-1'>
+                        {calculateReadTime(article.content || '', article.media || [])} mins Read
+                    </div>
+                </div>
+
+            </div>
+            </div> */}
             
-            {/* Podcast Player */}
+           {/* Podcast Player */}
             {article.hasPodcast && (
                 <PodcastPlayer podcastId={article.podcastId} articleId={article._id} />
             )}
