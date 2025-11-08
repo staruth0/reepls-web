@@ -488,7 +488,7 @@ const PostModal = ({
                   className={cn(
                     'absolute inset-0 w-full h-full resize-none bg-transparent p-3 text-base leading-relaxed outline-none z-10 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300',
                     !isLoggedIn ? 'cursor-not-allowed' : '',
-                    'text-transparent caret-black'
+                    'text-transparent caret-neutral-50'
                   )}
                   placeholder={''}
                   disabled={!isLoggedIn}
