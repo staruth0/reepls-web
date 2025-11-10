@@ -78,7 +78,7 @@ const BlogArticleProfileRepost: React.FC<BlogProfileProps> = ({ user, article })
         </div>
         <div className="flex items-center gap-1">
             <p className="text-sm text-neutral-100 truncate max-w-[120px] sm:max-w-[150px] md:max-w-[200px]" title={user?.bio}>
-              {user?.bio && user.bio.length > 40 ? `${user.bio.substring(0, 40)}...` : user?.bio}
+              {user?.bio && user.bio.length > 40 ? `${user.bio.substring(0, 40)}...` : (user?.bio || "Reepls user")}
             </p>
             <span className="text-sm text-neutral-100">•</span>
             <span className="text-sm text-neutral-100">{timeAgo(article?.createdAt || '')}</span>
