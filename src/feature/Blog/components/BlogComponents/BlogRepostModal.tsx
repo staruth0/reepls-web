@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MessageCircle, Heart, Share, User2, MoreHorizontal } from 'lucide-react';
+import { X, MessageCircle, Heart, Share, User2 } from 'lucide-react';
 import { FaSpinner } from 'react-icons/fa';
 import { User, Article, MediaItem as ArticleMediaItem } from '../../../../models/datamodels';
 
@@ -375,18 +375,24 @@ const BlogRepostModal: React.FC<RepostModalProps> = ({
                             @{author_of_post?.username || 'unknown'} • {article.createdAt ? new Date(article.createdAt).toLocaleDateString() : 'Unknown date'}
                           </p>
                         </div>
-                        <div className="ml-auto">
+                        {/* <div className="ml-auto">
                           <button className="p-1 hover:bg-neutral-600 rounded-full transition-colors">
                             <MoreHorizontal size={16} className="text-neutral-100" />
                           </button>
-                        </div>
+                        </div> */}
                       </div>
 
-                      {/* Post Content */}
+                      {/* Post Title or Content */}
                       <div className="mb-4">
-                        <p className="text-foreground leading-relaxed">
-                          {article.content || 'No content available'}
-                        </p>
+                        {article.title ? (
+                          <h4 className="text-foreground font-semibold leading-relaxed">
+                            {article.title}
+                          </h4>
+                        ) : (
+                          <p className="text-foreground leading-relaxed line-clamp-2">
+                            {article.content || 'No content available'}
+                          </p>
+                        )}
                       </div>
 
                       {/* Post Images - Professional Grid */}

@@ -37,7 +37,7 @@ import {
   Radio,
 } from "lucide-react";
 import SignInPopUp from "../../../AnonymousUser/components/SignInPopUp";
-import BlogRepostModal from "../BlogRepostModal";
+import BlogRepostModal from "./BlogRepostModal";
 import { useDeleteRepost, useRemoveSavedRepost, useSaveRepost } from "../../../Repost/hooks/useRepost";
 import { cn } from "../../../../utils";
 
