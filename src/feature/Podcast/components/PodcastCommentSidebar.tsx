@@ -51,7 +51,7 @@ const PodcastCommentSidebar: React.FC<PodcastCommentSidebarProps> = ({
   const { isLoggedIn } = useUser();
   const [comment, setComment] = useState<string>('');
   const [isEmojiPickerVisible, setEmojiPickerVisible] = useState(false);
-  const commentInputRef = useRef<HTMLInputElement | null>(null);
+  const commentInputRef = useRef<HTMLTextAreaElement | null>(null);
   const emojiPickerRef = useRef<HTMLDivElement | null>(null);
   const { theme } = useTheme();
   const navigate = useNavigate();
@@ -84,6 +84,14 @@ const PodcastCommentSidebar: React.FC<PodcastCommentSidebarProps> = ({
     }
   }, [isOpen]);
 
+  // Auto-resize textarea
+  useEffect(() => {
+    if (commentInputRef.current) {
+      commentInputRef.current.style.height = 'auto';
+      commentInputRef.current.style.height = `${Math.min(commentInputRef.current.scrollHeight, 120)}px`;
+    }
+  }, [comment]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -100,8 +108,9 @@ const PodcastCommentSidebar: React.FC<PodcastCommentSidebarProps> = ({
     };
   }, []);
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && isLoggedIn) {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey && isLoggedIn) {
+      event.preventDefault();
       handleCommentSubmit();
     }
   };
@@ -116,6 +125,14 @@ const PodcastCommentSidebar: React.FC<PodcastCommentSidebarProps> = ({
       toast.error(t('Comment cannot be empty.'));
       return;
     }
+
+    console.log('comment',   {
+      podcastId,
+      payload: {
+        content: comment,
+        isAudioComment: false,
+      },
+    },);
 
     addComment(
       {
@@ -210,16 +227,16 @@ const PodcastCommentSidebar: React.FC<PodcastCommentSidebarProps> = ({
 
         {/* Comment Input */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-neutral-700 bg-background">
-          <div className="flex items-center w-full p-2 border border-neutral-300 rounded-full bg-background transition-colors">
-            <input
-              type="text"
+          <div className="flex items-end w-full p-2 border border-neutral-300 rounded-full bg-background transition-colors">
+            <textarea
               placeholder={isLoggedIn ? t('What are your thoughts...') : t('Sign in to comment')}
-              className="flex-grow bg-transparent outline-none text-sm text-neutral-100 placeholder-neutral-300 px-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-grow bg-transparent outline-none text-sm text-neutral-100 placeholder-neutral-300 px-2 py-1 disabled:opacity-50 disabled:cursor-not-allowed resize-none overflow-y-auto max-h-[120px] rounded-full"
               value={comment}
               onChange={(e) => isLoggedIn && setComment(e.target.value)}
               onKeyDown={handleKeyDown}
               ref={commentInputRef}
               disabled={!isLoggedIn}
+              rows={1}
             />
             {isLoggedIn && (
               <>
