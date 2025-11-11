@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { ThumbsUp, MessageCircle } from 'lucide-react';
+import React from 'react';
 
 import { timeAgo } from '../../../utils/dateFormater';
 import { User } from '../../../models/datamodels';
@@ -32,24 +31,12 @@ interface PodcastCommentProps {
 
 const PodcastComment: React.FC<PodcastCommentProps> = ({
   comment,
- 
-  onReply,
-  onLike,
 }) => {
-
-  const [isLiked, setIsLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(comment.likesCount);
-
-  const handleLike = () => {
-    setIsLiked((like) => !like);
-    setLikesCount((count) => (isLiked ? count - 1 : count + 1));
-    onLike?.(comment._id);
-  };
 
   // Handle case where authorId might be null
   if (!comment.authorId) {
     return (
-      <div className="mb-4 px-4 py-3 bg-neutral-800 rounded-lg flex items-start gap-3">
+      <div className="mb-4 px-4 py-3 bg-neutral-800 rounded-lg border border-neutral-700 shadow-sm flex items-start gap-3">
         <div className="flex-shrink-0 h-10 w-10 rounded-full bg-neutral-600 flex items-center justify-center text-white font-bold text-lg uppercase">
           ?
         </div>
@@ -62,7 +49,7 @@ const PodcastComment: React.FC<PodcastCommentProps> = ({
               {timeAgo(comment.createdAt)}
             </span>
           </div>
-          <div className="text-neutral-300 text-sm mb-2 break-words">
+          <div className="text-neutral-300 text-sm break-words">
             {comment.content}
           </div>
         </div>
@@ -71,7 +58,7 @@ const PodcastComment: React.FC<PodcastCommentProps> = ({
   }
 
   return (
-    <div className="mb-4 px-4 py-3 bg-neutral-800 rounded-lg flex items-start gap-3">
+    <div className="mb-4 px-4 py-3 bg-neutral-800 rounded-lg border border-neutral-700 shadow-sm flex items-start gap-3">
       {/* Avatar */}
       <div className="flex-shrink-0 h-10 w-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-lg uppercase">
         {comment.authorId.name?.charAt(0) || 'U'}
@@ -90,28 +77,8 @@ const PodcastComment: React.FC<PodcastCommentProps> = ({
         </div>
 
         {/* Comment body */}
-        <div className="text-neutral-200 text-sm mb-2 break-words">
+        <div className="text-neutral-200 text-sm break-words">
           {comment.content}
-        </div>
-
-        {/* Actions row */}
-        <div className="flex gap-5 items-center text-neutral-400 text-xs">
-          <button
-            onClick={handleLike}
-            className={`flex items-center gap-1 hover:text-neutral-100 transition-colors ${
-              isLiked ? 'text-blue-400' : ''
-            }`}
-          >
-            <ThumbsUp size={15} className={isLiked ? 'fill-current' : ''} />
-            {likesCount > 0 && <span>{likesCount}</span>}
-          </button>
-          <button
-            onClick={() => onReply?.(comment._id)}
-            className="flex items-center gap-1 hover:text-neutral-100 transition-colors"
-          >
-            <MessageCircle size={15} />
-            {comment.repliesCount > 0 && <span>{comment.repliesCount}</span>}
-          </button>
         </div>
       </div>
     </div>
