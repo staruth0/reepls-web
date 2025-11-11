@@ -94,13 +94,16 @@ const UserFeed: React.FC = () => {
           </div>
         ) : (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col  gap-7 py-6">
-            {data?.pages.map((page, i) => (
-              <div className=" self-center flex flex-col items-center gap-2" key={i}>
-                {page.articles.map((article: Article) => (           
-                  <BlogPost key={article._id} article={article} />
-                ))}
-              </div>
-            ))}
+            {data?.pages?.map((page, i) => {
+              const articles = Array.isArray(page?.articles) ? page.articles : [];
+              return (
+                <div className=" self-center flex flex-col items-center gap-2" key={i}>
+                  {articles.map((article: Article) => (           
+                    <BlogPost key={article._id} article={article} />
+                  ))}
+                </div>
+              );
+            })}
           </div>
         )}
         {/* Loading indicator for next page */}

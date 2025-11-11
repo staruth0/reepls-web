@@ -24,13 +24,16 @@ const SimilarProfiles: React.FC = () => {
     return <div className="w-full flex flex-col gap-6 mt-4 py-1 text-red-500">{t("profile.errors.error")}: {error.message}</div>;
   }
 
-  if (!recommendedUsers?.length) {
+  // Ensure recommendedUsers is an array
+  const usersArray = Array.isArray(recommendedUsers) ? recommendedUsers : [];
+
+  if (!usersArray.length) {
     return <div className="w-full flex flex-col gap-6 mt-4 py-1 text-gray-500">{t("profile.errors.noRecommendedUser")}</div>;
   }
 
   return (
     <div className="w-full flex flex-col gap-6 mt-4 py-1 px-4">
-      {recommendedUsers?.slice(0, 4)?.map((user: User, index: number) => (
+      {usersArray.slice(0, 4).map((user: User, index: number) => (
         <AuthorSuggestionComponent
           key={`${user.id || user._id || index}-${index}`}
           username={user.username || ''}

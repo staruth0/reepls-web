@@ -128,9 +128,9 @@ const BlogArticleProfileNoComment: React.FC<BlogProfileProps> = ({
   };
 
   const handleDeleteRepost = () => {
-    if (article?._id) {
+    if (article?.repost?.repost_id) {
     
-      deleteRepost(article._id, {
+      deleteRepost(article.repost.repost_id, {
         onSuccess: () => {
           toast.success("Repost deleted successfully");
           setShowRepostDeleteConfirmation(false);
