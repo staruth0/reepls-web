@@ -66,8 +66,11 @@ const AuthorSuggestions: React.FC = () => {
     );
   }
 
+  // Ensure recommendedUsers is an array
+  const usersArray = Array.isArray(recommendedUsers) ? recommendedUsers : [];
+
   // Empty state
-  if (!recommendedUsers?.length) {
+  if (!usersArray.length) {
     return (
       <div className="w-full flex flex-col gap-6 mt-4 py-1 text-gray-500 text-center">
         {t("feed.noSuggestions")}
@@ -78,7 +81,7 @@ const AuthorSuggestions: React.FC = () => {
   // Success state
   return (
     <div className="w-full flex flex-col gap-6 mt-4 py-1">
-      {recommendedUsers?.slice(0, 5)?.map((user: User, index: number) => (
+      {usersArray.slice(0, 5).map((user: User, index: number) => (
         <AuthorSugestionComponent
           key={`${user.id}-${index}`}
           name={user.name!}

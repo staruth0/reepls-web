@@ -47,10 +47,10 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
     };
   }, [isModalOpen, displayMedia.length]);
 
-  const renderImage = (mediaItem: MediaItem, index: number, className: string = "", isSingleImage: boolean = false) => (
+  const renderImage = (mediaItem: MediaItem, index: number, className: string = "", isSingleImage: boolean = false, borderRadiusClass: string = "") => (
     <div 
       key={index} 
-      className={`relative cursor-pointer ${className} bg-neutral-800 rounded-lg overflow-hidden group hover:opacity-95 transition-opacity duration-200 w-full`}
+      className={`relative cursor-pointer ${className} bg-neutral-800 overflow-hidden group hover:opacity-95 transition-opacity duration-200 w-full ${borderRadiusClass}`}
       onClick={() => openModal(index)}
       style={isSingleImage ? { aspectRatio: "16 / 9" } : { aspectRatio: "1 / 1" }}
     >
@@ -76,10 +76,10 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
     </div>
   );
 
-  const renderImageWithOverlay = (mediaItem: MediaItem, index: number, className: string = "", remainingCount: number) => (
+  const renderImageWithOverlay = (mediaItem: MediaItem, index: number, className: string = "", remainingCount: number, borderRadiusClass: string = "") => (
     <div 
       key={index} 
-      className={`relative cursor-pointer ${className} bg-neutral-800 rounded-lg overflow-hidden group hover:opacity-95 transition-opacity duration-200 w-full`}
+      className={`relative cursor-pointer ${className} bg-neutral-800 overflow-hidden group hover:opacity-95 transition-opacity duration-200 w-full ${borderRadiusClass}`}
       onClick={() => openModal(index)}
       style={{ aspectRatio: "1 / 1" }}
     >
@@ -102,7 +102,7 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
           controlsList="nodownload"
         />
       )}
-      <div className="absolute inset-0 bg-black/60 rounded-lg flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
         <span className="text-white text-2xl font-bold">+{remainingCount}</span>
       </div>
     </div>
@@ -115,7 +115,7 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
         return (
           <div className="w-full mx-auto">
             <div className="w-full aspect-[16/9] sm:aspect-[16/9] md:aspect-[16/9]">
-              {renderImage(displayMedia[0], 0, "", true)}
+              {renderImage(displayMedia[0], 0, "", true, "rounded-lg")}
             </div>
           </div>
         );
@@ -123,8 +123,8 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
         return (
           <div className="w-full mx-auto">
             <div className="grid grid-cols-2 gap-1 sm:gap-2 aspect-[2/1] sm:aspect-[2/1] min-h-[120px] sm:min-h-[150px]">
-              {renderImage(displayMedia[0], 0)}
-              {renderImage(displayMedia[1], 1)}
+              {renderImage(displayMedia[0], 0, "", false, "rounded-tl-lg rounded-bl-lg")}
+              {renderImage(displayMedia[1], 1, "", false, "rounded-tr-lg rounded-br-lg")}
             </div>
           </div>
         );
@@ -132,9 +132,9 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
         return (
           <div className="w-full mx-auto">
             <div className="grid grid-cols-2 gap-1 sm:gap-2 aspect-[4/3] sm:aspect-square min-h-[150px] sm:min-h-[200px]">
-              {renderImage(displayMedia[0], 0)}
-              {renderImage(displayMedia[1], 1)}
-              {renderImageWithOverlay(displayMedia[2], 2, "col-span-2", 1)}
+              {renderImage(displayMedia[0], 0, "", false, "rounded-tl-lg")}
+              {renderImage(displayMedia[1], 1, "", false, "rounded-tr-lg")}
+              {renderImageWithOverlay(displayMedia[2], 2, "col-span-2", 1, "rounded-bl-lg rounded-br-lg")}
             </div>
           </div>
         );
@@ -142,9 +142,10 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
         return (
           <div className="w-full mx-auto">
             <div className="grid grid-cols-2 gap-1 sm:gap-2 aspect-[4/3] sm:aspect-square min-h-[150px] sm:min-h-[200px]">
-              {displayMedia.map((mediaItem, index) =>
-                renderImage(mediaItem, index)
-              )}
+              {renderImage(displayMedia[0], 0, "", false, "rounded-tl-lg")}
+              {renderImage(displayMedia[1], 1, "", false, "rounded-tr-lg")}
+              {renderImage(displayMedia[2], 2, "", false, "rounded-bl-lg")}
+              {renderImage(displayMedia[3], 3, "", false, "rounded-br-lg")}
             </div>
           </div>
         );
@@ -153,10 +154,10 @@ const BlogImagery: React.FC<BlogImageryProps> = ({ media, article }) => {
         return (
           <div className="w-full mx-auto">
             <div className="grid grid-cols-2 gap-1 sm:gap-2 aspect-[4/3] sm:aspect-square min-h-[150px] sm:min-h-[200px]">
-              {displayMedia.slice(0, 3).map((mediaItem, index) =>
-                renderImage(mediaItem, index)
-              )}
-              {renderImageWithOverlay(displayMedia[3], 3, "", remainingCount)}
+              {renderImage(displayMedia[0], 0, "", false, "rounded-tl-lg")}
+              {renderImage(displayMedia[1], 1, "", false, "rounded-tr-lg")}
+              {renderImage(displayMedia[2], 2, "", false, "rounded-bl-lg")}
+              {renderImageWithOverlay(displayMedia[3], 3, "", remainingCount, "rounded-br-lg")}
             </div>
           </div>
         );

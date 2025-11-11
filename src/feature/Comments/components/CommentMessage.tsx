@@ -71,6 +71,11 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(content);
 
+  // Early return if author is not available
+  if (!author) {
+    return null;
+  }
+
   // Define target type and ID for the new hook
   const target_type = "Comment";
   const target_id = comment_id;
@@ -181,8 +186,8 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   }, [comment_id, deleteComment]);
 
   const handleProfileClick = useCallback(() => {
-    if (author.username) goToProfile(author?.username);
-  }, [author.username, goToProfile]);
+    if (author?.username) goToProfile(author.username);
+  }, [author?.username, goToProfile]);
 
   // Remove empty useEffect
 
@@ -212,12 +217,12 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
             {author?.profile_picture ? (
               <img
                 src={author.profile_picture}
-                alt={author.username}
+                alt={author?.username || 'User'}
                 className="size-8 rounded-full object-cover"
               />
             ) : (
               <div className="size-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
-                {author?.username?.charAt(0)?.toUpperCase()}
+                {author?.username?.charAt(0)?.toUpperCase() || '?'}
               </div>
             )}
           </motion.div>
@@ -372,7 +377,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleReact}
-          aria-label={`React to ${author.username}'s comment`}
+          aria-label={`React to ${author?.username || 'user'}'s comment`}
           aria-pressed={hasUserReacted || isCreateReactionSuccess}
           className={cn(
             "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200",
@@ -398,7 +403,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleToggleLevelTwo}
-          aria-label={`Reply to ${author.username}'s comment`}
+          aria-label={`Reply to ${author?.username || 'user'}'s comment`}
           aria-expanded={isLevelTwoCommentOpen}
           className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-neutral-100 hover:text-primary-400 hover:bg-primary-500/10 transition-all duration-200"
         >
