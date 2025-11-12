@@ -1,5 +1,5 @@
 import { Menu, MenuButton, MenuItem, MenuItems, Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuDot, LuInfo, LuMenu } from 'react-icons/lu';
 import { cn } from '../../../utils';
@@ -27,6 +27,7 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({ title, mainAction, acti
   const { t } = useTranslation();
   const { isLoggedIn } = useUser();
   const [showSignInPopup, setShowSignInPopup] = useState<string | null>(null);
+  const [showGlow, setShowGlow] = useState(false);
   const {authUser} = useUser()
 
   const handleActionBlocked = (action: string) => {
@@ -50,6 +51,24 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({ title, mainAction, acti
   const handleInfoClick = () => {
     handleActionBlocked('view info');
   };
+
+  // Glowing effect on mount and every 10 seconds
+  useEffect(() => {
+    // Trigger glow immediately on mount
+    setShowGlow(true);
+    const timeout = setTimeout(() => setShowGlow(false), 2000); // Glow for 2 seconds
+
+    // Set up interval to repeat every 10 seconds
+    const interval = setInterval(() => {
+      setShowGlow(true);
+      setTimeout(() => setShowGlow(false), 2000); // Glow for 2 seconds
+    }, 10000); // 10 seconds
+
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <>
@@ -106,16 +125,23 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({ title, mainAction, acti
             <Menu>
               <MenuButton
                 className={cn(
-                  'inline-flex items-center gap-2 rounded-md py-1.5 px-3 text-sm shadow-sm',
+                  'inline-flex items-center gap-2 rounded-md py-1.5 px-3 text-sm shadow-sm relative',
                   isLoggedIn
                     ? 'hover:text-primary-400 focus:text-primary-400 cursor-pointer'
                     : 'text-neutral-500 cursor-not-allowed',
-                  'transition-all duration-300 ease-in-out'
+                  'transition-all duration-300 ease-in-out',
+                  showGlow ? 'animate-pulse' : ''
                 )}
                 onClick={() => handleActionBlocked('view more actions')}
                 disabled={!isLoggedIn}
               >
-                <LuMenu className="w-6 h-6" />
+                <LuMenu className={cn(
+                  'w-6 h-6 transition-all duration-500',
+                  showGlow ? 'text-primary-400 drop-shadow-[0_0_8px_rgba(126,240,56,0.8)]' : ''
+                )} />
+                {showGlow && (
+                  <span className="absolute inset-0 rounded-md bg-primary-400/30 animate-ping"></span>
+                )}
               </MenuButton>
               {isLoggedIn && (
                 <MenuItems

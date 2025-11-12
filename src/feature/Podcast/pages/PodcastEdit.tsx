@@ -10,6 +10,7 @@ import UploadProgressModal from '../components/UploadProgressModal';
 
 import { apiClient1 } from '../../../services/apiClient';
 import { useUser } from '../../../hooks/useUser';
+import { cn } from '../../../utils';
 import { uploadPodcastThumbnail } from '../../../utils/media';
 import { useGetPodcastById, useUpdatePodcastMetadata } from '../hooks';
 import { useParams } from 'react-router-dom';
@@ -25,7 +26,7 @@ import {
 
 
 const EditPodcast: React.FC= () => {
-  const { authUser } = useUser();
+  const { authUser, isLoggedIn } = useUser();
   const { id } = useParams<{ id: string }>();
 
   // Fetch podcast data
@@ -259,15 +260,27 @@ const EditPodcast: React.FC= () => {
             />
             <button
               onClick={handleUpdateMetadata}
-              disabled={updateMetadata.isPending|| isUploadingThumbnail}
-              className="bg-primary-400 text-white font-bold text-md py-2 px-6 rounded-full transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={updateMetadata.isPending || isUploadingThumbnail || !isLoggedIn}
+              className={cn(
+                'py-3 px-10 rounded-full border',
+                isLoggedIn && !updateMetadata.isPending && !isUploadingThumbnail
+                  ? 'border-primary-300 cursor-pointer hover:bg-primary-50 focus:bg-primary-50'
+                  : 'border-neutral-500 text-neutral-500 cursor-not-allowed',
+                'transition-all duration-300 ease-in-out'
+              )}
             >
              {updateMetadata.isPending?  'Saving...' : 'Save Metadata'}
             </button>
             <button
               onClick={handleUpdateAudio}
-              disabled={updateMetadata.isPending || !audioFile}
-              className="bg-primary-400 text-white font-bold text-md py-2 px-6 rounded-full transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={updateMetadata.isPending || !audioFile || !isLoggedIn}
+              className={cn(
+                'py-3 px-10 rounded-full border',
+                isLoggedIn && !updateMetadata.isPending && audioFile
+                  ? 'border-primary-300 cursor-pointer hover:bg-primary-50 focus:bg-primary-50'
+                  : 'border-neutral-500 text-neutral-500 cursor-not-allowed',
+                'transition-all duration-300 ease-in-out'
+              )}
             >
               Update Audio
             </button>

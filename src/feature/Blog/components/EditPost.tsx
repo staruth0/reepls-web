@@ -598,7 +598,7 @@ const EditPost: React.FC = () => {
                   )}
                 </div>
               </div>
-              <div id="editor" className="mb-20">
+              <div id="editor" className="mb-20 relative">
                 <TipTapRichTextEditor
                   initialContent={htmlContent}
                   handleContentChange={setContent}
@@ -608,8 +608,8 @@ const EditPost: React.FC = () => {
                   disabled={isUpdating}
                   className="block max-w-full bg-primary-100 static mx-auto my-1"
                 />
-                <div className="mt-2 text-right">
-                  <span className={`text-xs ${getWordCountColor(content, LIMITS.ARTICLE.CONTENT_MAX_WORDS)}`}>
+                <div className="absolute bottom-1 right-2 text-xs">
+                  <span className={getWordCountColor(content, LIMITS.ARTICLE.CONTENT_MAX_WORDS)}>
                     {getWordCountDisplay(content, LIMITS.ARTICLE.CONTENT_MAX_WORDS)} words
                   </span>
                 </div>

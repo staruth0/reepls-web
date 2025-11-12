@@ -81,7 +81,7 @@ const UserFeed: React.FC = () => {
       <div className="lg:grid grid-cols-[4fr_1.65fr]">
         <div className="Feed__Posts min-h-screen lg:border-r-[1px] border-neutral-500">
           <Topbar>
-            <div className="px-3 flex justify-between items-center w-full">
+            <div className="lg:px-3 flex justify-between items-center w-full">
               <ToggleFeed />
             </div>
           </Topbar>

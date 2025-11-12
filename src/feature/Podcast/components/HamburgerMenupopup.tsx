@@ -13,6 +13,7 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({
   onAddCategoryClick,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showGlow, setShowGlow] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -39,6 +40,24 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({
     };
   }, []);
 
+  // Glowing effect on mount and every 10 seconds
+  useEffect(() => {
+    // Trigger glow immediately on mount
+    setShowGlow(true);
+    const timeout = setTimeout(() => setShowGlow(false), 2000); // Glow for 2 seconds
+
+    // Set up interval to repeat every 10 seconds
+    const interval = setInterval(() => {
+      setShowGlow(true);
+      setTimeout(() => setShowGlow(false), 2000); // Glow for 2 seconds
+    }, 10000); // 10 seconds
+
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
+  }, []);
+
   const handleMenuItemClick = (action: () => void) => {
     action();
     setIsOpen(false); // Close the menu after an item is clicked
@@ -49,10 +68,17 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({
       <button
         ref={buttonRef}
         onClick={toggleMenu}
-        className="p-2 rounded-full hover:bg-neutral-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500"
+        className={`p-2 rounded-full hover:bg-neutral-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 relative ${
+          showGlow ? 'animate-pulse' : ''
+        }`}
         aria-label="Options menu"
       >
-        <IoMenu className="size-6 text-neutral-50" />
+        <IoMenu className={`size-6 text-neutral-50 transition-all duration-500 ${
+          showGlow ? 'text-primary-400 drop-shadow-[0_0_8px_rgba(126,240,56,0.8)]' : ''
+        }`} />
+        {showGlow && (
+          <span className="absolute inset-0 rounded-full bg-primary-400/30 animate-ping"></span>
+        )}
       </button>
 
       {isOpen && (
