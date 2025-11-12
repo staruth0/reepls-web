@@ -197,7 +197,7 @@ const FeedPodcasts: React.FC = () => {
     <div className={`lg:grid grid-cols-[4fr_1.65fr]`}>
       <div className="min-h-screen flex flex-col items-center lg:border-r-[1px] border-neutral-500">
         <Topbar>
-          <div className="px-3 flex justify-between items-center w-full">
+          <div className="lg:px-3 flex justify-between items-center w-full">
             <ToggleFeed />
             {/* <CognitiveModeIndicator
               isActive={isBrainActive}

@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import Topbar from "../../../components/atoms/Topbar/Topbar";
-import Tabs from "../../../components/molecules/Tabs/Tabs";
 import Communique from "../../Feed/components/Communique/Communique";
 import SearchTopBar from "../components/SearchTopBar";
 import SearchPeople from "./SearchPeople";
@@ -19,6 +18,78 @@ const tabs = [
   { id: "Articles", title: "Articles" },
   { id: "People", title: "People" },
 ];
+
+interface SearchTabsProps {
+  tabs: { id: string; title: string }[];
+  activeTab: string | number;
+  setActiveTab: (tabId: string | number) => void;
+}
+
+const SearchTabs: React.FC<SearchTabsProps> = ({ tabs, activeTab, setActiveTab }) => {
+  const tabRef = useRef<HTMLDivElement>(null);
+  const activeTabRef = useRef<HTMLButtonElement>(null);
+
+  // Scroll active tab into view on mobile
+  useEffect(() => {
+    if (activeTabRef.current && tabRef.current) {
+      const container = tabRef.current;
+      const activeElement = activeTabRef.current;
+      const containerRect = container.getBoundingClientRect();
+      const activeRect = activeElement.getBoundingClientRect();
+      
+      // Check if active tab is out of view
+      if (activeRect.left < containerRect.left) {
+        container.scrollTo({
+          left: container.scrollLeft + (activeRect.left - containerRect.left) - 16,
+          behavior: 'smooth'
+        });
+      } else if (activeRect.right > containerRect.right) {
+        container.scrollTo({
+          left: container.scrollLeft + (activeRect.right - containerRect.right) + 16,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [activeTab]);
+
+  return (
+    <div className="w-full">
+      <div 
+        ref={tabRef}
+        className="relative flex overflow-x-auto scroll-smooth
+          [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]
+          border-b border-neutral-300
+          justify-between lg:overflow-x-visible"
+      >
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              ref={isActive ? activeTabRef : null}
+              onClick={() => setActiveTab(tab.id)}
+              className={`
+                relative flex-shrink-0 px-4 py-3 cursor-pointer 
+                transition-all duration-300 whitespace-nowrap
+                flex items-center justify-center
+                font-medium text-base
+                ${isActive 
+                  ? 'text-neutral-50' 
+                  : 'text-neutral-400 hover:text-neutral-300'
+                }
+              `}
+            >
+              <span className="relative z-10">{tab.title}</span>
+              {isActive && (
+                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary-400 rounded-t-full" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 const SearchResults: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -59,12 +130,11 @@ const SearchResults: React.FC = () => {
           <SearchTopBar initialSearchTerm={query} />
         </Topbar>
         <div className="flex flex-col min-h-screen items-center">
-          <div className="mt-10 min-w-[370px] self-center">
-            <Tabs
+          <div className="mt-10 w-full px-4 sm:px-6 md:px-10 lg:px-20 max-w-7xl">
+            <SearchTabs
               tabs={tabs}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
-              scale={true}
             />
           </div>
           <div className="mt-8 md:px-10 lg:px-20 text-[15px] w-full flex flex-col items-center flex-shrink-0">

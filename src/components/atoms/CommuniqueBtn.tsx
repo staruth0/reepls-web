@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { LuStar } from 'react-icons/lu';
 import { useTranslation } from 'react-i18next';
+import { cn } from '../../utils';
 
 interface StarToggleProps {
   isCommunique: boolean;
@@ -20,18 +21,22 @@ const StarToggle: React.FC<StarToggleProps> = ({ isCommunique, onToggle }) => {
     : t('Tag as communique');
 
   return (
-    <div className="relative inline-block">
+    <div className="relative flex items-center justify-center">
       <button
         type="button"
         onClick={handleToggle}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="focus:outline-none"
+        className={cn(
+          'w-6 h-6 flex items-center justify-center',
+          'hover:text-primary-400 focus:text-primary-400 cursor-pointer',
+          'transition-all duration-300 ease-in-out'
+        )}
       >
         <LuStar
-          className={`size-6 transition-colors duration-200 ${
-            isCommunique ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'
-          } hover:text-yellow-300`}
+          className={`w-6 h-6 transition-colors duration-300 ${
+            isCommunique ? 'fill-primary-400 text-primary-400' : 'text-neutral-100'
+          } hover:text-primary-400`}
         />
       </button>
       {isHovered && (

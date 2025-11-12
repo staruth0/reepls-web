@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 // import { LuHistory, LuHeadphones } from 'react-icons/lu';
 import Topbar from '../../../components/atoms/Topbar/Topbar';
-import Tabs from '../../../components/molecules/Tabs/Tabs';
 import { useUser } from '../../../hooks/useUser';
 import { Follow } from '../../../models/datamodels';
 import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
@@ -36,6 +35,78 @@ interface SavedArticleWrapper {
 interface SavedArticlesResponse {
   articles: SavedArticleWrapper[];
 }
+
+interface SavedTabsProps {
+  tabs: { id: string; title: string }[];
+  activeTab: string | number;
+  setActiveTab: (tabId: string | number) => void;
+}
+
+const SavedTabs: React.FC<SavedTabsProps> = ({ tabs, activeTab, setActiveTab }) => {
+  const tabRef = useRef<HTMLDivElement>(null);
+  const activeTabRef = useRef<HTMLButtonElement>(null);
+
+  // Scroll active tab into view on mobile
+  useEffect(() => {
+    if (activeTabRef.current && tabRef.current) {
+      const container = tabRef.current;
+      const activeElement = activeTabRef.current;
+      const containerRect = container.getBoundingClientRect();
+      const activeRect = activeElement.getBoundingClientRect();
+      
+      // Check if active tab is out of view
+      if (activeRect.left < containerRect.left) {
+        container.scrollTo({
+          left: container.scrollLeft + (activeRect.left - containerRect.left) - 16,
+          behavior: 'smooth'
+        });
+      } else if (activeRect.right > containerRect.right) {
+        container.scrollTo({
+          left: container.scrollLeft + (activeRect.right - containerRect.right) + 16,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [activeTab]);
+
+  return (
+    <div className="w-full">
+      <div 
+        ref={tabRef}
+        className="relative flex overflow-x-auto scroll-smooth
+          [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]
+          border-b border-neutral-300
+          lg:justify-between lg:overflow-x-visible"
+      >
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              ref={isActive ? activeTabRef : null}
+              onClick={() => setActiveTab(tab.id)}
+              className={`
+                relative flex-shrink-0 px-4 py-3 cursor-pointer 
+                transition-all duration-300 whitespace-nowrap
+                flex items-center justify-center
+                font-medium text-base
+                ${isActive 
+                  ? 'text-neutral-50' 
+                  : 'text-neutral-400 hover:text-neutral-300'
+                }
+              `}
+            >
+              <span className="relative z-10">{tab.title}</span>
+              {isActive && (
+                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary-400 rounded-t-full" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 const Bookmarks: React.FC = () => {
   const { authUser } = useUser();
@@ -149,8 +220,8 @@ useEffect(() => {
           </div>
           </Topbar>
           <div className="notification__content sm:px-5 md:px-10 lg:px-20 mt-5 min-h-screen flex flex-col items-center">
-            <div className="w-[82%]">
-              <Tabs activeTab={activeTab} setActiveTab={setActiveTab} scale={false} tabs={tabs} borderBottom={true} />
+            <div className="w-full lg:w-[82%]">
+              <SavedTabs activeTab={activeTab} setActiveTab={setActiveTab} tabs={tabs} />
             </div>
             <div className="px-2 mt-6 w-full">
               <div className="p-2">
@@ -206,8 +277,8 @@ useEffect(() => {
           </div>
           </Topbar>
           <div className="notification__content sm:px-5 md:px-10 lg:px-20 mt-5 min-h-screen flex flex-col items-center">
-            <div className="w-[82%]">
-              <Tabs activeTab={activeTab} setActiveTab={setActiveTab} scale={false} tabs={tabs} borderBottom={true} />
+            <div className="w-full lg:w-[82%]">
+              <SavedTabs activeTab={activeTab} setActiveTab={setActiveTab} tabs={tabs} />
             </div>
             <div className="px-2 mt-6 w-full">
               <p className="text-neutral-50 text-center py-4">
@@ -260,8 +331,8 @@ useEffect(() => {
           </div>
         </Topbar>
         <div className="notification__content  md:px-10 lg:px-20 mt-5 min-h-screen flex flex-col items-center">
-          <div className="w-[88%]">
-            <Tabs activeTab={activeTab} setActiveTab={setActiveTab} scale={false} tabs={tabs} borderBottom={true} />
+          <div className="w-full lg:w-[88%]">
+            <SavedTabs activeTab={activeTab} setActiveTab={setActiveTab} tabs={tabs} />
           </div>
           <div className="px-2 mt-6 w-full min-h-screen flex flex-col items-center ">
             {activeTab === 'posts' && (

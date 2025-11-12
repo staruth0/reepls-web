@@ -11,6 +11,7 @@ import PodcastPreviewModal from '../components/PodcastPreview';
 import { apiClient1 } from '../../../services/apiClient';
 import { useUser } from '../../../hooks/useUser';
 import { t } from 'i18next';
+import { cn } from '../../../utils';
 import { uploadPodcastThumbnail } from '../../../utils/media';
 import UploadProgressModal from '../components/UploadProgressModal';
 import { 
@@ -51,7 +52,7 @@ const Podcast: React.FC = () => {
   const audioInputRef = useRef<HTMLInputElement>(null);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
 
-  const { authUser } = useUser();
+  const { authUser, isLoggedIn } = useUser();
 
   const handleThumbnailUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
@@ -313,8 +314,14 @@ const Podcast: React.FC = () => {
             />
             <button
               onClick={handlePost}
-              disabled={isPosting || isUploadingThumbnail}
-              className="bg-primary-400 text-white font-bold text-md py-2 px-6 rounded-full transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isPosting || isUploadingThumbnail || !isLoggedIn}
+              className={cn(
+                'py-3 px-10 rounded-full border',
+                isLoggedIn && !isPosting && !isUploadingThumbnail
+                  ? 'border-primary-300 cursor-pointer hover:bg-primary-50 focus:bg-primary-50'
+                  : 'border-neutral-500 text-neutral-500 cursor-not-allowed',
+                'transition-all duration-300 ease-in-out'
+              )}
             >
               Publish
             </button>

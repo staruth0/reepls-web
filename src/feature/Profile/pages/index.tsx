@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import Topbar from "../../../components/atoms/Topbar/Topbar";
-import Tabs from "../../../components/molecules/Tabs/Tabs";
 import ProfileAbout from "../components/ProfileAbout";
 import ProfileArticles from "../components/ProfileArticles";
 import ProfileBody from "../components/ProfileBody";
@@ -25,6 +24,79 @@ import MainContent from "../../../components/molecules/MainContent";
 import { useGetUserMedia } from "../hooks";
 import { useGetMyReposts } from "../../Repost/hooks/useRepost";
 import { useGetPodcastsByUser } from "../../Podcast/hooks";
+
+interface ProfileTabsProps {
+  tabs: { id: string; title: string }[];
+  activeTab: string | number;
+  setActiveTab: (tabId: string | number) => void;
+}
+
+const ProfileTabs: React.FC<ProfileTabsProps> = ({ tabs, activeTab, setActiveTab }) => {
+  const tabRef = useRef<HTMLDivElement>(null);
+  const activeTabRef = useRef<HTMLButtonElement>(null);
+
+  // Scroll active tab into view on mobile
+  useEffect(() => {
+    if (activeTabRef.current && tabRef.current) {
+      const container = tabRef.current;
+      const activeElement = activeTabRef.current;
+      const containerRect = container.getBoundingClientRect();
+      const activeRect = activeElement.getBoundingClientRect();
+      
+      // Check if active tab is out of view
+      if (activeRect.left < containerRect.left) {
+        container.scrollTo({
+          left: container.scrollLeft + (activeRect.left - containerRect.left) - 16,
+          behavior: 'smooth'
+        });
+      } else if (activeRect.right > containerRect.right) {
+        container.scrollTo({
+          left: container.scrollLeft + (activeRect.right - containerRect.right) + 16,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [activeTab]);
+
+  return (
+    <div className="w-full min-w-0 overflow-hidden">
+      <div 
+        ref={tabRef}
+        className="relative flex overflow-x-auto scroll-smooth
+          [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]
+          border-b border-neutral-300
+          lg:justify-between lg:overflow-x-visible
+          -mx-5 sm:-mx-10 md:-mx-10 lg:mx-0 px-5 sm:px-10 md:px-10 lg:px-0"
+      >
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              ref={isActive ? activeTabRef : null}
+              onClick={() => setActiveTab(tab.id)}
+              className={`
+                relative flex-shrink-0 px-4 py-3 cursor-pointer 
+                transition-all duration-300 whitespace-nowrap
+                flex items-center justify-center
+                font-medium text-base
+                ${isActive 
+                  ? 'text-neutral-50' 
+                  : 'text-neutral-400 hover:text-neutral-300'
+                }
+              `}
+            >
+              <span className="relative z-10">{tab.title}</span>
+              {isActive && (
+                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary-400 rounded-t-full" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 const Profile: React.FC = () => {
   const { t } = useTranslation();
@@ -265,12 +337,10 @@ const Profile: React.FC = () => {
           </ProfileBody>
 
           <div className="mt-6">
-            <Tabs
+            <ProfileTabs
               tabs={tabs}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
-              scale={false}
-              borderBottom={true}
             />
           </div>
 
