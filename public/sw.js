@@ -27,10 +27,37 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Handle push notifications with rich content and actions
+// Import Firebase Messaging scripts (will be loaded from CDN)
+// Firebase messaging will be available via importScripts in the service worker
+
+// Handle push notifications with rich content and actions (supports both FCM and standard push)
 self.addEventListener('push', event => {
   try {
-    const data = event.data ? event.data.json() : {};
+    let data = {};
+    
+    // Handle Firebase Cloud Messaging format
+    if (event.data) {
+      try {
+        const payload = event.data.json();
+        // FCM sends data in notification and data fields
+        if (payload.notification) {
+          data = {
+            title: payload.notification.title,
+            body: payload.notification.body,
+            icon: payload.notification.icon,
+            image: payload.notification.image,
+            ...payload.data, // Merge custom data
+            data: payload.data || {}, // Keep data for click handling
+          };
+        } else {
+          // Standard push notification format
+          data = payload;
+        }
+      } catch (e) {
+        // If JSON parsing fails, try text
+        data = { body: event.data.text() || 'New notification' };
+      }
+    }
     
     // Default notification options
     const options = {
@@ -40,8 +67,8 @@ self.addEventListener('push', event => {
       image: data.image || undefined, // Large image for rich notifications
       requireInteraction: data.requireInteraction || false,
       silent: data.silent || false,
-      data: data.data || {},
-      tag: data.tag || `notification-${Date.now()}`, // Group notifications
+      data: data.data || data, // Include all data for click handling
+      tag: data.tag || data.data?.tag || `notification-${Date.now()}`, // Group notifications
       renotify: data.renotify || false,
       timestamp: Date.now(),
       vibrate: [],
@@ -51,7 +78,8 @@ self.addEventListener('push', event => {
     };
 
     // Set vibration patterns based on notification type
-    if (data.data && data.data.type) {
+    const notificationType = data.type || data.data?.type;
+    if (notificationType) {
       const vibrationPatterns = {
         'follow': [100, 50, 100],
         'reaction': [100, 30, 100, 30, 100],
@@ -61,12 +89,13 @@ self.addEventListener('push', event => {
         'post': [150, 50, 150]
       };
       
-      options.vibrate = vibrationPatterns[data.data.type] || [100, 50, 100];
+      options.vibrate = vibrationPatterns[notificationType] || [100, 50, 100];
     }
 
     // Add action buttons based on notification type
-    if (data.data && data.data.type) {
-      switch (data.data.type) {
+    if (notificationType) {
+      const notificationData = data.data || data;
+      switch (notificationType) {
         case 'follow':
           options.actions = [
             {
@@ -80,7 +109,7 @@ self.addEventListener('push', event => {
               icon: '/icons/close.svg'
             }
           ];
-          options.tag = `follow-${data.data.sender_id}`;
+          options.tag = `follow-${notificationData.sender_id || ''}`;
           break;
           
         case 'reaction':
@@ -96,7 +125,7 @@ self.addEventListener('push', event => {
               icon: '/icons/user.svg'
             }
           ];
-          options.tag = `reaction-${data.data.article_id}`;
+          options.tag = `reaction-${notificationData.article_id || ''}`;
           break;
           
         case 'comment':
@@ -113,7 +142,7 @@ self.addEventListener('push', event => {
               icon: '/icons/reply.svg'
             }
           ];
-          options.tag = `comment-${data.data.article_id}`;
+          options.tag = `comment-${notificationData.article_id || ''}`;
           break;
           
         case 'article':
@@ -130,14 +159,15 @@ self.addEventListener('push', event => {
               icon: '/icons/bookmark.svg'
             }
           ];
-          options.tag = `${data.data.type}-${data.data.article_id}`;
+          options.tag = `${notificationType}-${notificationData.article_id || ''}`;
           break;
       }
     }
 
     // Show the notification
+    const title = data.title || data.notification?.title || 'New Notification';
     event.waitUntil(
-      self.registration.showNotification(data.title || 'New Notification', options)
+      self.registration.showNotification(title, options)
     );
   } catch (error) {
     console.error('Error handling push notification:', error);

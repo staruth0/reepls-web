@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Bounce, ToastContainer} from 'react-toastify';
 import NotFound from './feature/NotFound';
@@ -7,185 +7,45 @@ import './index.css';
 import { AuthRoutes } from './Routes/AuthRoutes';
 import { UserRoutes } from './Routes/UserRoutes';
 import { WebRoutes } from './Routes/WebRoutes';
-import { apiClient } from './services/apiClient';
-import { useFetchVapidPublicKey } from './feature/Notifications/hooks/useNotification';
-import { useUser } from './hooks/useUser';
 import FloatingAudioPlayer from './components/molecules/Audio/FloatingAudioPlayer';
 import { AudioPlayerProvider } from './context/AudioContext/AudioContextPlayer';
 
 // Setting up routes for your app
 const router = createBrowserRouter([WebRoutes, AuthRoutes, UserRoutes, { path: '*', element: <NotFound /> }]);
 
-// Type for subscription data
-interface SubscriptionData {
-  endpoint: string;
-  expirationTime: number | null;
-  keys: {
-    p256dh: string;
-    auth: string;
-  };
-  userId: string;
-}
-
-// Type for PushSubscription JSON result
-interface PushSubscriptionJSON {
-  endpoint: string;
-  expirationTime: number | null;
-  keys?: {
-    p256dh: string;
-    auth: string;
-  };
-}
-
 function App() {
-  const { theme } = useTheme(); 
-  const { data,  error } = useFetchVapidPublicKey();
-  const { authUser } = useUser();
-  const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null);
-  const [permissionGranted, setPermissionGranted] = useState<boolean>(false);
+  const { theme } = useTheme();
 
-  // Removed console.log for production performance
-
-
-  function urlBase64ToUint8Array(base64String: string): BufferSource {
-    if (!base64String) {
-      return new Uint8Array();
-    }
-    
-    try {
-      const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-      const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-      const rawData = window.atob(base64);
-      const bytes = new Uint8Array(rawData.length);
-      for (let i = 0; i < rawData.length; i++) {
-        bytes[i] = rawData.charCodeAt(i);
-      }
-      return bytes;
-    } catch (error) {
-      void error;
-      return new Uint8Array();
-    }
-  }
-
-
+  // Apply theme
   useEffect(() => {
     document.body.className = theme === 'dark' ? 'dark-theme' : ''; 
   }, [theme]);
 
-  // Register the service worker
+  // Register the service worker for FCM
   useEffect(() => {
-    if ('serviceWorker' in navigator && 'PushManager' in window) {
+    if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/sw.js')
         .then((registration) => {
-          setSwRegistration(registration);
+          console.log('Service Worker registered successfully:', registration);
+          // Also register firebase-messaging-sw.js for Firebase
+          navigator.serviceWorker
+            .register('/firebase-messaging-sw.js')
+            .then(() => {
+              console.log('Firebase Messaging Service Worker registered');
+            })
+            .catch((err) => {
+              console.warn('Firebase Messaging SW registration failed (this is OK if using main SW):', err);
+            });
         })
         .catch((error) => {
-          void error;
-         
+          console.error('Service Worker registration failed:', error);
         });
-    } else {
-      return
     }
   }, []);
 
-  // Check notification permission
-  useEffect(() => {
-    const checkPermission = async () => {
-      if ('Notification' in window) {
-        const permission = Notification.permission;
-        setPermissionGranted(permission === 'granted');
-        
-        if (permission === 'denied') {
-          return
-        }
-      }
-    };
-    
-    checkPermission();
-  }, []);
-
-  // Subscribe to push notifications
-  useEffect(() => {
-    const subscribeToPush = async () => {
-      // Only proceed if we have all the necessary data
-      if (!data?.publicVapid || !authUser?.id || !swRegistration || !permissionGranted) {
-        return;
-      }
-      
-      try {
-        // Check for existing subscription
-        const existingSubscription = await swRegistration.pushManager.getSubscription();
-        
-        if (existingSubscription) {
-          // Get the subscription as JSON
-          const subscriptionJSON = existingSubscription.toJSON() as PushSubscriptionJSON;
-          
-
-          const subscriptionData: SubscriptionData = {
-            endpoint: existingSubscription.endpoint,
-            expirationTime: existingSubscription.expirationTime || null,
-            keys: {
-              p256dh: subscriptionJSON.keys?.p256dh || '',
-              auth: subscriptionJSON.keys?.auth || '',
-            },
-            userId: `${authUser.id}`,
-          };
-          
-          await apiClient.post('/push-notification/subscribe', subscriptionData);
-          return;
-        }
-        
-        // Request permission if not already granted
-        if (Notification.permission !== 'granted') {
-          const permission = await Notification.requestPermission();
-          if (permission !== 'granted') {
-            return;
-          }
-          setPermissionGranted(true);
-        }
-        
-        // Subscribe the user with properly converted VAPID key
-        const applicationServerKey = urlBase64ToUint8Array(data.publicVapid);
-        const subscription = await swRegistration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: applicationServerKey,
-        });
-        // Get the subscription as JSON
-        const subscriptionJSON = subscription.toJSON() as PushSubscriptionJSON;
-        // Prepare subscription data for backend
-        const subscriptionData: SubscriptionData = {
-          endpoint: subscription.endpoint,
-          expirationTime: subscription.expirationTime || null,
-          keys: {
-            p256dh: subscriptionJSON.keys?.p256dh || '',
-            auth: subscriptionJSON.keys?.auth || '',
-          },
-          userId: `${authUser.id}`,
-        };
-        
-        // Send subscription to backend
-        await apiClient.post('/push-notification/subscribe', subscriptionData);
-      
-      } catch (error: unknown) {
-        void error;
-        
-      }
-    };
-    
-    subscribeToPush();
-  }, [data, authUser?.id, swRegistration, permissionGranted]);
-
-  if (error) {
-    void error;
-  }
-
-
-//   {
-//   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
-// }
-
-
+  // Note: Auto-subscription removed - users must explicitly enable notifications via toggle
+  // The useFCM hook will still check subscription status silently on mount
 
   return (
     <>
