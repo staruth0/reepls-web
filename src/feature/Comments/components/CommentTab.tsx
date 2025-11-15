@@ -114,7 +114,7 @@ const CommentTab: React.FC<CommentTabProps> = ({
       <div className="relative">
         <motion.div 
           className={cn(
-            "flex items-center w-full p-2 border border-neutral-300 rounded-full bg-background transition-colors",
+            "flex items-center w-full p-1.5 sm:p-2 border border-neutral-300 rounded-full bg-background transition-colors",
             isSending && "opacity-75"
           )}
           whileHover={{ scale: 1.01 }}
@@ -127,7 +127,7 @@ const CommentTab: React.FC<CommentTabProps> = ({
                 ? t("What are your thoughts...")
                 : t("Sign in to comment")
             }
-            className="flex-grow bg-transparent outline-none text-sm text-neutral-100 placeholder-neutral-100 px-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-grow min-w-0 bg-transparent outline-none text-xs sm:text-sm text-neutral-100 placeholder-neutral-100 px-1.5 sm:px-2 disabled:opacity-50 disabled:cursor-not-allowed"
             value={comment}
             onChange={(e) => isLoggedIn && setComment(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -136,16 +136,16 @@ const CommentTab: React.FC<CommentTabProps> = ({
           />
           
           {isLoggedIn && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               {/* Emoji Button */}
               <div className="relative" ref={emojiPickerRef}>
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setEmojiPickerVisible(!isEmojiPickerVisible)}
-                  className="p-2 rounded-full text-neutral-100 hover:text-primary-400 hover:bg-primary-500/10 transition-all duration-200"
+                  className="p-1.5 sm:p-2 rounded-full text-neutral-100 hover:text-primary-400 hover:bg-primary-500/10 transition-all duration-200"
                 >
-                  <LuSmile size={18} />
+                  <LuSmile className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
                 </motion.button>
                 
                 {/* Emoji Picker */}
@@ -176,16 +176,16 @@ const CommentTab: React.FC<CommentTabProps> = ({
                 onClick={handleSubmit}
                 disabled={isSending || comment.trim() === ""}
                 className={cn(
-                  "p-2 rounded-full transition-all duration-200",
+                  "p-1.5 sm:p-2 rounded-full transition-all duration-200",
                   comment.trim() === "" || isSending
                     ? "text-neutral-100 cursor-not-allowed"
                     : "text-primary-400 hover:text-primary-300 hover:bg-primary-500/20"
                 )}
               >
                 {isSending ? (
-                  <LuLoader className="animate-spin" size={18} />
+                  <LuLoader className="animate-spin w-4 h-4 sm:w-[18px] sm:h-[18px]" />
                 ) : (
-                  <LuSend size={18} />
+                  <LuSend className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
                 )}
               </motion.button>
             </div>
@@ -195,11 +195,11 @@ const CommentTab: React.FC<CommentTabProps> = ({
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="ml-2 flex items-center gap-2 px-4 py-2 text-neutral-100 bg-primary-500/20 hover:bg-primary-500/30 rounded-lg border border-primary-500/30 transition-all duration-200"
+              className="ml-2 flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-neutral-100 bg-primary-500/20 hover:bg-primary-500/30 rounded-lg border border-primary-500/30 transition-all duration-200 flex-shrink-0"
               onClick={() => navigate("/auth")}
             >
-              <FaRegUserCircle size={16} className="text-primary-400" />
-              <span className="text-sm font-medium">{t("Sign In")}</span>
+              <FaRegUserCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-400" />
+              <span className="text-xs sm:text-sm font-medium whitespace-nowrap">{t("Sign In")}</span>
             </motion.button>
           )}
         </motion.div>
