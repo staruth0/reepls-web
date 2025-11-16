@@ -127,11 +127,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex items-center justify-center py-8"
+        className="flex items-center justify-center py-6 sm:py-8"
       >
-        <div className="flex flex-col items-center gap-3">
-          <LuLoader className="animate-spin text-primary-400 text-2xl" />
-          <p className="text-neutral-400 text-sm">Loading comments...</p>
+        <div className="flex flex-col items-center gap-2 sm:gap-3">
+          <LuLoader className="animate-spin text-primary-400 text-xl sm:text-2xl" />
+          <p className="text-neutral-400 text-xs sm:text-sm">Loading comments...</p>
         </div>
       </motion.div>
     );
@@ -141,11 +141,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex items-center justify-center py-8"
+        className="flex items-center justify-center py-6 sm:py-8"
       >
-        <div className="flex flex-col items-center gap-3 text-red-400">
-          <LuCircleAlert className="text-2xl" />
-          <p className="text-sm">Error loading comments</p>
+        <div className="flex flex-col items-center gap-2 sm:gap-3 text-red-400">
+          <LuCircleAlert className="text-xl sm:text-2xl" />
+          <p className="text-xs sm:text-sm">Error loading comments</p>
         </div>
       </motion.div>
     );
@@ -160,16 +160,16 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     >
       {/* Header */}
       <motion.div 
-        className="flex items-center justify-end p-4"
+        className="flex items-center justify-end p-2 sm:p-4"
         variants={headerVariants}
       >
         <motion.button
           whileHover={{ scale: 1.1, rotate: 90 }}
           whileTap={{ scale: 0.9 }}
           onClick={handleCloseCommentSection}
-          className="p-2 rounded-full hover:bg-neutral-700/50 transition-colors group"
+          className="p-1.5 sm:p-2 rounded-full hover:bg-neutral-700/50 transition-colors group"
         >
-          <LuX className="text-neutral-400 group-hover:text-neutral-100 transition-colors" />
+          <LuX className="text-neutral-400 group-hover:text-neutral-100 transition-colors w-4 h-4 sm:w-5 sm:h-5" />
         </motion.button>
       </motion.div>
 
@@ -181,7 +181,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="p-4"
+            className="p-2 sm:p-4"
           >
             <CommentTab
               article_id={article_id}
@@ -193,18 +193,18 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       </AnimatePresence>
 
       {/* Comments List */}
-      <div className="max-h-96 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-neutral-600 scrollbar-track-transparent">
+      <div className="max-h-64 sm:max-h-80 md:max-h-96 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-neutral-600 scrollbar-track-transparent">
         <AnimatePresence mode="popLayout">
           {commentsToRender.length === 0 ? (
             <motion.div 
-              className="flex flex-col items-center justify-center py-12 text-neutral-400"
+              className="flex flex-col items-center justify-center py-8 sm:py-12 text-neutral-400 px-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <LuMessageCircle className="text-4xl mb-3 opacity-50" />
-              <p className="text-sm">No comments yet</p>
-              <p className="text-xs opacity-75">Be the first to share your thoughts!</p>
+              <LuMessageCircle className="text-3xl sm:text-4xl mb-2 sm:mb-3 opacity-50" />
+              <p className="text-xs sm:text-sm">No comments yet</p>
+              <p className="text-[10px] sm:text-xs opacity-75 text-center">Be the first to share your thoughts!</p>
             </motion.div>
           ) : (
             commentsToRender.map((comment: Comment, index: number) => {
@@ -232,7 +232,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         {/* Pagination */}
         {article.type !== "Repost" && hasNextPage && (
           <motion.div 
-            className="p-4 flex justify-center"
+            className="p-2 sm:p-4 flex justify-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
@@ -241,15 +241,15 @@ const CommentSection: React.FC<CommentSectionProps> = ({
               whileTap={{ scale: 0.98 }}
               onClick={() => fetchNextPage()}
               disabled={isFetchingNextPage}
-              className="px-6 py-2 bg-primary-500/10 hover:bg-primary-500/20 text-primary-400 rounded-lg border border-primary-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 sm:px-6 py-1.5 sm:py-2 bg-primary-500/10 hover:bg-primary-500/20 text-primary-400 rounded-lg border border-primary-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isFetchingNextPage ? (
-                <div className="flex items-center gap-2">
-                  <LuLoader className="animate-spin text-sm" />
-                  <span className="text-sm">Loading more...</span>
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <LuLoader className="animate-spin text-xs sm:text-sm" />
+                  <span className="text-xs sm:text-sm">Loading more...</span>
                 </div>
               ) : (
-                <span className="text-sm font-medium">Show More Comments</span>
+                <span className="text-xs sm:text-sm font-medium">Show More Comments</span>
               )}
             </motion.button>
           </motion.div>

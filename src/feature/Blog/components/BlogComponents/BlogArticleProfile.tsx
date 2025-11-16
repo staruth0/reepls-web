@@ -493,7 +493,7 @@ useEffect(() => {
                   onClick={handleSubscriptionToggle}
                   disabled={isSubscriptionPending}
                   className={cn(
-                    "text-primary-400 hover:underline ml-2 text-sm cursor-pointer transition-colors",
+                    "hidden md:inline-block text-primary-400 hover:underline ml-2 text-sm cursor-pointer transition-colors",
                     isSubscriptionPending ? "opacity-50 cursor-not-allowed" : "",
                     isSubscribed ? "text-green-400" : "text-primary-400"
                   )}

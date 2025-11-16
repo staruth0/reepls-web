@@ -194,7 +194,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
   return (
     <motion.div
       className={cn(
-        "w-full p-3 relative overflow-visible",
+        "w-full p-2 sm:p-3 relative overflow-visible",
         isSameAuthorAsPrevious ? "self-end" : "self-start"
       )}
       initial={{ opacity: 0, y: 10 }}
@@ -203,49 +203,49 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
       transition={{ duration: 0.2 }}
     >
       <motion.div 
-        className="bg-neutral-700 p-3 relative rounded-xl shadow-sm inline-block w-full transition-all duration-200"
+        className="bg-neutral-700 p-2 sm:p-3 relative rounded-xl shadow-sm inline-block w-full transition-all duration-200"
         whileHover={{ scale: 1.01 }}
       >
         {/* Header */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="cursor-pointer"
+            className="cursor-pointer flex-shrink-0"
             onClick={handleProfileClick}
           >
             {author?.profile_picture ? (
               <img
                 src={author.profile_picture}
                 alt={author?.username || 'User'}
-                className="size-8 rounded-full object-cover"
+                className="size-7 sm:size-8 rounded-full object-cover"
               />
             ) : (
-              <div className="size-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
+              <div className="size-7 sm:size-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-xs sm:text-sm">
                 {author?.username?.charAt(0)?.toUpperCase() || '?'}
               </div>
             )}
           </motion.div>
           
-          <div className="flex-1">
-            <div className="font-semibold flex items-center justify-between text-neutral-50 text-[14px]">
+          <div className="flex-1 min-w-0">
+            <div className="font-semibold flex items-center justify-between text-neutral-50 text-xs sm:text-[14px]">
               <motion.div
-                className="flex items-center gap-2 cursor-pointer group"
+                className="flex items-center gap-1 sm:gap-2 cursor-pointer group min-w-0"
                 onClick={handleProfileClick}
                 whileHover={{ x: 2 }}
               >
-                <span className="font-semibold text-neutral-100 text-sm group-hover:text-primary-400 transition-colors">
+                <span className="font-semibold text-neutral-100 text-xs sm:text-sm group-hover:text-primary-400 transition-colors truncate">
                   {author?.username}
                 </span>
                 {author?.is_verified_writer && (
                   <LuBadgeCheck
-                    className="text-primary-400 size-4"
+                    className="text-primary-400 w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0"
                     strokeWidth={2.5}
                   />
                 )}
                 {isAuthor && (
                   <motion.div 
-                    className="px-2 py-0.5 text-primary-400 text-xs"
+                    className="px-1.5 sm:px-2 py-0.5 text-primary-400 text-[10px] sm:text-xs flex-shrink-0"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.2 }}
@@ -255,23 +255,23 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
                 )}
               </motion.div>
               
-              <div className="absolute right-2 text-[12px] font-light flex items-center gap-2 text-neutral-100">
-                <span>{formattedDate}</span>
+              <div className="absolute right-1 sm:right-2 text-[10px] sm:text-[12px] font-light flex items-center gap-1 sm:gap-2 text-neutral-100 flex-shrink-0">
+                <span className="whitespace-nowrap">{formattedDate}</span>
                 {isAuthAuthor && (
                   <motion.button
                     whileHover={{ scale: 1.1, rotate: 90 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setShowMenu(!showMenu)}
-                    className="p-1 rounded-full hover:bg-neutral-700/50 transition-colors"
+                    className="p-0.5 sm:p-1 rounded-full hover:bg-neutral-700/50 transition-colors"
                   >
-                    <EllipsisVertical className="size-4 text-neutral-100 hover:text-neutral-200" />
+                    <EllipsisVertical className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-neutral-100 hover:text-neutral-200" />
                   </motion.button>
                 )}
               </div>
             </div>
             
             {author?.title && (
-              <p className="text-[12px] text-neutral-100">{author.title}</p>
+              <p className="text-[10px] sm:text-[12px] text-neutral-100 truncate">{author.title}</p>
             )}
           </div>
         </div>
@@ -291,7 +291,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
                   type="text"
                   value={editedContent}
                   onChange={(e) => setEditedContent(e.target.value)}
-                  className="flex-1 bg-neutral-600/50 text-neutral-100 text-sm outline-none rounded-lg px-3 py-2 border border-neutral-500/50 focus:border-primary-500/50"
+                  className="flex-1 bg-neutral-600/50 text-neutral-100 text-xs sm:text-sm outline-none rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 border border-neutral-500/50 focus:border-primary-500/50"
                   autoFocus
                 />
                 <motion.button 
@@ -299,12 +299,12 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
                   whileTap={{ scale: 0.95 }}
                   onClick={handleUpdateClick} 
                   disabled={isUpdatePending}
-                  className="p-2 rounded-lg bg-primary-500/20 hover:bg-primary-500/30 disabled:opacity-50 transition-colors"
+                  className="p-1.5 sm:p-2 rounded-lg bg-primary-500/20 hover:bg-primary-500/30 disabled:opacity-50 transition-colors"
                 >
                   {isUpdatePending ? (
-                    <LuLoader className="animate-spin size-4 text-primary-400" />
+                    <LuLoader className="animate-spin w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-400" />
                   ) : (
-                    <Send size={16} className="text-primary-400" />
+                    <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-400" />
                   )}
                 </motion.button>
               </motion.div>
@@ -314,7 +314,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="text-neutral-100 text-sm leading-relaxed"
+                className="text-neutral-100 text-xs sm:text-sm leading-relaxed break-words"
               >
                 {content}
               </motion.p>
@@ -368,7 +368,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
 
       {/* Actions */}
       <motion.div 
-        className="flex items-center gap-6 mt-3"
+        className="flex items-center gap-3 sm:gap-6 mt-2 sm:mt-3 flex-wrap"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.1 }}
@@ -380,20 +380,20 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
           aria-label={`React to ${author?.username || 'user'}'s comment`}
           aria-pressed={hasUserReacted || isCreateReactionSuccess}
           className={cn(
-            "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200",
+            "flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-medium transition-all duration-200",
             hasUserReacted || isCreateReactionSuccess
               ? "bg-primary-500/20 text-primary-400 border border-primary-500/30"
               : "text-neutral-400 hover:text-primary-400 hover:bg-primary-500/10"
           )}
         >
           {isCreateReactionPending ? (
-            <LuLoader className="animate-spin size-3" />
+            <LuLoader className="animate-spin w-3 h-3 sm:w-3 sm:h-3" />
           ) : (
-            <ThumbsUp className="size-3" />
+            <ThumbsUp className="w-3 h-3 sm:w-3 sm:h-3" />
           )}
           <span className="text-neutral-100">React</span>
           {reactionCount > 0 && (
-          <span className="bg-neutral-600/50 px-1.5 py-0.5 rounded-full text-xs text-neutral-100">
+          <span className="bg-neutral-600/50 px-1 sm:px-1.5 py-0.5 rounded-full text-[10px] sm:text-xs text-neutral-100">
             {reactionCount}
           </span>
           )}
@@ -405,12 +405,12 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
           onClick={handleToggleLevelTwo}
           aria-label={`Reply to ${author?.username || 'user'}'s comment`}
           aria-expanded={isLevelTwoCommentOpen}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-neutral-100 hover:text-primary-400 hover:bg-primary-500/10 transition-all duration-200"
+          className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-medium text-neutral-100 hover:text-primary-400 hover:bg-primary-500/10 transition-all duration-200"
         >
-          <MessageCircle className="size-3" />
+          <MessageCircle className="w-3 h-3 sm:w-3 sm:h-3" />
           <span className="text-neutral-100">Reply</span>
           {replies?.length > 0 && (
-            <span className="bg-neutral-600/50 px-1.5 py-0.5 rounded-full text-xs text-neutral-100">
+            <span className="bg-neutral-600/50 px-1 sm:px-1.5 py-0.5 rounded-full text-[10px] sm:text-xs text-neutral-100">
               {replies.length}
             </span>
           )}
@@ -420,7 +420,7 @@ const CommentMessage: React.FC<MessageComponentProps> = ({
               animate={{ rotate: 45 }}
               transition={{ duration: 0.2 }}
             >
-              <LuX className="size-3" />
+              <LuX className="w-3 h-3 sm:w-3 sm:h-3" />
             </motion.div>
           )}
         </motion.button>
