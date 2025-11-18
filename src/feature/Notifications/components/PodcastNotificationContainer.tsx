@@ -2,43 +2,39 @@ import React from "react";
 import { useGetUserById } from "../../Profile/hooks";
 import { useUpdateNotificationReadStatus } from "../hooks/useNotification";
 import { useNavigate } from "react-router-dom";
-import { LuMessageCircle } from "react-icons/lu";
+import { LuMic } from "react-icons/lu";
 
-interface CommentNotificationProps {
+interface PodcastNotificationProps {
   username: string;
   timestamp: string;
-  comment: string;
+  communique: string;
   is_read: boolean;
   id: string;
-  slug: string;
-  article_id: string;
-  isArticle: boolean;
   podcastId?: string;
+  podcast_id?: string;
 }
 
-const CommentNotificationContainer: React.FC<CommentNotificationProps> = ({
+const PodcastNotificationContainer: React.FC<PodcastNotificationProps> = ({
   username,
   timestamp,
-  isArticle,
-  comment,
+  communique,
   is_read,
   id,
-  slug,
-  article_id,
   podcastId,
+  podcast_id,
 }) => {
   const { user } = useGetUserById(username);
   const { mutate } = useUpdateNotificationReadStatus();
   const navigate = useNavigate();
 
+  // Prioritize podcast_id from backend, fallback to podcastId
+  const podcastIdValue = podcast_id || podcastId;
+
   const updateStatus = () => {
-    // If podcastId exists, navigate to podcast page
-    if (podcastId) {
-      navigate(`/podcast/${podcastId}`);
+    if (podcastIdValue) {
+      navigate(`/podcast/${podcastIdValue}`);
     } else {
-      navigate(
-        `${isArticle ? `/posts/article/slug/${slug}` : `/posts/post/${article_id}`}`
-      );
+      navigate('/notifications');
     }
     mutate(
       { notificationId: id, isRead: true },
@@ -87,8 +83,8 @@ const CommentNotificationContainer: React.FC<CommentNotificationProps> = ({
             <span className="text-xs sm:text-sm font-semibold text-neutral-100 hover:text-primary-400 transition-colors">
               {user?.name || username}
             </span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 font-medium">
-              Commented
+            <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 font-medium">
+              Podcast
             </span>
           </div>
           <span className="text-xs text-neutral-400 whitespace-nowrap ml-2">
@@ -98,10 +94,10 @@ const CommentNotificationContainer: React.FC<CommentNotificationProps> = ({
 
         <div className="relative">
           <div className="absolute -left-2 top-1/2 -translate-y-1/2">
-            <LuMessageCircle className="w-4 h-4 text-green-400/60" />
+            <LuMic className="w-4 h-4 text-purple-400/60" />
           </div>
           <p className="text-xs sm:text-sm text-neutral-300 dark:text-neutral-200 pl-5 line-clamp-2 leading-relaxed">
-            {comment}
+            {communique}
           </p>
         </div>
       </div>
@@ -116,4 +112,5 @@ const CommentNotificationContainer: React.FC<CommentNotificationProps> = ({
   );
 };
 
-export default CommentNotificationContainer;
+export default PodcastNotificationContainer;
+

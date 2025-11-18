@@ -353,7 +353,24 @@ const EditPost: React.FC = () => {
       });
       setShowPodcastListModal(false);
       setSelectedPodcast(null);
-      navigate(`/posts/article/slug/${article?.slug || articleId}`);
+      // Navigate based on isArticle property
+      if (article?.isArticle) {
+        // Navigate to article view by slug
+        if (article?.slug) {
+          navigate(`/posts/article/slug/${article.slug}`);
+        } else if (article?._id) {
+          navigate(`/posts/article/slug/${article._id}`);
+        } else {
+          navigate('/feed');
+        }
+      } else {
+        // Navigate to post view by ID
+        if (article?._id) {
+          navigate(`/posts/post/${article._id}`);
+        } else {
+          navigate('/feed');
+        }
+      }
     } catch (error) {
       console.error('Error attaching podcast:', error);
       let errorMessage = 'Failed to attach podcast';
@@ -452,7 +469,24 @@ const EditPost: React.FC = () => {
               isLoading: false,
               autoClose: 1500,
             });
-            navigate(`/posts/article/slug/${article?.slug || articleId}`);
+            // Navigate based on isArticle property
+            if (article?.isArticle) {
+              // Navigate to article view by slug
+              if (article?.slug) {
+                navigate(`/posts/article/slug/${article.slug}`);
+              } else if (article?._id) {
+                navigate(`/posts/article/slug/${article._id}`);
+              } else {
+                navigate('/feed');
+              }
+            } else {
+              // Navigate to post view by ID
+              if (article?._id) {
+                navigate(`/posts/post/${article._id}`);
+              } else {
+                navigate('/feed');
+              }
+            }
           },
           onError: (error: Error) => {
             toast.update(toastId, {

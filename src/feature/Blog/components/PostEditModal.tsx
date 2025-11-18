@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { LuLoader, LuTag } from 'react-icons/lu';
 import { X, MoreVertical, Star } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import TagsModal from './TagsModal';
 import {
   allowedImageTypes,
@@ -51,6 +52,7 @@ const PostEditModal = ({
   const { theme } = useTheme();
   const { t } = useTranslation();
   const { isLoggedIn, authUser } = useUser();
+  const navigate = useNavigate();
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const highlightRef = useRef<HTMLDivElement | null>(null);
@@ -230,6 +232,24 @@ const PostEditModal = ({
         toast.success('Post updated successfully');
         setIsSubmitting(false);
         setIsModalOpen(false);
+        // Navigate based on isArticle property
+        if (article?.isArticle) {
+          // Navigate to article view by slug
+          if (article?.slug) {
+            navigate(`/posts/article/slug/${article.slug}`);
+          } else if (article?._id) {
+            navigate(`/posts/article/slug/${article._id}`);
+          } else {
+            navigate('/feed');
+          }
+        } else {
+          // Navigate to post view by ID
+          if (article?._id) {
+            navigate(`/posts/post/${article._id}`);
+          } else {
+            navigate('/feed');
+          }
+        }
       },
       onError: (error: any) => {
         toast.error('Error updating post: ' + (error?.response?.data?.message || error?.message));
