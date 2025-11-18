@@ -75,13 +75,13 @@ const LandingPageFooter = () => {
             </button>
           </motion.div>
 
-          {/* Right - Social Media Icons */}
+          {/* Right - Social Media Icon */}
           <motion.div
             className="flex items-center gap-4 justify-center md:justify-end"
             variants={itemVariants}
           >
             <motion.a
-              href="https://instagram.com"
+              href="https://instagram.com" 
               target="_blank"
               rel="noopener noreferrer"
               className="text-white hover:text-primary-400 transition-colors"
