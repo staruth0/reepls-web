@@ -7,6 +7,8 @@ import PostNotificationContainer from '../components/NotificationContainer';
 import FollowNotificationContainer from '../components/FollowNotificationContainer';
 import CommentNotificationContainer from '../components/CommentNotificationContainer';
 import ReactionNotificationContainer from '../components/ReactionNotificationContainer';
+import PodcastNotificationContainer from '../components/PodcastNotificationContainer';
+import PublicationNotificationContainer from '../components/PublicationNotificationContainer';
 import { timeAgo } from '../../../utils/dateFormater';
 import { FiBell } from 'react-icons/fi'; 
 import { useNavigate } from 'react-router-dom';
@@ -49,7 +51,9 @@ const Notifications: React.FC = () => {
           ) : (
             <div className="mt-6 flex max-w-2xl mx-auto flex-col gap-5">
               {notifications.map((notification, index) => {
-                const { type, sender_id, content, created_at, is_read, _id, slug, article_id, isArticle } = notification;
+                const { type, sender_id, content, created_at, is_read, _id, slug, article_id, isArticle, podcastId, podcast_id, publicationId, publication_id, url } = notification;
+                // Prioritize podcast_id from backend, fallback to podcastId
+                const podcastIdValue = podcast_id || podcastId;
 
                 switch (type) {
                   case 'follow':
@@ -74,6 +78,7 @@ const Notifications: React.FC = () => {
                         id={_id}
                         slug={slug}
                         article_id={article_id!}
+                        podcastId={podcastIdValue}
                       />
                     );
                   case 'reaction':
@@ -88,6 +93,7 @@ const Notifications: React.FC = () => {
                         slug={slug}
                         article_id={article_id!}
                         isArticle={isArticle!}
+                        podcastId={podcastIdValue}
                       />
                     );
                   case 'post':
@@ -103,6 +109,7 @@ const Notifications: React.FC = () => {
                         article_id={article_id!}
                         type={type}
                         isArticle={isArticle!}
+                        podcastId={podcastIdValue}
                       />
                     );
                   case 'article':
@@ -118,6 +125,34 @@ const Notifications: React.FC = () => {
                         article_id={article_id!}
                         type={type}
                         isArticle={isArticle!}
+                        podcastId={podcastIdValue}
+                      />
+                    );
+                  case 'podcast':
+                    return (
+                      <PodcastNotificationContainer
+                        key={index}
+                        username={sender_id}
+                        timestamp={timeAgo(created_at)}
+                        communique={content}
+                        is_read={is_read}
+                        id={_id}
+                        podcastId={podcastIdValue}
+                      />
+                    );
+                  case 'publication':
+                    return (
+                      <PublicationNotificationContainer
+                        key={index}
+                        username={sender_id}
+                        timestamp={timeAgo(created_at)}
+                        communique={content}
+                        is_read={is_read}
+                        id={_id}
+                        publicationId={publicationId}
+                        publication_id={publication_id}
+                        article_id={article_id}
+                        url={url}
                       />
                     );
                   default:

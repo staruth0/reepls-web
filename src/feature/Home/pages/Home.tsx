@@ -1,9 +1,17 @@
 import "../styles/home.scss";
 import Header from "../components/header/Header";
-import Banner from "../components/Banner/Banner";
-import Sections from "../components/Sections/Sections";
-import FooterTop from "../components/Footer/FooterTop";
-import FooterBottom from "../components/Footer/FooterBottom";
+import {
+  HeroSection,
+  NarrativeGapSection,
+  ProblemSection,
+  ReeplsSolutionSection,
+  CoreFeaturesSection,
+  InDepthPostsSection,
+  StreamsSection,
+  CurateKnowledgeSection,
+  FinalCTASection,
+} from "../components/LandingPage";
+import LandingPageFooter from "../components/LandingPage/LandingPageFooter";
 
 import { useUser } from "../../../hooks/useUser";
 import { useEffect, useState } from "react";
@@ -61,14 +69,16 @@ function Home() {
   return (
     <div className="home__container bg-background">
       <Header />
-      <div className="lg:px-[100px] max-w-screen-2xl mx-auto">
-        <Banner />
-        <Sections />
-      </div>
-      <FooterTop />
-      <div className="lg:px-[100px] max-w-screen-2xl mx-auto">
-        <FooterBottom />
-      </div>
+      <HeroSection />
+      <NarrativeGapSection />
+      <ProblemSection />
+      <ReeplsSolutionSection />
+      <CoreFeaturesSection />
+      <InDepthPostsSection />
+      <StreamsSection />
+      <CurateKnowledgeSection />
+      <FinalCTASection />
+      <LandingPageFooter />
     </div>
   );
 }

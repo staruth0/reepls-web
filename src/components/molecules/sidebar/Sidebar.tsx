@@ -148,9 +148,29 @@ const Sidebar: React.FC = () => {
     };
 
     createPost(post, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         setIsCreatingPost(false);
-        navigate("/feed");
+      
+        const articleData = data?.notification?.article || data?.article || data;
+        
+        // Navigate based on isArticle property
+        if (articleData?.isArticle) {
+          // Navigate to article view by slug
+          if (articleData?.slug) {
+            navigate(`/posts/article/slug/${articleData.slug}`);
+          } else if (articleData?._id) {
+            navigate(`/posts/article/slug/${articleData._id}`);
+          } else {
+            navigate("/feed");
+          }
+        } else {
+          // Navigate to post view by ID
+          if (articleData?._id) {
+            navigate(`/posts/post/${articleData._id}`);
+          } else {
+            navigate("/feed");
+          }
+        }
       },
       onError: (error: unknown) => {
         const errorMessage = error && typeof error === 'object' && 'response' in error 

@@ -9,6 +9,7 @@ import { UserRoutes } from './Routes/UserRoutes';
 import { WebRoutes } from './Routes/WebRoutes';
 import FloatingAudioPlayer from './components/molecules/Audio/FloatingAudioPlayer';
 import { AudioPlayerProvider } from './context/AudioContext/AudioContextPlayer';
+import NotificationPermissionPopup from './components/molecules/NotificationPermissionPopup';
 
 // Setting up routes for your app
 const router = createBrowserRouter([WebRoutes, AuthRoutes, UserRoutes, { path: '*', element: <NotFound /> }]);
@@ -66,6 +67,7 @@ function App() {
       />
 
       <FloatingAudioPlayer />
+      <NotificationPermissionPopup />
     </AudioPlayerProvider>
       
     </>

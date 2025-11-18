@@ -14,6 +14,7 @@ interface PostNotificationProps {
   article_id: string;
   type: string;
   isArticle: boolean;
+  podcastId?: string;
 }
 
 const PostNotificationContainer: React.FC<PostNotificationProps> = ({
@@ -24,16 +25,22 @@ const PostNotificationContainer: React.FC<PostNotificationProps> = ({
   id,
   slug,
   article_id,
-  isArticle
+  isArticle,
+  podcastId
 }) => {
   const { user } = useGetUserById(username);
   const { mutate } = useUpdateNotificationReadStatus();
   const navigate = useNavigate();
 
   const updateStatus = () => {
-    navigate(
-      `${isArticle ? `/posts/article/slug/${slug}` : `/posts/post/${article_id}`}`
-    );
+    // If podcastId exists, navigate to podcast page
+    if (podcastId) {
+      navigate(`/podcast/${podcastId}`);
+    } else {
+      navigate(
+        `${isArticle ? `/posts/article/slug/${slug}` : `/posts/post/${article_id}`}`
+      );
+    }
     mutate(
       { notificationId: id, isRead: true },
       {

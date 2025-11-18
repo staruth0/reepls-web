@@ -32,6 +32,7 @@ import { useGetAllReactionsForTarget } from "../../Repost/hooks/useRepost";
 import PodcastReactionsPopup from "../../Interactions/components/PodcastReactionPopup";
 import PodcastReactionModal from "../components/PodcastReactionmodal";
 import PodcastDetailSkeleton from "../components/PodcastDetailSkeleton";
+import ConfirmationModal from "../../Blog/components/ConfirmationModal";
 
 const PodcastDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -44,6 +45,7 @@ const PodcastDetail: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showReactionsPopup, setShowReactionsPopup] = useState(false);
   const [showReactionsHoverPopup, setShowReactionsHoverPopup] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const {
     data: podcastData,
@@ -109,6 +111,7 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
 
     setDeleteError(null);
     setIsDeleting(true);
+    setShowDeleteConfirmation(false);
 
     try {
       await deletePodcast(id);
@@ -119,6 +122,11 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
       setIsDeleting(false);
       setDeleteError("An error occurred while deleting.");
     }
+  };
+
+  const handleDeleteClick = () => {
+    setIsMenuOpen(false);
+    setShowDeleteConfirmation(true);
   };
 
   const retryDelete = () => {
@@ -301,7 +309,7 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDelete();
+                      handleDeleteClick();
                     }}
                     className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-neutral-600"
                   >
@@ -529,7 +537,7 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                handleDelete();
+                handleDeleteClick();
               }}
               className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-neutral-600"
             >
@@ -546,6 +554,17 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
         podcastAuthor={podcast?.author}
         podcast={podcast}
       />
+
+      {showDeleteConfirmation && (
+        <ConfirmationModal
+          title="Delete Podcast"
+          message="Are you sure you want to delete this podcast? This action cannot be undone."
+          onConfirm={handleDelete}
+          onCancel={() => setShowDeleteConfirmation(false)}
+          confirmText={isDeleting ? "Deleting..." : "Delete"}
+          confirmColor="red"
+        />
+      )}
     </div>
   );
 };

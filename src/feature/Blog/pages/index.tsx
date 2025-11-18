@@ -231,6 +231,29 @@ const CreatePost: React.FC = () => {
     toast.info('Tags cleared');
   };
 
+  // Helper function to navigate based on isArticle property
+  const navigateToPostOrArticle = (article: any) => {
+    if (article?.isArticle) {
+      // Navigate to article view by slug
+      if (article?.slug) {
+        navigate(`/posts/article/slug/${article.slug}`);
+      } else if (article?._id) {
+        // Fallback to ID if slug is not available
+        navigate(`/posts/article/slug/${article._id}`);
+      } else {
+        // Final fallback to feed
+        navigate('/feed');
+      }
+    } else {
+      // Navigate to post view by ID
+      if (article?._id) {
+        navigate(`/posts/post/${article._id}`);
+      } else {
+        // Fallback to feed
+        navigate('/feed');
+      }
+    }
+  };
 
 const onPublish = async () => {
   if (!isLoggedIn) return;
@@ -298,15 +321,17 @@ const onPublish = async () => {
       console.log('article debugging', article);
 
       createArticle(article, {
-        onSuccess: () => {
+        onSuccess: (data) => {
           toast.update(toastId, {
             render: t('Article published successfully'),
             type: 'success',
             isLoading: false,
             autoClose: 1500,
           });
-          navigate('/feed');
           clearDraftArticle();
+          // Extract article from nested response structure
+          const articleData = data?.notification?.article || data?.article || data;
+          navigateToPostOrArticle(articleData);
         },
         onError: (error) => {
           toast.update(toastId, {
@@ -346,7 +371,7 @@ const onPublish = async () => {
     setIsUploadingPodcast(true);
     setUploadProgress(0);
 
-    await apiClient1.post(
+    const response = await apiClient1.post(
       '/podcasts/create-with-article',
       formData,
       {
@@ -365,8 +390,10 @@ const onPublish = async () => {
       isLoading: false,
       autoClose: 1500,
     });
-    navigate('/feed');
     clearDraftArticle();
+    // Extract article from nested response structure
+    const articleData = response?.data?.notification?.article || response?.data?.article || response?.data;
+    navigateToPostOrArticle(articleData);
   } catch (error) {
     console.error('Upload error:', error);
     let errorMessage = 'Upload failed';
