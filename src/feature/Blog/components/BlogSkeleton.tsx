@@ -2,30 +2,26 @@ import React from "react";
 
 const BlogSkeletonComponent: React.FC = () => {
   return (
-    <div className="bg-neutral-800 text-neutral-300 px-2 md:p-4 rounded-lg lg:min-w-[600px] w-full min-h-[300px] mt-7 flex flex-col justify-between animate-pulse">
-      <div className="flex items-center md:space-x-3">
-        <div className="w-10 h-10 bg-neutral-700 rounded-full"></div>
-        <div>
-          <div className="h-4 bg-neutral-700 rounded w-32 mb-1"></div>
-          <div className="h-3 bg-neutral-700 rounded w-24"></div>
+    <div className="mt-5 border-[1px] border-neutral-500 p-2 md:p-4 max-w-2xl bg-background rounded-3xl animate-pulse">
+      {/* Profile Section */}
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-12 h-12 bg-neutral-700 rounded-full"></div>
+        <div className="flex-1">
+          <div className="h-4 bg-neutral-700 rounded w-32 mb-2"></div>
+          <div className="h-3 bg-neutral-700 rounded w-20"></div>
         </div>
       </div>
-      <div>
-        <div className="mt-4 h-5 bg-neutral-700 rounded w-3/4"></div>
-        <div className="mt-2 h-4 bg-neutral-700 rounded w-full"></div>
-        <div className="mt-2 h-4 bg-neutral-700 rounded w-5/6"></div>
-        <div className="mt-2 h-4 bg-neutral-700 rounded w-2/3"></div>
+
+      {/* Content/Image Area */}
+      <div className="mb-4">
+        <div className="w-full h-[400px] bg-neutral-700 rounded-lg"></div>
       </div>
 
-      <div className="mt-4 flex justify-between w-full">
-        <div className="h-9 bg-neutral-700 rounded w-32"></div>
-        <div className="h-9 bg-neutral-700 rounded w-32"></div>
-        <div className="h-9 bg-neutral-700 rounded w-32"></div>
-      </div>
-      <div className="mt-4 flex justify-between w-full">
-        <div className="h-9 bg-neutral-700 rounded w-32"></div>
-        <div className="h-9 bg-neutral-700 rounded w-32"></div>
-        <div className="h-9 bg-neutral-700 rounded w-32"></div>
+      {/* Interaction Buttons */}
+      <div className="flex items-center gap-4 px-2">
+        <div className="w-6 h-6 bg-neutral-700 rounded"></div>
+        <div className="w-6 h-6 bg-neutral-700 rounded"></div>
+        <div className="w-6 h-6 bg-neutral-700 rounded"></div>
       </div>
     </div>
   );

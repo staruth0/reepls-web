@@ -13,6 +13,7 @@ interface ProfileDetailsProps {
   bio: string;
   role: string;
   isverified:boolean;
+  isAuthUser?: boolean;
 }
 
 const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town,role,user_id,bio,isverified,username }) => {
@@ -25,6 +26,10 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town,role,user_id
   const handleGotoProfileSettings =()=>{
     navigate('/profileSettings')
   }
+
+  // const handleGotoEditProfile = () => {
+  //   navigate(`/profile/edit/${username}`)
+  // }
 
   const handleFollowingsClick = () => { 
     // Handle followings click
@@ -46,8 +51,10 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ name, town,role,user_id
             <p className="text-neutral-100 text-sm font-medium">{username}</p>
           </div>
           
-          {bio && (
+          {bio ? (
             <p className="text-neutral-100 text-sm leading-relaxed mb-3">{bio}</p>
+          ) : (
+            <p className="text-neutral-400 text-sm leading-relaxed mb-3">Reepls user</p>
           )}
         </div>
         

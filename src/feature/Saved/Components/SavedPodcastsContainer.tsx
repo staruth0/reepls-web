@@ -68,7 +68,7 @@ const SavedPodcastsContainer: React.FC<SavedPodcastsContainerProps> = ({ classNa
           You haven't saved any podcasts yet.
         </p>
         <button
-          onClick={() => navigate('/podcasts')}
+          onClick={() => navigate('/feed/podcasts')}
           className="mt-4 px-4 py-2 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors"
         >
           Discover Podcasts
@@ -95,6 +95,7 @@ const SavedPodcastsContainer: React.FC<SavedPodcastsContainerProps> = ({ classNa
               authorId?: {
                 _id: string;
                 name: string;
+                username?: string;
                 profile_picture?: string;
                 is_verified_writer?: boolean;
               };
@@ -116,6 +117,7 @@ const SavedPodcastsContainer: React.FC<SavedPodcastsContainerProps> = ({ classNa
               authorId?: {
                 _id: string;
                 name: string;
+                username?: string;
                 profile_picture?: string;
                 is_verified_writer?: boolean;
               };
@@ -136,15 +138,22 @@ const SavedPodcastsContainer: React.FC<SavedPodcastsContainerProps> = ({ classNa
               return null;
             }
          
+            // Only create cardPodcast if authorId exists
+            if (!podcast.authorId) {
+              return null;
+            }
+
             const cardPodcast = {
               id: podcast._id,
               thumbnailUrl: podcast.thumbnailUrl || 'https://placehold.co/400x200/444444/FFFFFF?text=Podcast+Thumbnail',
               author: {
-                id: podcast.authorId?._id || '',
-                name: podcast.authorId?.name || 'Unknown',
-                avatarUrl: podcast.authorId?.profile_picture || '',
-                isVerified: podcast.authorId?.is_verified_writer || false,
-              },
+                _id: podcast.authorId._id,
+                id: podcast.authorId._id,
+                name: podcast.authorId.name || 'Unknown',
+                username: podcast.authorId.username || '',
+                profile_picture: podcast.authorId.profile_picture || '',
+                is_verified_writer: podcast.authorId.is_verified_writer || false,
+              } as any, // Type assertion to match User type
               title: podcast.title || "Untitled Podcast",
               description: podcast.description || "",
               publishDate: formatDateWithMonth(podcast.createdAt),

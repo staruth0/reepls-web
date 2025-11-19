@@ -25,9 +25,9 @@ const ProfileArticles: React.FC<ProfileArticlesProps> = ({ articles = [] }) => {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center space-y-2">
-          <LuNewspaper className="text-4xl text-gray-500" />
-          <p className="text-gray-500 flex gap-2">
+        <div className="text-center py-8 flex flex-col items-center gap-4">
+          <LuNewspaper className="text-4xl text-neutral-400" />
+          <p className="text-neutral-400 text-base flex gap-2">
             {t("profile.noArticles")}
             <Link to="/posts/create" className="text-primary-400">
             {t("profile.createOne")}

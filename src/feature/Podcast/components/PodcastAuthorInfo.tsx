@@ -6,7 +6,7 @@ import { useFollowUser } from '../../../hooks/useFollowUser';
 import { useUser } from '../../../hooks/useUser';
 
 interface PodcastAuthorInfoProps {
-  author: User;
+  author: User | null;
 }
 
 const PodcastAuthorInfo: React.FC<PodcastAuthorInfoProps> = ({ author }) => {
@@ -16,9 +16,14 @@ const PodcastAuthorInfo: React.FC<PodcastAuthorInfoProps> = ({ author }) => {
     toggleFollow,
     isFollowPending,
     isUnfollowPending
-  } = useFollowUser({ targetUserId: author?.id });
+  } = useFollowUser({ targetUserId: author?.id || '' });
 
   const {authUser} = useUser()
+
+  // Return null if author is not available
+  if (!author) {
+    return null;
+  }
 
   const handleAuthorClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -66,7 +71,7 @@ const PodcastAuthorInfo: React.FC<PodcastAuthorInfoProps> = ({ author }) => {
         </div>
       </div>
 
- { authUser.id !== author.id &&     <button
+ { authUser?.id && authUser.id !== author.id &&     <button
         onClick={handleFollowClick}
         disabled={isFollowPending || isUnfollowPending}
         className={`ml-2 px-3 py-1 text-xs font-semibold transition-colors duration-200 ${
