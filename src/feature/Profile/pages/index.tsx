@@ -327,6 +327,7 @@ const Profile: React.FC = () => {
                   user_id={user.id!}
                   bio={user.bio!}
                   isverified={user.is_verified_writer!}
+                  isAuthUser={isAuthUser}
                 />
               </div>
               <ProfileHeroButtons
@@ -345,7 +346,13 @@ const Profile: React.FC = () => {
           </div>
 
           <div className="mt-6">
-            {activeTab === "about" && <ProfileAbout about={user?.about || ""} />}
+            {activeTab === "about" && (
+              <ProfileAbout 
+                about={user?.about || ""} 
+                isAuthUser={isAuthUser}
+                username={user?.username}
+              />
+            )}
             {activeTab === "posts" && (
               <>
                 <div className="pb-10">
@@ -355,11 +362,17 @@ const Profile: React.FC = () => {
                       <BlogSkeletonComponent />
                     </div>
                   ) : (
-                    authorPostsData?.pages.map((page, i) => (
-                      <div key={i}>
-                        <ProfilePosts authorId={authorId} posts={page.articles} />
-                      </div>
-                    ))
+                    (authorPostsData?.pages?.[0]?.totalPosts === 0 || 
+                     !authorPostsData?.pages?.[0]?.articles || 
+                     authorPostsData?.pages?.[0]?.articles?.length === 0) ? (
+                      <ProfilePosts authorId={authorId} posts={[]} isAuthUser={isAuthUser} />
+                    ) : (
+                      authorPostsData?.pages.map((page, i) => (
+                        <div key={i}>
+                          <ProfilePosts authorId={authorId} posts={page.articles} isAuthUser={isAuthUser} />
+                        </div>
+                      ))
+                    )
                   )}
                   {isFetchingNextPosts && (
                     <div className="p-2">
@@ -398,7 +411,7 @@ const Profile: React.FC = () => {
             )}
             {activeTab === "media" && <ProfileMedia userId={user.id!} />}
             {activeTab === "reposts" && <ProfileReposts userId={user.id!} />}
-            {activeTab === "podcasts" && <ProfilePodcasts userId={user.id!} />}
+            {activeTab === "podcasts" && <ProfilePodcasts userId={user.id!} isAuthUser={isAuthUser} />}
             <div ref={bottomRef} style={{ height: "100px" }} />
           </div>
         </div>

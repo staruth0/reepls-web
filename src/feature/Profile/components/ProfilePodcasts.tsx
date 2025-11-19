@@ -1,9 +1,12 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { LuMic } from "react-icons/lu";
 import { useGetPodcastsByUser } from "../../Podcast/hooks";
 import PodcastCard2 from "../../Podcast/components/PodcastLayout2";
 
 interface ProfilePodcastsProps {
   userId: string;
+  isAuthUser?: boolean;
 }
 
 interface PodcastData {
@@ -35,7 +38,8 @@ interface PodcastData {
   isPublic: boolean;
 }
 
-const ProfilePodcasts: React.FC<ProfilePodcastsProps> = ({ userId }) => {
+const ProfilePodcasts: React.FC<ProfilePodcastsProps> = ({ userId, isAuthUser = false }) => {
+  const navigate = useNavigate();
   const {
     data: podcastsData,
     isLoading,
@@ -45,6 +49,10 @@ const ProfilePodcasts: React.FC<ProfilePodcastsProps> = ({ userId }) => {
     page: 1,
     limit: 10,
   });
+
+  const handleCreatePodcast = () => {
+    navigate('/podcast/create');
+  };
 
   
   useEffect(() => {
@@ -81,8 +89,26 @@ const ProfilePodcasts: React.FC<ProfilePodcastsProps> = ({ userId }) => {
 
   if (!podcastsData || !podcastsData.data || podcastsData.data.results.length === 0) {
     return (
-      <div className="p-4 text-center">
-        <p className="text-neutral-400">No podcasts found for this user.</p>
+      <div className="p-4 py-8 text-center flex flex-col items-center gap-4">
+        <LuMic className="text-4xl text-neutral-400" />
+        {isAuthUser ? (
+          <div className="flex flex-col items-center gap-4">
+            <p className="text-neutral-400 text-base">
+              You haven't created any podcasts yet
+            </p>
+            <button
+              onClick={handleCreatePodcast}
+              className="flex items-center gap-2 px-4 py-2 bg-primary-400 text-white rounded-md hover:bg-primary-500 transition-colors"
+            >
+              <LuMic className="size-4" />
+              <span>Create Podcast</span>
+            </button>
+          </div>
+        ) : (
+          <p className="text-neutral-400 text-base">
+            This user has no podcasts yet oops
+          </p>
+        )}
       </div>
     );
   }

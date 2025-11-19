@@ -9,7 +9,7 @@ import { useAudioControls } from "../../../hooks/useMediaPlayer";
 interface Podcast {
   id: string;
   thumbnailUrl: string;
-  author: User;
+  author: User | null;
   title: string;
   description: string;
   publishDate: string; // e.g., "Jun 26"
@@ -44,7 +44,7 @@ const PodcastCard2: React.FC<PodcastCardProps> = ({
     title: podcast.title,
     url: podcast.audioUrl || '', // You'll need to add this to your Podcast interface
     thumbnail: podcast.thumbnailUrl,
-    author: podcast.author?.name,
+    author: podcast.author?.name || 'Unknown',
   });
 
   const handleCommentClick = () => {
