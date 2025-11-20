@@ -73,8 +73,8 @@ const StreamItemEllipsis: React.FC<AuthorListItemNoCheckboxProps> = ({ author })
   return (
     <>
       <div className="flex items-center py-2 w-full relative">
-        <div className="w-10 h-10 flex items-center justify-center rounded-full bg-primary-400 text-white font-bold mr-3">
-          {author.title.charAt(0)}
+        <div className="w-10 h-10 min-w-[2.5rem] min-h-[2.5rem] flex items-center justify-center rounded-full bg-primary-400 text-white font-bold mr-3 flex-shrink-0 aspect-square">
+          {author.title?.charAt(0)?.toUpperCase() || 'S'}
         </div>
 
         {/* Author details section */}

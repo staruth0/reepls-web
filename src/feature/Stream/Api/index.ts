@@ -43,7 +43,7 @@ const createOrUpdateArticle = async (payload: Article) => {
 
 // 8. Get user subscriptions
 const getUserSubscriptions = async () => {
-  const { data } = await apiClient.get(`/me/subscriptions`);
+  const { data } = await apiClient.get(`/publications/subscribed`);
   return data;
 };
 
