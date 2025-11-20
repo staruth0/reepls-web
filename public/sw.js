@@ -35,12 +35,13 @@ const vibrationPatterns = {
   'post': [150, 50, 150],
   'podcast': [150, 75, 150, 75, 150],
   'publication': [150, 50, 150, 50, 150],
-  'publication-article': [150, 50, 150, 50, 150]
+  'publication-article': [150, 50, 150, 50, 150],
+  'stream': [150, 50, 150, 50, 150]
 };
 
 // Default notification icon and badge
-const DEFAULT_ICON = '/icons/notification-icon.png';
-const DEFAULT_BADGE = '/icons/badge-icon.png';
+const DEFAULT_ICON = '/favicon.png';
+const DEFAULT_BADGE = '/favicon.png';
 
 // Helper function to extract notification data from different payload formats
 function extractNotificationData(payload) {
@@ -96,7 +97,7 @@ function buildNotificationOptions(notificationData, data) {
   const notificationType = getNotificationType(data);
   const options = {
     body: notificationData.body,
-    icon: notificationData.icon || DEFAULT_ICON,
+    icon:  DEFAULT_ICON,
     badge: DEFAULT_BADGE,
     image: notificationData.image,
     tag: `notification-${notificationType}-${Date.now()}`,
@@ -116,12 +117,12 @@ function buildNotificationOptions(notificationData, data) {
         {
           action: 'view-post',
           title: 'View Post',
-          icon: '/icons/view.svg'
+          icon: '/favicon.png'
         },
         {
           action: 'dismiss',
           title: 'Dismiss',
-          icon: '/icons/close.svg'
+          icon: '/favicon.png'
         }
       ];
       options.tag = `reaction-${notificationPayload.article_id || notificationPayload.articleId || ''}`;
@@ -133,17 +134,17 @@ function buildNotificationOptions(notificationData, data) {
         {
           action: 'view-post',
           title: 'View Post',
-          icon: '/icons/view.svg'
+          icon: '/favicon.png'
         },
         {
           action: 'reply',
           title: 'Reply',
-          icon: '/icons/reply.svg'
+          icon: '/favicon.png'
         },
         {
           action: 'dismiss',
           title: 'Dismiss',
-          icon: '/icons/close.svg'
+          icon: '/favicon.png'
         }
       ];
       options.tag = `comment-${notificationPayload.article_id || notificationPayload.articleId || ''}`;
@@ -154,17 +155,17 @@ function buildNotificationOptions(notificationData, data) {
         {
           action: 'view-profile',
           title: 'View Profile',
-          icon: '/icons/profile.svg'
+          icon: '/favicon.png'
         },
         {
           action: 'follow-back',
           title: 'Follow Back',
-          icon: '/icons/follow.svg'
+          icon: '/favicon.png'
         },
         {
           action: 'dismiss',
           title: 'Dismiss',
-          icon: '/icons/close.svg'
+          icon: '/favicon.png'
         }
       ];
       options.tag = `follow-${notificationPayload.sender_id || ''}`;
@@ -176,17 +177,17 @@ function buildNotificationOptions(notificationData, data) {
         {
           action: 'view-post',
           title: 'Read Article',
-          icon: '/icons/article.svg'
+          icon: '/favicon.png'
         },
         ...(hasPodcast ? [{
           action: 'view-podcast',
           title: 'Play Podcast',
-          icon: '/icons/podcast.svg'
+          icon: '/favicon.png'
         }] : []),
         {
           action: 'later',
           title: 'Read Later',
-          icon: '/icons/bookmark.svg'
+          icon: '/favicon.png'
         }
       ];
       options.tag = `article-${notificationPayload.article_id || notificationPayload.articleId || ''}`;
@@ -197,12 +198,12 @@ function buildNotificationOptions(notificationData, data) {
         {
           action: 'view-post',
           title: 'View Post',
-          icon: '/icons/view.svg'
+          icon: '/favicon.png'
         },
         {
           action: 'later',
           title: 'Read Later',
-          icon: '/icons/bookmark.svg'
+          icon: '/favicon.png'
         }
       ];
       options.tag = `post-${notificationPayload.article_id || notificationPayload.articleId || ''}`;
@@ -213,12 +214,12 @@ function buildNotificationOptions(notificationData, data) {
         {
           action: 'view-podcast',
           title: 'Play Podcast',
-          icon: '/icons/podcast.svg'
+          icon: '/favicon.png'
         },
         {
           action: 'later',
           title: 'Listen Later',
-          icon: '/icons/bookmark.svg'
+          icon: '/favicon.png'
         }
       ];
       options.tag = `podcast-${notificationPayload.podcastId || notificationPayload.podcast_id || ''}`;
@@ -228,21 +229,21 @@ function buildNotificationOptions(notificationData, data) {
       options.actions = [
         {
           action: 'view-publication',
-          title: 'View Publication',
-          icon: '/icons/article.svg'
+          title: 'View Stream',
+          icon: '/favicon.png'
         },
         {
           action: 'subscribe',
           title: 'Subscribe',
-          icon: '/icons/subscribe.svg'
+          icon: '/favicon.png'
         },
         {
           action: 'later',
           title: 'Read Later',
-          icon: '/icons/bookmark.svg'
+          icon: '/favicon.png'
         }
       ];
-      options.tag = `publication-${notificationPayload.publicationId || notificationPayload.article_id || ''}`;
+      options.tag = `publication-${notificationPayload.streamId || notificationPayload.stream_id || notificationPayload.publicationId || notificationPayload.article_id || ''}`;
       break;
 
     case 'publication-article':
@@ -250,20 +251,41 @@ function buildNotificationOptions(notificationData, data) {
         {
           action: 'view-post',
           title: 'Read Article',
-          icon: '/icons/article.svg'
+          icon: '/favicon.png'
         },
         {
           action: 'view-publication',
-          title: 'View Publication',
-          icon: '/icons/article.svg'
+          title: 'View Stream',
+          icon: '/favicon.png'
         },
         {
           action: 'later',
           title: 'Read Later',
-          icon: '/icons/bookmark.svg'
+          icon: '/favicon.png'
         }
       ];
       options.tag = `publication-article-${notificationPayload.article_id || notificationPayload.articleId || ''}`;
+      break;
+
+    case 'stream':
+      options.actions = [
+        {
+          action: 'view-publication',
+          title: 'View Stream',
+          icon: '/favicon.png'
+        },
+        {
+          action: 'subscribe',
+          title: 'Subscribe',
+          icon: '/favicon.png'
+        },
+        {
+          action: 'later',
+          title: 'Read Later',
+          icon: '/favicon.png'
+        }
+      ];
+      options.tag = `stream-${notificationPayload.streamId || notificationPayload.stream_id || ''}`;
       break;
 
     default:
@@ -271,12 +293,12 @@ function buildNotificationOptions(notificationData, data) {
         {
           action: 'view',
           title: 'View',
-          icon: '/icons/view.svg'
+          icon: '/favicon.png'
         },
         {
           action: 'dismiss',
           title: 'Dismiss',
-          icon: '/icons/close.svg'
+          icon: '/favicon.png'
         }
       ];
   }
@@ -359,19 +381,21 @@ self.addEventListener('notificationclick', (event) => {
   } else if (action === 'view-podcast') {
     // Navigate to podcast
     if (data.podcastId || data.podcast_id) {
-      url = `/podcasts/${data.podcastId || data.podcast_id}`;
+      url = `/podcast/${data.podcastId || data.podcast_id}`;
     } else if (data.url) {
       url = data.url;
     }
   } else if (action === 'view-publication') {
-    // Navigate to publication
+    // Navigate to stream
     if (data.url) {
       url = data.url;
+    } else if (data.streamId || data.stream_id) {
+      url = `/stream/${data.streamId || data.stream_id}`;
     } else if (data.publicationId) {
-      url = `/publications/${data.publicationId}`;
+      url = `/stream/${data.publicationId}`;
     } else if (data.article_id && notificationType === 'publication') {
       // Only use article_id for publication type, not publication-article
-      url = `/publications/${data.article_id}`;
+      url = `/stream/${data.article_id}`;
     }
   } else if (action === 'view-profile') {
     // Navigate to user profile
@@ -383,11 +407,17 @@ self.addEventListener('notificationclick', (event) => {
       url = `/profile/${data.sender_id}`;
     }
   } else if (action === 'reply') {
-    // Navigate to post with comment focus
+    // Navigate to the article or post where the comment was made, with comment focus
     if (data.slug) {
-      url = `/posts/article/slug/${data.slug}?comment=${data.parentCommentId || data.commentId || ''}`;
+      // If slug exists, check if it's an article or post
+      url = data.isArticle === 'true' || data.isArticle === true
+        ? `/posts/article/slug/${data.slug}?comment=${data.parentCommentId || data.commentId || ''}`
+        : `/posts/post/${data.article_id || data.articleId}?comment=${data.parentCommentId || data.commentId || ''}`;
     } else if (data.article_id || data.articleId) {
-      url = `/posts/article/${data.article_id || data.articleId}?comment=${data.parentCommentId || data.commentId || ''}`;
+      // Determine if it's an article or post based on isArticle flag
+      url = data.isArticle === 'true' || data.isArticle === true
+        ? `/posts/article/${data.article_id || data.articleId}?comment=${data.parentCommentId || data.commentId || ''}`
+        : `/posts/post/${data.article_id || data.articleId}?comment=${data.parentCommentId || data.commentId || ''}`;
     }
   } else if (action === 'follow-back') {
     // Navigate to profile and trigger follow
@@ -397,15 +427,17 @@ self.addEventListener('notificationclick', (event) => {
       url = `/profile/${data.sender_id}?action=follow`;
     }
   } else if (action === 'subscribe') {
-    // Navigate to publication and trigger subscribe
-    if (data.publicationId) {
-      url = `/publications/${data.publicationId}?action=subscribe`;
+    // Navigate to stream and trigger subscribe
+    if (data.streamId || data.stream_id) {
+      url = `/stream/${data.streamId || data.stream_id}?action=subscribe`;
+    } else if (data.publicationId) {
+      url = `/stream/${data.publicationId}?action=subscribe`;
     } else if (data.article_id && notificationType === 'publication') {
-      url = `/publications/${data.article_id}?action=subscribe`;
+      url = `/stream/${data.article_id}?action=subscribe`;
     }
   } else if (action === 'later') {
-    // Save for later - navigate to saved items or notifications
-    url = '/saved';
+    // Save for later - navigate to bookmarks
+    url = '/bookmarks';
   } else if (action === 'dismiss') {
     // Just close the notification, don't navigate
     return;
@@ -419,20 +451,22 @@ self.addEventListener('notificationclick', (event) => {
         url = `/posts/article/${data.article_id || data.articleId}`;
       }
     } else if (notificationType === 'publication') {
-      // Publication notification - navigate to publication
+      // Publication/Stream notification - navigate to stream
       if (data.url) {
         url = data.url;
+      } else if (data.streamId || data.stream_id) {
+        url = `/stream/${data.streamId || data.stream_id}`;
       } else if (data.publicationId) {
-        url = `/publications/${data.publicationId}`;
+        url = `/stream/${data.publicationId}`;
       } else if (data.article_id) {
-        url = `/publications/${data.article_id}`;
+        url = `/stream/${data.article_id}`;
       }
     } else if (notificationType === 'podcast') {
       // Podcast notification - navigate to podcast
       if (data.url) {
         url = data.url;
       } else if (data.podcastId || data.podcast_id) {
-        url = `/podcasts/${data.podcastId || data.podcast_id}`;
+        url = `/podcast/${data.podcastId || data.podcast_id}`;
       }
     } else if (notificationType === 'follow') {
       // Follow notification - navigate to profile
@@ -444,22 +478,43 @@ self.addEventListener('notificationclick', (event) => {
         url = `/profile/${data.sender_id}`;
       }
     } else if (notificationType === 'comment' || notificationType === 'comment-reply') {
-      // Comment notification - navigate to post
+      // Comment notification - navigate to the article or post where the comment was made
       if (data.slug) {
-        url = `/posts/article/slug/${data.slug}`;
+        // If slug exists, check if it's an article or post
+        url = data.isArticle === 'true' || data.isArticle === true
+          ? `/posts/article/slug/${data.slug}`
+          : `/posts/post/${data.article_id || data.articleId}`;
       } else if (data.article_id || data.articleId) {
-        url = `/posts/article/${data.article_id || data.articleId}`;
+        // Determine if it's an article or post based on isArticle flag
+        url = data.isArticle === 'true' || data.isArticle === true
+          ? `/posts/article/${data.article_id || data.articleId}`
+          : `/posts/post/${data.article_id || data.articleId}`;
       } else if (data.url) {
         url = data.url;
       }
     } else if (notificationType === 'reaction') {
-      // Reaction notification - navigate to post
+      // Reaction notification - navigate to the article or post where the reaction was made
       if (data.slug) {
-        url = `/posts/article/slug/${data.slug}`;
+        // If slug exists, check if it's an article or post
+        url = data.isArticle === 'true' || data.isArticle === true
+          ? `/posts/article/slug/${data.slug}`
+          : `/posts/post/${data.article_id || data.articleId}`;
       } else if (data.article_id || data.articleId) {
-        url = `/posts/article/${data.article_id || data.articleId}`;
+        // Determine if it's an article or post based on isArticle flag
+        url = data.isArticle === 'true' || data.isArticle === true
+          ? `/posts/article/${data.article_id || data.articleId}`
+          : `/posts/post/${data.article_id || data.articleId}`;
       } else if (data.url) {
         url = data.url;
+      }
+    } else if (notificationType === 'stream') {
+      // Stream notification - navigate to stream
+      if (data.url) {
+        url = data.url;
+      } else if (data.streamId || data.stream_id) {
+        url = `/stream/${data.streamId || data.stream_id}`;
+      } else if (data.publicationId) {
+        url = `/stream/${data.publicationId}`;
       }
     } else if (notificationType === 'article' || notificationType === 'post') {
       // Article/Post notification - navigate to post

@@ -10,10 +10,11 @@ import { useGetMyCollaboratorPublications, useGetMyPublications, useGetUserSubsc
 import { Publication } from '../../../models/datamodels'
 
 const StreamManagement:React.FC = () => {
+
   const { data: streams, isLoading, error } = useGetMyPublications();
 
   const { data: contributorStreams } = useGetMyCollaboratorPublications();
-
+  
   const { data: subscribedStreams, isLoading: isLoadingSubscribed, error: errorSubscribed } = useGetUserSubscriptions();
 
   useEffect(() => {
@@ -40,8 +41,7 @@ const StreamManagement:React.FC = () => {
         </Topbar>
 
         <div className="profile__content sm:px-5 md:px-10 lg:px-20 min-h-screen">
-         
-
+        
           <div className="mt-6">
             <Tabs
               tabs={tabs}
@@ -106,9 +106,7 @@ const StreamManagement:React.FC = () => {
       </div>
 
       <div className="profile__configurations bg-background hidden lg:block">
-       
           <ProfileConfigurations />
-        
       </div>
     </div>
   )
