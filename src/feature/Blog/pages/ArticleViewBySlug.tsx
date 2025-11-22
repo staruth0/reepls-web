@@ -417,6 +417,28 @@ const ArticleViewBySlug: React.FC = () => {
     setShowRepostsSidebar(true);
   }, [isLoggedIn]);
 
+  // Helper function to trim leading and trailing blank lines from content
+  const trimContentWhitespace = (text: string, html: string): { text: string; html: string } => {
+    // Trim plain text - remove leading and trailing newlines/whitespace
+    let trimmedText = text.trim();
+    
+    // Trim HTML - remove empty paragraphs and breaks at the beginning and end
+    let trimmedHtml = html;
+    
+    // Remove leading empty paragraphs (including those with only whitespace, breaks, or non-breaking spaces)
+    // Matches: <p></p>, <p> </p>, <p><br></p>, <p><br/></p>, <p>&nbsp;</p>, <p><br class="..."></p>, etc.
+    // This regex matches one or more empty paragraph tags at the start
+    trimmedHtml = trimmedHtml.replace(/^(<p[^>]*>(\s|&nbsp;|&#160;|<br[^>]*>)*<\/p>\s*)+/i, '');
+    
+    // Remove trailing empty paragraphs (including those with only whitespace, breaks, or non-breaking spaces)
+    trimmedHtml = trimmedHtml.replace(/(<p[^>]*>(\s|&nbsp;|&#160;|<br[^>]*>)*<\/p>\s*)+$/i, '');
+    
+    // Also trim any leading/trailing whitespace from the HTML string itself
+    trimmedHtml = trimmedHtml.trim();
+    
+    return { text: trimmedText, html: trimmedHtml };
+  };
+
   useEffect(() => {
     if (articleUid === PREVIEW_SLUG) {
       const draftArticle = loadDraftArticle();
@@ -425,10 +447,15 @@ const ArticleViewBySlug: React.FC = () => {
         navigate("/posts/create");
         return;
       }
+      // Trim content when loading from draft
+      const { text: trimmedContent, html: trimmedHtmlContent } = trimContentWhitespace(
+        draftArticle.content || "",
+        draftArticle.htmlContent || ""
+      );
       setTitle(draftArticle.title);
       setSubtitle(draftArticle.subtitle);
-      setContent(draftArticle.content);
-      setHtmlArticleContent(draftArticle.htmlContent);
+      setContent(trimmedContent);
+      setHtmlArticleContent(trimmedHtmlContent);
       setMedia(draftArticle.media);
     }
   }, [articleUid, loadDraftArticle, navigate]);
@@ -438,12 +465,17 @@ const ArticleViewBySlug: React.FC = () => {
       // Removed console.logs for production performance
       if (article.title) setTitle(article.title);
       if (article.subtitle) setSubtitle(article.subtitle);
-      if (article.content) setContent(article.content);
-      if (article.htmlContent) {
-        setHtmlArticleContent(article.htmlContent);
-      } else if (article.content) {
-        // Fallback: if htmlContent is missing, use content as HTML
-        setHtmlArticleContent(article.content);
+      
+      // Trim content when loading from article
+      if (article.content || article.htmlContent) {
+        const articleContent = article.content || "";
+        const articleHtmlContent = article.htmlContent || article.content || "";
+        const { text: trimmedContent, html: trimmedHtmlContent } = trimContentWhitespace(
+          articleContent,
+          articleHtmlContent
+        );
+        setContent(trimmedContent);
+        setHtmlArticleContent(trimmedHtmlContent);
       }
     }
   }, [article?.title, article?.subtitle, article?.content, article?.htmlContent]);

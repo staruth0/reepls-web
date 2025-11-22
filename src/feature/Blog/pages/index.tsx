@@ -106,7 +106,8 @@ const CreatePost: React.FC = () => {
       ActionIcon: LuEye,
       onClick: () => {
         if (!isLoggedIn) return;
-        saveDraftArticle({ title, subtitle, content, htmlContent, media, isCommunique });
+        const { text: trimmedContent, html: trimmedHtmlContent } = trimContentWhitespace(content, htmlContent);
+        saveDraftArticle({ title, subtitle, content: trimmedContent, htmlContent: trimmedHtmlContent, media, isCommunique });
         navigate('/posts/article/preview');
       },
     },
@@ -231,6 +232,28 @@ const CreatePost: React.FC = () => {
     toast.info('Tags cleared');
   };
 
+  // Helper function to trim leading and trailing blank lines from content
+  const trimContentWhitespace = (text: string, html: string): { text: string; html: string } => {
+    // Trim plain text - remove leading and trailing newlines/whitespace
+    let trimmedText = text.trim();
+    
+    // Trim HTML - remove empty paragraphs and breaks at the beginning and end
+    let trimmedHtml = html;
+    
+    // Remove leading empty paragraphs (including those with only whitespace, breaks, or non-breaking spaces)
+    // Matches: <p></p>, <p> </p>, <p><br></p>, <p><br/></p>, <p>&nbsp;</p>, <p><br class="..."></p>, etc.
+    // This regex matches one or more empty paragraph tags at the start
+    trimmedHtml = trimmedHtml.replace(/^(<p[^>]*>(\s|&nbsp;|&#160;|<br[^>]*>)*<\/p>\s*)+/i, '');
+    
+    // Remove trailing empty paragraphs (including those with only whitespace, breaks, or non-breaking spaces)
+    trimmedHtml = trimmedHtml.replace(/(<p[^>]*>(\s|&nbsp;|&#160;|<br[^>]*>)*<\/p>\s*)+$/i, '');
+    
+    // Also trim any leading/trailing whitespace from the HTML string itself
+    trimmedHtml = trimmedHtml.trim();
+    
+    return { text: trimmedText, html: trimmedHtml };
+  };
+
   // Helper function to navigate based on isArticle property
   const navigateToPostOrArticle = (article: any) => {
     if (article?.isArticle) {
@@ -301,13 +324,16 @@ const onPublish = async () => {
       setThumbnailImage(thumbnailUrl);
     }
 
+    // Trim leading and trailing blank lines from content
+    const { text: trimmedContent, html: trimmedHtmlContent } = trimContentWhitespace(content, htmlContent);
+
     // If there's no podcast, use the original hook
     if (!podcastData.audioFile) {
       const article: Article = {
         title,
         subtitle,
-        content,
-        htmlContent,
+        content: trimmedContent,
+        htmlContent: trimmedHtmlContent,
         thumbnail: thumbnailUrl, 
         media,
         tags,
@@ -349,8 +375,8 @@ const onPublish = async () => {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('subtitle', subtitle);
-    formData.append('content', content);
-    formData.append('htmlContent', htmlContent);
+    formData.append('content', trimmedContent);
+    formData.append('htmlContent', trimmedHtmlContent);
     if (thumbnailUrl) {
       formData.append('thumbnail', thumbnailUrl);
     }
@@ -452,7 +478,8 @@ const onPublish = async () => {
 
   useEffect(() => {
     if (!hasLoadedDraft) return;
-    saveDraftArticle({ title, subtitle, content, htmlContent, media, isCommunique });
+    const { text: trimmedContent, html: trimmedHtmlContent } = trimContentWhitespace(content, htmlContent);
+    saveDraftArticle({ title, subtitle, content: trimmedContent, htmlContent: trimmedHtmlContent, media, isCommunique });
   }, [title, subtitle, content, htmlContent, media, isCommunique, selectedPublicationId, hasLoadedDraft, saveDraftArticle]);
 
   return (

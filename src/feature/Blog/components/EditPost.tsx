@@ -389,6 +389,28 @@ const EditPost: React.FC = () => {
     }
   };
 
+  // Helper function to trim leading and trailing blank lines from content
+  const trimContentWhitespace = (text: string, html: string): { text: string; html: string } => {
+    // Trim plain text - remove leading and trailing newlines/whitespace
+    let trimmedText = text.trim();
+    
+    // Trim HTML - remove empty paragraphs and breaks at the beginning and end
+    let trimmedHtml = html;
+    
+    // Remove leading empty paragraphs (including those with only whitespace, breaks, or non-breaking spaces)
+    // Matches: <p></p>, <p> </p>, <p><br></p>, <p><br/></p>, <p>&nbsp;</p>, <p><br class="..."></p>, etc.
+    // This regex matches one or more empty paragraph tags at the start
+    trimmedHtml = trimmedHtml.replace(/^(<p[^>]*>(\s|&nbsp;|&#160;|<br[^>]*>)*<\/p>\s*)+/i, '');
+    
+    // Remove trailing empty paragraphs (including those with only whitespace, breaks, or non-breaking spaces)
+    trimmedHtml = trimmedHtml.replace(/(<p[^>]*>(\s|&nbsp;|&#160;|<br[^>]*>)*<\/p>\s*)+$/i, '');
+    
+    // Also trim any leading/trailing whitespace from the HTML string itself
+    trimmedHtml = trimmedHtml.trim();
+    
+    return { text: trimmedText, html: trimmedHtml };
+  };
+
   const onUpdate = async () => {
     if (!isLoggedIn || !articleId) return;
     
@@ -443,12 +465,15 @@ const EditPost: React.FC = () => {
         });
       }
 
+      // Trim leading and trailing blank lines from content
+      const { text: trimmedContent, html: trimmedHtmlContent } = trimContentWhitespace(content, htmlContent);
+
       const updatedArticleData: Article = {
         _id: articleId,
         title,
         subtitle,
-        content,
-        htmlContent,
+        content: trimmedContent,
+        htmlContent: trimmedHtmlContent,
         thumbnail: updatedThumbnail,
         media: updatedMedia,
         tags,
