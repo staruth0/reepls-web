@@ -7,6 +7,7 @@ import BlogSkeletonComponent from '../Blog/components/BlogSkeleton';
 import { useGetFollowedArticles } from '../Blog/hooks/useArticleHook';
 import Communique from './components/Communique/Communique';
 import ToggleFeed from './components/ToogleFeed';
+import AuthorSuggestions from './components/AuthorSuggestions';
 import './feed.scss';
 import MainContent from '../../components/molecules/MainContent';
 
@@ -103,10 +104,16 @@ const FeedFollowing: React.FC = () => {
             <BlogSkeletonComponent />
           </div>
         ) : hasNoArticles ? (
-          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] text-neutral-50 text-center py-4">
-            <p className="text-[16px] font-roboto">
-              {t("this page is empty! Follow some users to see their posts or check back later for new content.")}
-            </p>
+          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] text-neutral-50 py-4">
+            <div className="text-center mb-6">
+              <p className="text-[16px] font-roboto mb-4">
+                {t("No posts and articles because you aren't following users. Follow authors to start seeing their work.")}
+              </p>
+              <h3 className="text-[18px] font-semibold mb-4 text-neutral-300">
+                {t("REEPLS SUGGESTIONS")}
+              </h3>
+            </div>
+            <AuthorSuggestions />
           </div>
         ) : (
             <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col items-center gap-7">
