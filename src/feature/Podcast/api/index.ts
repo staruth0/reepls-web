@@ -63,6 +63,16 @@ const getPopularPodcasts = async (params?: GetPopularPodcastsParams) => {
   return data;
 };
 
+interface GetSuggestedPodcastsParams {
+  page?: number;
+  limit?: number;
+}
+
+const getSuggestedPodcasts = async (params?: GetSuggestedPodcastsParams) => {
+  const { data } = await apiClient.get("/podcasts/suggested", { params });
+  return data;
+};
+
 // --- Podcast Updates ---
 
 interface UpdatePodcastMetadataPayload {
@@ -267,6 +277,7 @@ export {
   getPodcastById,
   searchPodcasts,
   getPopularPodcasts,
+  getSuggestedPodcasts,
   updatePodcastMetadata,
   updatePodcastAudio,
   trackPodcastPlay,

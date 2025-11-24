@@ -5,7 +5,7 @@ import ToggleFeed from "./components/ToogleFeed";
 import PodcastCard from "../Podcast/components/PodcastLayout1";
 import PodcastCard2 from "../Podcast/components/PodcastLayout2";
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
-import { useGetAllPodcastsInfinite } from "../Podcast/hooks";
+import { useGetAllPodcastsInfinite, useGetSuggestedPodcasts } from "../Podcast/hooks";
 import { IPodcast, User } from "../../models/datamodels";
 import Communique from "./components/Communique/Communique";
 import { Pics } from "../../assets/images";
@@ -54,6 +54,18 @@ const FeedPodcasts: React.FC = () => {
     console.log('fetched podcast', podcastsAPI)
   },[podcastsAPI])
 
+  const { 
+    data: suggestedPodcastsData, 
+    isLoading: isLoadingSuggested 
+  } = useGetSuggestedPodcasts({
+    page: 1,
+    limit: 20,
+  });
+
+  useEffect(() => {
+    console.log("suggested podcasts", suggestedPodcastsData);
+  }, [suggestedPodcastsData]);
+
  
   function formatDate(iso?: string) {
     if (!iso) return "N/A";
@@ -69,12 +81,33 @@ const FeedPodcasts: React.FC = () => {
 
 
   const apiPodcastToCardPodcast = (p: IPodcast): Podcast => {
+    // Handle author - prefer p.author, fallback to p.authorId
+    let author: User;
+    if (p.author) {
+      // Map author object from API response (profilePicture -> profile_picture)
+      author = {
+        id: p.author.id || p.author._id || "",
+        name: p.author.name || p.author.username || "",
+        username: p.author.username || "",
+        profile_picture: (p.author as any).profilePicture || p.author.profile_picture || "",
+        is_verified_writer: (p.author as any).isVerifiedWriter || p.author.is_verified_writer || false,
+      };
+    } else if (p.authorId) {
+      // Use authorId if it's already a User object
+      author = typeof p.authorId === 'object' 
+        ? p.authorId 
+        : { id: p.authorId as any, name: "", profile_picture: "", is_verified_writer: false };
+    } else {
+      // Default fallback
+      author = { id: "", name: "", profile_picture: "", is_verified_writer: false };
+    }
+
     return {
       id: p.id ?? "",
       thumbnailUrl:
         p.thumbnailUrl ||
         Pics.podcastimg,
-      author: p.authorId || { id: "", name: "", profile_picture: "", is_verified_writer: false },
+      author: author,
       title: p.title || "Untitled Podcast",
       description: p.description || "",
       publishDate: formatDate(p.createdAt?.toString()),
@@ -93,6 +126,11 @@ const FeedPodcasts: React.FC = () => {
           ? (page?.data?.results || []).map(apiPodcastToCardPodcast)
           : []
       )
+    : [];
+
+  // Map suggested podcasts data
+  const suggestedPodcasts: Podcast[] = suggestedPodcastsData?.data?.results?.length > 0
+    ? suggestedPodcastsData.data.results.map(apiPodcastToCardPodcast)
     : [];
 
   // Handlers for actions
@@ -236,11 +274,11 @@ const FeedPodcasts: React.FC = () => {
             className="flex justify-start overflow-x-auto pb-3 sm:pb-4 scrollbar-hide"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {isLoading
+            {isLoadingSuggested
               ? // Show 3 skeletons while loading
                 [1, 2, 3].map((n) => <PodcastCardSkeleton key={n} />)
-              : podcasts.length > 0
-              ? podcasts.map((podcast) => (
+              : suggestedPodcasts.length > 0
+              ? suggestedPodcasts.map((podcast) => (
                   <div
                     key={podcast.id}
                     className="  flex-shrink-0 w-[280px] sm:w-[320px] md:w-[365px] mr-3 sm:mr-4"
@@ -256,7 +294,7 @@ const FeedPodcasts: React.FC = () => {
                   </div>
                 ))
               : // Empty fallback
-                <div className="text-neutral-400 italic text-sm sm:text-base">No podcasts available.</div>}
+                <div className="text-neutral-400 italic text-sm sm:text-base">No suggested podcasts available.</div>}
           </div>
         </div>
 

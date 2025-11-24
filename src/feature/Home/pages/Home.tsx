@@ -6,9 +6,9 @@ import {
   ProblemSection,
   ReeplsSolutionSection,
   CoreFeaturesSection,
-  InDepthPostsSection,
-  StreamsSection,
-  CurateKnowledgeSection,
+  // InDepthPostsSection,
+  // StreamsSection,
+  // CurateKnowledgeSection,
   FinalCTASection,
 } from "../components/LandingPage";
 import LandingPageFooter from "../components/LandingPage/LandingPageFooter";
@@ -74,9 +74,9 @@ function Home() {
       <ProblemSection />
       <ReeplsSolutionSection />
       <CoreFeaturesSection />
-      <InDepthPostsSection />
+      {/* <InDepthPostsSection />
       <StreamsSection />
-      <CurateKnowledgeSection />
+      <CurateKnowledgeSection /> */}
       <FinalCTASection />
       <LandingPageFooter />
     </div>
