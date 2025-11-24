@@ -8,6 +8,7 @@ import {
   getPodcastById,
   searchPodcasts,
   getPopularPodcasts,
+  getSuggestedPodcasts,
   updatePodcastMetadata,
   updatePodcastAudio,
   trackPodcastPlay,
@@ -147,6 +148,18 @@ export const useGetPopularPodcasts = (params?: UseGetPopularPodcastsParams) => {
   return useQuery({
     queryKey: ['podcasts', 'popular', params] as const,
     queryFn: () => getPopularPodcasts(params),
+  });
+};
+
+interface UseGetSuggestedPodcastsParams {
+  page?: number;
+  limit?: number;
+}
+
+export const useGetSuggestedPodcasts = (params?: UseGetSuggestedPodcastsParams) => {
+  return useQuery({
+    queryKey: ['podcasts', 'suggested', params] as const,
+    queryFn: () => getSuggestedPodcasts(params),
   });
 };
 
