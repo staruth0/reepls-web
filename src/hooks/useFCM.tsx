@@ -241,6 +241,61 @@ export const useFCM = () => {
       });
   }, [authUser?.id]);
 
+  // Handle token refresh - check for token changes periodically and on visibility change
+  useEffect(() => {
+    if (!authUser?.id || !isSubscribed) {
+      return;
+    }
+
+    let lastToken = fcmToken;
+
+    const checkTokenRefresh = async () => {
+      try {
+        if ('serviceWorker' in navigator) {
+          const registration = await navigator.serviceWorker.ready;
+          const currentToken = await getFCMToken(registration);
+          
+          if (currentToken && currentToken !== lastToken) {
+            console.log('FCM token refreshed, updating backend');
+            lastToken = currentToken;
+            setFcmToken(currentToken);
+            
+            // Update token on backend
+            try {
+              await apiClient.post('/push-notification/subscribe', {
+                token: currentToken,
+                userId: authUser.id,
+                platform: 'web',
+              });
+              console.log('Token refresh: Backend updated successfully');
+            } catch (error) {
+              console.error('Token refresh: Failed to update backend:', error);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error checking token refresh:', error);
+      }
+    };
+
+    // Check token on visibility change (when user comes back to the app)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        checkTokenRefresh();
+      }
+    };
+
+    // Check token periodically (every 5 minutes)
+    const interval = setInterval(checkTokenRefresh, 5 * 60 * 1000);
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [authUser?.id, isSubscribed, fcmToken]);
+
   return {
     fcmToken,
     isSubscribed,

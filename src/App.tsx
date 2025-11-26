@@ -10,6 +10,7 @@ import { WebRoutes } from './Routes/WebRoutes';
 import FloatingAudioPlayer from './components/molecules/Audio/FloatingAudioPlayer';
 import { AudioPlayerProvider } from './context/AudioContext/AudioContextPlayer';
 import NotificationPermissionPopup from './components/molecules/NotificationPermissionPopup';
+import config from './config';
 
 // Setting up routes for your app
 const router = createBrowserRouter([WebRoutes, AuthRoutes, UserRoutes, { path: '*', element: <NotFound /> }]);
@@ -27,8 +28,30 @@ function App() {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/sw.js')
-        .then((registration) => {
+        .then(async (registration) => {
           console.log('Service Worker registered successfully:', registration);
+          
+          // Wait for service worker to be ready
+          const readyRegistration = await navigator.serviceWorker.ready;
+          
+          // Send Firebase config to service worker
+          if (readyRegistration.active) {
+            const firebaseConfig = {
+              apiKey: config.firebase.apiKey,
+              authDomain: config.firebase.authDomain,
+              projectId: config.firebase.projectId,
+              storageBucket: config.firebase.storageBucket,
+              messagingSenderId: config.firebase.messagingSenderId,
+              appId: config.firebase.appId,
+            };
+            
+            readyRegistration.active.postMessage({
+              type: 'FIREBASE_CONFIG',
+              config: firebaseConfig,
+            });
+            console.log('Firebase config sent to service worker');
+          }
+          
           // Also register firebase-messaging-sw.js for Firebase
           navigator.serviceWorker
             .register('/firebase-messaging-sw.js')
