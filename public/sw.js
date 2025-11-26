@@ -1,8 +1,16 @@
 // Service Worker for REEPLS Push Notifications
 // Handles Web Push (VAPID) and FCM notifications
 
+// Import Firebase SDKs (using compat version for service workers)
+importScripts('https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js');
+
 const CACHE_NAME = 'reepls-v1';
 const STATIC_CACHE_NAME = 'reepls-static-v1';
+
+// Firebase configuration - will be set via message from main app
+let firebaseConfig = null;
+let messaging = null;
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
@@ -42,6 +50,51 @@ const vibrationPatterns = {
 // Default notification icon and badge
 const DEFAULT_ICON = '/favicon.png';
 const DEFAULT_BADGE = '/favicon.png';
+
+// Helper function to parse boolean values from strings
+function parseBoolean(value) {
+  if (typeof value === 'string') {
+    return value === 'true' || value === '1';
+  }
+  return Boolean(value);
+}
+
+// Initialize Firebase with config received from main app
+function initializeFirebase(config) {
+  if (!config || firebaseConfig) {
+    return; // Already initialized or no config
+  }
+
+  try {
+    firebaseConfig = config;
+    firebase.initializeApp(config);
+    messaging = firebase.messaging();
+    
+    console.log('[Service Worker] Firebase initialized successfully');
+    
+    // Set up background message handler for FCM
+    messaging.onBackgroundMessage((payload) => {
+      console.log('[Service Worker] FCM background message received:', payload);
+      
+      // Extract notification data
+      const notificationData = extractNotificationData(payload);
+      const data = payload.data || {};
+      
+      // Build notification options
+      const options = buildNotificationOptions(notificationData, data);
+      
+      // Show notification
+      return self.registration.showNotification(
+        notificationData.title || 'New Notification',
+        options
+      );
+    });
+    
+    console.log('[Service Worker] FCM background message handler registered');
+  } catch (error) {
+    console.error('[Service Worker] Firebase initialization error:', error);
+  }
+}
 
 // Helper function to extract notification data from different payload formats
 function extractNotificationData(payload) {
@@ -172,7 +225,7 @@ function buildNotificationOptions(notificationData, data) {
       break;
 
     case 'article':
-      const hasPodcast = notificationPayload.hasPodcast === 'true' || notificationPayload.hasPodcast === true;
+      const hasPodcast = parseBoolean(notificationPayload.hasPodcast);
       options.actions = [
         {
           action: 'view-post',
@@ -368,11 +421,11 @@ self.addEventListener('notificationclick', (event) => {
   if (action === 'view-post' || action === 'view') {
     // Navigate to article/post
     if (data.slug) {
-      url = data.isArticle === 'true' || data.isArticle === true
+      url = parseBoolean(data.isArticle)
         ? `/posts/article/slug/${data.slug}`
         : `/posts/post/${data.article_id || data.articleId}`;
     } else if (data.article_id || data.articleId) {
-      url = data.isArticle === 'true' || data.isArticle === true
+      url = parseBoolean(data.isArticle)
         ? `/posts/article/${data.article_id || data.articleId}`
         : `/posts/post/${data.article_id || data.articleId}`;
     } else if (data.url) {
@@ -410,12 +463,12 @@ self.addEventListener('notificationclick', (event) => {
     // Navigate to the article or post where the comment was made, with comment focus
     if (data.slug) {
       // If slug exists, check if it's an article or post
-      url = data.isArticle === 'true' || data.isArticle === true
+      url = parseBoolean(data.isArticle)
         ? `/posts/article/slug/${data.slug}?comment=${data.parentCommentId || data.commentId || ''}`
         : `/posts/post/${data.article_id || data.articleId}?comment=${data.parentCommentId || data.commentId || ''}`;
     } else if (data.article_id || data.articleId) {
       // Determine if it's an article or post based on isArticle flag
-      url = data.isArticle === 'true' || data.isArticle === true
+      url = parseBoolean(data.isArticle)
         ? `/posts/article/${data.article_id || data.articleId}?comment=${data.parentCommentId || data.commentId || ''}`
         : `/posts/post/${data.article_id || data.articleId}?comment=${data.parentCommentId || data.commentId || ''}`;
     }
@@ -481,12 +534,12 @@ self.addEventListener('notificationclick', (event) => {
       // Comment notification - navigate to the article or post where the comment was made
       if (data.slug) {
         // If slug exists, check if it's an article or post
-        url = data.isArticle === 'true' || data.isArticle === true
+        url = parseBoolean(data.isArticle)
           ? `/posts/article/slug/${data.slug}`
           : `/posts/post/${data.article_id || data.articleId}`;
       } else if (data.article_id || data.articleId) {
         // Determine if it's an article or post based on isArticle flag
-        url = data.isArticle === 'true' || data.isArticle === true
+        url = parseBoolean(data.isArticle)
           ? `/posts/article/${data.article_id || data.articleId}`
           : `/posts/post/${data.article_id || data.articleId}`;
       } else if (data.url) {
@@ -496,12 +549,12 @@ self.addEventListener('notificationclick', (event) => {
       // Reaction notification - navigate to the article or post where the reaction was made
       if (data.slug) {
         // If slug exists, check if it's an article or post
-        url = data.isArticle === 'true' || data.isArticle === true
+        url = parseBoolean(data.isArticle)
           ? `/posts/article/slug/${data.slug}`
           : `/posts/post/${data.article_id || data.articleId}`;
       } else if (data.article_id || data.articleId) {
         // Determine if it's an article or post based on isArticle flag
-        url = data.isArticle === 'true' || data.isArticle === true
+        url = parseBoolean(data.isArticle)
           ? `/posts/article/${data.article_id || data.articleId}`
           : `/posts/post/${data.article_id || data.articleId}`;
       } else if (data.url) {
@@ -519,11 +572,11 @@ self.addEventListener('notificationclick', (event) => {
     } else if (notificationType === 'article' || notificationType === 'post') {
       // Article/Post notification - navigate to post
       if (data.slug) {
-        url = data.isArticle === 'true' || data.isArticle === true
+        url = parseBoolean(data.isArticle)
           ? `/posts/article/slug/${data.slug}`
           : `/posts/post/${data.article_id || data.articleId}`;
       } else if (data.article_id || data.articleId) {
-        url = data.isArticle === 'true' || data.isArticle === true
+        url = parseBoolean(data.isArticle)
           ? `/posts/article/${data.article_id || data.articleId}`
           : `/posts/post/${data.article_id || data.articleId}`;
       } else if (data.url) {
@@ -585,6 +638,11 @@ self.addEventListener('message', (event) => {
         return cache.addAll(event.data.urls);
       })
     );
+  }
+  
+  // Handle Firebase config initialization
+  if (event.data && event.data.type === 'FIREBASE_CONFIG') {
+    initializeFirebase(event.data.config);
   }
 });
 
