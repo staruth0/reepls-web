@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import ProfileConfigurations from '../../Profile/components/ProfileConfigurations'
 import Topbar from '../../../components/atoms/Topbar/Topbar'
 import { t } from 'i18next'
 import Tabs from '../../../components/molecules/Tabs/Tabs'
@@ -8,6 +7,7 @@ import ContributorStreams from '../components/ContributorStreams'
 import StreamItemEllipsis from '../components/StreamItemEllipsis'
 import { useGetMyCollaboratorPublications, useGetMyPublications, useGetUserSubscriptions } from '../Hooks'
 import { Publication } from '../../../models/datamodels'
+import StreamSidebar from '../components/StreamSidebar'
 
 const StreamManagement:React.FC = () => {
 
@@ -106,7 +106,7 @@ const StreamManagement:React.FC = () => {
       </div>
 
       <div className="profile__configurations bg-background hidden lg:block">
-          <ProfileConfigurations />
+      <StreamSidebar />
       </div>
     </div>
   )

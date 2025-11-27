@@ -7,6 +7,7 @@ import SearchPeople from "./SearchPeople";
 import SearchPosts from "./searchPosts";
 import SearchArticles from "./SearchArticles";
 import SearchAll from "./SearchAll";
+import SearchPodcast from "./SearchPodcast";
 import { useUser } from "../../../hooks/useUser";
 import { useStoreSearchSuggestion } from "../hooks";
 import MainContent from "../../../components/molecules/MainContent";
@@ -16,6 +17,7 @@ const tabs = [
   { id: "All", title: "All" },
   { id: "Posts", title: "Posts" },
   { id: "Articles", title: "Articles" },
+  { id: "Podcast", title: "Podcast" },
   { id: "People", title: "People" },
 ];
 
@@ -141,6 +143,7 @@ const SearchResults: React.FC = () => {
             {activeTab === "All" && <SearchAll query={query} />}
             {activeTab === "Posts" && <SearchPosts query={query} />}
             {activeTab === "Articles" && <SearchArticles query={query} />}
+            {activeTab === "Podcast" && <SearchPodcast query={query} />}
             {activeTab === "People" && <SearchPeople query={query} />}
           </div>
         </div>

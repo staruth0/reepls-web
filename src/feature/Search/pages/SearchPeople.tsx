@@ -56,11 +56,9 @@ const SearchPeople: React.FC<SearchPeopleProps> = ({ query }) => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="people w-full min-w-[350px] max-w-[360px] flex flex-col items-center flex-shrink-0">
-        <div className="space-y-4 mt-4">
-          <p className="text-neutral-500 text-center">{`${t("loadingResults")}...`}</p>
-        </div>
-      </div>
+      <div className="flex justify-center items-center py-8">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-400"></div>
+    </div>
     );
   }
 
