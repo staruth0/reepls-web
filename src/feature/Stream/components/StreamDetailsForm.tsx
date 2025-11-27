@@ -31,14 +31,14 @@ interface StreamDetailsFormProps {
     name: string; 
     description: string; 
     topics: string[]; 
-    coverImage: string; 
+    coverImage?: string; 
     bannerImage?: string 
   }) => void;
   initialData: { 
     name: string; 
     description: string; 
     topics: string[]; 
-    coverImage: string; 
+    coverImage?: string; 
     bannerImage?: string 
   };
   isLoading?: boolean;
@@ -426,11 +426,6 @@ const StreamDetailsForm: React.FC<StreamDetailsFormProps> = ({
       return;
     }
 
-    if (!formData.coverImg) {
-      toast.error(t("Cover image is required"));
-      return;
-    }
-
     // Determine final topics
     let finalTopics = [...formData.topics];
     if (formData.topics.length === 0 && formData.customTopic.trim() !== "") {
@@ -442,7 +437,7 @@ const StreamDetailsForm: React.FC<StreamDetailsFormProps> = ({
       name: formData.name.trim(), 
       description: formData.description.trim(), 
       topics: finalTopics, 
-      coverImage: formData.coverImg || '', 
+      coverImage: formData.coverImg, 
       bannerImage: formData.bannerImg 
     });
   }, [formData, validate, onNext]);
@@ -469,7 +464,6 @@ const StreamDetailsForm: React.FC<StreamDetailsFormProps> = ({
             onChange={handleCoverImageChange}
             isUploading={isUploadingCover}
             label="Cover Image"
-            required
             shape="circular"
             className="-mt-16 ml-4"
           />

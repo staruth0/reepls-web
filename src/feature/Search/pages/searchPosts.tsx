@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { Article } from '../../../models/datamodels';
 import BlogPost from '../../Blog/components/BlogPost';
-import BlogSkeletonComponent from '../../Blog/components/BlogSkeleton';
 import { useGetArticleResults } from '../hooks';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
@@ -52,10 +51,9 @@ const SearchPosts: React.FC<SearchPostsProps> = ({ query }) => {
   if (isLoading) {
     return (
       <div className="search-posts">
-        <div className="px-1 sm:px-8 transition-all duration-300 ease-linear flex flex-col-reverse">
-          <BlogSkeletonComponent />
-          <BlogSkeletonComponent />
-        </div>
+         <div className="flex justify-center items-center py-8">
+                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-400"></div>
+                 </div>
       </div>
     );
   }

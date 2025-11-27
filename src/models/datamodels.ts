@@ -90,7 +90,7 @@ export interface Publication {
   title: string;
   short_description: string;
   description?: string;
-  cover_image: string;
+  cover_image?: string;
   banner_image?: string;
   owner_id?: string;
   articles_count?: number;

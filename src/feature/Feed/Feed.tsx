@@ -88,12 +88,10 @@ const UserFeed: React.FC = () => {
 
         {/* Display Skeleton or Articles */}
         {isLoading ? (
-          <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col-reverse items-center">
-            <div className="self-center">
-              <BlogSkeletonComponent />
-              <BlogSkeletonComponent />
-            </div>
-          </div>
+           <div className="px-1 sm:px-8 w-[98%] sm:w-[80%] transition-all duration-300 ease-linear flex flex-col gap-7 py-6">
+           <BlogSkeletonComponent />
+           <BlogSkeletonComponent />
+         </div>
         ) : (
           <div className="px-1 sm:px-8 w-[98%] sm:w-[90%] transition-all duration-300 ease-linear flex flex-col  gap-7 py-6">
             {data?.pages?.map((page, i) => {

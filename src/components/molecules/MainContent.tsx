@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Home, Search, PlusCircle, Bookmark, User, Pencil, Mic } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
 import { toast } from 'react-toastify';
 import { useUser } from '../../hooks/useUser';
@@ -17,10 +17,18 @@ interface MainContentProps {
 
 export const MainContent: React.FC<MainContentProps> = ({ children }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isCreatingPost, setIsCreatingPost] = useState(false);
   const { authUser: user, isLoggedIn } = useUser();
   const decryptedUser = getDecryptedUser();
   const { mutate: createPost, isPending } = useSendNewArticleNotification();
+  
+  // Check if current route matches
+  const isFeedActive = location.pathname.includes('/feed');
+  const isSearchActive = location.pathname.includes('/search');
+  const isPostActive = location.pathname.includes('/posts/create') || location.pathname.includes('/podcast/create') || isCreatingPost;
+  const isBookmarksActive = location.pathname.includes('/bookmarks');
+  const isProfileActive = location.pathname.includes('/profile');
   const handlePost = async (
     postContent: string,
     postImages: File[],
@@ -102,11 +110,11 @@ export const MainContent: React.FC<MainContentProps> = ({ children }) => {
 
       {/* Mobile Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-neutral-700 p-2 flex md:hidden justify-around items-center z-50 h-20">
-        <Link to="/feed" className="flex flex-col items-center text-neutral-100 hover:text-primary-500">
+        <Link to="/feed" className={`flex flex-col items-center hover:text-primary-500 ${isFeedActive ? 'text-primary-400' : 'text-neutral-100'}`}>
           <Home size={24} />
           <span className="text-xs mt-1">Home</span>
         </Link>
-        <Link to="/search" className="flex flex-col items-center text-neutral-100 hover:text-primary-500">
+        <Link to="/search" className={`flex flex-col items-center hover:text-primary-500 ${isSearchActive ? 'text-primary-400' : 'text-neutral-100'}`}>
           <Search size={24} />
           <span className="text-xs mt-1">Search</span>
         </Link>
@@ -114,7 +122,7 @@ export const MainContent: React.FC<MainContentProps> = ({ children }) => {
         {/* Create Post Button with Popover */}
         <div className="relative">
           <Popover>
-            <PopoverButton className="flex flex-col items-center text-neutral-100 hover:text-primary-500">
+            <PopoverButton className={`flex flex-col items-center hover:text-primary-500 ${isPostActive ? 'text-primary-400' : 'text-neutral-100'}`}>
               <PlusCircle size={24} />
               <span className="text-xs mt-1">Post</span>
             </PopoverButton>
@@ -176,11 +184,17 @@ export const MainContent: React.FC<MainContentProps> = ({ children }) => {
           </Popover>
         </div>
         
-        <Link to="/bookmarks" className="flex flex-col items-center text-neutral-100 hover:text-primary-500">
+        <Link 
+          to={isLoggedIn ? "/bookmarks" : "/anonymous"} 
+          className={`flex flex-col items-center hover:text-primary-500 ${isBookmarksActive ? 'text-primary-400' : 'text-neutral-100'}`}
+        >
           <Bookmark size={24} />
           <span className="text-xs mt-1">Saved</span>
         </Link>
-        <Link to={`/profile/${user?.username}`} className="flex flex-col items-center text-neutral-100 hover:text-primary-500">
+        <Link 
+          to={isLoggedIn ? `/profile/${user?.username}` : "/anonymous"} 
+          className={`flex flex-col items-center hover:text-primary-500 ${isProfileActive ? 'text-primary-400' : 'text-neutral-100'}`}
+        >
           <User size={24} />
           <span className="text-xs mt-1">Profile</span>
         </Link>

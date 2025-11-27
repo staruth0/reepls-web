@@ -22,13 +22,13 @@ const CreateStream: React.FC = () => {
     name: string;
     description: string;
     topics: string[];
-    coverImage: string;
+    coverImage?: string;
     bannerImage?: string;
   }>({
     name: '',
     description: '',
     topics: [],
-    coverImage: '',
+    coverImage: undefined,
     bannerImage: undefined,
   });
 
@@ -39,11 +39,9 @@ const CreateStream: React.FC = () => {
     const publicationData: Publication = {
       title: details.name,
       short_description: details.description,
-      cover_image: details.coverImage || '',
-      // Only include banner_image if provided
-      ...(details.bannerImage && { banner_image: details.bannerImage }),
-      // Only include tags if the array is not empty
-      ...(details.topics.length > 0 && { tags: details.topics }),
+      ...(details.coverImage ? { cover_image: details.coverImage } : {}),
+      ...(details.bannerImage ? { banner_image: details.bannerImage } : {}),
+      ...(details.topics.length > 0 ? { tags: details.topics } : {}),
     };
     console.log(publicationData);
     createPublication(publicationData, {
@@ -87,7 +85,7 @@ const CreateStream: React.FC = () => {
                 name: streamDetails.name,
                 description: streamDetails.description,
                 topics: streamDetails.topics,
-                coverImage: streamDetails.coverImage,
+                ...(streamDetails.coverImage && { coverImage: streamDetails.coverImage }),
                 ...(streamDetails.bannerImage && { bannerImage: streamDetails.bannerImage }),
               }}
               isLoading={isCreating}
