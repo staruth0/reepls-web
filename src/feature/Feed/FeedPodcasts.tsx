@@ -126,11 +126,11 @@ const FeedPodcasts: React.FC = () => {
     : [];
 
   // Handlers for actions
-  const handleLike = (podcastId: string) => {
+  const handleLike = (_podcastId: string) => {
     // Like action handler
   };
 
-  const handleComment = (podcastId: string) => {
+  const handleComment = (_podcastId: string) => {
     // Comment action handler
   };
   
@@ -138,11 +138,11 @@ const FeedPodcasts: React.FC = () => {
     navigate(`/podcast/${podcastId}`);
   };
 
-  const handleBookmark = (podcastId: string) => {
+  const handleBookmark = (_podcastId: string) => {
     // Bookmark action handler
   };
 
-  const handleFollow = (authorId: string) => {
+  const handleFollow = (_authorId: string) => {
     // Follow action handler
   };
 
