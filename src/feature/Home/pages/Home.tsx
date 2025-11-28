@@ -14,32 +14,18 @@ import {
 import LandingPageFooter from "../components/LandingPage/LandingPageFooter";
 
 import { useUser } from "../../../hooks/useUser";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import SplashComponent from "../../../components/molecules/SplashScreen/SplashComponent";
 
 function Home() {
   const { isLoggedIn } = useUser();
   const navigate = useNavigate();
-  const [showSplash, setShowSplash] = useState(false);
+  // Initialize showSplash based on isLoggedIn to prevent flash of landing page
+  const [showSplash, setShowSplash] = useState(() => isLoggedIn);
   const [splashText, setSplashText] = useState<string | undefined>(undefined);
 
-  useEffect(() => {
-    // Check if user is logged in on mount
-    if (isLoggedIn) {
-      setShowSplash(true); 
-
-      // Wait 5 seconds, then check internet
-      const splashTimer = setTimeout(() => {
-        checkInternetConnection();
-      }, 3000);
-
-      // Cleanup timeout on unmount
-      return () => clearTimeout(splashTimer);
-    }
-  }, [isLoggedIn,setShowSplash]);
-
-  const checkInternetConnection = () => {
+  const checkInternetConnection = useCallback(() => {
     if (navigator.onLine) {
       // Internet is good, navigate to /feed
       navigate("/feed");
@@ -47,7 +33,23 @@ function Home() {
       // Internet is bad, update splash text and keep showing splash
       setSplashText("Internet connection not good. Please check your network.");
     }
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    // Check if user is logged in on mount
+    if (isLoggedIn) {
+      // Wait 3 seconds, then check internet
+      const splashTimer = setTimeout(() => {
+        checkInternetConnection();
+      }, 3000);
+
+      // Cleanup timeout on unmount
+      return () => clearTimeout(splashTimer);
+    } else {
+      // If user logs out, hide splash
+      setShowSplash(false);
+    }
+  }, [isLoggedIn, checkInternetConnection]);
 
   //Continuously check internet if it's bad
   useEffect(() => {

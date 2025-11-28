@@ -128,8 +128,6 @@ const SearchAll: React.FC<SearchAllProps> = ({ query }) => {
     return t("search.errors.default");
   };
 
-  console.log('results', results);
-
   // Toast error notification
   useEffect(() => {
     if (error) {
