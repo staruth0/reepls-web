@@ -34,3 +34,58 @@ export function convertBase64ToBlob(base64: string) {
   }
   return new Blob([u8arr], { type: mime });
 }
+
+// Utility to update meta tags for social media sharing
+export function updateMetaTags(params: {
+  title: string;
+  description: string;
+  image: string;
+  url: string;
+}) {
+  const { title, description, image, url } = params;
+
+  // Helper to update or create meta tag
+  const updateMetaTag = (property: string, content: string) => {
+    let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement;
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.setAttribute('property', property);
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute('content', content);
+  };
+
+  // Helper to update or create Twitter meta tag
+  const updateTwitterMetaTag = (name: string, content: string) => {
+    let meta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement;
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.setAttribute('name', name);
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute('content', content);
+  };
+
+  // Ensure image URL is absolute
+  const getAbsoluteImageUrl = (imageUrl: string) => {
+    if (!imageUrl) return `${window.location.origin}/favicon.png`;
+    if (imageUrl.startsWith('http')) return imageUrl;
+    if (imageUrl.startsWith('/')) return `${window.location.origin}${imageUrl}`;
+    return `${window.location.origin}/${imageUrl}`;
+  };
+
+  const absoluteImageUrl = getAbsoluteImageUrl(image);
+
+  // Set Open Graph tags
+  updateMetaTag('og:title', title);
+  updateMetaTag('og:description', description);
+  updateMetaTag('og:image', absoluteImageUrl);
+  updateMetaTag('og:url', url);
+  updateMetaTag('og:type', 'article');
+
+  // Set Twitter Card tags
+  updateTwitterMetaTag('twitter:card', 'summary_large_image');
+  updateTwitterMetaTag('twitter:title', title);
+  updateTwitterMetaTag('twitter:description', description);
+  updateTwitterMetaTag('twitter:image', absoluteImageUrl);
+}

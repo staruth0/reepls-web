@@ -9,12 +9,15 @@ import {
 } from "react-share";
 import { IoCopyOutline, IoCheckmarkCircle } from "react-icons/io5"; 
 import { t } from "i18next";
+import { MediaItem, MediaType } from "../../../models/datamodels";
 
 interface SharePopupProps {
   url: string; // URL of the post to share
   title: string; // Title of the post
   subtitle?: string; // Subtitle of the post
-  thumbnail?: string; // Thumbnail image URL
+  thumbnail?: string; // Thumbnail image URL (for articles)
+  media?: MediaItem[]; // Media array (for posts)
+  isArticle?: boolean; // Whether this is an article or post
   description?: string; // Description for social media previews
   onClose: () => void; // Function to close the popup
 }
@@ -24,6 +27,8 @@ const SharePopup: React.FC<SharePopupProps> = ({
   title, 
   subtitle, 
   thumbnail, 
+  media,
+  isArticle,
   description, 
   onClose 
 }) => {
@@ -39,6 +44,26 @@ const SharePopup: React.FC<SharePopupProps> = ({
   // Create a comprehensive description for sharing
   const shareDescription = description || subtitle || title;
   
+  // Determine which image to use for sharing
+  // For articles: use thumbnail
+  // For posts: use first image from media array, or thumbnail if no media
+  const getShareImage = (): string => {
+    if (isArticle) {
+      // For articles, use thumbnail
+      return thumbnail || '';
+    } else {
+      // For posts, use first image from media array
+      if (media && media.length > 0) {
+        const firstImage = media.find(item => item.type === MediaType.Image);
+        if (firstImage) {
+          return firstImage.url;
+        }
+      }
+      // Fallback to thumbnail if no media images
+      return thumbnail || '';
+    }
+  };
+  
   // Use thumbnail or fallback to favicon
   // Ensure the image URL is absolute
   const getAbsoluteImageUrl = (imageUrl: string) => {
@@ -48,7 +73,7 @@ const SharePopup: React.FC<SharePopupProps> = ({
     return `${window.location.origin}/${imageUrl}`;
   };
   
-  const shareImage = getAbsoluteImageUrl(thumbnail || '');
+  const shareImage = getAbsoluteImageUrl(getShareImage());
 
   useEffect(() => {
     // Update meta tags for better social media previews
@@ -87,18 +112,10 @@ const SharePopup: React.FC<SharePopupProps> = ({
       updateTwitterMetaTag('twitter:title', title);
       updateTwitterMetaTag('twitter:description', shareDescription);
       updateTwitterMetaTag('twitter:image', shareImage);
-      
-      // Debug logging
-      console.log('Share metadata updated:', {
-        title,
-        description: shareDescription,
-        image: shareImage,
-        url
-      });
     };
 
     updateMetaTags();
-  }, [url, title, shareDescription, shareImage]);
+  }, [url, title, shareDescription, shareImage, isArticle, media, thumbnail]);
 
   return (
     <>

@@ -13,7 +13,7 @@ import { Editor } from "reactjs-tiptap-editor";
 import SharePopup from "../../../components/molecules/share/SharePopup";
 import { PREVIEW_SLUG } from "../../../constants";
 import { useUser } from "../../../hooks/useUser";
-import { Article, Follow, MediaItem, User } from "../../../models/datamodels";
+import { Article, Follow, MediaItem, MediaType, User } from "../../../models/datamodels";
 import { timeAgo } from "../../../utils/dateFormater";
 import SignInPopUp from "../../AnonymousUser/components/SignInPopUp";
 import { useFollowUser, useGetFollowing, useUnfollowUser} from "../../Follow/hooks";
@@ -47,6 +47,7 @@ import AudioWave from "../../../components/molecules/Audio/AudiWave";
 import ErrorBoundary from "../../../components/atoms/ErrorBoundary";
 import { useGetAllReactionsForTarget } from "../../Repost/hooks/useRepost";
 import { useQueryClient } from "@tanstack/react-query";
+import { updateMetaTags } from "../../../utils";
 
 // Start of reading progress implementation
 import { useCreateReadingProgress, useGetReadingProgressByArticleId, useUpdateReadingProgress } from "../../ReadingProgress/hooks";
@@ -159,8 +160,8 @@ const ArticleViewBySlug: React.FC = () => {
     content: content || "",
     isLoggedIn: !!isLoggedIn,
     isPreview: isPreview,
-    onProgressChange: (progress) => {
-      console.log('Reading progress updated:', progress);
+    onProgressChange: (_progress) => {
+      // Reading progress updated
     }
   });
   
@@ -238,8 +239,8 @@ const ArticleViewBySlug: React.FC = () => {
       setIsProgressSaving(false);
     };
 
-    const onError = (error: Error) => {
-      console.error('Error saving reading progress:', error);
+    const onError = (_error: Error) => {
+      // Error saving reading progress
       setIsProgressSaving(false);
       if (!isUnload) {
         toast.error("Failed to save reading progress");
@@ -460,6 +461,41 @@ const ArticleViewBySlug: React.FC = () => {
     }
   }, [articleUid, loadDraftArticle, navigate]);
 
+  // Update meta tags when article loads for better social media previews
+  useEffect(() => {
+    if (article) {
+      // Determine which image to use
+      let shareImage = '';
+      if (article.isArticle) {
+        // For articles, use thumbnail
+        shareImage = article.thumbnail || '';
+      } else {
+        // For posts, use first image from media array
+        if (article.media && article.media.length > 0) {
+          const firstImage = article.media.find((item: MediaItem) => item.type === MediaType.Image);
+          if (firstImage) {
+            shareImage = firstImage.url;
+          }
+        }
+        // Fallback to thumbnail if no media images
+        if (!shareImage) {
+          shareImage = article.thumbnail || '';
+        }
+      }
+
+      const articleTitle = article.title || (article.content ? article.content.split(" ").slice(0, 10).join(" ") + "..." : "Untitled");
+      const articleDescription = article.subtitle || article.content?.substring(0, 160) + "..." || articleTitle;
+      const articleUrl = `${window.location.origin}/posts/${article.isArticle ? "article/slug/" + article.slug : "post/" + article._id}`;
+
+      updateMetaTags({
+        title: articleTitle,
+        description: articleDescription,
+        image: shareImage,
+        url: articleUrl,
+      });
+    }
+  }, [article]);
+
   useEffect(() => {
     if (article) {
       // Removed console.logs for production performance
@@ -482,7 +518,7 @@ const ArticleViewBySlug: React.FC = () => {
 
   useEffect(() => {
     if (isError) {
-      console.error('Error fetching article:', isError);
+      // Error fetching article
       toast.error("Error fetching article.");
       navigate("/posts/create");
     }
@@ -807,6 +843,8 @@ const ArticleViewBySlug: React.FC = () => {
           title={memoizedArticleTitle} 
           subtitle={article?.subtitle}
           thumbnail={article?.thumbnail}
+          media={article?.media}
+          isArticle={article?.isArticle}
           description={article?.subtitle || article?.content?.substring(0, 160) + "..."}
           onClose={() => setShowSharePopup(false)} 
         />

@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { LuLoader, LuX } from 'react-icons/lu';
 import Topbar from '../../components/atoms/Topbar/Topbar';
 import { useGetArticleById } from '../Blog/hooks/useArticleHook';
+import { updateMetaTags } from '../../utils';
+import { MediaType, MediaItem } from '../../models/datamodels';
 import './PostView.scss';
 import BlogPost2 from '../Blog/components/BlogPost2';
 
@@ -21,8 +23,7 @@ const PostView: React.FC = () => {
         // Navigate to home page instead of browser back
         // This ensures users always land on the home page when closing shared links
         navigate('/feed', { replace: true });
-      } catch (error) {
-        console.error('Navigation failed:', error);
+      } catch {
         // Fallback: try to navigate to root
         window.location.href = '/feed';
       }
@@ -54,6 +55,41 @@ const PostView: React.FC = () => {
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isClosing]);
+
+  // Update meta tags when article loads for better social media previews
+  useEffect(() => {
+    if (article) {
+      // Determine which image to use
+      let shareImage = '';
+      if (article.isArticle) {
+        // For articles, use thumbnail
+        shareImage = article.thumbnail || '';
+      } else {
+        // For posts, use first image from media array
+        if (article.media && article.media.length > 0) {
+          const firstImage = article.media.find((item: MediaItem) => item.type === MediaType.Image);
+          if (firstImage) {
+            shareImage = firstImage.url;
+          }
+        }
+        // Fallback to thumbnail if no media images
+        if (!shareImage) {
+          shareImage = article.thumbnail || '';
+        }
+      }
+
+      const articleTitle = article.title || (article.content ? article.content.split(" ").slice(0, 10).join(" ") + "..." : "Untitled Post");
+      const articleDescription = article.subtitle || article.content?.substring(0, 160) + "..." || articleTitle;
+      const articleUrl = `${window.location.origin}/posts/${article.isArticle ? "article/slug/" + article.slug : "post/" + article._id}`;
+
+      updateMetaTags({
+        title: articleTitle,
+        description: articleDescription,
+        image: shareImage,
+        url: articleUrl,
+      });
+    }
+  }, [article]);
 
   return (
     <div className={`post-view-container ${isClosing ? 'closing' : ''}`}>

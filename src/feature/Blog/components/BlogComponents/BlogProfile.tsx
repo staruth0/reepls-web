@@ -361,6 +361,8 @@ const BlogProfile: React.FC<BlogProfileProps> = ({ user,article_id,article, titl
           title={articleTitle} 
           subtitle={article?.subtitle}
           thumbnail={article?.thumbnail}
+          media={article?.media}
+          isArticle={article?.isArticle}
           description={article?.subtitle || article?.content?.substring(0, 160) + "..."}
           onClose={() => setShowSharePopup(false)} 
         />
