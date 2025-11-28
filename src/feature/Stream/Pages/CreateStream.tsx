@@ -43,7 +43,6 @@ const CreateStream: React.FC = () => {
       ...(details.bannerImage ? { banner_image: details.bannerImage } : {}),
       ...(details.topics.length > 0 ? { tags: details.topics } : {}),
     };
-    console.log(publicationData);
     createPublication(publicationData, {
       onSuccess: () => {
         toast.success('Stream created successfully!');
@@ -51,7 +50,6 @@ const CreateStream: React.FC = () => {
         navigate('/stream/management'); // Adjust the route as needed
       },
       onError: (error: ApiError) => {
-        console.error('Error creating stream:', error);
         const errorMessage = error?.response?.data?.message || 'Failed to create stream. Please try again.';
         toast.error(errorMessage);
       },

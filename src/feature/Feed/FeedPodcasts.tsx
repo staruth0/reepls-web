@@ -50,10 +50,6 @@ const FeedPodcasts: React.FC = () => {
     sortOrder: "desc",
   });
 
-  useEffect(()=>{
-    console.log('fetched podcast', podcastsAPI)
-  },[podcastsAPI])
-
   const { 
     data: suggestedPodcastsData, 
     isLoading: isLoadingSuggested 
@@ -61,10 +57,6 @@ const FeedPodcasts: React.FC = () => {
     page: 1,
     limit: 20,
   });
-
-  useEffect(() => {
-    console.log("suggested podcasts", suggestedPodcastsData);
-  }, [suggestedPodcastsData]);
 
  
   function formatDate(iso?: string) {
@@ -135,11 +127,11 @@ const FeedPodcasts: React.FC = () => {
 
   // Handlers for actions
   const handleLike = (podcastId: string) => {
-    console.log(`Like action for podcast: ${podcastId}`);
+    // Like action handler
   };
 
   const handleComment = (podcastId: string) => {
-    console.log(`Comment action for podcast: ${podcastId}`);
+    // Comment action handler
   };
   
   const handlePodcastClick = (podcastId: string) => {
@@ -147,11 +139,11 @@ const FeedPodcasts: React.FC = () => {
   };
 
   const handleBookmark = (podcastId: string) => {
-    console.log(`Bookmark action for podcast: ${podcastId}`);
+    // Bookmark action handler
   };
 
   const handleFollow = (authorId: string) => {
-    console.log(`Follow action for author: ${authorId}`);
+    // Follow action handler
   };
 
   // const handleBrainClick = () => {
