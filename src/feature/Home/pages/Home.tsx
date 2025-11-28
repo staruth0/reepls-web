@@ -17,6 +17,7 @@ import { useUser } from "../../../hooks/useUser";
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import SplashComponent from "../../../components/molecules/SplashScreen/SplashComponent";
+import { updateMetaTags } from "../../../utils";
 
 function Home() {
   const { isLoggedIn } = useUser();
@@ -63,6 +64,30 @@ function Home() {
       return () => clearInterval(interval);
     }
   }, [splashText, navigate]);
+
+  // Update meta tags for SEO when landing page is displayed
+  useEffect(() => {
+    if (!showSplash && !isLoggedIn) {
+      const homepageUrl = window.location.origin;
+      const homepageDescription = "Reepls is the dedicated platform where Africa's thought leaders, storytellers, and innovators share, publish, and watch their influence spread.";
+      
+      updateMetaTags({
+        title: "REEPLS - Amplify Your African Voice | Platform for Thought Leaders & Storytellers",
+        description: homepageDescription,
+        image: `${homepageUrl}/favicon.png`,
+        url: homepageUrl,
+      });
+
+      // Also update the meta description tag directly
+      let metaDescription = document.querySelector('meta[name="description"]') as HTMLMetaElement;
+      if (!metaDescription) {
+        metaDescription = document.createElement('meta');
+        metaDescription.setAttribute('name', 'description');
+        document.head.appendChild(metaDescription);
+      }
+      metaDescription.setAttribute('content', homepageDescription);
+    }
+  }, [showSplash, isLoggedIn]);
 
   if (showSplash) {
     return <SplashComponent text={splashText} />;
