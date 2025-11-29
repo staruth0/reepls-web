@@ -46,6 +46,11 @@ const ReportArticlePopup: React.FC<ReportArticlePopupProps> = ({
       return;
     }
 
+    if (!authUser?.id) {
+      toast.error(t('report.authenticationError'));
+      return;
+    }
+
     console.log('fullReason', {
       article_id: articleId,
       reporter_id: authUser.id,

@@ -4,13 +4,12 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { interests } from '../../../data';
 import { cn } from '../../../utils';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useUpdateUser } from '../../Profile/hooks';
 
 function Interests() {
   const { t } = useTranslation();
   const updateUser = useUpdateUser();
-  const location = useLocation();
   const navigate = useNavigate();
   const [interest, setInterest] = useState<string[]>([]);
 
@@ -48,7 +47,7 @@ function Interests() {
   return (
     <div className="interest__container">
       <div className="head__interests">
-        <div>{t(`${location.state}, you’re in! Select your interests`)}</div>
+        <div>{t(`You're in! Select your interests`)}</div>
         <p>{t('Last! Pick at least one topic that you are interested in')}</p>
       </div>
       <div className={cn(`counter__interests`, { green: interest.length > 0 })}>

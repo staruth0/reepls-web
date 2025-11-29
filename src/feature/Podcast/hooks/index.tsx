@@ -29,6 +29,7 @@ import {
   getSavedPodcastsByRating,
   trackPodcastListenAuthenticated,
   trackPodcastListenAnonymous,
+  checkIfPodcastIsSaved,
 } from '../api'; 
 
 
@@ -372,8 +373,9 @@ export const useSavePodcastToLibrary = () => {
   const queryClient = useQueryClient(); 
   return useMutation({
     mutationFn: ({ podcastId, payload }: UseSavePodcastPayload) => savePodcastToLibrary(podcastId, payload),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['saved-podcasts', 'self'] });
+      queryClient.invalidateQueries({ queryKey: ['podcast', variables.podcastId, 'is-saved'] });
     },
   });
 };
@@ -381,9 +383,10 @@ export const useSavePodcastToLibrary = () => {
 export const useRemovePodcastFromLibrary = () => {
   const queryClient = useQueryClient(); 
   return useMutation({
-    mutationFn: removePodcastFromLibrary,
-    onSuccess: () => {
+    mutationFn: (podcastId: string) => removePodcastFromLibrary(podcastId),
+    onSuccess: (_, podcastId) => {
       queryClient.invalidateQueries({ queryKey: ['saved-podcasts', 'self'] });
+      queryClient.invalidateQueries({ queryKey: ['podcast', podcastId, 'is-saved'] });
     },
   });
 };
@@ -420,6 +423,14 @@ export const useGetMySavedPodcasts = (params?: UseGetMySavedPodcastsParams) => {
   return useQuery({
     queryKey: ['saved-podcasts', 'self', params] as const,
     queryFn: () => getMySavedPodcasts(params),
+  });
+};
+
+export const useCheckIfPodcastIsSaved = (podcastId: string | undefined) => {
+  return useQuery({
+    queryKey: ['podcast', podcastId, 'is-saved'] as const,
+    queryFn: () => checkIfPodcastIsSaved(podcastId!),
+    enabled: !!podcastId,
   });
 };
 

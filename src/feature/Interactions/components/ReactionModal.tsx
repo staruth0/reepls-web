@@ -226,7 +226,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({
     if (!authUser?.id) return; // Require login
 
     const userReaction = allReactions?.reactions?.find(
-      (r: ReactionReceived) => r.user_id?.id === authUser.id
+      (r: ReactionReceived) => r.user_id?.id === authUser?.id
     );
 
     // If user already reacted with this type, do nothing

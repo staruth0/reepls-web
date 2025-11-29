@@ -238,6 +238,11 @@ const getMySavedPodcasts = async (params?: GetSavedPodcastsParams) => {
   return data;
 };
 
+const checkIfPodcastIsSaved = async (podcastId: string) => {
+  const { data } = await apiClient.get(`/podcasts/${podcastId}/is-saved`);
+  return data;
+};
+
 const getSavedPodcastsByCategory = async (category: string, params?: GetSavedPodcastsParams) => {
   const { data } = await apiClient.get(`/podcasts/self/saved?category=${category}`, { params });
   return data;
@@ -299,4 +304,5 @@ export {
   getSavedPodcastsByRating,
   trackPodcastListenAuthenticated,
   trackPodcastListenAnonymous,
+  checkIfPodcastIsSaved,
 };

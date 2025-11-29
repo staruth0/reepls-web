@@ -34,6 +34,7 @@ import StreamManagement from '../feature/Stream/Pages/StreamManagement.tsx';
 import SreamEdit from '../feature/Stream/Pages/SreamEdit.tsx';
 import Subscribers from '../feature/Stream/Pages/Subscribers.tsx';
 import Collaborators from '../feature/Stream/Pages/Collaborators.tsx';
+import ProtectedRoute from '../components/atoms/ProtectedRoute';
 // import Home from "../feature/Home/pages/Home";
 
 
@@ -123,11 +124,11 @@ const UserRoutes = {
     },
     {
       path: '/posts/create',
-      element: <CreatePost />,
+      element: <ProtectedRoute><CreatePost /></ProtectedRoute>,
     },
     {
       path: '/podcast/create',
-      element: <Podcast />,
+      element: <ProtectedRoute><Podcast /></ProtectedRoute>,
     },
     {
       path: '/podcast/edit/:id',
@@ -139,7 +140,7 @@ const UserRoutes = {
     },
      {
       path: '/stream/create',
-      element: <CreateStream />,
+      element: <ProtectedRoute><CreateStream /></ProtectedRoute>,
     },
      {
       path: '/stream/edit/:id',

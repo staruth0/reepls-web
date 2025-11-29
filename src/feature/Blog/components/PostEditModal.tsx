@@ -331,10 +331,10 @@ const PostEditModal = ({
                 style={{ marginTop: '0.5rem' }}
               >
                 <div className="flex items-center gap-3">
-                  {authUser.profile_picture ? (
+                  {authUser?.profile_picture ? (
                     <img
                       src={authUser.profile_picture}
-                      alt={authUser.name}
+                      alt={authUser?.name || 'User'}
                       className="w-12 h-12 rounded-full object-cover"
                     />
                   ) : (
@@ -348,8 +348,8 @@ const PostEditModal = ({
                     </div>
                   )}
                   <div className="flex flex-col">
-                    <span className="font-semibold text-base">{authUser.name}</span>
-                    {authUser.bio && (
+                    <span className="font-semibold text-base">{authUser?.name || 'User'}</span>
+                    {authUser?.bio && (
                       <span
                         className="text-neutral-200 text-sm truncate max-w-[120px] sm:max-w-[150px] md:max-w-[200px]"
                         title={authUser.bio}

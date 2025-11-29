@@ -50,6 +50,8 @@ const ProfilePodcasts: React.FC<ProfilePodcastsProps> = ({ userId, isAuthUser = 
     limit: 10,
   });
 
+  console.log("podcastsData profile podcasts", podcastsData);
+
   const handleCreatePodcast = () => {
     navigate('/podcast/create');
   };
@@ -115,26 +117,35 @@ const ProfilePodcasts: React.FC<ProfilePodcastsProps> = ({ userId, isAuthUser = 
 
   // Transform the podcast data to match the PodcastCard2 interface
   const transformPodcastData = (podcast: PodcastData) => {
-    const duration = podcast.audio?.duration ? `${Math.round(podcast.audio.duration / 60)} min` : 'Unknown';
-    const publishDate = new Date(podcast.createdAt).toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
+    const duration = podcast.audio?.duration ? `${Math.round(podcast.audio.duration / 60)} min` : "Unknown";
+    const publishDate = new Date(podcast.createdAt).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
     });
 
     return {
-      id: podcast.id,
-      thumbnailUrl: podcast.audio?.thumbnailUrl || `https://placehold.co/128x128/444444/FFFFFF?text=Podcast`,
+      // Some APIs return `_id` instead of `id`
+      id: (podcast as any).id || (podcast as any)._id || "",
+      thumbnailUrl:
+        (podcast as any).thumbnailUrl ||
+        podcast.audio?.thumbnailUrl ||
+        `https://placehold.co/128x128/444444/FFFFFF?text=Podcast`,
       author: {
-        id: podcast.authorId.id,
+        id: (podcast.authorId as any).id || (podcast.authorId as any)._id || "",
         username: podcast.authorId.username,
         name: podcast.authorId.name,
-        profileImage: podcast.authorId.profileImage || `https://placehold.co/40x40/444444/FFFFFF?text=${podcast.authorId.name?.charAt(0) || 'U'}`,
+        profileImage:
+          podcast.authorId.profileImage ||
+          `https://placehold.co/40x40/444444/FFFFFF?text=${
+            podcast.authorId.name?.charAt(0) || "U"
+          }`,
         isVerified: podcast.authorId.isVerified || false,
       },
       title: podcast.title,
       description: podcast.description,
       publishDate,
       listenTime: duration,
+      audioUrl: podcast.audio?.url || "",
       likes: podcast.savesCount || 0,
       comments: podcast.commentsCount || 0,
       isBookmarked: false, // This would need to be determined based on user's bookmarked podcasts
@@ -149,12 +160,11 @@ const ProfilePodcasts: React.FC<ProfilePodcastsProps> = ({ userId, isAuthUser = 
       <div className="space-y-4">
         {podcastsData.data.results.map((podcast: PodcastData) => (
           <PodcastCard2
-          
-            key={podcast.id}
+            key={(podcast as any).id || (podcast as any)._id}
             podcast={transformPodcastData(podcast)}
-            onComment={(podcastId) => {
-              console.log(`Comment clicked for podcast: ${podcastId}`);
-              // Handle comment action
+            onReadMore={(podcastId) => {
+              if (!podcastId) return;
+              navigate(`/podcast/${podcastId}`);
             }}
           />
         ))}

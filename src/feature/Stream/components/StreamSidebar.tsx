@@ -69,7 +69,7 @@ const StreamSidebar: React.FC = () => {
             )}
           </div>
         </div>
-
+{/* 
          <div className=" p-4 bg-gray-750 text-neutral-200">
                 <ul className="space-y-2">
                     <li>
@@ -91,7 +91,7 @@ const StreamSidebar: React.FC = () => {
                         </a>
                     </li>
                 </ul>
-            </div>
+            </div> */}
       </div>
     </div>
   );

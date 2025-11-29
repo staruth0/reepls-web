@@ -71,7 +71,7 @@ const PodcastAuthorInfo: React.FC<PodcastAuthorInfoProps> = ({ author }) => {
         </div>
       </div>
 
- { authUser?.id && authUser.id !== author.id &&     <button
+ { authUser?.id && authUser?.id !== author.id &&     <button
         onClick={handleFollowClick}
         disabled={isFollowPending || isUnfollowPending}
         className={`ml-2 px-3 py-1 text-xs font-semibold transition-colors duration-200 ${

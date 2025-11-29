@@ -57,7 +57,7 @@ export const useSubscriptionStatus = (publicationId: string) => {
 
     const subscribers: Subscriber[] = subscribersData.subscribers;
     const usernames = subscribers.map((subscriber: Subscriber) => subscriber.username);
-    const isSubscribed = usernames.includes(authUser.username);
+    const isSubscribed = authUser?.username ? usernames.includes(authUser.username) : false;
 
     return {
       isSubscribed,
