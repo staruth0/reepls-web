@@ -95,7 +95,7 @@ const FeedPodcasts: React.FC = () => {
     }
 
     return {
-      id: p.id ?? "",
+      id: p.id || (p as any)._id || "",
       thumbnailUrl:
         p.thumbnailUrl ||
         Pics.podcastimg,

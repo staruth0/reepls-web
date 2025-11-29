@@ -196,7 +196,7 @@ useEffect(() => {
   const tabs = [
     { id: 'posts', title: `${t("saved.tabs.posts")} (${savedPosts?.length || 0})` },
     { id: 'articles', title: `${t("saved.tabs.articles")} (${savedArticles?.length || 0})` },
-    { id: 'podcasts', title: `Podcasts (${savedPodcastsData?.data?.savedPodcasts?.length || 0})` },
+    { id: 'podcasts', title: `Podcasts (${savedPodcastsData?.data?.totalResults || savedPodcastsData?.data?.results?.length || 0})` },
     { id: 'reposts', title: `Reposts (${Reposts?.reposts?.length || 0})` }, // Add this tab
     { id: 'history', title: `${t("saved.tabs.history")}` },
   ];

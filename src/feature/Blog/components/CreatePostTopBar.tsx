@@ -77,7 +77,7 @@ const CreatePostTopBar: React.FC<CreateTopBarProps> = ({ title, mainAction, acti
           {t(title)}
         </h2>
         <div className="flex items-center justify-center gap-2">
-        { authUser.CanMakecommuniquer &&  <StarToggle
+        { authUser?.CanMakecommuniquer &&  <StarToggle
             isCommunique={isCommunique}
             onToggle={onToggleCommunique}
           />}

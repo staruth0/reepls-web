@@ -1,17 +1,29 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useGetMySavedPodcasts } from '../../Podcast/hooks';
 import { Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { formatDateWithMonth } from '../../../utils/dateFormater';
-
 import PodcastCard2 from '../../Podcast/components/PodcastLayout2';
-
-
+import { Pics } from '../../../assets/images';
+import { User } from '../../../models/datamodels';
 
 // Helper function to format duration, as seen in FeedPodcasts.
 function formatDuration(sec?: number) {
   if (!sec || isNaN(sec)) return "0 min";
   return `${Math.round(sec / 60)} min`;
+}
+
+// Helper function to format date
+function formatDate(dateString?: string): string {
+  if (!dateString) return "";
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  } catch {
+    return "";
+  }
 }
 
 interface SavedPodcastsContainerProps {
@@ -32,10 +44,6 @@ const SavedPodcastsContainer: React.FC<SavedPodcastsContainerProps> = ({ classNa
     limit: 20,
   });
 
-  useEffect(()=>{
-    console.log('saved data',savedPodcastsData)
-  },[savedPodcastsData])
-  
   // Loading, error, and empty states
   if (isLoading) {
     return (
@@ -61,7 +69,9 @@ const SavedPodcastsContainer: React.FC<SavedPodcastsContainerProps> = ({ classNa
     );
   }
 
-  if (!savedPodcastsData?.data?.savedPodcasts || (savedPodcastsData.data.savedPodcasts?.length || 0) === 0) {
+  const podcasts = savedPodcastsData?.data?.results || [];
+  
+  if (podcasts.length === 0) {
     return (
       <div className={`flex flex-col items-center justify-center h-64 ${className}`}>
         <p className="text-neutral-300 text-center">
@@ -76,107 +86,67 @@ const SavedPodcastsContainer: React.FC<SavedPodcastsContainerProps> = ({ classNa
       </div>
     );
   }
-  
+
+  // Transform API podcast data to match PodcastCard2 interface
+  const transformPodcast = (p: any) => {
+    // Handle author - the API returns author object directly
+    let author: User;
+    if (p.author) {
+      author = {
+        id: p.author.id || "",
+        name: p.author.name || p.author.username || "",
+        username: p.author.username || "",
+        profile_picture: (p.author as any).profilePicture || p.author.profile_picture || "",
+        is_verified_writer: (p.author as any).isVerifiedWriter || p.author.is_verified_writer || false,
+      };
+    } else {
+      // Default fallback
+      author = { id: "", name: "", username: "", profile_picture: "", is_verified_writer: false };
+    }
+
+    return {
+      id: p.id || "",
+      thumbnailUrl: p.thumbnailUrl || Pics.podcastimg,
+      author: author,
+      title: p.title || "Untitled Podcast",
+      description: p.description || "",
+      publishDate: formatDate(p.createdAt),
+      listenTime: formatDuration(p.audio?.duration),
+      audioUrl: p.audio?.url || "",
+      likes: p.likesCount || 0,
+      comments: p.commentsCount ?? 0,
+      isBookmarked: true,
+    };
+  };
 
   const handlePodcastClick = (podcastId: string) => {
     navigate(`/podcast/${podcastId}`);
   };
 
-  
   return (
     <div className={`w-full ${className}`}>
       <div className="grid grid-cols-1 gap-6">
-        {(savedPodcastsData?.data?.savedPodcasts || [])
-          .filter((savedPodcast: { 
-            _id: string;
-            podcastId: {
-              _id: string;
-              thumbnailUrl?: string;
-              authorId?: {
-                _id: string;
-                name: string;
-                username?: string;
-                profile_picture?: string;
-                is_verified_writer?: boolean;
-              };
-              title?: string;
-              description?: string;
-              createdAt: string;
-              audio?: {
-                duration?: number;
-              };
-              likesCount?: number;
-              commentsCount?: number;
-            } | null;
-          }) => savedPodcast.podcastId !== null) // Filter out null podcastId
-          .map((savedPodcast: { 
-            _id: string;
-            podcastId: {
-              _id: string;
-              thumbnailUrl?: string;
-              authorId?: {
-                _id: string;
-                name: string;
-                username?: string;
-                profile_picture?: string;
-                is_verified_writer?: boolean;
-              };
-              title?: string;
-              description?: string;
-              createdAt: string;
-              audio?: {
-                duration?: number;
-              };
-              likesCount?: number;
-              commentsCount?: number;
-            };
-          }) => {
-            const podcast = savedPodcast.podcastId;
+        {podcasts.map((podcast: any) => {
+          const cardPodcast = transformPodcast(podcast);
+          
+          // Skip if no valid ID
+          if (!cardPodcast.id) {
+            return null;
+          }
 
-            // Additional safety check
-            if (!podcast) {
-              return null;
-            }
-         
-            // Only create cardPodcast if authorId exists
-            if (!podcast.authorId) {
-              return null;
-            }
-
-            const cardPodcast = {
-              id: podcast._id,
-              thumbnailUrl: podcast.thumbnailUrl || 'https://placehold.co/400x200/444444/FFFFFF?text=Podcast+Thumbnail',
-              author: {
-                _id: podcast.authorId._id,
-                id: podcast.authorId._id,
-                name: podcast.authorId.name || 'Unknown',
-                username: podcast.authorId.username || '',
-                profile_picture: podcast.authorId.profile_picture || '',
-                is_verified_writer: podcast.authorId.is_verified_writer || false,
-              } as any, // Type assertion to match User type
-              title: podcast.title || "Untitled Podcast",
-              description: podcast.description || "",
-              publishDate: formatDateWithMonth(podcast.createdAt),
-              listenTime: formatDuration(podcast.audio?.duration),
-              likes: podcast.likesCount || 0,
-              comments: podcast.commentsCount || 0,
-              isBookmarked: true, 
-            };
-
-            return (
-              <div
-                key={savedPodcast._id}
-                className="cursor-pointer"
-                onClick={() => handlePodcastClick(cardPodcast.id)}
-              >
-               
-                <PodcastCard2
-                  podcast={cardPodcast}
-                 
-                />
-              </div>
-            );
-          })}
+          return (
+            <div
+              key={podcast.id}
+              className="cursor-pointer"
+              onClick={() => handlePodcastClick(cardPodcast.id)}
+            >
+              <PodcastCard2
+                podcast={cardPodcast}
+                onReadMore={handlePodcastClick}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );

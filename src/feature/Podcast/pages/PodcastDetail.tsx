@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback, useMemo, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   useGetPodcastById,
   useSavePodcastToLibrary,
   useRemovePodcastFromLibrary,
-  useGetMySavedPodcasts,
+  useCheckIfPodcastIsSaved,
   useDeletePodcast,
 } from "../hooks";
 import {
@@ -33,12 +33,13 @@ import PodcastReactionsPopup from "../../Interactions/components/PodcastReaction
 import PodcastReactionModal from "../components/PodcastReactionmodal";
 import PodcastDetailSkeleton from "../components/PodcastDetailSkeleton";
 import ConfirmationModal from "../../Blog/components/ConfirmationModal";
+import { CognitiveModeContext } from "../../../context/CognitiveMode/CognitiveModeContext";
 
 const PodcastDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { mutateAsync: deletePodcast } = useDeletePodcast();
-
+  const { isCognitiveMode } = useContext(CognitiveModeContext);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [isCommentSidebarOpen, setIsCommentSidebarOpen] = useState(false);
@@ -61,32 +62,11 @@ const PodcastDetail: React.FC = () => {
 
   const { mutate: savePodcast, isPending: isSaving } =
     useSavePodcastToLibrary();
-  const { mutate: removePodcast, isPending: isRemoving } =
-    useRemovePodcastFromLibrary();
+  const { mutate: removePodcast, isPending: isRemoving } = useRemovePodcastFromLibrary();
 
-  const { data: savedPodcastsData } = useGetMySavedPodcasts({
-    page: 1,
-    limit: 20,
-  });
-
- 
-
-
-const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
-  if (!savedPodcastsData?.data?.savedPodcasts) {
-    return [];
-  }
-
-  return (savedPodcastsData?.data?.savedPodcasts || [])
-    .map(
-      (savedPodcast: { podcastId?: { _id?: string } | null }) =>
-        savedPodcast.podcastId && savedPodcast.podcastId._id
-    )
-    .filter(Boolean);
-};;
-
-  const savedPodcastIds = getSavedPodcastIds(savedPodcastsData);
-  const isCurrentPodcastSaved = savedPodcastIds.includes(id || "");
+  const { data: isSavedData } = useCheckIfPodcastIsSaved(id);
+  console.log("isSavedData", isSavedData);
+  const isCurrentPodcastSaved = isSavedData?.data?.isSaved || false;
 
   const { authUser } = useUser();
   const isCurrentauthorPodcast = authUser?.id === podcastData?.data?.author?.id;
@@ -375,16 +355,16 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
         </h1>
 
         {/* Thumbnail */}
-        <div className="my-6 w-full max-w-full mx-auto">
+     {!isCognitiveMode &&   <div className="my-6 w-full max-w-full mx-auto">
           <img
             src={podcast?.thumbnailUrl || Pics.podcastimg}
             alt={podcast?.title}
             className="w-full h-auto rounded-lg object-cover max-h-[500px]"
           />
-        </div>
+        </div>}
 
         {/* Audio */}
-        <div className="flex items-center gap-4 my-6 p-4 bg-neutral-800 rounded-lg">
+        <div className="flex items-center gap-4 my-6 p-4 bg-neutral-800 rounded-lg overflow-hidden">
           <button
             onClick={togglePlay}
             className="p-3 rounded-full bg-main-green hover:bg-green-600 flex-shrink-0"
@@ -396,13 +376,13 @@ const getSavedPodcastIds = (savedPodcastsData: any): string[] => {
             )}
           </button>
 
-          <div className="flex-grow w-full">
+          <div className="flex-grow min-w-0 overflow-hidden">
             <AudioWave
               isPlaying={currentTrack?.id === podcast?.id && isPlaying}
             />
           </div>
 
-          <span className="text-sm text-neutral-400">
+          <span className="text-sm text-neutral-400 flex-shrink-0 whitespace-nowrap">
             {memoizedPodcastDuration}
           </span>
         </div>

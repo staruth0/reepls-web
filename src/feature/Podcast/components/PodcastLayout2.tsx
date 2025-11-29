@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import PodcastAuthorInfo from "./PodcastAuthorInfo"; 
 import PodcastEngagementMetrics from "./PodcastEngagementMetrics"; 
 import { User } from "../../../models/datamodels";
 import { LuMic } from "react-icons/lu";
 import { useAudioControls } from "../../../hooks/useMediaPlayer";
+import { CognitiveModeContext } from "../../../context/CognitiveMode/CognitiveModeContext";
 
 // Define the interface for the podcast data
 interface Podcast {
@@ -34,6 +35,7 @@ const PodcastCard2: React.FC<PodcastCardProps> = ({
   onComment,
   onReadMore,
 }) => {
+  const { isCognitiveMode } = useContext(CognitiveModeContext);
   // Audio controls for the podcast
   const { 
     isPlaying, 
@@ -70,7 +72,7 @@ const PodcastCard2: React.FC<PodcastCardProps> = ({
     
       <div className="flex flex-row-reverse items-start gap-4 mb-4"> 
        
-        <div className="flex-shrink-0 w-32 h-32 overflow-hidden rounded-md"> 
+   {!isCognitiveMode &&     <div className="flex-shrink-0 w-32 h-32 overflow-hidden rounded-md"> 
           <img
             src={podcast.thumbnailUrl}
             alt={podcast.title}
@@ -79,7 +81,7 @@ const PodcastCard2: React.FC<PodcastCardProps> = ({
               e.currentTarget.src = `https://placehold.co/128x128/444444/FFFFFF?text=Thumb`;
             }}
           />
-        </div>
+        </div>}
 
       
         <div className="flex-1 min-w-0"> 

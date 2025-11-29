@@ -111,9 +111,9 @@ const Sidebar: React.FC = () => {
     const images: MediaItem[] = [];
     const videos: MediaItem[] = [];
     for (const image of postImages) {
-      if (authUser.id) {
+      if (authUser?.id) {
         try {
-          const url = await uploadPostImage(authUser?.id, image);
+          const url = await uploadPostImage(authUser.id, image);
           images.push({ url, type: MediaType.Image });
         } catch {
           toast.error(
@@ -124,9 +124,9 @@ const Sidebar: React.FC = () => {
       }
     }
     for (const video of postVideos) {
-      if (authUser.id) {
+      if (authUser?.id) {
         try {
-          const url = await uploadPostVideo(authUser?.id, video);
+          const url = await uploadPostVideo(authUser.id, video);
           videos.push({ url, type: MediaType.Video });
         } catch {
           toast.error(

@@ -1,11 +1,10 @@
-
-import React from 'react';
+import React, { useContext } from 'react';
 import PodcastAuthorInfo from './PodcastAuthorInfo';
 import PodcastEngagementMetrics from './PodcastEngagementMetrics'; 
 import { User } from '../../../models/datamodels';
 import { LuMic } from "react-icons/lu";
 import { useAudioControls } from "../../../hooks/useMediaPlayer";
-
+import { CognitiveModeContext } from "../../../context/CognitiveMode/CognitiveModeContext";
 
 interface Podcast {
   id: string;
@@ -35,6 +34,7 @@ const PodcastCard: React.FC<PodcastCardProps> = ({
   onComment,
   onReadMore,
 }) => {
+  const { isCognitiveMode } = useContext(CognitiveModeContext);
   // Audio controls for the podcast
   const { 
     isPlaying, 
@@ -67,8 +67,8 @@ const PodcastCard: React.FC<PodcastCardProps> = ({
 
   return (
     <div className="bg-neutral-800 rounded-lg shadow-md overflow-visible border border-neutral-700 h-full flex flex-col">
-      <div className="w-full h-48 overflow-hidden">
-        <img
+    {!isCognitiveMode &&     <div className="w-full h-48 overflow-hidden">
+      <img
           src={podcast.thumbnailUrl}
           alt={podcast.title}
           className="w-full h-full object-cover"
@@ -76,7 +76,7 @@ const PodcastCard: React.FC<PodcastCardProps> = ({
             e.currentTarget.src = `https://placehold.co/400x200/444444/FFFFFF?text=Podcast+Thumbnail`;
           }}
         />
-      </div>
+      </div>}
 
       <div className="p-4 flex-1 flex flex-col justify-between">
         {/* Author Info */}

@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { LuThumbsUp,  LuBookmark, LuLoader } from "react-icons/lu";
 import { toast } from "react-toastify";
-import { useGetMySavedPodcasts } from "../hooks";
 import {
   useSavePodcastToLibrary,
   useRemovePodcastFromLibrary,
+  useCheckIfPodcastIsSaved,
 } from "../hooks";
 import { useGetAllReactionsForTarget } from "../../Repost/hooks/useRepost";
 
@@ -27,35 +27,14 @@ const PodcastEngagementMetrics: React.FC<PodcastEngagementMetricsProps> = ({
   const { mutate: savePodcast, isPending: isSaving } = useSavePodcastToLibrary();
   const { mutate: removePodcast, isPending: isRemoving } = useRemovePodcastFromLibrary();
 
-  const { data: savedPodcastsData } = useGetMySavedPodcasts({
-    page: 1,
-    limit: 20,
-  });
+  const { data: isSavedData } = useCheckIfPodcastIsSaved(id);
+  const isCurrentPodcastSaved = isSavedData?.data?.isSaved || false;
 
   const { data: allReactions } = useGetAllReactionsForTarget("Podcast", id);
 
-const getSavedPodcastIds = (savedPodcastsData: { data?: { savedPodcasts?: Array<{ podcastId?: { _id?: string } | null }> } }): string[] => {
-  if (!savedPodcastsData?.data?.savedPodcasts) {
-    return [];
-  }
-
-  return (savedPodcastsData?.data?.savedPodcasts || [])
-    .map((savedPodcast: { podcastId?: { _id?: string } | null }) =>
-      savedPodcast.podcastId?._id
-    )
-    .filter((id): id is string => Boolean(id));
-};
-useEffect(() => {
-  console.log("savedpodcasts", savedPodcastsData?.data?.savedPodcasts ?? []);
-}, [savedPodcastsData]);
-
-
-  const savedPodcastIds = getSavedPodcastIds(savedPodcastsData);
-  const isCurrentPodcastSaved = savedPodcastIds.includes(id);
-
   const handleBookmark = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (isSaving || isRemoving) return;
+    if (isSaving || isRemoving || !id) return;
 
     if (isCurrentPodcastSaved) {
       removePodcast(id, {
@@ -168,7 +147,7 @@ useEffect(() => {
           className={`hover:text-primary-400 transition-colors duration-200 ${
             isCurrentPodcastSaved ? "text-primary-400" : ""
           }`}
-          disabled={isSaving || isRemoving}
+          disabled={isSaving || isRemoving || !id}
           title={isCurrentPodcastSaved ? "Unsave" : "Save"}
         >
           {isSaving || isRemoving ? (
