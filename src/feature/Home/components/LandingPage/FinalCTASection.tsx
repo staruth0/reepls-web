@@ -69,9 +69,12 @@ const FinalCTASection = () => {
           </div>
 
           {/* Image Placeholder */}
-          <div className="bg-[#d9d9d9] h-[400px] md:h-[500px] lg:h-[540px] rounded-2xl w-full max-w-[1254px]">
-            {/* Placeholder for diverse users image */}
-          </div>
+
+          {/* <div className="bg-[#d9d9d9] h-[400px] md:h-[500px] lg:h-[540px] rounded-2xl w-full max-w-[1254px]">
+           
+          </div> */}
+
+          
         </div>
       </div>
     </section>
