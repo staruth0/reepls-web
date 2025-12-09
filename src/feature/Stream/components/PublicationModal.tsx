@@ -219,7 +219,7 @@ const PublicationModal: React.FC<PublicationModalProps> = ({
           </button>
           <button
             onClick={handlePushToPublication}
-            disabled={!selectedPublication || isPushPending || (currentPublicationId && selectedPublication?._id !== currentPublicationId)}
+            disabled={!!(!selectedPublication || isPushPending || (currentPublicationId && selectedPublication?._id !== currentPublicationId))}
             className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
           >
             {isPushPending ? (
