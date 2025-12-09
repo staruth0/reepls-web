@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Book} from "lucide-react";
 import { LuLoader } from "react-icons/lu";
 import { toast } from "react-toastify";
@@ -13,6 +13,7 @@ interface PublicationModalProps {
   publications: Publication[];
   articleId: string;
   onPush: (articleId: string, publicationId: string) => void;
+  currentPublicationId?: string | null;
 }
 
 const PublicationModal: React.FC<PublicationModalProps> = ({
@@ -20,16 +21,38 @@ const PublicationModal: React.FC<PublicationModalProps> = ({
   onClose,
   publications,
   articleId,
+  currentPublicationId,
   
 }) => {
   const [selectedPublication, setSelectedPublication] = useState<Publication | null>(null);
   const { mutate: pushArticleToPublication, isPending: isPushPending } = usePushArticleToPublication();
+
+  // Find the publication the article currently belongs to
+  const currentPublication = currentPublicationId 
+    ? publications.find(pub => pub._id === currentPublicationId)
+    : null;
+
+  // Pre-select the current publication when modal opens
+  useEffect(() => {
+    if (isOpen && currentPublication) {
+      setSelectedPublication(currentPublication);
+    } else if (isOpen && !currentPublication) {
+      setSelectedPublication(null);
+    }
+  }, [isOpen, currentPublication]);
 
   const handlePushToPublication = () => {
     if (!selectedPublication) {
       toast.error("Please select a publication");
       return;
     }
+
+    // Prevent pushing to another publication if article already belongs to one
+    if (currentPublicationId && selectedPublication._id !== currentPublicationId) {
+      toast.error("This article already belongs to a publication and cannot be pushed to another");
+      return;
+    }
+
     console.log('selectedPublication', {
       articleId,
       publicationId: selectedPublication._id || '',
@@ -78,21 +101,48 @@ const PublicationModal: React.FC<PublicationModalProps> = ({
         </div>
 
         <div className="mb-4">
-          <p className="text-neutral-100 text-sm mb-3">
-            Select a publication to push this article to:
-          </p>
+          {currentPublicationId ? (
+            <div className="mb-3 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+              <p className="text-yellow-400 text-sm font-medium mb-1">
+                Article Already Belongs to a Publication
+              </p>
+              <p className="text-neutral-300 text-xs">
+                This article is already part of a publication and cannot be pushed to another publication.
+              </p>
+              {currentPublication && (
+                <p className="text-neutral-200 text-xs mt-1">
+                  Current publication: <span className="font-semibold">{currentPublication.title}</span>
+                </p>
+              )}
+            </div>
+          ) : (
+            <p className="text-neutral-100 text-sm mb-3">
+              Select a publication to push this article to:
+            </p>
+          )}
           
            {publications && publications.length > 0 ? (
              <div className="space-y-1 max-h-60 overflow-y-auto">
-               {publications.map((publication) => (
+               {publications.map((publication) => {
+                 const isCurrentPublication = publication._id === currentPublicationId;
+                 const isSelected = selectedPublication?._id === publication._id;
+                 const isDisabled = currentPublicationId && !isCurrentPublication;
+                 
+                 return (
                  <div
                    key={publication._id}
-                   className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
-                     selectedPublication?._id === publication._id
-                       ? "bg-primary-500/10"
-                       : "hover:bg-neutral-700/30"
+                   className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
+                     isDisabled 
+                       ? "opacity-50 cursor-not-allowed" 
+                       : isSelected
+                       ? "bg-primary-500/10 cursor-pointer"
+                       : "hover:bg-neutral-700/30 cursor-pointer"
                    }`}
-                   onClick={() => setSelectedPublication(publication)}
+                   onClick={() => {
+                     if (!isDisabled) {
+                       setSelectedPublication(publication);
+                     }
+                   }}
                  >
                    {/* Icon */}
                    <div className="w-10 h-10 rounded-lg bg-neutral-600 flex items-center justify-center flex-shrink-0">
@@ -113,7 +163,11 @@ const PublicationModal: React.FC<PublicationModalProps> = ({
                        <h3 className="font-semibold text-neutral-100 text-sm">
                          {publication.title}
                        </h3>
-                     
+                       {isCurrentPublication && (
+                         <span className="text-xs bg-primary-500/20 text-primary-400 px-2 py-0.5 rounded">
+                           Current
+                         </span>
+                       )}
                      </div>
                      
                      {publication.short_description && (
@@ -133,16 +187,17 @@ const PublicationModal: React.FC<PublicationModalProps> = ({
                    
                    {/* Checkbox */}
                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
-                     selectedPublication?._id === publication._id
+                     isSelected
                        ? "border-primary-500 bg-primary-500"
                        : "border-neutral-400"
                    }`}>
-                     {selectedPublication?._id === publication._id && (
+                     {isSelected && (
                        <div className="w-2 h-2 rounded-full bg-white"></div>
                      )}
                    </div>
                  </div>
-               ))}
+               );
+               })}
              </div>
           ) : (
             <div className="text-center py-8">
@@ -164,7 +219,7 @@ const PublicationModal: React.FC<PublicationModalProps> = ({
           </button>
           <button
             onClick={handlePushToPublication}
-            disabled={!selectedPublication || isPushPending}
+            disabled={!selectedPublication || isPushPending || (currentPublicationId && selectedPublication?._id !== currentPublicationId)}
             className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
           >
             {isPushPending ? (

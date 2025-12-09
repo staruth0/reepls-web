@@ -299,7 +299,7 @@ const BlogArticleProfile: React.FC<BlogProfileProps> = ({
 
     if (isSubscribed) {
       // Unsubscribe
-      unsubscribeFromPublication(article.publication_id, {
+      unsubscribeFromPublication(article.publication_id,{
         onSuccess: () => {
           toast.success("Successfully unsubscribed from publication!");
         },
@@ -733,6 +733,7 @@ useEffect(() => {
           onClose={() => setShowPublicationModal(false)}
           publications={publications || []}
           articleId={article_id}
+          currentPublicationId={article?.publication_id || null}
           onPush={(articleId, publicationId) => {
             pushArticleToPublication({
               articleId,
