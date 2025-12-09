@@ -22,6 +22,7 @@ import {
   getPublicationMedia,
   getPublicationArticles,
   getAllUserPublications,
+  getAllUserPublicationsByUserId,
   subscribeToPublication,
   unsubscribeFromPublication,
   getMySubscriptions,
@@ -356,6 +357,15 @@ export const useGetAllUserPublications = () => {
   return useQuery({
     queryKey: ["allUserPublications"],
     queryFn: () => getAllUserPublications(),
+  });
+};
+
+// Get all publications for a specific user by user_id
+export const useGetAllUserPublicationsByUserId = (userId: string) => {
+  return useQuery({
+    queryKey: ["allUserPublications", userId],
+    queryFn: () => getAllUserPublicationsByUserId(userId),
+    enabled: !!userId,
   });
 };
 

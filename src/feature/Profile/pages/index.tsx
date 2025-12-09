@@ -20,6 +20,7 @@ import ProfileRightSideSkeleton from "../components/ProfileRightSideSkeleton";
 import { getDecryptedUser } from "../../Auth/api/Encryption";
 import ProfileReposts from "../components/ProfileReposts";
 import ProfilePodcasts from "../components/ProfilePodcasts";
+import ProfileStreams from "../components/ProfileStreams";
 import MainContent from "../../../components/molecules/MainContent";
 import { useGetUserMedia } from "../hooks";
 import { useGetMyReposts } from "../../Repost/hooks/useRepost";
@@ -213,6 +214,10 @@ const Profile: React.FC = () => {
           ? ` (${podcastsCount})` 
           : ""
       }`,
+    },
+    {
+      id: "streams",
+      title: "Streams",
     },
   ];
   
@@ -412,6 +417,7 @@ const Profile: React.FC = () => {
             {activeTab === "media" && <ProfileMedia userId={user.id!} />}
             {activeTab === "reposts" && <ProfileReposts userId={user.id!} />}
             {activeTab === "podcasts" && <ProfilePodcasts userId={user.id!} isAuthUser={isAuthUser} />}
+            {activeTab === "streams" && <ProfileStreams userId={user.id!} isAuthUser={isAuthUser} />}
             <div ref={bottomRef} style={{ height: "100px" }} />
           </div>
         </div>

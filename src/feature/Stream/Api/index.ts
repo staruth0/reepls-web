@@ -137,6 +137,12 @@ const getAllUserPublications = async () => {
   return data;
 };
 
+// 29. Get all publications for a specific user by user_id
+const getAllUserPublicationsByUserId = async (userId: string) => {
+  const { data } = await apiClient.get(`/publications/all/${userId}`);
+  return data;
+};
+
 // 24. Subscribe to publication
 const subscribeToPublication = async (publicationId: string) => {
   const { data } = await apiClient.post(`/publications/${publicationId}/subscribe-only`);
@@ -195,4 +201,5 @@ export {
   getMySubscriptions,
   getPublicationSubscriptionStatus,
   getPublicationAuthor,
+  getAllUserPublicationsByUserId,
 };

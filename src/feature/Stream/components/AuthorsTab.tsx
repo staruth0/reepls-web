@@ -12,6 +12,7 @@ const AuthorsTab: React.FC<AuthorsTabProps> = ({ stream }) => {
   const { data: authorData, isLoading, error } = useGetPublicationAuthor(stream._id || '');
 
   console.log('Author data:', authorData);
+  console.log('Stream data:', stream);
 
   const author = authorData?.author;
 

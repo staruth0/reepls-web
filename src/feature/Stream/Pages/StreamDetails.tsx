@@ -25,6 +25,7 @@ const StreamDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { data: streamData, isLoading, error, refetch } = useGetPublicationById(id || '');
  
+  console.log('Stream data:', streamData);
   
   
   const tabContent: Record<string, React.ReactNode> = {
