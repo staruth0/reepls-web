@@ -1,4 +1,5 @@
 import TermsPolicies from '../components/molecules/TermsPolicies';
+import ChildSafetyStandards from '../components/molecules/ChildSafetyStandards';
 import AnonymousBookmarks from '../feature/AnonymousUser/Pages/AnonymousBookmarks';
 import AnonymousNotification from '../feature/AnonymousUser/Pages/AnonymousNotification';
 import AnonymousProfile from '../feature/AnonymousUser/Pages/AnonymousProfile';
@@ -101,6 +102,10 @@ const UserRoutes = {
     {
       path: '/Terms&Policies',
       element: <TermsPolicies />,
+    },
+    {
+      path: '/child-safety-standards',
+      element: <ChildSafetyStandards />,
     },
     { 
       path: '/notifications',
