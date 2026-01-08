@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import Topbar from "../atoms/Topbar/Topbar";
 
 const TermsPolicies: React.FC = () => {
@@ -15,9 +16,17 @@ const TermsPolicies: React.FC = () => {
       {/* Centered Content */}
       <div className="flex-1 flex items-center justify-center px-6 py-8">
         <div className="text-neutral-50 max-w-3xl text-left">
-          <h1 className="text-3xl font-semibold mb-6 text-center">
+          <h1 className="text-3xl font-semibold mb-4 text-center">
             {t("Terms and Policies")}
           </h1>
+          <div className="text-sm text-neutral-400 text-center mb-6">
+            <Link 
+              to="/child-safety-standards" 
+              className="text-blue-400 hover:text-blue-300 underline"
+            >
+              View Child Safety Standards
+            </Link>
+          </div>
 
           <section className="mb-6">
             <h2 className="text-xl font-semibold mb-2">

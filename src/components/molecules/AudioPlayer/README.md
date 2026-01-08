@@ -141,6 +141,7 @@ const PlayButton = ({ track }) => {
 
 ### Progress Bar
 
+{% raw %}
 ```tsx
 const ProgressBar = () => {
   const { currentTime, duration, seekToPercentage } = useAudioPlayerControls();
@@ -163,6 +164,7 @@ const ProgressBar = () => {
   );
 };
 ```
+{% endraw %}
 
 ### Volume Control
 
