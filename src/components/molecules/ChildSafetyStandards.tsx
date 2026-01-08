@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Topbar from "../atoms/Topbar/Topbar";
 
 const ChildSafetyStandards: React.FC = () => {
@@ -17,9 +18,17 @@ const ChildSafetyStandards: React.FC = () => {
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
               Reepls Child Safety Standards
             </h1>
-            <p className="text-neutral-300 text-sm md:text-base">
+            <p className="text-neutral-300 text-sm md:text-base mb-4">
               Last updated: January 2026
             </p>
+            <div className="text-sm text-neutral-400">
+              <Link 
+                to="/Terms&Policies" 
+                className="text-blue-400 hover:text-blue-300 underline"
+              >
+                View Terms and Policies
+              </Link>
+            </div>
           </div>
 
           {/* Introduction */}
