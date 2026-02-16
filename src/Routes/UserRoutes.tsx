@@ -107,6 +107,10 @@ const UserRoutes = {
       path: '/child-safety-standards',
       element: <ChildSafetyStandards />,
     },
+    {
+      path: '/child-safety',
+      element: <ChildSafetyStandards />,
+    },
     { 
       path: '/notifications',
       element: <Notifications />,

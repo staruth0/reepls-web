@@ -19,9 +19,8 @@ const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
 
   const {t} = useTranslation();
 
-  // Safely handle initial state with fallback if user is undefined
   const [bannerImage, setBannerImage] = useState<string | undefined>(() => {
-    return user?.banner_picture || Pics.bannerPlaceholder;
+    return user?.banner_picture ?? undefined;
   });
   const [profileImg, setProfileImg] = useState<string | undefined>(() => {
     return user?.profile_picture || Pics.imagePlaceholder;
@@ -97,10 +96,9 @@ const ProfileEditBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
 
   return (
     <>
-      {/* Banner Section */}
       <div
-        className="relative h-24 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${bannerImage})` }}
+        className="relative h-24 bg-cover bg-center bg-no-repeat bg-neutral-200"
+        style={{ backgroundImage: bannerImage ? `url(${bannerImage})` : undefined }}
       >
         <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
           <button

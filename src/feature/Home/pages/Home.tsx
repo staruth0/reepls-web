@@ -94,8 +94,10 @@ function Home() {
   }
 
   return (
-    <div className="home__container bg-background">
+    <div className="home__container home__container--light min-h-screen bg-[#f9fff5] text-[#373737]">
       <Header />
+      {/* Spacer so fixed header does not overlap content */}
+      <div className="h-14 md:h-16 shrink-0" aria-hidden />
       <HeroSection />
       <NarrativeGapSection />
       <ProblemSection />

@@ -653,6 +653,12 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Never cache navigation/document requests so the app always loads the latest index.html and entry point
+  if (event.request.mode === 'navigate') {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((response) => {
       // Return cached version or fetch from network

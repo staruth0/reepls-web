@@ -23,9 +23,9 @@ const ProfileBody: React.FC<ProfileBodyProps> = ({ children, user }) => {
   return (
     <>
       <div
-        className="relative h-36 bg-cover bg-center bg-no-repeat"
+        className="relative h-36 bg-cover bg-center bg-no-repeat bg-neutral-200"
         style={{ 
-          backgroundImage: `url(${user.banner_picture ? user.banner_picture : Pics.bannerPlaceholder})` 
+          backgroundImage: user.banner_picture ? `url(${user.banner_picture})` : undefined
         }}
       >
         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">

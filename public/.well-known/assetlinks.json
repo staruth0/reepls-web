@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.reepls.app",
+      "sha256_cert_fingerprints": [
+        "A0:53:95:BE:20:3D:B3:91:73:A6:57:6E:CA:84:F9:06:81:A0:94:AC:EF:7E:64:4B:C8:19:55:A9:A1:16:0D:7F"
+      ]
+    }
+  }
+]

@@ -1,7 +1,10 @@
 import React from "react";
 import LanguageSwitcher from "./LanguageSwitcher";
+import ThemeSwitcher from "./ThemeSwitcher";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../../../hooks/useUser";
+import useTheme from "../../../hooks/useTheme";
+import { logoOnDark, logoOnWhite } from "../../../assets/icons";
 
 
 interface SidebarProps {
@@ -9,33 +12,22 @@ interface SidebarProps {
   toggleSidebar: () => void
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen , toggleSidebar}) => {
-
-    const { t } = useTranslation();
-    const {isLoggedIn }= useUser()
-  
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
+  const { t } = useTranslation();
+  const { isLoggedIn } = useUser();
+  const { theme } = useTheme();
 
   return (
     <div
       className={`fixed z-40 inset-y-0 left-0 w-3/4 bg-background shadow-lg transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
     >
-      {/* <button
-        onClick={onClose}
-        className="absolute top-4 right-4 p-2 text-neutral-50 hover:text-gray-900 focus:outline-none"
-      >
-        <LuX className="h-6 w-6" />
-      </button> */}
-
       <div className="">
-        <div className="flex items-center gap-2 mb-8 border-b border-b-neutral-700 pb-3 p-6">
+        <div className="flex items-center mb-8 border-b border-b-neutral-700 pb-3 p-6">
           <img
-            src="/favicon.png"
-            alt="Reepl Logo"
-            className="h-8 w-8"
+            src={theme === "light" ? logoOnDark : logoOnWhite}
+            alt="Reepls"
+            className="h-8 w-auto object-contain shrink-0"
           />
-          <span className="text-xl font-semibold text-neutral-50">
-            Reepls
-          </span>
         </div>
 
         <ul className="space-y-4 px-6">
@@ -50,7 +42,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen , toggleSidebar}) => {
             </a>
           </li>
           <li>
-          <LanguageSwitcher />
+            <ThemeSwitcher variant="menu" />
+          </li>
+          <li>
+            <LanguageSwitcher />
           </li>
         </ul>
       </div>

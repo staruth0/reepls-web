@@ -1,30 +1,21 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LuMenu } from "react-icons/lu";
 import LeftHeader from "./LeftHeader";
 import Sidebar from "../Sidebar";
-import LanguageSwitcher from "../LanguageSwitcher";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import useTheme from "../../../../hooks/useTheme";
-import { logoOnDark, logoOnWhite, favicon } from "../../../../assets/icons";
+import { logoOnDark, logoOnWhite } from "../../../../assets/icons";
+import { SECTION_CONTENT_CLASS } from "../LandingPage/sectionLayout";
 
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [navState, setNavstate] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isLanding = location.pathname === "/";
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setNavstate(window.scrollY > 100);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
   const { theme } = useTheme();
 
@@ -39,40 +30,40 @@ const Header = () => {
         ></div>
       )}
 
+      {/* Full-width bar (fixed or sticky); content inside constrained to section max-width */}
       <div
-        className={`${
-          navState
-            ? "fixed top-0 left-0 right-0 w-screen shadow-sm"
-            : "sticky top-0"
-        } navbar flex border-b-neutral-600 border-b items-center justify-between px-5 md:px-16 lg:px-[128px]  py-4 w-full bg-background z-20 max-w-screen-2xl mx-auto`}
+        className={`navbar z-20 inset-x-0 top-0 w-full ${
+          isLanding
+            ? "fixed bg-background border-b border-neutral-600 shadow-sm"
+            : "sticky bg-background border-b border-neutral-600"
+        }`}
       >
+        <div className={`flex items-center justify-between py-3 md:py-4 w-full ${SECTION_CONTENT_CLASS} ${isLanding ? "text-foreground" : ""}`}>
         <div
-          className="flex items-center gap-2 cursor-pointer"
+          className="flex items-center cursor-pointer"
           onClick={() => navigate("/")}
+          aria-label="Reepls home"
         >
-          {/* Image for larger screens (sm and up) */}
           <img
-            src={`${theme === "dark" ? logoOnWhite : logoOnDark}`}
-            alt="Logo"
-            className="hidden sm:block w-36"
+            src={theme === "light" ? logoOnDark : logoOnWhite}
+            alt="Reepls"
+            className="h-6 sm:h-7 md:h-8 w-auto object-contain shrink-0"
           />
-          {/* Favicon for smaller screens (below sm) */}
-          <img src={favicon} alt="Favicon" className="block sm:hidden w-8 h-8"/> 
-       
         </div>
 
-        <div className="hidden md:block">
-          <LeftHeader />
+        <div className="hidden md:flex md:items-center md:gap-2">
+          <LeftHeader isLanding={isLanding} />
         </div>
 
-        <div className="flex gap-2 items-center md:hidden">
-          <LanguageSwitcher />
+        <div className="flex items-center md:hidden">
           <button
             onClick={toggleSidebar}
-            className="p-2 text-neutral-50 hover:text-gray-900 focus:outline-none"
+            className={`p-2 focus:outline-none rounded ${isLanding ? "text-foreground hover:text-primary-400" : "text-neutral-50 hover:text-gray-900"}`}
+            aria-label="Open menu"
           >
-            <LuMenu className="h-6 w-6 border border-primary-400" />
+            <LuMenu className="h-6 w-6" />
           </button>
+        </div>
         </div>
       </div>
     </>
