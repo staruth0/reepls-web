@@ -10,9 +10,14 @@
   font-family: var(--roboto-font);
   font-weight: 400;
 
+ 
+
   .swiper__part {
     flex: 1;
     background: var(--background);
+     @include mixin.max-1024{
+      display: none;
+     }
   }
 
   .page__container {
@@ -29,6 +34,9 @@
       align-items: center;
       justify-content: space-between;
       padding: 0.5rem 2.5rem;
+       @include mixin.max-768{
+      padding: .5rem 1rem;
+     }
 
      img{
       cursor: pointer;

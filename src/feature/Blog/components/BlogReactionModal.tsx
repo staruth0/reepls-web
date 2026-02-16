@@ -1,0 +1,154 @@
+import React, { useState } from "react";
+import { Icon } from "@iconify/react";
+
+import { useUser } from "../../../hooks/useUser";
+import { motion } from "framer-motion";
+import { toast } from "react-toastify";
+import {  useGetArticleReactions } from "../../Interactions/hooks";
+import { ReactionReceived } from "../../../models/datamodels";
+import { t } from "i18next";
+import { useCreateReactionRepost, useUpdateReactionRepost } from "../../Repost/hooks/useRepost";
+
+interface ReactionModalProps {
+  article_id: string;
+}
+
+const ReactionModal: React.FC<ReactionModalProps> = ({ article_id }) => {
+  const [isPending, setIsPending] = useState(false);
+  const [pendingReaction, setPendingReaction] = useState<string | null>(null);
+  const [successReaction, setSuccessReaction] = useState<string | null>(null);
+  const { authUser } = useUser();
+  const { mutate: createReaction } = useCreateReactionRepost();
+  const { mutate: updateReaction } = useUpdateReactionRepost();
+  const { data: allReactions } = useGetArticleReactions(article_id);
+
+  const handleReaction = (reaction: string) => {
+    if (!authUser?.id) return; // Ensure user is logged in
+
+    const userReaction = allReactions?.reactions?.find(
+      (r: ReactionReceived) => r.user_id?.id === authUser.id
+    );
+
+    if (userReaction) {
+      // Update existing reaction
+      if (userReaction.type === reaction) return; // Same reaction, no action needed
+
+      setIsPending(true);
+      setPendingReaction(reaction);
+      updateReaction(
+        {
+          reactionId: userReaction._id,
+          type: reaction,
+        },
+        {
+          onSuccess: () => {
+            toast.success("Reaction updated successfully");
+            setIsPending(false);
+            setPendingReaction(null);
+            setSuccessReaction(reaction);
+            setTimeout(() => setSuccessReaction(null), 1000);
+            
+          },
+          onError: () => {
+            toast.error("Failed to update reaction");
+            setIsPending(false);
+            setPendingReaction(null);
+           
+          },
+        }
+      );
+    } else {
+      // Create new reaction
+      setIsPending(true);
+      setPendingReaction(reaction);
+      createReaction(
+        {
+            target_id: article_id,
+            target_type: "Article",
+            type: reaction,
+          },
+        {
+          onSuccess: () => {
+            toast.success(t("blog.alerts.ReactionSuccess"));
+            setIsPending(false);
+            setPendingReaction(null);
+            setSuccessReaction(reaction);
+            setTimeout(() => setSuccessReaction(null), 1000);
+            
+          },
+          onError: () => {
+            toast.error(t("blog.alerts.ReactionFailed"));
+            setIsPending(false);
+            setPendingReaction(null);
+         
+          },
+        }
+      );
+    }
+  };
+
+  const bounceVariants = {
+    bounce: {
+      x: [0, 10, -10, 0],
+      y: [5, -10, 0],
+      transition: { duration: 0.5, times: [0, 0.6, 1] },
+    },
+  };
+
+  const glowVariants = {
+    glow: {
+      scale: [1, 1.1, 1],
+      opacity: [1, 0.8, 1],
+      transition: { duration: 0.8, repeat: Infinity, ease: "easeInOut" },
+    },
+  };
+
+  const reactions = [
+    { icon: "pepicons-pencil:hands-clapping", name: "clap" },
+    { icon: "heroicons:hand-thumb-up", name: "like" },
+    { icon: "heroicons:heart", name: "love" },
+    { icon: "heroicons:face-smile", name: "smile" },
+    { icon: "heroicons:face-frown", name: "cry" },
+  ];
+
+
+
+  return (
+    <div
+      className=" mt-2 shadow-sm rounded-full bg-background p-3 transition-opacity duration-400 opacity-100 z-[999]"
+      style={{ bottom: "40px", left: "0px" }}
+    >
+      <div className="flex space-x-4">
+        {reactions.map((reaction) => (
+          <button
+            key={reaction.name}
+            className="relative flex flex-col items-center hover:scale-110 transform transition cursor-pointer"
+            onClick={() => handleReaction(reaction.name)}
+            title={reaction.name}
+            disabled={isPending && pendingReaction !== reaction.name}
+          >
+            <motion.div
+              variants={{ ...bounceVariants, ...glowVariants }}
+              animate={
+                successReaction === reaction.name
+                  ? "bounce"
+                  : isPending && pendingReaction === reaction.name
+                  ? "glow"
+                  : ""
+              }
+            >
+              <Icon 
+                icon={reaction.icon} 
+                className={`w-6 h-6 ${reaction.name === "clap" ? "transform scale-x-[-1]" : ""} ${
+                  isPending && pendingReaction === reaction.name ? "text-primary-400" : ""
+                }`}
+              />
+            </motion.div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default ReactionModal;

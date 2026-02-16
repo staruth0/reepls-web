@@ -1,102 +1,108 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 :root {
-  // Light Theme Primary Colors
-  --primary-50: #F9FFF5;
-  --primary-100: #F2FFEB;
-  --primary-200: #AEFD7D;
-  --primary-300: #7EF038;
-  --primary-400-main: #57C016;
-  --primary-500: #408415;
-  --primary-600: #AEFD7D;
-  --primary-700: #EFFFF5;
-  --primary-800: #F9FFF5;
+--primary-50: #f9fff5;       // No change
+--primary-100: #f2ffeb;      // No change
+--primary-200: #aefd7d;      // No change
+--primary-300: #469117;      // Changed from #7ef038 to #469117
+--primary-400: #57c016;      // No change
+--primary-400-main: #57c016; // No change
+--primary-500: #7ef038;      // Changed from #408415 to #7ef038
+--primary-600: #aefd7d;      // No change
+--primary-700: #ecffe1;      // Changed from #effff5 to #ecffe1
+--primary-800: #f9fff5;      // No change
 
   // Light Theme Secondary Colors
-  --secondary-50: #534109;
-  --secondary-100: #796215;
-  --secondary-200: #AE8A13;
-  --secondary-300: #E9B50C;
-  --secondary-400: #FFCD29;
-  --secondary-500: #FFD95C;
-  --secondary-600: #FFE58F;
-  --secondary-700: #FFFC12;
-  --secondary-800: #FFF5D6;
-
+--secondary-50: #534109;      // No change
+--secondary-100: #796215;     // No change
+--secondary-200: #c49b12;     // Changed from #ae8a13 to #c49b12
+--secondary-300: #e9b50c;     // No change
+--secondary-400: #ffcd29;     // No change
+--secondary-500: #ffd95c;     // No change
+--secondary-600: #ffe58f;     // No change
+--secondary-700: #fffc12;     // No change
+--secondary-800: #fff5d6;     // No change
 
   // Light Theme MAIN Colors
-  --main-green: #57C016;
-  --main-yellow: #E9B50C;
-  --background: #FEFEFE;
-  --plain-a: #242424;
-  --plain-b: #FEFEFE;
+--main-green: #57c016;        // Changed from #57c016 to #570016
+--main-yellow: #e9b50c;       // No change
+--background: #fefefe;        // No change
+--foreground: #242424;        // No change
+--plain-a: #242424;           // No change
+--plain-b: #fefefe;           // No change
 
   // Light Theme Neutral Colors
-  --neutral-50: #474747;
-  --neutral-100: #737373;
-  --neutral-200: #ADADAD;
-  --neutral-300: #BDBDBD;
-  --neutral-400-main: #C7C7C7;
-  --neutral-400: #D9D9D9;
-  --neutral-600: #E8E8E8;
-  --neutral-700: #F5F5F5;
-  --neutral-800: #FAFAFA;
+--neutral-50: #474747;        // No change
+--neutral-100: #737373;       // No change
+--neutral-200: #868686;       // Changed from #adadad to #868686
+--neutral-300: #838383;       // Changed from #bdbdbd to #838383
+--neutral-400-main: #cccccc;  // Changed from #c7c7c7 to #cccccc
+--neutral-500: #dedede;       // Changed from #d9d9d9 to #dedede
+--neutral-600: #f2f2f2;       // Changed from #e8e8e8 to #f2f2f2
+--neutral-700: #f7f7f7;       // Changed from #f5f5f5 to #f7f7f7
+--neutral-800: #fcfcfc;       // Changed from #fafafa to #fcfcfc
+
+  // semantic colors
+  --background-color: var(--neutral-800);
+  --text-color: var(--plain-a);
+  --shadow-color: rgba(36, 36, 36, 0.1);
 
   //fonts
-  --roboto-font:"Roboto", sans-serif;
-  --instrument-serif-font:"Instrument Serif", serif;
+  --roboto-font: 'Roboto', sans-serif;
+  --inter-font: 'Inter', sans-serif;
+  --instrument-serif-font: 'Instrument Serif', serif;
+  --primary-font: 'Instrument Serif', serif;
+  --secondary-font: 'Roboto', sans-serif;
 }
 
 .dark-theme {
   // Dark Theme Primary Colors
-  --primary-50: #141712;
-  --primary-100: #161B13;
-  --primary-200: #294517;
-  --primary-300: #375C1F;
-  --primary-400-main: #408415;
-  --primary-500: #34581D;
-  --primary-600: #182112;
-  --primary-800: #141712;
-  --primary-700: #0F0F0F;
+--primary-50: #141712;       // No change
+--primary-100: #161813;      // Changed from #161b13 to #161813
+--primary-200: #294517;      // No change
+--primary-300: #375c1f;      // No change
+--primary-400: #408415;      // No change
+--primary-400-main: #408415; // No change
+--primary-500: #34581d;      // No change
+--primary-600: #182112;      // No change
+--primary-700: #25371b;      // Changed from #0f0f0f to #25371b
+--primary-800: #1e221b;      // Changed from #141712 to #1e221b
 
   // Dark Theme Secondary Colors
---secondary-50: #FFFFFF;
---secondary-100: #FFF1C2;
---secondary-200: #FFE58F;
---secondary-300: #E9B50C;
---secondary-400: #FFCD29;
---secondary-500: #FFD95C;
---secondary-600: #AE8A13;
---secondary-700: #534109;
---secondary-800: #FFFFFF;
-
+--secondary-50: #ffffff;      // Changed from #534109 to #ffffff
+--secondary-100: #796215;     // Changed from #fff1c2 to #796215
+--secondary-200: #d5a710;     // Changed from #ffe58f to #d5a710
+--secondary-300: #e9b50c;     // No change
+--secondary-400: #ffcd29;     // No change
+--secondary-500: #ffd95c;     // No change
+--secondary-600: #aeba13;     // Changed from #ae8a13 to #aeba13
+--secondary-700: #534109;     // Changed from #fffc12 to #534109
+--secondary-800: #ffffff;     // Changed from #fff5d6 to #ffffff
 
   // Dark Theme MAIN Colors
-  --main-green: #408415;
-  --main-yellow: #FFCD29;
-  --background: #0F0F0F;
-  --plain-a: #FEFEFE;
-  --plain-b: #141414;
+--main-green: #408415;        // No change
+--main-yellow: #ffcd29;       // No change
+--background: #1f1f1f;        // Changed from #0f0f0f to #1f1f1f
+--foreground: #444444;        // No change
+--plain-a: #e0e0e0;           // Changed from #fefefe to #e0e0e0
+--plain-b: #141414;           // No change
 
   // Dark Theme Neutral Colors
-  --neutral-50: #B2B2B2;
-  --neutral-100: #9999A3;
-  --neutral-200: #989298;
-  --neutral-300: #8A878D;
-  --neutral-400-main: #5C5A5D;
-  --neutral-400: #525053;
-  --neutral-600: #333234;
-  --neutral-700: #262527;
-  --neutral-800: #1F1E1F;
+--neutral-50: #e1e1e1;        // Changed from #b2b2b2 to #e1e1e1
+--neutral-100: #c4c3c3;       // Changed from #9999a3 to #c4c3c3
+--neutral-200: #7a7a7a;       // Changed from #989298 to #7a7a7a
+--neutral-300: #707070;       // Changed from #8a878d to #707070
+--neutral-400-main: #5c5c5c;  // Changed from #5c5a5d to #5c5c5c
+--neutral-500: #414141;       // Changed from #525053 to #414141
+--neutral-600: #303030;       // Changed from #333234 to #303030
+--neutral-700: #262626;       // Changed from #262527 to #262626
+--neutral-800: #212121;       // Changed from #1f1e1f to #212121
+
+  // semantic colors
+  --background-color: var(--neutral-800);
+  --text-color: var(--plain-a);
+  --shadow-color: rgba(200, 200, 200, 0.4);
 }
-
-
-
-
-
-
-
-

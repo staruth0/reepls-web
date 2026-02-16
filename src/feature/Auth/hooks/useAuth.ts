@@ -12,14 +12,13 @@ export const useAuth = () => {
     setLoading(true);
     setError(false);
     try {
-      console.log(credentials)
       const response = await registerUser(credentials);
       if (response) {
         setData(response);
       }
       return response;
     } catch (error) {
-      console.error(error);
+      void error;
       setError(true);
     } finally {
       setLoading(false);
@@ -37,7 +36,7 @@ export const useAuth = () => {
       }
       return response;
     } catch (error) {
-      console.error(error);
+      void error;
       setError(true);
     } finally {
       setLoading(false);
@@ -55,7 +54,7 @@ export const useAuth = () => {
       }
       return response;
     } catch (error) {
-      console.error(error);
+      void error;
       setError(true);
     } finally {
       setLoading(false);
@@ -73,7 +72,7 @@ export const useAuth = () => {
       }
       return response;
     } catch (error) {
-      console.error(error);
+      void error;
       setError(true);
     } finally {
       setLoading(false);
@@ -91,7 +90,7 @@ export const useAuth = () => {
       }
       return response;
     } catch (error) {
-      console.error(error);
+      void error;
       setError(true);
     } finally {
       setLoading(false);
@@ -109,7 +108,7 @@ export const useAuth = () => {
       }
       return response;
     } catch (error) {
-      console.error(error);
+      void error;
       setError(true);
     } finally {
       setLoading(false);

@@ -1,0 +1,124 @@
+@use '../../../styles/mixin.scss';
+@use '../../../styles/main.scss';
+@use '../../../styles/variable.scss';
+
+.home__container {
+  flex-direction: column;
+  // min-height: 100vh;
+  background-color: var(--background);
+  color: var(--neutral-50);
+  font-family: var(--roboto-font);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  gap: 1rem;
+  overflow-x: hidden;
+  // max-width: 1440px;
+
+  .language__translators {
+    display: flex;
+    gap: 1rem;
+
+    button {
+      @include mixin.button;
+      background-color: var(--main-yellow);
+      color: var(--plain-b);
+      outline: none;
+      border: none;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+
+      &:hover {
+        background-color: var(--main-yellow);
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+}
+
+.navbar.fixed{
+  margin: 0 auto;
+// max-width: 1440px;
+}
+
+
+.header {
+  padding: 1rem;
+  margin: 0 auto;
+  max-width: 1440px;
+
+ 
+
+  .container {
+    max-width: 80rem;
+    margin: 0 auto;
+  }
+
+  .flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .md\:hidden {
+    @media (min-width: 768px) {
+      display: none;
+    }
+  }
+
+  .leftheader {
+    display: none;
+  }
+
+  .h-8 {
+    height: 2rem;
+  }
+
+  .w-8 {
+    width: 2rem;
+  }
+
+  .text-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+
+  .font-semibold {
+    font-weight: 600;
+  }
+
+  
+  
+}
+
+.hover-underlined {
+  position: relative;
+  text-decoration: none;
+  color: var(--primary-300);
+  font-weight: bold;
+  transition: color 0.3s ease;
+  font-weight: 500;
+
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-300);
+    bottom: 0;
+    left: 0;
+    transition: width 0.4s ease-in-out;
+  }
+
+  &:hover {
+
+    &::before {
+      opacity: 0;
+    }
+
+    &::after {
+      width: 92%;
+    }
+  }
+}

@@ -48,3 +48,57 @@ export default tseslint.config({
   },
 })
 ```
+
+Subscribe or unsubscribe from a publication. Publication owners are automatically subscribed and cannot manually toggle their subscription.
+
+# Toggle subscription for a publication (Subscribe/Unsubscribe)
+# POST /api-v1/publications/:publication_id/subscribe
+POST {{baseUrl}}/publications/68aa4185a3377a93801dcea7/subscribe
+
+Retrieves user's subscribed publications with pagination and detailed publication information.
+# Get user's subscribed publications with pagination
+# GET /api-v1/publications/me/subscriptions
+GET {{baseUrl}}/publications/me/subscriptions?page=1&limit=10&sortBy=createdAt:desc
+
+Retrieves subscribers of a specific publication (owner only access control).
+# Get subscribers of a specific publication
+# GET /api-v1/publications/:publication_id/subscribers  
+GET{{baseUrl}}/publications/68a786af3e0ecd6fc4e895e3/subscribers?page=1&limit=10&sortBy=subscribedAt:desc
+
+The collaboration system allows publications to have multiple contributors with different permission levels and automatic subscription management.
+Permission Levels
+
+-   Full Access: Can manage collaborators, edit publication settings, create/edit articles
+-   Edit Access: Can create/edit articles, view analytics
+
+1. Add Collaborator
+Adds a collaborator to a publication with automatic subscription.
+# Add a collaborator to a publication
+# POST /api-v1/publications/:publication_id/collaborators
+POST {{baseUrl}}/publications/68a786af3e0ecd6fc4e895e3/collaborators
+
+Retrieves list of publication collaborators.
+# Get list of publication collaborators with pagination and sorting
+# GET /api-v1/publications/:publication_id/collaborators
+GET {{baseUrl}}/publications/68a786af3e0ecd6fc4e895e3/collaborators?page=1&limit=10&sortBy=addedAt:desc
+
+
+Updates collaborator permissions (owner only).
+# Update collaborator permissions (Owner only)
+# PATCH /api-v1/publications/:publication_id/collaborators/:collaborator_id
+PATCH {{baseUrl}}/publications/68a786af3e0ecd6fc4e895e3/collaborators/68a78d94dc0b7eec46050acd
+
+Allows a collaborator to leave a publication (self-removal).
+# Leave collaboration (Self-removal)
+# DELETE /api-v1/publications/:publication_id/collaborators/self
+DELETE {{baseUrl}}/publications/68a786af3e0ecd6fc4e895e3/collaborators/self
+
+Removes a collaborator from publication (owner only).
+# Remove a collaborator from publication (Owner only)
+# DELETE /api-v1/publications/:publication_id/collaborators/:collaborator_id
+DELETE {{baseUrl}}/publications/68a786af3e0ecd6fc4e895e3/collaborators/687420d28a4d8df6fc4d10
+
+Retrieves all publications where the user is a collaborator.
+# Get my collaborative publications - Default pagination
+# GET /api-v1/publications/my-publications
+GET {{baseUrl}}/publications/my-publications

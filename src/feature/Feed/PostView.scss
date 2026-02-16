@@ -1,0 +1,145 @@
+.post-view-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 2rem;
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease-out;
+
+    &.closing {
+        animation: fadeOut 0.3s ease-out;
+    }
+
+    .post-view-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: -1;
+    }
+
+    .post-view-content {
+        background: var(--background);
+        border-radius: 12px;
+        width: 100%;
+        max-width: 680px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        position: relative;
+        animation: slideUp 0.3s ease-out;
+
+        .closing & {
+            animation: slideDown 0.3s ease-out;
+        }
+    }
+
+    .close-button {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 50%;
+        transition: background-color 0.2s;
+
+        &:hover {
+            background-color: var(--neutral-700);
+        }
+    }
+
+    .post-content-container {
+        padding: 1rem;
+
+        @media (min-width: 768px) {
+            padding: 2rem;
+        }
+    }
+
+    .loading-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 200px;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+}
+
+.each_blog_post.modal-view {
+    box-shadow: none;
+    padding: 0;
+    max-width: 100%;
+
+    .modal-header {
+        padding: 1rem;
+        border-bottom: 1px solid var(--neutral-700);
+
+        .close-modal-button {
+            background: var(--neutral-700);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            color: var(--text-primary);
+            cursor: pointer;
+
+            &:hover {
+                background: var(--neutral-600);
+            }
+        }
+    }
+}

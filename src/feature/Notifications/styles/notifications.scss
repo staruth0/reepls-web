@@ -1,0 +1,86 @@
+.notifications-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: var(--roboto-font);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 1rem;
+
+  .tabs {
+    display: flex;
+    position: relative;
+    justify-content: space-between;
+    padding: 0.5rem;
+    max-width: 60%;
+    gap: 1rem;
+    align-self: center;
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 1rem 0.6rem;
+      background: none;
+      border: none;
+      font-size: 14.5px;
+      color: #757575;
+      cursor: pointer;
+      transition: all 0.3s;
+
+      &.active {
+        color: #333;
+        font-weight: bold;
+        scale: 1.1;
+      }
+
+      &:hover {
+        color: #333;
+      }
+    }
+
+    .slider {
+      position: absolute;
+      bottom: 0;
+      height: 2px;
+      width: 33.33%;
+      background-color: var(--main-green);
+      transition: left 0.3s ease-in-out;
+    }
+  }
+
+  .content {
+    padding: 1rem;
+
+    .topics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+
+      .topic {
+        padding: 0.5rem 1.2rem;
+        border: 0.5px solid var(--neutral-100);
+        border-radius: 20px;
+        background-color: var(--neutral-400);
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.3s;
+
+        &:hover {
+          background-color: var(--main-green);
+          border: none;
+          color: white;
+        }
+      }
+    }
+
+    .recent,
+    .people {
+      p {
+        font-size: 1rem;
+        margin: 0.5rem 0;
+      }
+    }
+  }
+}

@@ -1,15 +1,68 @@
 @use 'variable' as *;
 @use 'mixin' as *;
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-
+// * {
+//   margin: 0;
+//   padding: 0;
+//   box-sizing: border-box;
+// }
 
 body {
-font-size: 16px;
-background: var(--primary-50);
+  font-size: 16px;
+  // background: var(--primary-50);
+  background: var(--background-color);
+  // color: var(--secondary-50);
+  // background: var(--background-color);
+  color: var(--text-color);
+  // font-family: var(--inter-font);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  // font-family: var(--instrument-serif-font);
+  font-family: var(--inter-font);
+  text-overflow: ellipsis;
+}
+
+button {
+  cursor: pointer;
+}
+
+p,
+span,
+a,
+button,
+input,
+textarea,
+select {
+  font-family: var(--inter-font);
+  // font-family: var(--roboto-font);
+  outline: none;
+  
+}
+
+div {
+  // font-family: var(--roboto-font);
+  font-family: var(--inter-font);
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: var(--main-green);
+  font-size: 0.2rem;
+}
+
+//TODO: add custom icons for swiper buttons directly
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  font-size: 2rem;
+}
+
+.swiper-pagination-bullet {
+  background-color: var(--main-green);
+  color: var(--main-green);
 }

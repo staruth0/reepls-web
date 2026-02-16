@@ -1,15 +1,17 @@
-import React, { useState } from "react";
-import "../styles/input.scss";
-import { MdOutlineRemoveRedEye } from "react-icons/md";
-import { FaRegEyeSlash } from "react-icons/fa6";
-import "react-phone-input-2/lib/style.css";
-import { cm,chevrondown } from "../../../assets/icons";
+import React, { useState } from 'react';
+import { FaRegEyeSlash } from 'react-icons/fa6';
+import { MdOutlineRemoveRedEye } from 'react-icons/md';
+import 'react-phone-input-2/lib/style.css';
+import PhoneInput, { CountryData } from 'react-phone-input-2';
+import '../styles/input.scss';
 
 interface InputProps {
   label: string;
   placeholder: string;
   textValue: string;
-  handleInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleInputChange?: 
+    | ((e: React.ChangeEvent<HTMLInputElement>) => void)
+    | ((value: string, data: CountryData , event: React.ChangeEvent<HTMLInputElement>, formattedValue: string) => void);
   handleBlur?: () => void;
   type: string;
   isInputError?: boolean;
@@ -24,61 +26,55 @@ const InputField: React.FC<InputProps> = ({
   type,
   isInputError,
   inputErrorMessage,
-  handleBlur
+  handleBlur,
 }) => {
-  const [isPasswordVisible, setIsPasswordVisible] = useState(
-    type === "password"
-  );
+  const [isPasswordVisible, setIsPasswordVisible] = useState(type === 'password');
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
-  if (type === "text" || type === "email") {
+  if (type === 'text' || type === 'email') {
     return (
       <div className="input__field">
         <input
           type={type}
           placeholder={`e.g ${placeholder}`}
           value={textValue}
-          onChange={handleInputChange}
-          className={isInputError ? "error" : ""}
+          onChange={handleInputChange as (e: React.ChangeEvent<HTMLInputElement>) => void}
+          className={isInputError ? 'error' : ''}
           onBlur={handleBlur}
           required
         />
         <label>{label}</label>
-        {isInputError && (
-          <div className="input__error">{inputErrorMessage}</div>
-        )}
+        {isInputError && <div className="input__error">{inputErrorMessage}</div>}
       </div>
     );
   }
 
-  if (type === "phone") {
+  if (type === 'phone') {
     return (
-      <div className="phone__input">
-        <div className="country__code">
-          <div>
-            <img src={cm} alt="Cameroon flag" className="flag__icon" />
-            <p>+237</p>
-          </div>
-
-          <img src={chevrondown} alt="Chevrondown" className="chevron__icon" />
-        </div>
-        <div className="input__wrapper">
-          <input
-            type="tel"
-            placeholder={placeholder}
-            value={textValue}
-            onChange={handleInputChange}
-            className={`phone-input-field  ${isInputError ? "error" : " "}`}
-            onBlur={handleBlur}
-          />
-          <label>{label}</label>
-          {isInputError && (
-            <div className="input__error">{inputErrorMessage}</div>
-          )}
-        </div>
+      <div className="phone__input flex flex-col">
+        <PhoneInput
+          country={'cm'}
+          value={textValue}
+          onChange={(value, country, event, formattedValue) => {
+            if (handleInputChange) {
+              (handleInputChange as (
+                value: string,
+                data: CountryData | {},
+                event: React.ChangeEvent<HTMLInputElement>,
+                formattedValue: string
+              ) => void)(value, country, event, formattedValue);
+            }
+          }}
+          inputProps={{
+            onBlur: handleBlur,
+            required: true,
+          }}
+          inputClass={isInputError ? 'error' : ''}
+        />
+        {isInputError && <div className="text-red-600 text-[13px]">{inputErrorMessage}</div>}
       </div>
     );
   }
@@ -86,25 +82,21 @@ const InputField: React.FC<InputProps> = ({
   return (
     <div className="input__field">
       <input
-        type={isPasswordVisible ? "password" : "text"}
+        type={isPasswordVisible ? 'password' : 'text'}
         placeholder={`e.g ${placeholder}`}
         value={textValue}
-        onChange={handleInputChange}
-        className={isInputError ? "error" : ""}
+        onChange={handleInputChange as (e: React.ChangeEvent<HTMLInputElement>) => void}
+        className={isInputError ? 'error' : ''}
         onBlur={handleBlur}
         required
       />
-      <label className={isInputError ? "error" : ""}>{label}</label>
+      <label className={isInputError ? 'error' : ''}>{label}</label>
       {isInputError && <div className="input__error">{inputErrorMessage}</div>}
-
       {isPasswordVisible ? (
-        <FaRegEyeSlash
-          className={`input__icon ${isInputError ? "error" : " "}`}
-          onClick={togglePasswordVisibility}
-        />
+        <FaRegEyeSlash className={`input__icon ${isInputError ? 'error' : ' '}`} onClick={togglePasswordVisibility} />
       ) : (
         <MdOutlineRemoveRedEye
-          className={`input__icon ${isInputError ? "error" : " "}`}
+          className={`input__icon ${isInputError ? 'error' : ' '}`}
           onClick={togglePasswordVisibility}
         />
       )}
