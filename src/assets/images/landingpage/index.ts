@@ -3,6 +3,7 @@ import curatedKnowledgeImage from './curated-knowlege-image.png';
 import manWithLaptopGirlWithPhone from './man-withlaptop-girl-withphone.png';
 import map from './map.png';
 import phoneHeroSection from './phone-herosection.png';
+import playstore from './playstore.png';
 import streamsCentralisedPublicationImage from './steams-centralised-publication-image.png';
 
 export const LandingPageImages = {
@@ -11,6 +12,7 @@ export const LandingPageImages = {
   manWithLaptopGirlWithPhone,
   map,
   phoneHeroSection,
+  playstore,
   streamsCentralisedPublicationImage,
 };
 

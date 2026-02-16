@@ -1,9 +1,7 @@
-// import { motion } from "framer-motion";
-// import { LandingPageImages } from "../../../../assets/images/landingpage";
 import { useNavigate } from "react-router-dom";
-
-// Figma asset URL
-const imgFrame = "https://www.figma.com/api/mcp/asset/546484fd-8693-4925-aff8-8b134a8355f6";
+import { LandingPageImages } from "../../../../assets/images/landingpage";
+import { LandingImage } from "./LandingImage";
+import { SECTION_CONTENT_CLASS, SECTION_PADDING_Y } from "./sectionLayout";
 
 const ReeplsSolutionSection = () => {
   const navigate = useNavigate();
@@ -58,49 +56,27 @@ const ReeplsSolutionSection = () => {
   // };
 
   return (
-    <section className="py-16 md:py-24 bg-[#f9fff5]">
-      <div className="max-w-7xl mx-auto px-5 md:px-16 lg:px-[80px]">
-        <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-[24px]">
-          {/* Left Content */}
-          <div className="flex flex-col gap-[12px] items-start max-w-[600px] flex-1">
-            {/* Title - Split into multiple lines as per Figma design */}
-            <div className="font-medium leading-[52px] text-[#373737] text-3xl md:text-4xl lg:text-[45px] tracking-[0px]">
-              <p className="mb-0">
-                <span className="text-[#373737]">The Reepls Solution:</span>{" "}
-              </p>
-              <p className="mb-0 text-neutral-500">A centralized ecosystem built</p>
-              <p className="mb-0 text-neutral-500">to give your ideas the gravity</p>
-              <p className="text-neutral-500">they deserve.</p>
-            </div>
-
-            {/* Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mt-3">
-              <button
-                onClick={() => navigate("/auth")}
-                className="bg-primary-400 cursor-pointer flex items-center justify-center rounded-full h-[40px] px-[24px] hover:bg-primary-500 transition-colors"
-              >
-                <span className="font-medium text-[#fefefe] text-[14px] leading-[20px] text-center whitespace-nowrap">
-                  Start a Reepl
-                </span>
-              </button>
-              
-              <button
-                onClick={() => navigate("/feed")}
-                className="border border-[#79747e] border-solid cursor-pointer rounded-full h-[40px] px-[24px] hover:bg-neutral-100 transition-colors"
-              >
-                <span className="font-medium text-[#373737] text-[14px] leading-[20px] text-center whitespace-nowrap">
-                  Explore Stories
-                </span>
-              </button>
-            </div>
+    <section className={`${SECTION_PADDING_Y} bg-white`}>
+      <div className={SECTION_CONTENT_CLASS}>
+        <div className="flex flex-col min-[900px]:flex-row items-stretch min-[900px]:items-center gap-8 min-[900px]:gap-12 w-full">
+          <div className="flex flex-col gap-3 items-start min-w-0 max-w-[500px] flex-1 w-full order-2 min-[900px]:order-1">
+            <h2 className="font-medium leading-tight text-[#373737] text-2xl sm:text-3xl md:text-4xl lg:text-[45px] tracking-[0px]">
+              The Reepls Solution: A centralized ecosystem built to give your ideas the gravity they deserve.
+            </h2>
+            <button
+              onClick={() => navigate("/auth")}
+              className="bg-primary-400 cursor-pointer flex items-center justify-center rounded-full h-10 md:h-[40px] px-6 md:px-[24px] hover:bg-primary-500 transition-colors mt-2"
+            >
+              <span className="font-medium text-plain-b text-sm md:text-[14px] leading-[20px] text-center whitespace-nowrap">
+                Learn More
+              </span>
+            </button>
           </div>
-
-          {/* Right Image - Using Figma asset */}
-          <div className="flex-1 h-[400px] md:h-[500px] lg:h-[738px] relative w-full lg:w-auto">
-            <img 
-              alt="Reepls Ecosystem" 
-              className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" 
-              src={imgFrame} 
+          <div className="flex-[1.15] w-full min-w-0 flex items-center justify-start min-[900px]:justify-center order-1 min-[900px]:order-2">
+            <LandingImage
+              src={LandingPageImages.manWithLaptopGirlWithPhone}
+              alt="Reepls Ecosystem - centralized space for your ideas"
+              className="w-full h-auto object-contain object-left min-[900px]:object-center"
             />
           </div>
 

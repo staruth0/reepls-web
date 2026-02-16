@@ -119,6 +119,9 @@ const ChildSafetyStandards: React.FC = () => {
                 If you believe a child is in immediate danger, contact local law enforcement or a child protection hotline.
               </p>
             </div>
+            <p className="mt-6 text-neutral-400 text-sm italic">
+              Reepls – as referenced on Google Play.
+            </p>
           </section>
         </div>
       </div>
