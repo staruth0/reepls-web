@@ -40,7 +40,7 @@ const Header = () => {
       >
         <div className={`flex items-center justify-between py-3 md:py-4 w-full ${SECTION_CONTENT_CLASS} ${isLanding ? "text-foreground" : ""}`}>
         <div
-          className="flex items-center cursor-pointer"
+          className="flex items-center gap-2 cursor-pointer"
           onClick={() => navigate("/")}
           aria-label="Reepls home"
         >
@@ -49,6 +49,9 @@ const Header = () => {
             alt="Reepls"
             className="h-6 sm:h-7 md:h-8 w-auto object-contain shrink-0"
           />
+          <span className="font-semibold text-foreground text-sm sm:text-base md:text-lg whitespace-nowrap">
+            Reepls
+          </span>
         </div>
 
         <div className="hidden md:flex md:items-center md:gap-2">

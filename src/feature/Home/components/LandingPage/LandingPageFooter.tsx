@@ -3,18 +3,20 @@ import { FaInstagram, FaFacebookF, FaYoutube } from "react-icons/fa";
 import { logoOnDark, logoOnWhite } from "../../../../assets/icons";
 import { SECTION_CONTENT_CLASS } from "./sectionLayout";
 import useTheme from "../../../../hooks/useTheme";
+import ThemeSwitcher from "../ThemeSwitcher";
 
 const LandingPageFooter = () => {
   const { theme } = useTheme();
 
   return (
-    <footer className="bg-[#373737] py-12 sm:py-14 md:py-16 lg:py-20">
+    <footer className="bg-[#373737] py-10 sm:py-12 md:py-14 lg:py-16">
       <div className={SECTION_CONTENT_CLASS}>
         <div className="flex flex-col gap-10 min-[900px]:gap-12">
-          <div className="flex flex-col min-[900px]:flex-row items-start justify-between gap-8 min-[900px]:gap-0">
+          {/* Top: 3 equal-width sections on large screens; wrap as needed */}
+          <div className="grid grid-cols-1 min-[700px]:grid-cols-2 min-[950px]:grid-cols-3 gap-8 min-[950px]:gap-x-10 items-start">
             <Link
               to="/"
-              className="flex items-center pr-0 lg:pr-[120px]"
+              className="flex items-center min-w-0"
               aria-label="Reepls home"
             >
               <img
@@ -24,18 +26,13 @@ const LandingPageFooter = () => {
               />
             </Link>
 
-            <div className="flex flex-1 font-medium gap-6 sm:gap-8 md:gap-12 items-center justify-center text-sm sm:text-[16px] text-[#737373] tracking-[-0.75px] flex-wrap">
+            {/* Links: must never wrap; keep one long line of 3 items */}
+            <div className="flex font-medium gap-4 sm:gap-5 md:gap-6 items-start min-[950px]:items-center justify-start min-[950px]:justify-center text-sm sm:text-[16px] text-[#737373] tracking-[-0.75px] flex-nowrap whitespace-nowrap min-w-0 overflow-x-auto">
               <Link
                 to="/feed"
                 className="hover:text-[#cccccc] transition-colors"
               >
                 Get the app
-              </Link>
-              <Link
-                to="/Terms&Policies"
-                className="hover:text-[#cccccc] transition-colors"
-              >
-                Help center
               </Link>
               <button
                 onClick={() => window.open('https://donations-ashy.vercel.app/', '_blank')}
@@ -46,13 +43,16 @@ const LandingPageFooter = () => {
             </div>
 
             {/* Right - Customer Support */}
-            <div className="flex flex-1 flex-col items-start min-[900px]:items-end">
-              <p className="font-medium text-sm sm:text-base leading-[24px] text-[#737373] tracking-[-0.75px] text-left min-[900px]:text-right">
-                <span className="font-bold block mb-1">Customer Support:</span>
-                <span className="block">(+237) 677 77 77 77</span>
-                <span className="font-bold block mt-1">Email:</span>
-                <span className="block">info@reepls.com</span>
-              </p>
+            <div className="flex flex-col items-start min-[950px]:items-end min-w-0">
+              <div className="font-medium text-sm sm:text-base leading-[24px] text-[#737373] tracking-[-0.75px] text-left min-[950px]:text-right space-y-1">
+                <p>
+                  <span className="font-bold">Contact:</span>{" "}
+                  <span>(+237) 677 77 77 77</span>
+                </p>
+                <p>
+                  <span className="font-bold">Email:</span> <span>info@reepls.com</span>
+                </p>
+              </div>
             </div>
           </div>
 
@@ -66,7 +66,11 @@ const LandingPageFooter = () => {
               © 2025. All rights reserved.
             </p>
 
-            <div className="flex gap-6 md:gap-8 items-center justify-center">
+            <div className="flex gap-4 md:gap-6 items-center justify-center">
+              {/* Desktop theme switcher lives in footer */}
+              <div className="hidden md:block">
+                <ThemeSwitcher variant="footer" />
+              </div>
               <a
                 href="https://instagram.com"
                 target="_blank"

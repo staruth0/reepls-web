@@ -9,7 +9,9 @@ const ProblemSection = () => {
             <span className="text-primary-400">The Problem:</span>{" "}
             <span className="text-[#e5e5e5]">Your stories are scattered.</span>
           </p>
-          <p className="text-[#b3b3b3] text-base sm:text-lg md:text-xl lg:text-2xl">Your voice is consumed, not published.</p>
+          <p className="font-medium leading-tight text-lg sm:text-2xl md:text-3xl lg:text-4xl min-[900px]:text-[45px] tracking-[0px] text-[#b3b3b3]">
+            Your voice is consumed, not published.
+          </p>
         </div>
       </div>
     </section>

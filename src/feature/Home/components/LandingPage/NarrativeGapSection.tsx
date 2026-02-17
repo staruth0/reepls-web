@@ -46,7 +46,7 @@ const NarrativeGapSection = () => {
     <section className={`${SECTION_PADDING_Y} bg-background`}>
       <div className={SECTION_CONTENT_CLASS}>
         <div className="flex flex-col items-center gap-4 md:gap-6 py-6 sm:py-8 md:py-12 lg:py-16">
-          <div className="flex flex-col items-center gap-3 md:gap-4 max-w-4xl w-full">
+          <div className="flex flex-col items-center gap-3 md:gap-4 max-w-[800px] w-full">
             <h2 className="font-medium leading-tight text-foreground text-xl sm:text-2xl md:text-3xl lg:text-4xl min-[900px]:text-[45px] text-center tracking-[0px]">
               The Narrative Gap: From Consumers to Creators
             </h2>

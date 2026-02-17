@@ -14,7 +14,7 @@ function Playstore({ className }: { className?: string }) {
       href={PLAY_STORE_URL}
       target="_blank"
       rel="noopener noreferrer"
-      className={`inline-block ${className ?? ""}`}
+      className={`block ${className ?? ""}`}
       aria-label="Get Reepls on Google Play"
     >
       <LandingImage
@@ -31,34 +31,36 @@ const HeroSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className={`${SECTION_PADDING_Y} bg-background border-b border-neutral-600 relative overflow-hidden`}>
+    <section className="pt-16 pb-12 sm:pb-16 md:pb-20 lg:pb-24 bg-primary-50 border-b border-neutral-600 relative overflow-hidden">
       <div className={`${SECTION_CONTENT_CLASS} relative z-10`}>
-        <div className="flex flex-col min-[900px]:flex-row gap-6 min-[900px]:gap-8 items-start min-[900px]:items-center w-full">
-          <div className="flex flex-1 flex-col items-start gap-3 w-full min-w-0 min-[900px]:max-w-[520px]">
-            <div className="font-medium leading-tight text-foreground text-2xl sm:text-3xl md:text-4xl lg:text-5xl min-[900px]:text-[57px] tracking-[-0.75px]">
-              <p className="mb-0">Start the Reepl.</p>
-              <p className="mb-0">Amplify Your</p>
-              <p>African Voice.</p>
-            </div>
+        <div className="flex flex-col min-[900px]:flex-row gap-6 min-[900px]:gap-8 items-center min-[900px]:items-center w-full">
+          <div className="flex flex-1 flex-col items-center min-[900px]:items-start gap-3 w-full min-w-0 min-[900px]:max-w-[520px] text-center min-[900px]:text-left">
+            <h1 className="font-medium leading-tight min-[900px]:leading-[1.18] text-foreground text-2xl sm:text-3xl md:text-4xl lg:text-5xl min-[900px]:text-[57px] tracking-[-0.75px]">
+              <span className="block min-[900px]:hidden">
+                Start the Reepl. Amplify Your African Voice.
+              </span>
+              <span className="hidden min-[900px]:block">
+                Start the Reepl.<br />
+                Amplify Your<br />
+                African Voice.
+              </span>
+            </h1>
 
-            <div className="flex flex-col font-medium justify-center leading-snug text-sm sm:text-base md:text-lg lg:text-[20px] text-neutral-100 tracking-[-0.75px] whitespace-pre-wrap">
-              <p className="mb-0">
-                {`Reepls is the dedicated platform where Africa's thought leaders, storytellers, and innovators share, publish, and watch `}
-              </p>
-              <p>their influence spread.</p>
-            </div>
+            <p className="font-medium leading-snug text-sm sm:text-base md:text-lg lg:text-[20px] text-neutral-100 tracking-[-0.75px]">
+              Reepls is the dedicated platform where Africa's thought leaders, storytellers, and innovators share, publish, and watch their influence spread.
+            </p>
 
             {/* Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 items-center mt-3">
+            <div className="flex flex-row gap-3 items-center justify-center min-[900px]:justify-start mt-3 w-full max-w-[420px] min-[900px]:max-w-none">
               <button
                 onClick={() => navigate("/auth")}
-                className="bg-primary-400 cursor-pointer flex items-center justify-center rounded-full h-12 sm:h-14 md:h-[64px] px-6 md:px-[24px] hover:bg-primary-500 transition-colors w-full sm:w-auto"
+                className="bg-primary-400 cursor-pointer flex-1 flex items-center justify-center rounded-full h-12 sm:h-14 md:h-[64px] px-5 md:px-[20px] hover:bg-primary-500 transition-colors"
               >
                 <span className="font-medium text-plain-b text-sm sm:text-base md:text-[18px] leading-[20px] text-center whitespace-nowrap">
                   Get Started
                 </span>
               </button>
-              <Playstore className="h-12 sm:h-14 md:h-[64px] w-[180px] sm:w-[200px] md:w-[214px]" />
+              <Playstore className="flex-1 h-12 sm:h-14 md:h-[64px]" />
             </div>
           </div>
 

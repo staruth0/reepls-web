@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 interface ThemeSwitcherProps {
   /** Show icon + "Theme" label in one line (e.g. in mobile menu) */
-  variant?: "default" | "menu";
+  variant?: "default" | "menu" | "footer";
 }
 
 const ThemeSwitcher = ({ variant = "default" }: ThemeSwitcherProps) => {
@@ -21,6 +21,7 @@ const ThemeSwitcher = ({ variant = "default" }: ThemeSwitcherProps) => {
   };
 
   const isMenu = variant === "menu";
+  const isFooter = variant === "footer";
 
   return (
     <div className="relative">
@@ -29,7 +30,9 @@ const ThemeSwitcher = ({ variant = "default" }: ThemeSwitcherProps) => {
         className={
           isMenu
             ? "flex items-center gap-2 rounded-lg transition-colors text-neutral-50 hover:text-primary-400"
-            : "p-2 rounded-lg hover:bg-neutral-700 transition-colors text-foreground"
+            : isFooter
+              ? "p-2 rounded-full border border-[#737373] text-[#737373] hover:text-[#cccccc] hover:border-[#cccccc] transition-colors"
+              : "p-2 rounded-lg hover:bg-neutral-700 transition-colors text-foreground"
         }
         aria-expanded={isOpen}
         aria-haspopup="true"
@@ -39,7 +42,13 @@ const ThemeSwitcher = ({ variant = "default" }: ThemeSwitcherProps) => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1.5 bg-background border border-neutral-500 rounded-lg shadow-lg overflow-hidden p-2 z-50 min-w-[120px]">
+        <div
+          className={`absolute bg-background border border-neutral-500 rounded-lg shadow-lg overflow-hidden p-2 z-50 min-w-[120px] ${
+            isFooter
+              ? "bottom-full mb-2 right-0 left-auto"
+              : "top-full mt-1.5 left-0"
+          }`}
+        >
           <button
             onClick={() => handleThemeChange("light")}
             className="flex items-center gap-2 w-full px-3 py-2 rounded hover:bg-neutral-700 transition-colors text-foreground text-sm"
