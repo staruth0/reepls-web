@@ -42,10 +42,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
             </a>
           </li>
           <li>
-            <ThemeSwitcher variant="menu" />
+            <LanguageSwitcher />
           </li>
           <li>
-            <LanguageSwitcher />
+            <ThemeSwitcher variant="menu" />
           </li>
         </ul>
       </div>

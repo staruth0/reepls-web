@@ -31,28 +31,28 @@ const CoreFeaturesSection = () => {
   // };
 
   return (
-    <section className={`${SECTION_PADDING_Y} bg-background border-b border-neutral-600`}>
+    <section className={`${SECTION_PADDING_Y} bg-primary-50 border-b border-neutral-600`}>
       <div className={SECTION_CONTENT_CLASS}>
         <div className="flex flex-col gap-14 sm:gap-16 md:gap-20 lg:gap-24 items-start min-[900px]:items-center w-full">
-          <div className="flex flex-col gap-3 items-start min-[900px]:items-center w-full min-[900px]:max-w-[600px] text-left min-[900px]:text-center">
-            <h2 className="font-medium leading-tight text-foreground text-xl sm:text-2xl md:text-3xl lg:text-4xl tracking-[0px]">
+          <div className="flex flex-col gap-3 items-center w-full min-[900px]:max-w-[600px] text-center">
+            <h2 className="font-semibold leading-tight text-foreground text-2xl sm:text-3xl md:text-3xl lg:text-4xl tracking-[0px]">
               Core Features (The How)
             </h2>
-            <p className="font-medium leading-snug text-sm sm:text-base md:text-lg text-neutral-100 tracking-[-0.75px]">
+            <p className="font-medium leading-snug text-base sm:text-base md:text-lg text-neutral-100 tracking-[-0.75px]">
               Where Ideas Flow: Structured Content & Diverse Media
             </p>
           </div>
 
           {/* First feature: full width / left on single col; image column slightly larger than text on 2-col */}
           <div className="flex flex-col min-[900px]:flex-row gap-8 min-[900px]:gap-12 items-stretch min-[900px]:items-center w-full">
-            <div className="flex-[1.15] w-full min-w-0 flex justify-start min-[900px]:justify-start">
+            <div className="flex-[1.15] w-full min-w-0 flex justify-start min-[900px]:justify-start order-2 min-[900px]:order-1">
               <LandingImage
                 src={LandingPageImages.coreFeaturesImage}
                 alt="In-Depth Posts & Podcasts"
                 className="w-full h-auto object-contain rounded-xl"
               />
             </div>
-            <div className="flex-1 flex flex-col gap-3 items-start min-w-0 max-w-[500px] mx-0 min-[900px]:mx-0">
+            <div className="flex-1 flex flex-col gap-3 items-start min-w-0 max-w-[500px] mx-0 min-[900px]:mx-0 order-1 min-[900px]:order-2">
               <p className="font-medium leading-tight text-foreground text-xl sm:text-2xl md:text-3xl lg:text-4xl tracking-[0px] whitespace-pre-wrap">
                 In-Depth Posts & Podcasts:
               </p>
@@ -63,11 +63,11 @@ const CoreFeaturesSection = () => {
               </div>
               <div className="mt-2">
                 <button
-                  onClick={() => navigate("/auth")}
+                  onClick={() => navigate("/feed")}
                   className="bg-primary-400 cursor-pointer flex items-center justify-center rounded-full h-9 px-5 hover:bg-primary-500 transition-colors"
                 >
                   <span className="font-medium text-plain-b text-sm leading-tight text-center whitespace-nowrap">
-                    Learn More
+                    Explore stories
                   </span>
                 </button>
               </div>
@@ -76,7 +76,7 @@ const CoreFeaturesSection = () => {
 
           {/* Streams Section */}
           <div className="flex flex-col min-[900px]:flex-row items-stretch min-[900px]:items-center gap-8 min-[900px]:gap-12 w-full">
-            <div className="flex-1 flex flex-col gap-3 items-start max-w-[500px] mx-0 min-[900px]:mx-0 order-2 min-[900px]:order-1">
+            <div className="flex-1 flex flex-col gap-3 items-start max-w-[500px] mx-0 min-[900px]:mx-0 order-1">
               <p className="font-medium leading-tight text-foreground text-xl sm:text-2xl md:text-3xl lg:text-4xl tracking-[0px] whitespace-pre-wrap">
                 Streams (Centralized Publications)
               </p>
@@ -91,12 +91,12 @@ const CoreFeaturesSection = () => {
                   className="bg-primary-400 cursor-pointer flex items-center justify-center rounded-full h-9 px-5 hover:bg-primary-500 transition-colors"
                 >
                   <span className="font-medium text-plain-b text-sm leading-tight text-center whitespace-nowrap">
-                    Learn More
+                    Start a stream
                   </span>
                 </button>
               </div>
             </div>
-            <div className="flex-[1.15] w-full min-w-0 flex justify-start min-[900px]:justify-end order-1 min-[900px]:order-2">
+            <div className="flex-[1.15] w-full min-w-0 flex justify-start min-[900px]:justify-end order-2">
               <LandingImage
                 src={LandingPageImages.streamsCentralisedPublicationImage}
                 alt="Streams - Centralized Publications"
@@ -107,14 +107,14 @@ const CoreFeaturesSection = () => {
 
           {/* Curate Your Knowledge: image column slightly larger */}
           <div className="flex flex-col min-[900px]:flex-row items-stretch min-[900px]:items-center gap-8 min-[900px]:gap-12 w-full">
-            <div className="flex-[1.15] w-full min-w-0 flex justify-start min-[900px]:justify-start">
+            <div className="flex-[1.15] w-full min-w-0 flex justify-start min-[900px]:justify-start order-2 min-[900px]:order-1">
               <LandingImage
                 src={LandingPageImages.curatedKnowledgeImage}
                 alt="Curate Your Knowledge"
                 className="w-full h-auto object-contain rounded-xl"
               />
             </div>
-            <div className="flex-1 flex flex-col gap-3 items-start min-w-0 max-w-[500px] mx-0 min-[900px]:mx-0">
+            <div className="flex-1 flex flex-col gap-3 items-start min-w-0 max-w-[500px] mx-0 min-[900px]:mx-0 order-1 min-[900px]:order-2">
               <p className="font-medium leading-tight text-foreground text-xl sm:text-2xl md:text-3xl lg:text-4xl tracking-[0px] whitespace-pre-wrap">
                 Curate Your Knowledge
               </p>
@@ -129,7 +129,7 @@ const CoreFeaturesSection = () => {
                   className="bg-primary-400 cursor-pointer flex items-center justify-center rounded-full h-9 px-5 hover:bg-primary-500 transition-colors"
                 >
                   <span className="font-medium text-plain-b text-sm leading-tight text-center whitespace-nowrap">
-                    Learn More
+                    Get started
                   </span>
                 </button>
               </div>

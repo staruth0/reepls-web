@@ -56,23 +56,39 @@ const ReeplsSolutionSection = () => {
   // };
 
   return (
-    <section className={`${SECTION_PADDING_Y} bg-white`}>
+    <section className={`${SECTION_PADDING_Y} bg-background`}>
       <div className={SECTION_CONTENT_CLASS}>
         <div className="flex flex-col min-[900px]:flex-row items-stretch min-[900px]:items-center gap-8 min-[900px]:gap-12 w-full">
-          <div className="flex flex-col gap-3 items-start min-w-0 max-w-[500px] flex-1 w-full order-2 min-[900px]:order-1">
-            <h2 className="font-medium leading-tight text-[#373737] text-2xl sm:text-3xl md:text-4xl lg:text-[45px] tracking-[0px]">
-              The Reepls Solution: A centralized ecosystem built to give your ideas the gravity they deserve.
-            </h2>
-            <button
-              onClick={() => navigate("/auth")}
-              className="bg-primary-400 cursor-pointer flex items-center justify-center rounded-full h-10 md:h-[40px] px-6 md:px-[24px] hover:bg-primary-500 transition-colors mt-2"
-            >
-              <span className="font-medium text-plain-b text-sm md:text-[14px] leading-[20px] text-center whitespace-nowrap">
-                Learn More
-              </span>
-            </button>
+          <div className="flex flex-col gap-3 items-center min-[900px]:items-start min-w-0 max-w-[600px] mx-auto min-[900px]:mx-0 flex-1 w-full text-center min-[900px]:text-left order-1 min-[900px]:order-1">
+            <div className="space-y-2">
+              <h2 className="font-medium leading-tight text-foreground text-2xl sm:text-3xl md:text-4xl lg:text-[45px] tracking-[0px]">
+                The Reepls Solution
+              </h2>
+              <p className="font-medium leading-tight text-neutral-100 text-2xl sm:text-3xl md:text-4xl lg:text-[45px] tracking-[0px]">
+                A centralized ecosystem built to give your ideas the gravity they deserve.
+              </p>
+            </div>
+
+            <div className="flex flex-row flex-wrap gap-3 items-center justify-center min-[900px]:justify-start mt-2">
+              <button
+                onClick={() => navigate("/auth")}
+                className="bg-primary-400 cursor-pointer flex items-center justify-center rounded-full h-10 md:h-[44px] px-6 md:px-[24px] hover:bg-primary-500 transition-colors"
+              >
+                <span className="font-medium text-plain-b text-sm md:text-[14px] leading-[20px] text-center whitespace-nowrap">
+                  Start a Reepl
+                </span>
+              </button>
+              <button
+                onClick={() => navigate("/feed")}
+                className="border border-neutral-50 cursor-pointer flex items-center justify-center rounded-full h-10 md:h-[44px] px-6 md:px-[24px] hover:bg-neutral-700/20 transition-colors"
+              >
+                <span className="font-medium text-foreground text-sm md:text-[14px] leading-[20px] text-center whitespace-nowrap">
+                  Explore
+                </span>
+              </button>
+            </div>
           </div>
-          <div className="flex-[1.15] w-full min-w-0 flex items-center justify-start min-[900px]:justify-center order-1 min-[900px]:order-2">
+          <div className="flex-[1.15] w-full min-w-0 flex items-center justify-start min-[900px]:justify-center order-2 min-[900px]:order-2">
             <LandingImage
               src={LandingPageImages.manWithLaptopGirlWithPhone}
               alt="Reepls Ecosystem - centralized space for your ideas"

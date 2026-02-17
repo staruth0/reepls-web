@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import LanguageSwitcher from "../LanguageSwitcher";
-import ThemeSwitcher from "../ThemeSwitcher";
 
 interface LeftHeaderProps {
   isLanding?: boolean;
@@ -13,7 +12,6 @@ const LeftHeader = ({ isLanding }: LeftHeaderProps) => {
 
   return (
     <div className="flex items-center gap-3 sm:gap-4">
-      <ThemeSwitcher />
       <LanguageSwitcher />
 
       <button
