@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { LandingImage } from "./LandingImage";
-import { SECTION_CONTENT_CLASS, SECTION_PADDING_Y } from "./sectionLayout";
+import { SECTION_CONTENT_CLASS } from "./sectionLayout";
 import { LandingPageImages } from "../../../../assets/images/landingpage";
 
 // Hero image: only this file (src/assets/images/landingpage/phone-herosection.png)
