@@ -38,7 +38,7 @@ const FooterBottom = () => {
           </li>
           <li>
             <Link
-              to={`${authState.isLoggedIn ? "Terms&Policies" : "auth"}`}
+              to="/terms-and-conditions"
               className="text-neutral-50 hover:text-primary-400 transition-colors"
             >
               {t("footer.bottom.terms")}
@@ -46,7 +46,7 @@ const FooterBottom = () => {
           </li>
           <li>
             <Link
-              to={`${authState.isLoggedIn ? "Terms&Policies" : "auth"}`}
+              to="/privacy-policy"
               className="text-neutral-50 hover:text-primary-400 transition-colors"
             >
               {t("footer.bottom.policy")}

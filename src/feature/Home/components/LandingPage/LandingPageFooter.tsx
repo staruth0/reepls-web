@@ -50,7 +50,8 @@ const LandingPageFooter = () => {
                   <span>(+237) 677 77 77 77</span>
                 </p>
                 <p>
-                  <span className="font-bold">Email:</span> <span>info@reepls.com</span>
+                  <span className="font-bold">Email:</span>{" "}
+                  <span>reepls.project@gmail.com</span>
                 </p>
               </div>
             </div>
@@ -61,10 +62,26 @@ const LandingPageFooter = () => {
 
           {/* Bottom Section */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            {/* Copyright */}
-            <p className="font-medium text-sm sm:text-base leading-[24px] text-[#737373] tracking-[-0.75px]">
-              © 2025. All rights reserved.
-            </p>
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6">
+              <p className="font-medium text-sm sm:text-base leading-[24px] text-[#737373] tracking-[-0.75px]">
+                © 2025. All rights reserved.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm text-[#737373]">
+                <Link
+                  to="/privacy-policy"
+                  className="hover:text-[#cccccc] transition-colors"
+                >
+                  Privacy Policy
+                </Link>
+                <span className="hidden sm:inline-block">•</span>
+                <Link
+                  to="/terms-and-conditions"
+                  className="hover:text-[#cccccc] transition-colors"
+                >
+                  Terms &amp; Conditions
+                </Link>
+              </div>
+            </div>
 
             <div className="flex gap-4 md:gap-6 items-center justify-center">
               {/* Desktop theme switcher lives in footer */}
